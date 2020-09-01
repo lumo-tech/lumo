@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>日志输出：Logger | thexp</title>
+    <meta name="generator" content="VuePress 1.5.3">
+    
+    <meta name="description" content="Pytorch Framework for Research">
+    <link rel="preload" href="/thexp/assets/css/0.styles.cbe7f000.css" as="style"><link rel="preload" href="/thexp/assets/js/app.4ed6bfcd.js" as="script"><link rel="preload" href="/thexp/assets/js/3.74d8f37c.js" as="script"><link rel="preload" href="/thexp/assets/js/36.0a8a65fa.js" as="script"><link rel="prefetch" href="/thexp/assets/js/10.cbd5d775.js"><link rel="prefetch" href="/thexp/assets/js/11.0c3dcf5c.js"><link rel="prefetch" href="/thexp/assets/js/12.71e963d5.js"><link rel="prefetch" href="/thexp/assets/js/13.d3fb616c.js"><link rel="prefetch" href="/thexp/assets/js/14.83510b18.js"><link rel="prefetch" href="/thexp/assets/js/15.5f1e9c6f.js"><link rel="prefetch" href="/thexp/assets/js/16.26c7422b.js"><link rel="prefetch" href="/thexp/assets/js/17.9ebef0f4.js"><link rel="prefetch" href="/thexp/assets/js/18.629f39e3.js"><link rel="prefetch" href="/thexp/assets/js/19.376ca785.js"><link rel="prefetch" href="/thexp/assets/js/20.7b4a6eed.js"><link rel="prefetch" href="/thexp/assets/js/21.3a10c028.js"><link rel="prefetch" href="/thexp/assets/js/22.308395cf.js"><link rel="prefetch" href="/thexp/assets/js/23.aa5c2f70.js"><link rel="prefetch" href="/thexp/assets/js/24.55394ed2.js"><link rel="prefetch" href="/thexp/assets/js/25.69bab919.js"><link rel="prefetch" href="/thexp/assets/js/26.3940c965.js"><link rel="prefetch" href="/thexp/assets/js/27.e5b12ecf.js"><link rel="prefetch" href="/thexp/assets/js/28.54bf0760.js"><link rel="prefetch" href="/thexp/assets/js/29.11901763.js"><link rel="prefetch" href="/thexp/assets/js/30.171024b1.js"><link rel="prefetch" href="/thexp/assets/js/31.19a1730a.js"><link rel="prefetch" href="/thexp/assets/js/32.97e3616f.js"><link rel="prefetch" href="/thexp/assets/js/33.144b21a4.js"><link rel="prefetch" href="/thexp/assets/js/34.42369718.js"><link rel="prefetch" href="/thexp/assets/js/35.195344ea.js"><link rel="prefetch" href="/thexp/assets/js/37.35c1c712.js"><link rel="prefetch" href="/thexp/assets/js/38.85393fda.js"><link rel="prefetch" href="/thexp/assets/js/39.36791a25.js"><link rel="prefetch" href="/thexp/assets/js/4.bfe63e3f.js"><link rel="prefetch" href="/thexp/assets/js/40.38a8eb16.js"><link rel="prefetch" href="/thexp/assets/js/41.2c6e723c.js"><link rel="prefetch" href="/thexp/assets/js/42.414e24c8.js"><link rel="prefetch" href="/thexp/assets/js/5.250cab8d.js"><link rel="prefetch" href="/thexp/assets/js/6.b4a27d37.js"><link rel="prefetch" href="/thexp/assets/js/7.6233ecca.js"><link rel="prefetch" href="/thexp/assets/js/8.2a09747e.js"><link rel="prefetch" href="/thexp/assets/js/9.a5aa0086.js"><link rel="prefetch" href="/thexp/assets/js/vendors~docsearch.33b3cf02.js">
+    <link rel="stylesheet" href="/thexp/assets/css/0.styles.cbe7f000.css">
+  </head>
+  <body>
+    <div id="app" data-server-rendered="true"><div class="theme-container"><header class="navbar"><div class="sidebar-button"><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="img" viewBox="0 0 448 512" class="icon"><path fill="currentColor" d="M436 124H12c-6.627 0-12-5.373-12-12V80c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12zm0 160H12c-6.627 0-12-5.373-12-12v-32c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12zm0 160H12c-6.627 0-12-5.373-12-12v-32c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12z"></path></svg></div> <a href="/thexp/zh/" class="home-link router-link-active"><!----> <span class="site-name">thexp</span></a> <div class="links"><div class="search-box"><input aria-label="Search" autocomplete="off" spellcheck="false" value=""> <!----></div> <nav class="nav-links can-hide"><div class="nav-item"><a href="/thexp/zh/" class="nav-link">
+  Home
+</a></div><div class="nav-item"><a href="/thexp/zh/tutorial/" class="nav-link">
+  Tutorial
+</a></div><div class="nav-item"><a href="/thexp/zh/cookbook/" class="nav-link">
+  Cookbook
+</a></div><div class="nav-item"><a href="/thexp/zh/about/" class="nav-link">
+  About
+</a></div><div class="nav-item"><div class="dropdown-wrapper"><button type="button" aria-label="Select language" class="dropdown-title"><span class="title">选择语言</span> <span class="arrow right"></span></button> <ul class="nav-dropdown" style="display:none;"><li class="dropdown-item"><!----> <a href="/thexp/logger/" class="nav-link">
+  English
+</a></li><li class="dropdown-item"><!----> <a href="/thexp/zh/logger/" aria-current="page" class="nav-link router-link-exact-active router-link-active">
+  简体中文
+</a></li></ul></div></div> <a href="https://github.com/sailist/thexp" target="_blank" rel="noopener noreferrer" class="repo-link">
+    GitHub
+    <svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg></a></nav></div></header> <div class="sidebar-mask"></div> <aside class="sidebar"><nav class="nav-links"><div class="nav-item"><a href="/thexp/zh/" class="nav-link">
+  Home
+</a></div><div class="nav-item"><a href="/thexp/zh/tutorial/" class="nav-link">
+  Tutorial
+</a></div><div class="nav-item"><a href="/thexp/zh/cookbook/" class="nav-link">
+  Cookbook
+</a></div><div class="nav-item"><a href="/thexp/zh/about/" class="nav-link">
+  About
+</a></div><div class="nav-item"><div class="dropdown-wrapper"><button type="button" aria-label="Select language" class="dropdown-title"><span class="title">选择语言</span> <span class="arrow right"></span></button> <ul class="nav-dropdown" style="display:none;"><li class="dropdown-item"><!----> <a href="/thexp/logger/" class="nav-link">
+  English
+</a></li><li class="dropdown-item"><!----> <a href="/thexp/zh/logger/" aria-current="page" class="nav-link router-link-exact-active router-link-active">
+  简体中文
+</a></li></ul></div></div> <a href="https://github.com/sailist/thexp" target="_blank" rel="noopener noreferrer" class="repo-link">
+    GitHub
+    <svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg></a></nav>  <ul class="sidebar-links"><li><section class="sidebar-group depth-0"><p class="sidebar-heading open"><span>Tutorial</span> <!----></p> <ul class="sidebar-links sidebar-group-items"><li><a href="/thexp/zh/tutorial/" class="sidebar-link">序言</a></li><li><a href="/thexp/zh/params/" class="sidebar-link">超参数声明：Params</a></li><li><a href="/thexp/zh/meter/" class="sidebar-link">变量记录：Meter</a></li><li><a href="/thexp/zh/logger/" aria-current="page" class="active sidebar-link">日志输出：Logger</a><ul class="sidebar-sub-headers"><li class="sidebar-sub-header"><a href="/thexp/zh/logger/#基本使用" class="sidebar-link">基本使用</a></li><li class="sidebar-sub-header"><a href="/thexp/zh/logger/#添加输出目录" class="sidebar-link">添加输出目录</a></li></ul></li><li><a href="/thexp/zh/saver/" class="sidebar-link">模型保存：Saver</a></li><li><a href="/thexp/zh/rnd/" class="sidebar-link">随机种子管理：RndManager</a></li><li><a href="/thexp/zh/builder/" class="sidebar-link">数据封装：DatasetBuilder</a></li><li><a href="/thexp/zh/bundler/" class="sidebar-link">数据集整合：DataBundler</a></li><li><a href="/thexp/zh/exp/" class="sidebar-link">试验管理与分析：Experiment/Query</a></li><li><a href="/thexp/zh/trainer/" class="sidebar-link">训练流程抽象：Trainer</a></li><li><a href="/thexp/zh/other/" class="sidebar-link">其他</a></li></ul></section></li></ul> </aside> <main class="page"> <div class="theme-default-content content__default"><h1 id="日志输出：logger"><a href="#日志输出：logger" class="header-anchor">#</a> 日志输出：Logger</h1> <div class="language-python line-numbers-mode"><pre class="language-python"><code><span class="token keyword">from</span> thexp <span class="token keyword">import</span> Logger
+</code></pre> <div class="line-numbers-wrapper"><span class="line-number">1</span><br></div></div><p>该模块用于日志输出，可以配合<code>Meter</code>类，也可以单独使用，支持多种日志级别的输出，同时添加了在同一行多次输出的支持。</p> <blockquote><p>和其他用于日志输出的框架相比，本框架最大的区别在于，当你需要在同一行内输出时，即使字符串长度超过屏幕长度，也不会导致换行，而是会省略多出来的字符串。</p></blockquote> <h2 id="基本使用"><a href="#基本使用" class="header-anchor">#</a> 基本使用</h2> <div class="language-python line-numbers-mode"><pre class="language-python"><code><span class="token keyword">import</span> time
+<span class="token keyword">from</span> thexp <span class="token keyword">import</span> Logger<span class="token punctuation">,</span>Meter<span class="token punctuation">,</span>Params
+logger <span class="token operator">=</span> Logger<span class="token punctuation">(</span><span class="token punctuation">)</span>
+
+meter <span class="token operator">=</span> Meter<span class="token punctuation">(</span><span class="token punctuation">)</span>
+meter<span class="token punctuation">.</span>a <span class="token operator">=</span> <span class="token number">3.13524635465</span>
+meter<span class="token punctuation">.</span>b <span class="token operator">=</span> <span class="token string">&quot;long text;long text;long text;long text;long text;long text;long text;long text;long text;long text;long text;long text;long text;long text;long text;long text;long text;long text;long text;long text;long text;long text;long text;long text;&quot;</span>
+
+<span class="token keyword">for</span> i <span class="token keyword">in</span> <span class="token builtin">range</span><span class="token punctuation">(</span><span class="token number">10</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
+    logger<span class="token punctuation">.</span>inline<span class="token punctuation">(</span><span class="token string">&quot;inline examples&quot;</span><span class="token punctuation">,</span>meter<span class="token punctuation">)</span>
+    time<span class="token punctuation">.</span>sleep<span class="token punctuation">(</span><span class="token number">0.2</span><span class="token punctuation">)</span>
+logger<span class="token punctuation">.</span>info<span class="token punctuation">(</span><span class="token number">1</span><span class="token punctuation">,</span><span class="token number">2</span><span class="token punctuation">,</span><span class="token number">3</span><span class="token punctuation">,</span><span class="token punctuation">{</span><span class="token number">4</span><span class="token punctuation">:</span><span class="token number">4</span><span class="token punctuation">}</span><span class="token punctuation">)</span>
+logger<span class="token punctuation">.</span>info<span class="token punctuation">(</span>meter<span class="token punctuation">)</span>
+
+<span class="token keyword">for</span> i <span class="token keyword">in</span> <span class="token builtin">range</span><span class="token punctuation">(</span><span class="token number">10</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
+    logger<span class="token punctuation">.</span>raw<span class="token punctuation">(</span>i<span class="token punctuation">,</span>inline<span class="token operator">=</span><span class="token boolean">True</span><span class="token punctuation">,</span>append<span class="token operator">=</span><span class="token boolean">True</span><span class="token punctuation">)</span> 
+    time<span class="token punctuation">.</span>sleep<span class="token punctuation">(</span><span class="token number">0.2</span><span class="token punctuation">)</span>
+</code></pre> <div class="line-numbers-wrapper"><span class="line-number">1</span><br><span class="line-number">2</span><br><span class="line-number">3</span><br><span class="line-number">4</span><br><span class="line-number">5</span><br><span class="line-number">6</span><br><span class="line-number">7</span><br><span class="line-number">8</span><br><span class="line-number">9</span><br><span class="line-number">10</span><br><span class="line-number">11</span><br><span class="line-number">12</span><br><span class="line-number">13</span><br><span class="line-number">14</span><br><span class="line-number">15</span><br><span class="line-number">16</span><br><span class="line-number">17</span><br></div></div><p>输出</p> <div class="language- line-numbers-mode"><pre class="language-text"><code>20-05-15 10:21:41 | inline examples | a: 3.1352 | b: long text;long text;long text;long text;long text;long text;long text;long text;long text;long text;long text;long text;long text;long text;long text;long text;long text;long text;long text;long text;long text;long text;long text;long text;
+20-05-15 10:21:41 | 1 | 2 | 3 | {4: 4}
+20-05-15 10:21:41 | a: 3.1352 | b: long text;long text;long text;long text;long text;long text;long text;long text;long text;long text;long text;long text;long text;long text;long text;long text;long text;long text;long text;long text;long text;long text;long text;long text;
+0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 
+</code></pre> <div class="line-numbers-wrapper"><span class="line-number">1</span><br><span class="line-number">2</span><br><span class="line-number">3</span><br><span class="line-number">4</span><br></div></div><p>在显示屏中运行时你会看到中间一段循环会一直在同一行打印，超过一行的部份会被暂时截断。</p> <div class="custom-block warning"><p class="custom-block-title">线程安全</p> <p>Logger设计时没有考虑到线程安全，作者暂时没有多进程/并行训练经验，暂时无法对这多线程/进程日志输出进行扩展。</p></div> <h2 id="添加输出目录"><a href="#添加输出目录" class="header-anchor">#</a> 添加输出目录</h2> <p>可以添加任意多个输出目录，参数为文件夹位置，日志名称会根据日期时间自动命名，后缀为 <code>.log</code></p> <div class="language-python line-numbers-mode"><pre class="language-python"><code>logger<span class="token punctuation">.</span>add_log_dir<span class="token punctuation">(</span><span class="token string">&quot;./&quot;</span><span class="token punctuation">)</span>
+</code></pre> <div class="line-numbers-wrapper"><span class="line-number">1</span><br></div></div></div> <footer class="page-edit"><!----> <!----></footer> <div class="page-nav"><p class="inner"><span class="prev">
+      ←
+      <a href="/thexp/zh/meter/" class="prev">
+        变量记录：Meter
+      </a></span> <span class="next"><a href="/thexp/zh/saver/">
+        模型保存：Saver
+      </a>
+      →
+    </span></p></div> </main></div><div class="global-ui"></div></div>
+    <script src="/thexp/assets/js/app.4ed6bfcd.js" defer></script><script src="/thexp/assets/js/3.74d8f37c.js" defer></script><script src="/thexp/assets/js/36.0a8a65fa.js" defer></script>
+  </body>
+</html>

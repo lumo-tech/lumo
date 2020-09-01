@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>变量记录：Meter | thexp</title>
+    <meta name="generator" content="VuePress 1.5.3">
+    
+    <meta name="description" content="Pytorch Framework for Research">
+    <link rel="preload" href="/thexp/assets/css/0.styles.cbe7f000.css" as="style"><link rel="preload" href="/thexp/assets/js/app.4ed6bfcd.js" as="script"><link rel="preload" href="/thexp/assets/js/3.74d8f37c.js" as="script"><link rel="preload" href="/thexp/assets/js/35.195344ea.js" as="script"><link rel="prefetch" href="/thexp/assets/js/10.cbd5d775.js"><link rel="prefetch" href="/thexp/assets/js/11.0c3dcf5c.js"><link rel="prefetch" href="/thexp/assets/js/12.71e963d5.js"><link rel="prefetch" href="/thexp/assets/js/13.d3fb616c.js"><link rel="prefetch" href="/thexp/assets/js/14.83510b18.js"><link rel="prefetch" href="/thexp/assets/js/15.5f1e9c6f.js"><link rel="prefetch" href="/thexp/assets/js/16.26c7422b.js"><link rel="prefetch" href="/thexp/assets/js/17.9ebef0f4.js"><link rel="prefetch" href="/thexp/assets/js/18.629f39e3.js"><link rel="prefetch" href="/thexp/assets/js/19.376ca785.js"><link rel="prefetch" href="/thexp/assets/js/20.7b4a6eed.js"><link rel="prefetch" href="/thexp/assets/js/21.3a10c028.js"><link rel="prefetch" href="/thexp/assets/js/22.308395cf.js"><link rel="prefetch" href="/thexp/assets/js/23.aa5c2f70.js"><link rel="prefetch" href="/thexp/assets/js/24.55394ed2.js"><link rel="prefetch" href="/thexp/assets/js/25.69bab919.js"><link rel="prefetch" href="/thexp/assets/js/26.3940c965.js"><link rel="prefetch" href="/thexp/assets/js/27.e5b12ecf.js"><link rel="prefetch" href="/thexp/assets/js/28.54bf0760.js"><link rel="prefetch" href="/thexp/assets/js/29.11901763.js"><link rel="prefetch" href="/thexp/assets/js/30.171024b1.js"><link rel="prefetch" href="/thexp/assets/js/31.19a1730a.js"><link rel="prefetch" href="/thexp/assets/js/32.97e3616f.js"><link rel="prefetch" href="/thexp/assets/js/33.144b21a4.js"><link rel="prefetch" href="/thexp/assets/js/34.42369718.js"><link rel="prefetch" href="/thexp/assets/js/36.0a8a65fa.js"><link rel="prefetch" href="/thexp/assets/js/37.35c1c712.js"><link rel="prefetch" href="/thexp/assets/js/38.85393fda.js"><link rel="prefetch" href="/thexp/assets/js/39.36791a25.js"><link rel="prefetch" href="/thexp/assets/js/4.bfe63e3f.js"><link rel="prefetch" href="/thexp/assets/js/40.38a8eb16.js"><link rel="prefetch" href="/thexp/assets/js/41.2c6e723c.js"><link rel="prefetch" href="/thexp/assets/js/42.414e24c8.js"><link rel="prefetch" href="/thexp/assets/js/5.250cab8d.js"><link rel="prefetch" href="/thexp/assets/js/6.b4a27d37.js"><link rel="prefetch" href="/thexp/assets/js/7.6233ecca.js"><link rel="prefetch" href="/thexp/assets/js/8.2a09747e.js"><link rel="prefetch" href="/thexp/assets/js/9.a5aa0086.js"><link rel="prefetch" href="/thexp/assets/js/vendors~docsearch.33b3cf02.js">
+    <link rel="stylesheet" href="/thexp/assets/css/0.styles.cbe7f000.css">
+  </head>
+  <body>
+    <div id="app" data-server-rendered="true"><div class="theme-container"><header class="navbar"><div class="sidebar-button"><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="img" viewBox="0 0 448 512" class="icon"><path fill="currentColor" d="M436 124H12c-6.627 0-12-5.373-12-12V80c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12zm0 160H12c-6.627 0-12-5.373-12-12v-32c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12zm0 160H12c-6.627 0-12-5.373-12-12v-32c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12z"></path></svg></div> <a href="/thexp/zh/" class="home-link router-link-active"><!----> <span class="site-name">thexp</span></a> <div class="links"><div class="search-box"><input aria-label="Search" autocomplete="off" spellcheck="false" value=""> <!----></div> <nav class="nav-links can-hide"><div class="nav-item"><a href="/thexp/zh/" class="nav-link">
+  Home
+</a></div><div class="nav-item"><a href="/thexp/zh/tutorial/" class="nav-link">
+  Tutorial
+</a></div><div class="nav-item"><a href="/thexp/zh/cookbook/" class="nav-link">
+  Cookbook
+</a></div><div class="nav-item"><a href="/thexp/zh/about/" class="nav-link">
+  About
+</a></div><div class="nav-item"><div class="dropdown-wrapper"><button type="button" aria-label="Select language" class="dropdown-title"><span class="title">选择语言</span> <span class="arrow right"></span></button> <ul class="nav-dropdown" style="display:none;"><li class="dropdown-item"><!----> <a href="/thexp/meter/" class="nav-link">
+  English
+</a></li><li class="dropdown-item"><!----> <a href="/thexp/zh/meter/" aria-current="page" class="nav-link router-link-exact-active router-link-active">
+  简体中文
+</a></li></ul></div></div> <a href="https://github.com/sailist/thexp" target="_blank" rel="noopener noreferrer" class="repo-link">
+    GitHub
+    <svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg></a></nav></div></header> <div class="sidebar-mask"></div> <aside class="sidebar"><nav class="nav-links"><div class="nav-item"><a href="/thexp/zh/" class="nav-link">
+  Home
+</a></div><div class="nav-item"><a href="/thexp/zh/tutorial/" class="nav-link">
+  Tutorial
+</a></div><div class="nav-item"><a href="/thexp/zh/cookbook/" class="nav-link">
+  Cookbook
+</a></div><div class="nav-item"><a href="/thexp/zh/about/" class="nav-link">
+  About
+</a></div><div class="nav-item"><div class="dropdown-wrapper"><button type="button" aria-label="Select language" class="dropdown-title"><span class="title">选择语言</span> <span class="arrow right"></span></button> <ul class="nav-dropdown" style="display:none;"><li class="dropdown-item"><!----> <a href="/thexp/meter/" class="nav-link">
+  English
+</a></li><li class="dropdown-item"><!----> <a href="/thexp/zh/meter/" aria-current="page" class="nav-link router-link-exact-active router-link-active">
+  简体中文
+</a></li></ul></div></div> <a href="https://github.com/sailist/thexp" target="_blank" rel="noopener noreferrer" class="repo-link">
+    GitHub
+    <svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg></a></nav>  <ul class="sidebar-links"><li><section class="sidebar-group depth-0"><p class="sidebar-heading open"><span>Tutorial</span> <!----></p> <ul class="sidebar-links sidebar-group-items"><li><a href="/thexp/zh/tutorial/" class="sidebar-link">序言</a></li><li><a href="/thexp/zh/params/" class="sidebar-link">超参数声明：Params</a></li><li><a href="/thexp/zh/meter/" aria-current="page" class="active sidebar-link">变量记录：Meter</a><ul class="sidebar-sub-headers"><li class="sidebar-sub-header"><a href="/thexp/zh/meter/#基本使用" class="sidebar-link">基本使用</a></li><li class="sidebar-sub-header"><a href="/thexp/zh/meter/#输出格式控制" class="sidebar-link">输出格式控制</a></li><li class="sidebar-sub-header"><a href="/thexp/zh/meter/#平均值" class="sidebar-link">平均值</a></li></ul></li><li><a href="/thexp/zh/logger/" class="sidebar-link">日志输出：Logger</a></li><li><a href="/thexp/zh/saver/" class="sidebar-link">模型保存：Saver</a></li><li><a href="/thexp/zh/rnd/" class="sidebar-link">随机种子管理：RndManager</a></li><li><a href="/thexp/zh/builder/" class="sidebar-link">数据封装：DatasetBuilder</a></li><li><a href="/thexp/zh/bundler/" class="sidebar-link">数据集整合：DataBundler</a></li><li><a href="/thexp/zh/exp/" class="sidebar-link">试验管理与分析：Experiment/Query</a></li><li><a href="/thexp/zh/trainer/" class="sidebar-link">训练流程抽象：Trainer</a></li><li><a href="/thexp/zh/other/" class="sidebar-link">其他</a></li></ul></section></li></ul> </aside> <main class="page"> <div class="theme-default-content content__default"><h1 id="变量记录：meter"><a href="#变量记录：meter" class="header-anchor">#</a> 变量记录：Meter</h1> <div class="language-python line-numbers-mode"><pre class="language-python"><code><span class="token keyword">from</span> thexp <span class="token keyword">import</span> Meter<span class="token punctuation">,</span> AvgMeter
+</code></pre> <div class="line-numbers-wrapper"><span class="line-number">1</span><br></div></div><h2 id="基本使用"><a href="#基本使用" class="header-anchor">#</a> 基本使用</h2> <div class="language-python line-numbers-mode"><pre class="language-python"><code><span class="token keyword">from</span> thexp <span class="token keyword">import</span> Meter
+<span class="token keyword">import</span> torch
+
+m <span class="token operator">=</span> Meter<span class="token punctuation">(</span><span class="token punctuation">)</span>
+m<span class="token punctuation">.</span>a <span class="token operator">=</span> <span class="token number">1</span>
+m<span class="token punctuation">.</span>b <span class="token operator">=</span> <span class="token string">&quot;2&quot;</span>
+m<span class="token punctuation">.</span>c <span class="token operator">=</span> torch<span class="token punctuation">.</span>rand<span class="token punctuation">(</span><span class="token number">1</span><span class="token punctuation">)</span><span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span>
+
+m<span class="token punctuation">.</span>c1 <span class="token operator">=</span> torch<span class="token punctuation">.</span>rand<span class="token punctuation">(</span><span class="token number">1</span><span class="token punctuation">)</span>
+m<span class="token punctuation">.</span>c2 <span class="token operator">=</span> torch<span class="token punctuation">.</span>rand<span class="token punctuation">(</span><span class="token number">2</span><span class="token punctuation">)</span>
+m<span class="token punctuation">.</span>c3 <span class="token operator">=</span> torch<span class="token punctuation">.</span>rand<span class="token punctuation">(</span><span class="token number">4</span><span class="token punctuation">,</span> <span class="token number">4</span><span class="token punctuation">)</span> <span class="token comment"># 输出时会只保留第一行</span>
+<span class="token keyword">print</span><span class="token punctuation">(</span>m<span class="token punctuation">)</span>
+</code></pre> <div class="line-numbers-wrapper"><span class="line-number">1</span><br><span class="line-number">2</span><br><span class="line-number">3</span><br><span class="line-number">4</span><br><span class="line-number">5</span><br><span class="line-number">6</span><br><span class="line-number">7</span><br><span class="line-number">8</span><br><span class="line-number">9</span><br><span class="line-number">10</span><br><span class="line-number">11</span><br><span class="line-number">12</span><br></div></div><p>输出</p> <div class="language- line-numbers-mode"><pre class="language-text"><code>a: 1 | b: 2 | c: 0.8843 | c1: 0.8047 | c2: tensor([0.3105, 0.8244]) | c3: tensor([[0.6359, 0.1128, 0.1258, 0.4511],...
+</code></pre> <div class="line-numbers-wrapper"><span class="line-number">1</span><br></div></div><p>在训练的过程中，Meter 实例中的变量可以任意取出，不受影响。</p> <h2 id="输出格式控制"><a href="#输出格式控制" class="header-anchor">#</a> 输出格式控制</h2> <p>Meter可以很方便的控制输出格式，目前基于需求，主要添加了百分比、浮点精度和整数这三种格式化方法，如下：</p> <div class="language-python line-numbers-mode"><pre class="language-python"><code><span class="token keyword">from</span> thexp <span class="token keyword">import</span> Meter
+m <span class="token operator">=</span> Meter<span class="token punctuation">(</span><span class="token punctuation">)</span>
+m<span class="token punctuation">.</span>a <span class="token operator">=</span> <span class="token number">0.236</span>
+m<span class="token punctuation">.</span>b <span class="token operator">=</span> <span class="token number">3.236</span>
+m<span class="token punctuation">.</span>c <span class="token operator">=</span> <span class="token number">0.23612312</span>
+m<span class="token punctuation">.</span>percent<span class="token punctuation">(</span>m<span class="token punctuation">.</span>a_<span class="token punctuation">)</span>
+m<span class="token punctuation">.</span><span class="token builtin">int</span><span class="token punctuation">(</span><span class="token string">'b'</span><span class="token punctuation">)</span>
+m<span class="token punctuation">.</span><span class="token builtin">float</span><span class="token punctuation">(</span>m<span class="token punctuation">.</span>c_<span class="token punctuation">,</span><span class="token number">2</span><span class="token punctuation">)</span>
+<span class="token keyword">print</span><span class="token punctuation">(</span>m<span class="token punctuation">)</span>
+</code></pre> <div class="line-numbers-wrapper"><span class="line-number">1</span><br><span class="line-number">2</span><br><span class="line-number">3</span><br><span class="line-number">4</span><br><span class="line-number">5</span><br><span class="line-number">6</span><br><span class="line-number">7</span><br><span class="line-number">8</span><br><span class="line-number">9</span><br></div></div><p>输出</p> <div class="language- line-numbers-mode"><pre class="language-text"><code>a: 23.60% | b: 3 | c: 0.24
+</code></pre> <div class="line-numbers-wrapper"><span class="line-number">1</span><br></div></div><div class="custom-block tip"><p class="custom-block-title">m.a_ 与 'a'</p> <p>在 <code>meter</code> 中，<strong>变量名+下划线实际等价于去掉了下划线的变量名对应的字符串</strong>，也即 <code>m.a_ == &quot;a&quot;</code>，在上面的代码中，这两种形式等价，这种实现方式主要用于IDE的自动补全，在变量后添加一个下划线即可以表示该变量名自身。</p></div> <h2 id="平均值"><a href="#平均值" class="header-anchor">#</a> 平均值</h2> <p>在很多时候都需要对输出值取平均，使得观察到的结果比较稳定。这由 <a href="https://github.com/sailist/thexp/blob/master/thexp/frame/meter.py#L172" target="_blank" rel="noopener noreferrer">thexp.frame.meter.AvgMeter<svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg></a> 实现。</p> <div class="language- line-numbers-mode"><pre class="language-text"><code>from thexp import Meter,AvgMeter
+
+am = AvgMeter()
+for j in range(5):
+    for i in range(100):
+        m = Meter()
+        m.percent(m.c_)
+        m.a = 1
+        m.b = &quot;2&quot;
+        m.c = torch.rand(1)[0]
+
+        m.c1 = torch.rand(1)
+        m.c2 = torch.rand(2)
+        m.c3 = torch.rand(4, 4)
+        m.d = [4]
+        m.e = {5: &quot;6&quot;}
+        # print(m)
+        am.update(m)
+    print(am)
+</code></pre> <div class="line-numbers-wrapper"><span class="line-number">1</span><br><span class="line-number">2</span><br><span class="line-number">3</span><br><span class="line-number">4</span><br><span class="line-number">5</span><br><span class="line-number">6</span><br><span class="line-number">7</span><br><span class="line-number">8</span><br><span class="line-number">9</span><br><span class="line-number">10</span><br><span class="line-number">11</span><br><span class="line-number">12</span><br><span class="line-number">13</span><br><span class="line-number">14</span><br><span class="line-number">15</span><br><span class="line-number">16</span><br><span class="line-number">17</span><br><span class="line-number">18</span><br><span class="line-number">19</span><br></div></div><p>输出</p> <div class="language- line-numbers-mode"><pre class="language-text"><code>a: 1 | b: 2 | c: 2.73%(43.51%) | c1: 0.9707 | c2: [0.65452176 0.84101534] | c3: [[0.84045666 0.7536433  0.8916327  0.28940183]... | d: [4] | e: {5: '6'}
+...
+</code></pre> <div class="line-numbers-wrapper"><span class="line-number">1</span><br><span class="line-number">2</span><br></div></div><div class="custom-block tip"><p class="custom-block-title">计算平均值的类型</p> <p>目前考虑到需求，平均值只计算<strong>标量</strong>、<strong>浮点类型</strong>的值，如果整数型值或向量需要计算平均，请将其转换为浮点数。或调用其内部的 <code>average(name)</code> 方法</p> <div class="language-python line-numbers-mode"><div class="highlight-lines"><br><br><br><br><br><br><div class="highlighted"> </div><div class="highlighted"> </div><br><br><br><br><br><br><br><br><br><br><br><br></div><pre class="language-python"><code>avg <span class="token operator">=</span> AvgMeter<span class="token punctuation">(</span><span class="token punctuation">)</span>
+
+avg<span class="token punctuation">.</span>average<span class="token punctuation">(</span>avg<span class="token punctuation">.</span>a_<span class="token punctuation">)</span>
+avg<span class="token punctuation">.</span>a <span class="token operator">=</span> <span class="token number">1</span>
+avg<span class="token punctuation">.</span>a <span class="token operator">=</span> <span class="token number">2</span>
+avg<span class="token punctuation">.</span>a <span class="token operator">=</span> <span class="token number">3</span>
+<span class="token keyword">assert</span> avg<span class="token punctuation">.</span>a<span class="token punctuation">.</span>avg <span class="token operator">==</span> <span class="token number">2</span>  <span class="token comment"># AvgItem object</span>
+<span class="token keyword">assert</span> avg<span class="token punctuation">.</span>a<span class="token punctuation">.</span>item <span class="token operator">==</span> <span class="token number">3</span>
+
+avg<span class="token punctuation">.</span>b <span class="token operator">=</span> <span class="token number">1</span>
+avg<span class="token punctuation">.</span>b <span class="token operator">=</span> <span class="token number">2</span>
+<span class="token keyword">assert</span> avg<span class="token punctuation">.</span>b <span class="token operator">==</span> <span class="token number">2</span>  <span class="token comment"># int object</span>
+
+avg<span class="token punctuation">.</span>average<span class="token punctuation">(</span>avg<span class="token punctuation">.</span>c_<span class="token punctuation">)</span>
+x<span class="token punctuation">,</span> y <span class="token operator">=</span> torch<span class="token punctuation">.</span>tensor<span class="token punctuation">(</span><span class="token punctuation">[</span><span class="token number">1</span><span class="token punctuation">,</span> <span class="token number">2</span><span class="token punctuation">,</span> <span class="token number">3</span><span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">,</span> torch<span class="token punctuation">.</span>tensor<span class="token punctuation">(</span><span class="token punctuation">[</span><span class="token number">4</span><span class="token punctuation">,</span> <span class="token number">5</span><span class="token punctuation">,</span> <span class="token number">6</span><span class="token punctuation">]</span><span class="token punctuation">)</span>
+avg<span class="token punctuation">.</span>c <span class="token operator">=</span> x
+avg<span class="token punctuation">.</span>c <span class="token operator">=</span> y
+<span class="token keyword">assert</span> <span class="token punctuation">(</span>avg<span class="token punctuation">.</span>c<span class="token punctuation">.</span>avg <span class="token operator">==</span> <span class="token punctuation">(</span>x <span class="token operator">+</span> y<span class="token punctuation">)</span> <span class="token operator">/</span> <span class="token number">2</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token builtin">all</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+<span class="token keyword">assert</span> <span class="token punctuation">(</span>avg<span class="token punctuation">.</span>c<span class="token punctuation">.</span>item <span class="token operator">==</span> y<span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token builtin">all</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+</code></pre><div class="line-numbers-wrapper"><span class="line-number">1</span><br><span class="line-number">2</span><br><span class="line-number">3</span><br><span class="line-number">4</span><br><span class="line-number">5</span><br><span class="line-number">6</span><br><span class="line-number">7</span><br><span class="line-number">8</span><br><span class="line-number">9</span><br><span class="line-number">10</span><br><span class="line-number">11</span><br><span class="line-number">12</span><br><span class="line-number">13</span><br><span class="line-number">14</span><br><span class="line-number">15</span><br><span class="line-number">16</span><br><span class="line-number">17</span><br><span class="line-number">18</span><br><span class="line-number">19</span><br></div></div></div> <h3 id="获取最后更新的值或者平均值"><a href="#获取最后更新的值或者平均值" class="header-anchor">#</a> 获取最后更新的值或者平均值</h3> <p>由于是否存储平均值对不同类型规则不同，所以从 <code>AvgMeter</code> 中获取值时，往往需要对其进行一次判断来确认，为了避免繁琐的确认，<code>AvgMeter</code> 提供了 <code>meter</code> 变量和 <code>avg</code> 变量，用来<strong>尽量</strong>的选取最后更新的值或者平均值。</p> <div class="language-python line-numbers-mode"><pre class="language-python"><code>avg <span class="token operator">=</span> AvgMeter<span class="token punctuation">(</span><span class="token punctuation">)</span>
+
+avg<span class="token punctuation">.</span>average<span class="token punctuation">(</span>avg<span class="token punctuation">.</span>a_<span class="token punctuation">)</span>
+avg<span class="token punctuation">.</span>a <span class="token operator">=</span> <span class="token number">1</span>
+avg<span class="token punctuation">.</span>a <span class="token operator">=</span> <span class="token number">2</span>
+avg<span class="token punctuation">.</span>a <span class="token operator">=</span> <span class="token number">3</span>
+<span class="token keyword">assert</span> avg<span class="token punctuation">.</span>a<span class="token punctuation">.</span>avg <span class="token operator">==</span> <span class="token number">2</span>  <span class="token comment"># AvgItem object</span>
+<span class="token keyword">assert</span> avg<span class="token punctuation">.</span>a<span class="token punctuation">.</span>item <span class="token operator">==</span> <span class="token number">3</span>
+
+avg<span class="token punctuation">.</span>b <span class="token operator">=</span> <span class="token number">1</span>
+avg<span class="token punctuation">.</span>b <span class="token operator">=</span> <span class="token number">2</span>
+<span class="token keyword">assert</span> avg<span class="token punctuation">.</span>b <span class="token operator">==</span> <span class="token number">2</span>  <span class="token comment"># int object</span>
+
+<span class="token comment"># 对于 meter 来说，尽量的获取最后更新的值</span>
+<span class="token keyword">assert</span> avg<span class="token punctuation">.</span>meter<span class="token punctuation">.</span>a <span class="token operator">==</span> <span class="token number">3</span>
+<span class="token keyword">assert</span> avg<span class="token punctuation">.</span>meter<span class="token punctuation">.</span>b <span class="token operator">==</span> <span class="token number">2</span>
+
+<span class="token comment"># 对于 avg 来说，尽量获取平均值，如果获取不了，则获取最后更新的值</span>
+<span class="token keyword">assert</span> avg<span class="token punctuation">.</span>avg<span class="token punctuation">.</span>a <span class="token operator">==</span> <span class="token number">2</span>
+<span class="token keyword">assert</span> avg<span class="token punctuation">.</span>avg<span class="token punctuation">.</span>b <span class="token operator">==</span> <span class="token number">2</span>
+</code></pre> <div class="line-numbers-wrapper"><span class="line-number">1</span><br><span class="line-number">2</span><br><span class="line-number">3</span><br><span class="line-number">4</span><br><span class="line-number">5</span><br><span class="line-number">6</span><br><span class="line-number">7</span><br><span class="line-number">8</span><br><span class="line-number">9</span><br><span class="line-number">10</span><br><span class="line-number">11</span><br><span class="line-number">12</span><br><span class="line-number">13</span><br><span class="line-number">14</span><br><span class="line-number">15</span><br><span class="line-number">16</span><br><span class="line-number">17</span><br><span class="line-number">18</span><br><span class="line-number">19</span><br><span class="line-number">20</span><br></div></div></div> <footer class="page-edit"><!----> <!----></footer> <div class="page-nav"><p class="inner"><span class="prev">
+      ←
+      <a href="/thexp/zh/params/" class="prev">
+        超参数声明：Params
+      </a></span> <span class="next"><a href="/thexp/zh/logger/">
+        日志输出：Logger
+      </a>
+      →
+    </span></p></div> </main></div><div class="global-ui"></div></div>
+    <script src="/thexp/assets/js/app.4ed6bfcd.js" defer></script><script src="/thexp/assets/js/3.74d8f37c.js" defer></script><script src="/thexp/assets/js/35.195344ea.js" defer></script>
+  </body>
+</html>
