@@ -143,9 +143,14 @@ class BaseTrainer(metaclass=Merge):
                 if params.tmp_dir is not None:
                     os.environ['TMPDIR'] = params.tmp_dir
 
+            from thexp import globs
             if params.local_rank >= 1:
-                from thexp import globs
                 globs['rank'] = params.local_rank
+
+            # 将所有大写的变量名看做全局常量
+            for k, v in params.items():  # type:str,Any
+                if k.isupper():
+                    globs[k] = v
         else:
             self.params = Params()
         self.initial()
@@ -209,6 +214,10 @@ class BaseTrainer(metaclass=Merge):
         self.experiment.add_plugin(_BUILTIN_PLUGIN.trainer, trainer_kwargs)
 
         self.callbacks(self.params)
+        from .callbacks import BaseCallback
+        if isinstance(self, BaseCallback):
+            self.hook(self)
+
         self.models(self.params)
         self.datasets(self.params)
 
