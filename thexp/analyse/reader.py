@@ -4,7 +4,7 @@ for reading values recorded by tensorboard directly instead of opening tensorboa
 import pprint as pp
 from collections import namedtuple
 from typing import List
-from tensorboard.backend.event_processing import event_accumulator
+
 
 Scalars = namedtuple('ScalarEvent', ['wall_times', 'values', 'steps'])
 
@@ -30,6 +30,7 @@ class BoardReader():
     """
 
     def __init__(self, file):
+        from tensorboard.backend.event_processing import event_accumulator
         self.ea = event_accumulator.EventAccumulator(file,
                                                      size_guidance={  # see below regarding this argument
                                                          event_accumulator.COMPRESSED_HISTOGRAMS: 500,

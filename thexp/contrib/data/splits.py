@@ -56,6 +56,9 @@ def semi_split(labels, n_percls, val_size=10000, include_sup=True, repeat_sup=Tr
 
 def train_val_split(target, val_size=10000):
     import numpy as np
+    if isinstance(target,list):
+        from thexp.base_classes import llist
+        target = llist(target)
 
     idx = np.arange(len(target))
     np.random.shuffle(idx)

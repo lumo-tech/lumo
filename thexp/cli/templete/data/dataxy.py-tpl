@@ -5,6 +5,7 @@ from thexp import globs
 from thexp.decorators import regist_func
 from thexp.base_classes import llist
 from torchvision.datasets.cifar import CIFAR10
+import numpy as np
 
 # globs.add_value('datasets', 'path/to/all_datasets/', level=globs.LEVEL.globals)
 root = globs['datasets']
@@ -18,7 +19,6 @@ datasets = {
 def cifar10(train=True):
     dataset = CIFAR10(root=root, train=train)
     xs = llist(Image.fromarray(i) for i in dataset.data)
-    ys = llist(int(i) for i in dataset.targets)
+    ys = np.array(int(i) for i in dataset.targets)
 
     return xs, ys
-

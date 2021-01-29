@@ -2,8 +2,13 @@
 for calculating and recording accuracy.
 """
 import torch
-from thexp import Meter, Params
 
+from thexp import Meter, Params
+try:
+    import sklearn
+except:
+    import warnings
+    warnings.warn("You need to install scikit-learn to use UnsupervisedAccMixin class ")
 
 class AccMixin():
     pass

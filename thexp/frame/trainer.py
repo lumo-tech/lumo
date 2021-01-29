@@ -604,7 +604,11 @@ class BaseTrainer(metaclass=Merge):
         for k in self._model_dict:
             self.logger.raw(k)
             if k in state_dict:
-                self._model_dict[k].load_state_dict(state_dict[k], strict=strict)
+                model = self._model_dict[k]
+                if hasattr(model,"_load_state_dict"):
+                    model._load_state_dict(state_dict[k], strict=strict)
+                else:
+                    model.load_state_dict(state_dict[k], strict=strict)
             else:
                 if strict:
                     raise KeyError(k)

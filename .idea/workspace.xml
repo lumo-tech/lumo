@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
   <component name="BranchesTreeState">
     <expand>
       <path>
@@ -20,36 +23,25 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="232f6e19-5cb1-41b7-8b12-9b1150540616" name="Default Changelist" comment="fix tensorboard kwargs">
-      <change afterPath="$PROJECT_DIR$/../thexp-demo/simple-addtricks/arch/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../thexp-demo/simple-addtricks/arch/cnn13.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../thexp-demo/simple-addtricks/arch/simple.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../thexp-demo/simple-addtricks/datasets.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../thexp-demo/simple-addtricks/main.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../thexp-demo/simple-addtricks/tricks/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../thexp-demo/simple-addtricks/tricks/ema.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../thexp-demo/simple-splitdataset/datasets.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../thexp-demo/simple-splitdataset/main.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../thexp-demo/simple-splitmodel/arch/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../thexp-demo/simple-splitmodel/arch/cnn13.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../thexp-demo/simple-splitmodel/arch/simple.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../thexp-demo/simple-splitmodel/datasets.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../thexp-demo/simple-splitmodel/main.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../thexp-demo/simple-splittrainer/arch/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../thexp-demo/simple-splittrainer/arch/cnn13.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../thexp-demo/simple-splittrainer/arch/simple.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../thexp-demo/simple-splittrainer/config.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../thexp-demo/simple-splittrainer/datasets.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../thexp-demo/simple-splittrainer/main.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../thexp-demo/simple-splittrainer/trainer/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../thexp-demo/simple-splittrainer/trainer/mnisttrainer.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../thexp-demo/simple-splittrainer/tricks/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../thexp-demo/simple-splittrainer/tricks/ema.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../thexp-demo/.idea/thexp-test3.iml" beforeDir="false" afterPath="$PROJECT_DIR$/../thexp-demo/.idea/thexp-test3.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../thexp-demo/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../thexp-demo/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../thexp-demo/onefile.py" beforeDir="false" afterPath="$PROJECT_DIR$/../thexp-demo/simple/main.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/build.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/features.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/install.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/deployment.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/deployment.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/setup.py" beforeDir="false" afterPath="$PROJECT_DIR$/setup.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/thexp/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/thexp/__init__.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/thexp/analyse/charts.py" beforeDir="false" afterPath="$PROJECT_DIR$/thexp/analyse/charts.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/thexp/analyse/reader.py" beforeDir="false" afterPath="$PROJECT_DIR$/thexp/analyse/reader.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/thexp/cli/templete/data/dataxy.py-tpl" beforeDir="false" afterPath="$PROJECT_DIR$/thexp/cli/templete/data/dataxy.py-tpl" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/thexp/cli/templete/trainers/__init__.py-tpl" beforeDir="false" afterPath="$PROJECT_DIR$/thexp/cli/templete/trainers/__init__.py-tpl" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/thexp/cli/templete/trainers/_trainer.py-tpl" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/thexp/cli/templete/trainers/mixin/datasets.py-tpl" beforeDir="false" afterPath="$PROJECT_DIR$/thexp/cli/templete/trainers/mixin/datasets.py-tpl" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/thexp/cli/templete/trainers/mixin/models.py-tpl" beforeDir="false" afterPath="$PROJECT_DIR$/thexp/cli/templete/trainers/mixin/models.py-tpl" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/thexp/contrib/data/splits.py" beforeDir="false" afterPath="$PROJECT_DIR$/thexp/contrib/data/splits.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/thexp/frame/builder.py" beforeDir="false" afterPath="$PROJECT_DIR$/thexp/frame/builder.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/thexp/frame/trainer.py" beforeDir="false" afterPath="$PROJECT_DIR$/thexp/frame/trainer.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/thexp/nest/trainer/acc.py" beforeDir="false" afterPath="$PROJECT_DIR$/thexp/nest/trainer/acc.py" afterDir="false" />
     </list>
     <list id="b3718b25-7204-4605-af22-7efa5eb0e45c" name="imporove" comment="" />
     <option name="SHOW_DIALOG" value="false" />
@@ -80,6 +72,14 @@
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
     <option name="ROOT_SYNC" value="SYNC" />
   </component>
+  <component name="GitSEFilterConfiguration">
+    <file-type-list>
+      <filtered-out-file-type name="LOCAL_BRANCH" />
+      <filtered-out-file-type name="REMOTE_BRANCH" />
+      <filtered-out-file-type name="TAG" />
+      <filtered-out-file-type name="COMMIT_BY_MESSAGE" />
+    </file-type-list>
+  </component>
   <component name="JupyterTrust" id="2383f275-060d-4d53-bada-2283e4b004cf" />
   <component name="ProjectId" id="1YwFtE6jVWfNJIh3j4U9W3RFz60" />
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
@@ -89,6 +89,7 @@
   </component>
   <component name="PropertiesComponent">
     <property name="ChangesTree.GroupingKeys" value="directory&#10;repository" />
+    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="TERMINAL_CUSTOM_COMMANDS_GOT_IT" value="true" />
@@ -99,12 +100,19 @@
     <property name="WebServerToolWindowPanel.toolwindow.show.date" value="false" />
     <property name="WebServerToolWindowPanel.toolwindow.show.permissions" value="false" />
     <property name="WebServerToolWindowPanel.toolwindow.show.size" value="false" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/thexp/utils/colored" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="nodejs_package_manager_path" value="npm" />
     <property name="restartRequiresConfirmation" value="false" />
-    <property name="settings.editor.selected.configurable" value="project.propVCSSupport.Mappings" />
+    <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
   </component>
   <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$" />
+      <recent name="E:\Python\iLearn\thexp\thexp\utils\colored" />
+      <recent name="E:\Python\iLearn\thexp\thexp-templete\arch" />
+      <recent name="E:\Python\iLearn\thexp" />
+      <recent name="E:\Python\iLearn\thexp\thexp\frame" />
+    </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="E:\Python\iLearn\thexp\thexp\future" />
       <recent name="E:\Python\iLearn\thexp\tests\frame" />
@@ -112,15 +120,8 @@
       <recent name="E:\Python\iLearn\thexp\thexp\cli" />
       <recent name="E:\Python\iLearn\thexp\thexp" />
     </key>
-    <key name="CopyFile.RECENT_KEYS">
-      <recent name="E:\Python\iLearn\thexp\thexp\utils\colored" />
-      <recent name="E:\Python\iLearn\thexp\thexp-templete\arch" />
-      <recent name="E:\Python\iLearn\thexp" />
-      <recent name="E:\Python\iLearn\thexp\thexp\frame" />
-      <recent name="E:\Python\iLearn\thexp\thexp\future\audio" />
-    </key>
   </component>
-  <component name="RunManager" selected="Python.w">
+  <component name="RunManager" selected="Shell Script.build.sh">
     <configuration name="8.params" type="PythonConfigurationType" factoryName="Python">
       <module name="thexp" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -143,7 +144,29 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="create_doc" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+    <configuration name="builder" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="thexp" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/thexp/frame" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/thexp/frame/builder.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="install" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="thexp" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -156,7 +179,7 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/create_doc.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/install.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -187,95 +210,53 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="web" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
-      <module name="thexp" />
+    <configuration name="build.sh" type="ShConfigurationType" temporary="true">
+      <option name="INDEPENDENT_SCRIPT_PATH" value="true" />
+      <option name="SCRIPT_PATH" value="$PROJECT_DIR$/build.sh" />
+      <option name="SCRIPT_OPTIONS" value="" />
+      <option name="INDEPENDENT_SCRIPT_WORKING_DIRECTORY" value="true" />
+      <option name="SCRIPT_WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="INDEPENDENT_INTERPRETER_PATH" value="true" />
+      <option name="INTERPRETER_PATH" value="/bin/zsh" />
       <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/web.py" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-      <option name="MODULE_MODE" value="false" />
-      <option name="REDIRECT_INPUT" value="false" />
-      <option name="INPUT_FILE" value="" />
+      <option name="EXECUTE_IN_TERMINAL" value="true" />
+      <envs />
       <method v="2" />
     </configuration>
-    <configuration name="pytest for test_meter.test_avgmeter" type="tests" factoryName="py.test" temporary="true" nameIsGenerated="true">
+    <configuration name="Doctests in builder" type="tests" factoryName="Doctests" temporary="true" nameIsGenerated="true">
       <module name="thexp" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
       <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/tests/frame" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/thexp/frame" />
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="_new_keywords" value="&quot;&quot;" />
-      <option name="_new_parameters" value="&quot;&quot;" />
-      <option name="_new_additionalArguments" value="&quot;&quot;" />
-      <option name="_new_target" value="&quot;test_meter.test_avgmeter&quot;" />
-      <option name="_new_targetType" value="&quot;PYTHON&quot;" />
-      <method v="2" />
-    </configuration>
-    <configuration name="pytest for test_params.test_baseparams" type="tests" factoryName="py.test" temporary="true" nameIsGenerated="true">
-      <module name="thexp" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/tests/frame" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="_new_keywords" value="&quot;&quot;" />
-      <option name="_new_parameters" value="&quot;&quot;" />
-      <option name="_new_additionalArguments" value="&quot;&quot;" />
-      <option name="_new_target" value="&quot;test_params.test_baseparams&quot;" />
-      <option name="_new_targetType" value="&quot;PYTHON&quot;" />
-      <method v="2" />
-    </configuration>
-    <configuration name="pytest for test_rndmanager.test_rndmanager" type="tests" factoryName="py.test" temporary="true" nameIsGenerated="true">
-      <module name="thexp" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/tests/frame" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="_new_keywords" value="&quot;&quot;" />
-      <option name="_new_parameters" value="&quot;&quot;" />
-      <option name="_new_additionalArguments" value="&quot;&quot;" />
-      <option name="_new_target" value="&quot;test_rndmanager.test_rndmanager&quot;" />
-      <option name="_new_targetType" value="&quot;PYTHON&quot;" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/thexp/frame/builder.py" />
+      <option name="CLASS_NAME" value="" />
+      <option name="METHOD_NAME" value="" />
+      <option name="FOLDER_NAME" value="" />
+      <option name="TEST_TYPE" value="TEST_SCRIPT" />
+      <option name="PATTERN" value="" />
+      <option name="USE_PATTERN" value="false" />
       <method v="2" />
     </configuration>
     <list>
       <item itemvalue="Python.8.params" />
-      <item itemvalue="Python.create_doc" />
       <item itemvalue="Python.w" />
-      <item itemvalue="Python.web" />
-      <item itemvalue="Python tests.pytest for test_meter.test_avgmeter" />
-      <item itemvalue="Python tests.pytest for test_params.test_baseparams" />
-      <item itemvalue="Python tests.pytest for test_rndmanager.test_rndmanager" />
+      <item itemvalue="Python.install" />
+      <item itemvalue="Shell Script.build.sh" />
+      <item itemvalue="Python tests.Doctests in builder" />
+      <item itemvalue="Python.builder" />
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="Shell Script.build.sh" />
+        <item itemvalue="Python.builder" />
+        <item itemvalue="Python tests.Doctests in builder" />
+        <item itemvalue="Python.install" />
         <item itemvalue="Python.w" />
-        <item itemvalue="Python.create_doc" />
-        <item itemvalue="Python.web" />
-        <item itemvalue="Python tests.pytest for test_rndmanager.test_rndmanager" />
-        <item itemvalue="Python tests.pytest for test_params.test_baseparams" />
       </list>
     </recent_temporary>
   </component>
@@ -449,6 +430,14 @@
       <workItem from="1598777487003" duration="2908000" />
       <workItem from="1598839896339" duration="1923000" />
       <workItem from="1599008990943" duration="1916000" />
+      <workItem from="1610957339465" duration="1987000" />
+      <workItem from="1611112241296" duration="8809000" />
+      <workItem from="1611304773414" duration="3206000" />
+      <workItem from="1611318309236" duration="290000" />
+      <workItem from="1611460710266" duration="4964000" />
+      <workItem from="1611542638935" duration="32000" />
+      <workItem from="1611544371231" duration="3493000" />
+      <workItem from="1611744266991" duration="1189000" />
     </task>
     <task id="LOCAL-00005" summary="change">
       <created>1589939036175</created>
@@ -843,136 +832,6 @@
     <MESSAGE value="update docs" />
     <option name="LAST_COMMIT_MESSAGE" value="update docs" />
   </component>
-  <component name="WindowStateProjectService">
-    <state x="552" y="181" key="#Deployment" timestamp="1596365712335">
-      <screen x="0" y="0" width="1920" height="1040" />
-    </state>
-    <state x="552" y="181" key="#Deployment/0.0.1920.1040@0.0.1920.1040" timestamp="1596365712335" />
-    <state x="552" y="178" width="816" height="779" key="#Intentions" timestamp="1596422496254">
-      <screen x="0" y="0" width="1920" height="1040" />
-    </state>
-    <state x="552" y="178" width="816" height="779" key="#Intentions/0.0.1920.1040@0.0.1920.1040" timestamp="1596422496254" />
-    <state x="842" y="381" key="#Notifications" timestamp="1599008992210">
-      <screen x="0" y="0" width="1920" height="1040" />
-    </state>
-    <state x="842" y="381" key="#Notifications/0.0.1920.1040@0.0.1920.1040" timestamp="1599008992210" />
-    <state x="552" y="160" key="#Plugins" timestamp="1596422495917">
-      <screen x="0" y="0" width="1920" height="1040" />
-    </state>
-    <state x="552" y="160" key="#Plugins/0.0.1920.1040@0.0.1920.1040" timestamp="1596422495917" />
-    <state x="414" y="174" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1596194222046">
-      <screen x="0" y="0" width="1920" height="1040" />
-    </state>
-    <state x="414" y="174" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1596194222046" />
-    <state x="629" y="328" key="#com.intellij.fileTypes.FileTypeChooser" timestamp="1597287778677">
-      <screen x="0" y="0" width="1920" height="1040" />
-    </state>
-    <state x="629" y="328" key="#com.intellij.fileTypes.FileTypeChooser/0.0.1920.1040@0.0.1920.1040" timestamp="1597287778677" />
-    <state x="765" y="239" key="#com.intellij.ide.util.MemberChooser" timestamp="1597799601619">
-      <screen x="0" y="0" width="1920" height="1040" />
-    </state>
-    <state x="765" y="239" key="#com.intellij.ide.util.MemberChooser/0.0.1920.1040@0.0.1920.1040" timestamp="1597799601619" />
-    <state x="690" y="269" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog" timestamp="1597219256309">
-      <screen x="0" y="0" width="1920" height="1040" />
-    </state>
-    <state x="690" y="269" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1597219256309" />
-    <state x="806" y="418" key="#com.jetbrains.python.refactoring.move.PyMoveModuleMembersDialog" timestamp="1596422003568">
-      <screen x="0" y="0" width="1920" height="1040" />
-    </state>
-    <state x="806" y="418" key="#com.jetbrains.python.refactoring.move.PyMoveModuleMembersDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1596422003568" />
-    <state x="973" y="118" key="CommitChangelistDialog2" timestamp="1599018920588">
-      <screen x="0" y="0" width="1920" height="1040" />
-    </state>
-    <state x="973" y="118" key="CommitChangelistDialog2/0.0.1920.1040@0.0.1920.1040" timestamp="1599018920588" />
-    <state width="617" height="466" key="DebuggerActiveHint" timestamp="1596444608283">
-      <screen x="0" y="0" width="1920" height="1040" />
-    </state>
-    <state width="617" height="466" key="DebuggerActiveHint/0.0.1920.1040@0.0.1920.1040" timestamp="1596444608283" />
-    <state x="92" y="92" width="1736" height="856" key="DiffContextDialog" timestamp="1596439092200">
-      <screen x="0" y="0" width="1920" height="1040" />
-    </state>
-    <state x="92" y="92" width="1736" height="856" key="DiffContextDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1596439092200" />
-    <state x="746" y="284" key="FileChooserDialogImpl" timestamp="1598575333719">
-      <screen x="0" y="0" width="1920" height="1040" />
-    </state>
-    <state x="746" y="284" key="FileChooserDialogImpl/0.0.1920.1040@0.0.1920.1040" timestamp="1598575333719" />
-    <state width="1877" height="160" key="GridCell.Tab.0.bottom" timestamp="1598535806823">
-      <screen x="0" y="0" width="1920" height="1040" />
-    </state>
-    <state width="1877" height="160" key="GridCell.Tab.0.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1598535806823" />
-    <state width="1877" height="160" key="GridCell.Tab.0.center" timestamp="1598535806823">
-      <screen x="0" y="0" width="1920" height="1040" />
-    </state>
-    <state width="1877" height="160" key="GridCell.Tab.0.center/0.0.1920.1040@0.0.1920.1040" timestamp="1598535806823" />
-    <state width="1877" height="160" key="GridCell.Tab.0.left" timestamp="1598535806823">
-      <screen x="0" y="0" width="1920" height="1040" />
-    </state>
-    <state width="1877" height="160" key="GridCell.Tab.0.left/0.0.1920.1040@0.0.1920.1040" timestamp="1598535806823" />
-    <state width="1877" height="160" key="GridCell.Tab.0.right" timestamp="1598535806823">
-      <screen x="0" y="0" width="1920" height="1040" />
-    </state>
-    <state width="1877" height="160" key="GridCell.Tab.0.right/0.0.1920.1040@0.0.1920.1040" timestamp="1598535806823" />
-    <state width="1877" height="286" key="GridCell.Tab.1.bottom" timestamp="1597417640963">
-      <screen x="0" y="0" width="1920" height="1040" />
-    </state>
-    <state width="1877" height="286" key="GridCell.Tab.1.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1597417640963" />
-    <state width="1877" height="286" key="GridCell.Tab.1.center" timestamp="1597417640963">
-      <screen x="0" y="0" width="1920" height="1040" />
-    </state>
-    <state width="1877" height="286" key="GridCell.Tab.1.center/0.0.1920.1040@0.0.1920.1040" timestamp="1597417640963" />
-    <state width="1877" height="286" key="GridCell.Tab.1.left" timestamp="1597417640963">
-      <screen x="0" y="0" width="1920" height="1040" />
-    </state>
-    <state width="1877" height="286" key="GridCell.Tab.1.left/0.0.1920.1040@0.0.1920.1040" timestamp="1597417640963" />
-    <state width="1877" height="286" key="GridCell.Tab.1.right" timestamp="1597417640963">
-      <screen x="0" y="0" width="1920" height="1040" />
-    </state>
-    <state width="1877" height="286" key="GridCell.Tab.1.right/0.0.1920.1040@0.0.1920.1040" timestamp="1597417640963" />
-    <state x="463" y="165" key="SettingsEditor" timestamp="1599018953487">
-      <screen x="0" y="0" width="1920" height="1040" />
-    </state>
-    <state x="463" y="165" key="SettingsEditor/0.0.1920.1040@0.0.1920.1040" timestamp="1599018953487" />
-    <state x="681" y="261" width="540" height="524" key="StructurePopup" timestamp="1593763881502">
-      <screen x="0" y="0" width="1920" height="1040" />
-    </state>
-    <state x="681" y="261" width="540" height="524" key="StructurePopup/0.0.1920.1040@0.0.1920.1040" timestamp="1593763881502" />
-    <state x="552" y="252" key="Vcs.Push.Dialog.v2" timestamp="1599018933754">
-      <screen x="0" y="0" width="1920" height="1040" />
-    </state>
-    <state x="552" y="252" key="Vcs.Push.Dialog.v2/0.0.1920.1040@0.0.1920.1040" timestamp="1599018933754" />
-    <state width="968" height="528" key="XDebugger.FullValuePopup" timestamp="1595936657112">
-      <screen x="0" y="0" width="1920" height="1040" />
-    </state>
-    <state width="968" height="528" key="XDebugger.FullValuePopup/0.0.1920.1040@0.0.1920.1040" timestamp="1595936657112" />
-    <state x="652" y="347" key="com.intellij.ide.util.TipDialog" timestamp="1594338611329">
-      <screen x="0" y="0" width="1920" height="1040" />
-    </state>
-    <state x="652" y="347" key="com.intellij.ide.util.TipDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1594338611329" />
-    <state x="504" y="248" key="com.intellij.xdebugger.impl.breakpoints.ui.BreakpointsDialogFactory$2" timestamp="1595936983212">
-      <screen x="0" y="0" width="1920" height="1040" />
-    </state>
-    <state x="504" y="248" key="com.intellij.xdebugger.impl.breakpoints.ui.BreakpointsDialogFactory$2/0.0.1920.1040@0.0.1920.1040" timestamp="1595936983212" />
-    <state x="647" y="280" width="759" height="594" key="find.popup" timestamp="1597646741325">
-      <screen x="0" y="0" width="1920" height="1040" />
-    </state>
-    <state x="647" y="280" width="759" height="594" key="find.popup/0.0.1920.1040@0.0.1920.1040" timestamp="1597646741325" />
-    <state x="836" y="256" key="ftp.server.browser" timestamp="1593501038029">
-      <screen x="0" y="0" width="1920" height="1040" />
-    </state>
-    <state x="836" y="256" key="ftp.server.browser/0.0.1920.1040@0.0.1920.1040" timestamp="1593501038029" />
-    <state x="827" y="424" key="publish.login" timestamp="1593490174760">
-      <screen x="0" y="0" width="1920" height="1040" />
-    </state>
-    <state x="827" y="424" key="publish.login/0.0.1920.1040@0.0.1920.1040" timestamp="1593490174760" />
-    <state x="701" y="167" key="refactoring.ChangeSignatureDialog" timestamp="1593746645966">
-      <screen x="0" y="0" width="1920" height="1040" />
-    </state>
-    <state x="701" y="167" key="refactoring.ChangeSignatureDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1593746645966" />
-    <state x="623" y="225" width="672" height="678" key="search.everywhere.popup" timestamp="1597893255346">
-      <screen x="0" y="0" width="1920" height="1040" />
-    </state>
-    <state x="623" y="225" width="672" height="678" key="search.everywhere.popup/0.0.1920.1040@0.0.1920.1040" timestamp="1597893255346" />
-  </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
       <breakpoints>
@@ -1016,78 +875,81 @@
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/thexp$schedule.coverage" NAME="schedule Coverage Results" MODIFIED="1593777972401" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/thexp/calculate" />
-    <SUITE FILE_PATH="coverage/thexp$w.coverage" NAME="w Coverage Results" MODIFIED="1598490863854" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/thexp$reset.coverage" NAME="reset Coverage Results" MODIFIED="1590573092989" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/../thexp-test3" />
-    <SUITE FILE_PATH="coverage/thexp$7_exp.coverage" NAME="7.exp Coverage Results" MODIFIED="1590714983342" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/../thexp-test3" />
-    <SUITE FILE_PATH="coverage/thexp$9_reporter.coverage" NAME="9.reporter Coverage Results" MODIFIED="1587004764869" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/examples" />
-    <SUITE FILE_PATH="coverage/thexp$ex_trainer__2_.coverage" NAME="ex_trainer (2) Coverage Results" MODIFIED="1590542382505" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/../thexp-test2" />
-    <SUITE FILE_PATH="coverage/thexp$avg_item.coverage" NAME="avg_item Coverage Results" MODIFIED="1583995674748" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/examples/more" />
-    <SUITE FILE_PATH="coverage/thexp$onefile.coverage" NAME="onefile Coverage Results" MODIFIED="1590759544723" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/../thexp-test3" />
-    <SUITE FILE_PATH="coverage/thexp$ex_trainer.coverage" NAME="ex_trainer Coverage Results" MODIFIED="1590731136814" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/../thexp-test3" />
-    <SUITE FILE_PATH="coverage/thexp$query.coverage" NAME="query Coverage Results" MODIFIED="1595812553912" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/thexp/analyser" />
-    <SUITE FILE_PATH="coverage/thexp$rename_templete.coverage" NAME="rename_templete Coverage Results" MODIFIED="1595939431489" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/thexp$pytest_in_test_attr_py.coverage" NAME="pytest in test_attr.py Coverage Results" MODIFIED="1596012991291" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/tests/base_classes" />
-    <SUITE FILE_PATH="coverage/thexp$temp__1_.coverage" NAME="temp (1) Coverage Results" MODIFIED="1596103933952" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/thexp$pytest_for_test_params_test_baseparams.coverage" NAME="pytest for test_params.test_baseparams Coverage Results" MODIFIED="1596720766785" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/tests/frame" />
-    <SUITE FILE_PATH="coverage/thexp$memory.coverage" NAME="memory Coverage Results" MODIFIED="1586953694595" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/thexp/calculate" />
-    <SUITE FILE_PATH="coverage/thexp$markdown_writer.coverage" NAME="markdown_writer Coverage Results" MODIFIED="1587002656840" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/thexp/utils" />
-    <SUITE FILE_PATH="coverage/thexp$temp.coverage" NAME="temp Coverage Results" MODIFIED="1591626062379" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/examples/more" />
-    <SUITE FILE_PATH="coverage/thexp$4_rnd_seed.coverage" NAME="4.rnd_seed Coverage Results" MODIFIED="1589511344851" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/examples" />
-    <SUITE FILE_PATH="coverage/thexp$screen_str.coverage" NAME="screen_str Coverage Results" MODIFIED="1586857551042" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/examples/more" />
-    <SUITE FILE_PATH="coverage/thexp$attr.coverage" NAME="attr Coverage Results" MODIFIED="1590588258133" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/thexp$ex_databundler.coverage" NAME="ex_databundler Coverage Results" MODIFIED="1590676003556" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/examples" />
-    <SUITE FILE_PATH="coverage/thexp$attr__1_.coverage" NAME="attr (1) Coverage Results" MODIFIED="1590501051578" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/thexp$ex_trainer__1_.coverage" NAME="ex_trainer (1) Coverage Results" MODIFIED="1590501047903" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/../thexp-test" />
-    <SUITE FILE_PATH="coverage/thexp$list.coverage" NAME="list Coverage Results" MODIFIED="1590107298823" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/thexp/base_classes" />
-    <SUITE FILE_PATH="coverage/thexp$pytest_for_test_rndmanager_test_rndmanager.coverage" NAME="pytest for test_rndmanager.test_rndmanager Coverage Results" MODIFIED="1596723758570" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/tests/frame" />
-    <SUITE FILE_PATH="coverage/thexp$rampup.coverage" NAME="rampup Coverage Results" MODIFIED="1587216993947" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/examples/more" />
     <SUITE FILE_PATH="coverage/thexp$gitutils.coverage" NAME="gitutils Coverage Results" MODIFIED="1589527015591" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/thexp/utils" />
+    <SUITE FILE_PATH="coverage/thexp$memory.coverage" NAME="memory Coverage Results" MODIFIED="1586953694595" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/thexp/calculate" />
+    <SUITE FILE_PATH="coverage/thexp$mem.coverage" NAME="mem Coverage Results" MODIFIED="1587047997860" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/examples/more" />
+    <SUITE FILE_PATH="coverage/thexp$util.coverage" NAME="util Coverage Results" MODIFIED="1590540500158" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="C:/ProgramData/Anaconda3/Lib/site-packages/git" />
+    <SUITE FILE_PATH="coverage/thexp$3_logger.coverage" NAME="3.logger Coverage Results" MODIFIED="1589509296950" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/examples" />
+    <SUITE FILE_PATH="coverage/thexp$install.coverage" NAME="install Coverage Results" MODIFIED="1611460688924" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/thexp$7_expview__1_.coverage" NAME="7.expview (1) Coverage Results" MODIFIED="1589082055409" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/../thexp-test" />
+    <SUITE FILE_PATH="coverage/thexp$10_databundler.coverage" NAME="10.databundler Coverage Results" MODIFIED="1588742213809" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/examples" />
+    <SUITE FILE_PATH="coverage/thexp$ttt.coverage" NAME="ttt Coverage Results" MODIFIED="1589505131835" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/examples/more" />
+    <SUITE FILE_PATH="coverage/thexp$attr__1_.coverage" NAME="attr (1) Coverage Results" MODIFIED="1590501051578" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/thexp$cli.coverage" NAME="cli Coverage Results" MODIFIED="1583909955029" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/thexp/cli" />
+    <SUITE FILE_PATH="coverage/thexp$1_1_trainer__1_.coverage" NAME="1.1.trainer (1) Coverage Results" MODIFIED="1589331959414" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/examples" />
+    <SUITE FILE_PATH="coverage/thexp$hook.coverage" NAME="hook Coverage Results" MODIFIED="1589514886367" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/examples/more" />
+    <SUITE FILE_PATH="coverage/thexp$list.coverage" NAME="list Coverage Results" MODIFIED="1590107298823" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/thexp/base_classes" />
+    <SUITE FILE_PATH="coverage/thexp$temp__1_.coverage" NAME="temp (1) Coverage Results" MODIFIED="1596103933952" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/thexp$dataxy.coverage" NAME="dataxy Coverage Results" MODIFIED="1596514159955" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/thexp-templete/data" />
+    <SUITE FILE_PATH="coverage/thexp$p2.coverage" NAME="p2 Coverage Results" MODIFIED="1596262938833" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/thexp$markdown_writer.coverage" NAME="markdown_writer Coverage Results" MODIFIED="1587002656840" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/thexp/utils" />
     <SUITE FILE_PATH="coverage/thexp$pytest_for_test_meter_test_avgmeter.coverage" NAME="pytest for test_meter.test_avgmeter Coverage Results" MODIFIED="1596713742754" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/tests" />
-    <SUITE FILE_PATH="coverage/thexp$6_global_config.coverage" NAME="6.global_config Coverage Results" MODIFIED="1589528491009" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/examples" />
+    <SUITE FILE_PATH="coverage/thexp$pytest_in_test_attr_py.coverage" NAME="pytest in test_attr.py Coverage Results" MODIFIED="1596012991291" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/tests/base_classes" />
+    <SUITE FILE_PATH="coverage/thexp$avg_item.coverage" NAME="avg_item Coverage Results" MODIFIED="1583995674748" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/examples/more" />
     <SUITE FILE_PATH="coverage/thexp$tmp.coverage" NAME="tmp Coverage Results" MODIFIED="1588903123760" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/examples/more" />
+    <SUITE FILE_PATH="coverage/thexp$1_1_trainer.coverage" NAME="1.1.trainer Coverage Results" MODIFIED="1589786569007" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/examples" />
+    <SUITE FILE_PATH="coverage/thexp$attr.coverage" NAME="attr Coverage Results" MODIFIED="1590588258133" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/thexp$temp.coverage" NAME="temp Coverage Results" MODIFIED="1591626062379" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/examples/more" />
+    <SUITE FILE_PATH="coverage/thexp$runweb.coverage" NAME="runweb Coverage Results" MODIFIED="1590759403311" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/thexp$onefile.coverage" NAME="onefile Coverage Results" MODIFIED="1590759544723" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/../thexp-test3" />
+    <SUITE FILE_PATH="coverage/thexp$test_trainer.coverage" NAME="test_trainer Coverage Results" MODIFIED="1595938307549" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/tests/frame" />
+    <SUITE FILE_PATH="coverage/thexp$w.coverage" NAME="w Coverage Results" MODIFIED="1611306472636" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/thexp$builder.coverage" NAME="builder Coverage Results" MODIFIED="1611745341601" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/thexp/frame" />
+    <SUITE FILE_PATH="coverage/thexp$2_meters.coverage" NAME="2.meters Coverage Results" MODIFIED="1589598864795" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/examples" />
+    <SUITE FILE_PATH="coverage/thexp$constrain.coverage" NAME="constrain Coverage Results" MODIFIED="1596423917418" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/thexp/analyser" />
+    <SUITE FILE_PATH="coverage/thexp$shake.coverage" NAME="shake Coverage Results" MODIFIED="1595206128128" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/thexp/torch/module" />
+    <SUITE FILE_PATH="coverage/thexp$reverts__1_.coverage" NAME="reverts (1) Coverage Results" MODIFIED="1590574414370" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/../thexp-test3" />
+    <SUITE FILE_PATH="coverage/thexp$4_rnd_seed.coverage" NAME="4.rnd_seed Coverage Results" MODIFIED="1589511344851" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/examples" />
+    <SUITE FILE_PATH="coverage/thexp$global_var.coverage" NAME="global_var Coverage Results" MODIFIED="1587084603245" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/examples/more" />
+    <SUITE FILE_PATH="coverage/thexp$reverts.coverage" NAME="reverts Coverage Results" MODIFIED="1590542664136" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/../thexp-test2" />
+    <SUITE FILE_PATH="coverage/thexp$ex_databundler.coverage" NAME="ex_databundler Coverage Results" MODIFIED="1590676003556" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/examples" />
+    <SUITE FILE_PATH="coverage/thexp$params_vars.coverage" NAME="params_vars Coverage Results" MODIFIED="1593747334050" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/thexp/base_classes" />
+    <SUITE FILE_PATH="coverage/thexp$ex_trainer__1_.coverage" NAME="ex_trainer (1) Coverage Results" MODIFIED="1590501047903" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/../thexp-test" />
+    <SUITE FILE_PATH="coverage/thexp$8_params.coverage" NAME="8.params Coverage Results" MODIFIED="1595948218756" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/examples" />
+    <SUITE FILE_PATH="coverage/thexp$iter2obj.coverage" NAME="iter2obj Coverage Results" MODIFIED="1584168042456" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/examples/more" />
+    <SUITE FILE_PATH="coverage/thexp$Doctests_in_builder.coverage" NAME="Doctests in builder Coverage Results" MODIFIED="1611744749979" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/thexp/frame" />
+    <SUITE FILE_PATH="coverage/thexp$6_global_config.coverage" NAME="6.global_config Coverage Results" MODIFIED="1589528491009" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/examples" />
+    <SUITE FILE_PATH="coverage/thexp$9_reporter.coverage" NAME="9.reporter Coverage Results" MODIFIED="1587004764869" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/examples" />
+    <SUITE FILE_PATH="coverage/thexp$rename_templete.coverage" NAME="rename_templete Coverage Results" MODIFIED="1595939431489" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/thexp$none_item.coverage" NAME="none_item Coverage Results" MODIFIED="1583973291705" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/examples/more" />
+    <SUITE FILE_PATH="coverage/thexp$ex_trainer.coverage" NAME="ex_trainer Coverage Results" MODIFIED="1590731136814" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/../thexp-test3" />
+    <SUITE FILE_PATH="coverage/thexp$rampup.coverage" NAME="rampup Coverage Results" MODIFIED="1587216993947" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/examples/more" />
+    <SUITE FILE_PATH="coverage/thexp$pytest_in_test_list_py.coverage" NAME="pytest in test_list.py Coverage Results" MODIFIED="1596012011291" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/tests/base_classes" />
+    <SUITE FILE_PATH="coverage/thexp$1_trainer.coverage" NAME="1.trainer Coverage Results" MODIFIED="1596455084053" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/examples" />
+    <SUITE FILE_PATH="coverage/thexp$create_doc.coverage" NAME="create_doc Coverage Results" MODIFIED="1597644720939" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/thexp$5_saver.coverage" NAME="5.saver Coverage Results" MODIFIED="1589511688374" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/examples" />
+    <SUITE FILE_PATH="coverage/thexp$pytest_for_test_params_test_baseparams.coverage" NAME="pytest for test_params.test_baseparams Coverage Results" MODIFIED="1596720766785" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/tests/frame" />
+    <SUITE FILE_PATH="coverage/thexp$webtemp.coverage" NAME="webtemp Coverage Results" MODIFIED="1590837834263" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/thexp$reset.coverage" NAME="reset Coverage Results" MODIFIED="1590573092989" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/../thexp-test3" />
+    <SUITE FILE_PATH="coverage/thexp$pytest_for_test_rndmanager_test_rndmanager.coverage" NAME="pytest for test_rndmanager.test_rndmanager Coverage Results" MODIFIED="1596723758570" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/tests/frame" />
+    <SUITE FILE_PATH="coverage/thexp$timeit.coverage" NAME="timeit Coverage Results" MODIFIED="1586085147242" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/thexp/utils" />
+    <SUITE FILE_PATH="coverage/thexp$timeit__1_.coverage" NAME="timeit (1) Coverage Results" MODIFIED="1586085309261" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/examples/more" />
+    <SUITE FILE_PATH="coverage/thexp$plotter.coverage" NAME="plotter Coverage Results" MODIFIED="1587004548062" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/thexp/frame" />
+    <SUITE FILE_PATH="coverage/thexp$web.coverage" NAME="web Coverage Results" MODIFIED="1597198989559" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/thexp$ex_trainer__2_.coverage" NAME="ex_trainer (2) Coverage Results" MODIFIED="1590542382505" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/../thexp-test2" />
+    <SUITE FILE_PATH="coverage/thexp$markdown_writer__1_.coverage" NAME="markdown_writer (1) Coverage Results" MODIFIED="1587002971749" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/thexp/future" />
+    <SUITE FILE_PATH="coverage/thexp$main.coverage" NAME="main Coverage Results" MODIFIED="1590819014308" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/../thexp-test3/simple-splitdataset" />
+    <SUITE FILE_PATH="coverage/thexp$schedules.coverage" NAME="schedules Coverage Results" MODIFIED="1593782186612" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/examples/more" />
+    <SUITE FILE_PATH="coverage/thexp$7_exp.coverage" NAME="7.exp Coverage Results" MODIFIED="1590714983342" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/../thexp-test3" />
+    <SUITE FILE_PATH="coverage/thexp$screen_str.coverage" NAME="screen_str Coverage Results" MODIFIED="1586857551042" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/examples/more" />
+    <SUITE FILE_PATH="coverage/thexp$query.coverage" NAME="query Coverage Results" MODIFIED="1595812553912" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/thexp/analyser" />
+    <SUITE FILE_PATH="coverage/thexp$pytest_for_test_meter_test_avgmeter__1_.coverage" NAME="pytest for test_meter.test_avgmeter (1) Coverage Results" MODIFIED="1596722840972" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/tests/frame" />
     <SUITE FILE_PATH="coverage/thexp$1_2_trainer.coverage" NAME="1.2.trainer Coverage Results" MODIFIED="1589551589991" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/examples" />
     <SUITE FILE_PATH="coverage/thexp$main__1_.coverage" NAME="main (1) Coverage Results" MODIFIED="1590821410812" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/../thexp-test3/simple-splittrainer" />
-    <SUITE FILE_PATH="coverage/thexp$7_expview__1_.coverage" NAME="7.expview (1) Coverage Results" MODIFIED="1589082055409" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/../thexp-test" />
-    <SUITE FILE_PATH="coverage/thexp$cli.coverage" NAME="cli Coverage Results" MODIFIED="1583909955029" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/thexp/cli" />
-    <SUITE FILE_PATH="coverage/thexp$pytest_in_test_list_py.coverage" NAME="pytest in test_list.py Coverage Results" MODIFIED="1596012011291" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/tests/base_classes" />
-    <SUITE FILE_PATH="coverage/thexp$8_params.coverage" NAME="8.params Coverage Results" MODIFIED="1595948218756" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/examples" />
-    <SUITE FILE_PATH="coverage/thexp$schedules.coverage" NAME="schedules Coverage Results" MODIFIED="1593782186612" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/examples/more" />
-    <SUITE FILE_PATH="coverage/thexp$plotter.coverage" NAME="plotter Coverage Results" MODIFIED="1587004548062" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/thexp/frame" />
-    <SUITE FILE_PATH="coverage/thexp$params_vars.coverage" NAME="params_vars Coverage Results" MODIFIED="1593747334050" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/thexp/base_classes" />
-    <SUITE FILE_PATH="coverage/thexp$trainer.coverage" NAME="trainer Coverage Results" MODIFIED="1586085233727" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/thexp/frame" />
-    <SUITE FILE_PATH="coverage/thexp$runweb.coverage" NAME="runweb Coverage Results" MODIFIED="1590759403311" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/thexp$timeit.coverage" NAME="timeit Coverage Results" MODIFIED="1586085147242" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/thexp/utils" />
-    <SUITE FILE_PATH="coverage/thexp$util.coverage" NAME="util Coverage Results" MODIFIED="1590540500158" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="C:/ProgramData/Anaconda3/Lib/site-packages/git" />
-    <SUITE FILE_PATH="coverage/thexp$markdown_writer__1_.coverage" NAME="markdown_writer (1) Coverage Results" MODIFIED="1587002971749" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/thexp/future" />
-    <SUITE FILE_PATH="coverage/thexp$7_expview.coverage" NAME="7.expview Coverage Results" MODIFIED="1589524700270" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/examples" />
-    <SUITE FILE_PATH="coverage/thexp$hook.coverage" NAME="hook Coverage Results" MODIFIED="1589514886367" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/examples/more" />
-    <SUITE FILE_PATH="coverage/thexp$ttt.coverage" NAME="ttt Coverage Results" MODIFIED="1589505131835" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/examples/more" />
-    <SUITE FILE_PATH="coverage/thexp$mem.coverage" NAME="mem Coverage Results" MODIFIED="1587047997860" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/examples/more" />
-    <SUITE FILE_PATH="coverage/thexp$constrain.coverage" NAME="constrain Coverage Results" MODIFIED="1596423917418" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/thexp/analyser" />
-    <SUITE FILE_PATH="coverage/thexp$global_var.coverage" NAME="global_var Coverage Results" MODIFIED="1587084603245" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/examples/more" />
-    <SUITE FILE_PATH="coverage/thexp$Doctests_in_list.coverage" NAME="Doctests in list Coverage Results" MODIFIED="1596011791469" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/thexp/base_classes" />
-    <SUITE FILE_PATH="coverage/thexp$1_1_trainer__1_.coverage" NAME="1.1.trainer (1) Coverage Results" MODIFIED="1589331959414" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/examples" />
-    <SUITE FILE_PATH="coverage/thexp$main.coverage" NAME="main Coverage Results" MODIFIED="1590819014308" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/../thexp-test3/simple-splitdataset" />
-    <SUITE FILE_PATH="coverage/thexp$p2.coverage" NAME="p2 Coverage Results" MODIFIED="1596262938833" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/thexp$none_item.coverage" NAME="none_item Coverage Results" MODIFIED="1583973291705" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/examples/more" />
-    <SUITE FILE_PATH="coverage/thexp$1_trainer.coverage" NAME="1.trainer Coverage Results" MODIFIED="1596455084053" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/examples" />
-    <SUITE FILE_PATH="coverage/thexp$test_trainer.coverage" NAME="test_trainer Coverage Results" MODIFIED="1595938307549" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/tests/frame" />
-    <SUITE FILE_PATH="coverage/thexp$reverts__1_.coverage" NAME="reverts (1) Coverage Results" MODIFIED="1590574414370" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/../thexp-test3" />
-    <SUITE FILE_PATH="coverage/thexp$dataxy.coverage" NAME="dataxy Coverage Results" MODIFIED="1596514159955" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/thexp-templete/data" />
-    <SUITE FILE_PATH="coverage/thexp$pytest_for_test_meter_test_avgmeter__1_.coverage" NAME="pytest for test_meter.test_avgmeter (1) Coverage Results" MODIFIED="1596722840972" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/tests/frame" />
-    <SUITE FILE_PATH="coverage/thexp$1_1_trainer.coverage" NAME="1.1.trainer Coverage Results" MODIFIED="1589786569007" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/examples" />
-    <SUITE FILE_PATH="coverage/thexp$reverts.coverage" NAME="reverts Coverage Results" MODIFIED="1590542664136" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/../thexp-test2" />
-    <SUITE FILE_PATH="coverage/thexp$shake.coverage" NAME="shake Coverage Results" MODIFIED="1595206128128" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/thexp/torch/module" />
-    <SUITE FILE_PATH="coverage/thexp$web.coverage" NAME="web Coverage Results" MODIFIED="1597198989559" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/thexp$10_databundler.coverage" NAME="10.databundler Coverage Results" MODIFIED="1588742213809" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/examples" />
-    <SUITE FILE_PATH="coverage/thexp$pytest_in_test_meter_py.coverage" NAME="pytest in test_meter.py Coverage Results" MODIFIED="1596713092304" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/tests" />
-    <SUITE FILE_PATH="coverage/thexp$create_doc.coverage" NAME="create_doc Coverage Results" MODIFIED="1597644720939" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/thexp$webtemp.coverage" NAME="webtemp Coverage Results" MODIFIED="1590837834263" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/thexp$5_saver.coverage" NAME="5.saver Coverage Results" MODIFIED="1589511688374" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/examples" />
-    <SUITE FILE_PATH="coverage/thexp$3_logger.coverage" NAME="3.logger Coverage Results" MODIFIED="1589509296950" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/examples" />
-    <SUITE FILE_PATH="coverage/thexp$iter2obj.coverage" NAME="iter2obj Coverage Results" MODIFIED="1584168042456" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/examples/more" />
     <SUITE FILE_PATH="coverage/thexp$pytest_in_test_params_py.coverage" NAME="pytest in test_params.py Coverage Results" MODIFIED="1596639692906" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/tests" />
-    <SUITE FILE_PATH="coverage/thexp$2_meters.coverage" NAME="2.meters Coverage Results" MODIFIED="1589598864795" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/examples" />
-    <SUITE FILE_PATH="coverage/thexp$timeit__1_.coverage" NAME="timeit (1) Coverage Results" MODIFIED="1586085309261" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/examples/more" />
+    <SUITE FILE_PATH="coverage/thexp$trainer.coverage" NAME="trainer Coverage Results" MODIFIED="1586085233727" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/thexp/frame" />
+    <SUITE FILE_PATH="coverage/thexp$Doctests_in_list.coverage" NAME="Doctests in list Coverage Results" MODIFIED="1596011791469" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/thexp/base_classes" />
+    <SUITE FILE_PATH="coverage/thexp$7_expview.coverage" NAME="7.expview Coverage Results" MODIFIED="1589524700270" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/examples" />
+    <SUITE FILE_PATH="coverage/thexp$pytest_in_test_meter_py.coverage" NAME="pytest in test_meter.py Coverage Results" MODIFIED="1596713092304" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/tests" />
   </component>
 </project>

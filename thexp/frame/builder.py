@@ -1,7 +1,12 @@
 from collections.abc import Iterable as CIterable
+import math
+
 from itertools import chain
-from typing import Callable, List, Union, Iterable, overload
-from torch.utils.data import Dataset
+from typing import Callable, List, Union, Iterable, overload, Iterator, Sized
+
+from torch.utils.data import Dataset, Sampler
+
+__all__ = ['Delegate', 'BatchDelegate', 'DatasetBuilder', 'BatchDatasetBuilder', 'BatchBuilderSampler']
 
 
 class _Value:
@@ -111,6 +116,9 @@ class Delegate:
     def subset(self, indices):
         pass
 
+    def __repr__(self):
+        return '{}({})'.format(self.__class__.__name__, len(self))
+
 
 class _placehold:
     """用于DatasetBuilder内部"""
@@ -130,11 +138,15 @@ class _delegate_placehold:
     def __init__(self,
                  delegate: Delegate,
                  transform: Callable = None, target_transform: Callable = None,
-                 name=None):
+                 name=None, append_name=None):
         self.delegate = delegate
         self.transform = transform
         self.target_transform = target_transform
         self.name = name
+        self.append_name = append_name
+
+    def __repr__(self):
+        return 'Placehold@{}[{}]'.format(self.name, self.delegate)
 
 
 class DatasetBuilder(Dataset):
@@ -244,16 +256,20 @@ class DatasetBuilder(Dataset):
                     if self._zip:
                         assert item.name is not None, 'value must have name in zip mode'
 
+                    name = item.name
+                    if dph.append_name is not None:
+                        name = '{}_{}'.format(dph.append_name, name)
+
                     if isinstance(item, X):
                         if dph.transform is not None:
                             item.value = dph.transform(item.value)
-                        xs.append(_placehold(name=item.name, value=item.value))
+                        xs.append(_placehold(name=name, value=item.value))
                     if isinstance(item, Y):
                         if dph.target_transform is not None:
                             item.value = dph.target_transform(item.value)
-                        ys.append(_placehold(name=item.name, value=item.value))
+                        ys.append(_placehold(name=name, value=item.value))
                     if isinstance(item, ID):
-                        ids.append(_placehold(name=item.name, value=item.value))
+                        ids.append(_placehold(name=name, value=item.value))
 
         if self._zip:
             from thexp.base_classes.attr import attr
@@ -279,6 +295,9 @@ class DatasetBuilder(Dataset):
 
     def _check_len(self, values):
         ilen = len(values)
+        if ilen == 0:
+            return
+
         if self._dataset_len is None:
             self._dataset_len = ilen
         else:
@@ -331,7 +350,10 @@ class DatasetBuilder(Dataset):
         return self
 
     def add_delegate(self, delegate: Delegate, transform=None, target_transform=None, name=None):
+        if not isinstance(self, BatchDatasetBuilder):
+            assert not isinstance(delegate, BatchDelegate), 'Using BatchDatasetBuilder to add BatchDelegate'
         # self.d
+        append_name = name
         if name is None:
             name = 'delegate_{}'.format(len(self._delegates))
         if self._indices is not None:
@@ -339,7 +361,7 @@ class DatasetBuilder(Dataset):
 
         self._check_delegate_name(name)
         self._check_len(delegate)
-        self._delegates.append(_delegate_placehold(delegate, transform, target_transform, name))
+        self._delegates.append(_delegate_placehold(delegate, transform, target_transform, name, append_name))
         return self
 
     def zip_mode(self):
@@ -389,3 +411,241 @@ class DatasetBuilder(Dataset):
     def DataLoader(self, *args, **kwargs):
         from thexp.contrib.data import DataLoader
         return DataLoader(self, *args, **kwargs)
+
+
+class BatchDatasetBuilder(DatasetBuilder):
+
+    def _sample__getitem__(self, index: int):
+        if self._re_indices is not None:
+            if index >= self.real_num:
+                index = index - self.real_num
+                self._re_indices[index] = (self._re_indices[index] + self.vitu_num) % self.real_num
+                index = self._re_indices[index]
+
+        if self._indices is not None:
+            index = self._indices[index]
+
+        ids = []
+        xs = []
+        ys = []
+
+        for ph in self._placeholds['x']:  # type:_placehold
+            source = self._ipts[ph.source]
+            x = source[index]
+            if ph.transform is not None:
+                x = ph.transform(x)
+            ph.value = x
+            xs.append(ph)
+        for ph in self._placeholds['y']:
+            source = self._ipts[ph.source]
+            y = source[index]
+            if ph.transform is not None:
+                y = ph.transform(y)
+            ph.value = y
+            ys.append(ph)
+        for dph in self._delegates:  # type:_delegate_placehold
+            if isinstance(dph.delegate, BatchDelegate):
+                continue
+
+            items = dph.delegate(index, self)
+            if isinstance(items, _Value):
+                items = [items]
+            if isinstance(items, CIterable):
+                for item in items:
+                    assert isinstance(item, _Value), 'want instance of _Value, but {}'.format(item)
+                    if self._zip:
+                        assert item.name is not None, 'value must have name in zip mode'
+
+                    if isinstance(item, X):
+                        if dph.transform is not None:
+                            item.value = dph.transform(item.value)
+                        xs.append(_placehold(name=item.name, value=item.value))
+                    if isinstance(item, Y):
+                        if dph.target_transform is not None:
+                            item.value = dph.target_transform(item.value)
+                        ys.append(_placehold(name=item.name, value=item.value))
+                    if isinstance(item, ID):
+                        ids.append(_placehold(name=item.name, value=item.value))
+
+        if self._zip:
+            from thexp.base_classes.attr import attr
+            res = attr()
+            if self._add_id:
+                res['_indexs'] = index
+            for ph in ids:
+                res[ph.name] = ph.value
+            for ph in xs:
+                res[ph.name] = ph.value
+            for ph in ys:
+                res[ph.name] = ph.value
+
+            return res
+        else:
+            ids = [i.value for i in ids]
+            xs = [i.value for i in xs]
+            ys = [i.value for i in ys]
+            if self._add_id:
+                ids.insert(0, index)
+
+            return [ids, xs, ys]
+
+    def __getitem__(self, batch_index: Iterable):
+
+        from thexp.base_classes.attr import attr
+        if self._zip:
+            batch_data = []
+            for i in batch_index:
+                res = self._sample__getitem__(i)
+                batch_data.append(res)
+            for phd in self._delegates:
+                if isinstance(phd.delegate, BatchDelegate):
+                    batch_dele_datas = phd.delegate(batch_index, self)
+                    if isinstance(batch_dele_datas, _Value):
+                        batch_dele_datas = [batch_dele_datas]
+                    for batch_dele_data in batch_dele_datas:
+                        for ele, sample in zip(batch_dele_data.value, batch_data):
+                            assert batch_dele_data.name is not None, 'value must have name in zip mode'
+                            name = batch_dele_data.name
+                            if phd.append_name is not None:
+                                name = "{}_{}".format(phd.append_name, name)
+                            sample[name] = ele
+
+        else:
+            idss, xss, yss = [], [], []
+            for i in batch_index:
+                ids, xs, ys = self._sample__getitem__(i)
+                idss.append(ids)
+                xss.append(xs)
+                yss.append(ys)
+
+            for phd in self._delegates:
+                if isinstance(phd.delegate, BatchDelegate):
+                    batch_dele_datas = phd.delegate(batch_index, self)
+                    if isinstance(batch_dele_datas, _Value):
+                        batch_dele_datas = [batch_dele_datas]
+
+                    for batch_dele_data in batch_dele_datas:
+                        if isinstance(batch_dele_data, X):
+                            liss = xss
+                        elif isinstance(batch_dele_data, Y):
+                            liss = yss
+                        else:
+                            liss = idss
+
+                        for ele, sample in zip(batch_dele_data.value, liss):
+                            sample.append(ele)
+            batch_data = []
+            for ids, xs, ys in zip(idss, xss, yss):
+                batch_data.append([*ids, *xs, *ys])
+
+        return batch_data
+
+
+class BatchBuilderSampler(Sampler):
+
+    def __init__(self, data_source: Sized, batch_size, drop_last):
+        # Since collections.abc.Iterable does not check for `__getitem__`, which
+        # is one way for an object to be an iterable, we don't do an `isinstance`
+        # check here.
+        if not isinstance(drop_last, bool):
+            raise ValueError("drop_last should be a boolean value, but got "
+                             "drop_last={}".format(drop_last))
+        self.source = data_source
+        self.batch_size = batch_size
+        self.drop_last = drop_last
+
+    def __iter__(self):
+        batch = []
+        for idx in self.source:
+            batch.append(idx)
+            if len(batch) == self.batch_size:
+                yield [batch]
+                batch = []
+        if len(batch) > 0 and not self.drop_last:
+            yield [batch]
+
+    def __len__(self):
+        if self.drop_last:
+            return len(self.source) // self.batch_size
+        else:
+            return (len(self.source) + self.batch_size - 1) // self.batch_size
+
+
+class BatchDelegate(Delegate):
+    """
+    class MyBatchDelegate(BatchDelegate):
+
+        def __len__(self):
+            return 0
+
+        def __sample_call__(self, index, builder=None):
+            return index
+
+        def __call__(self, batch_index, builder=None):
+            res = [i for i in batch_index]
+            return self.X_(res, 'range')
+
+
+    loader = (
+        BatchDatasetBuilder(torch.arange(0, 100))
+            .add_x(name='x')
+            .add_delegate(MyBatchDelegate())
+            .DataLoader(batch_sampler=BatchBuilderSampler(torch.arange(0, 100), 11, drop_last=False))
+    )
+    print(list(iter(loader)))
+    """
+
+    def batch_X_(self, value, name=None):
+        return self.X_(value, name)
+
+    def batch_Y_(self, value, name=None):
+        return self.Y_(value, name)
+
+    def batch_ID_(self, value, name=None):
+        return self.ID_(value, name)
+
+    def __sample_call__(self, index, builder=None) -> Union[X, Y, ID, None, Iterable[_Value]]:
+        pass
+
+    def __call__(self, batch_index: Iterable, builder=None):
+        return [self.__sample_call__(i) for i in batch_index]
+
+
+if __name__ == '__main__':
+    import torch
+
+
+    class MyBatchDelegate(BatchDelegate):
+
+        def __len__(self):
+            return 0
+
+        def __sample_call__(self, index, builder=None):
+            return index
+
+        def __call__(self, batch_index, builder=None):
+            res = [i for i in batch_index]
+            return self.X_(res, 'range')
+
+
+    class MyDelegate(Delegate):
+
+        def __len__(self):
+            return 0
+
+        def __call__(self, index, builder=None):
+            return self.X_(index, 'li')
+
+
+    loader = (
+        BatchDatasetBuilder(torch.arange(1, 101))
+            .add_x(name='x')
+        .zip_mode()
+            .add_delegate(MyDelegate())
+            .add_delegate(MyBatchDelegate(),name='f')
+            .add_delegate(MyBatchDelegate())
+    )
+    print(loader._delegates)
+
+    loader = loader.DataLoader(batch_sampler=BatchBuilderSampler(torch.arange(0, 100), 3, drop_last=False))
+    print(next(iter(loader)))
