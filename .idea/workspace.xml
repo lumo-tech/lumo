@@ -121,7 +121,7 @@
       <recent name="E:\Python\iLearn\thexp\thexp" />
     </key>
   </component>
-  <component name="RunManager" selected="Shell Script.build.sh">
+  <component name="RunManager" selected="Python.install">
     <configuration name="8.params" type="PythonConfigurationType" factoryName="Python">
       <module name="thexp" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -246,16 +246,16 @@
       <item itemvalue="Python.8.params" />
       <item itemvalue="Python.w" />
       <item itemvalue="Python.install" />
-      <item itemvalue="Shell Script.build.sh" />
-      <item itemvalue="Python tests.Doctests in builder" />
       <item itemvalue="Python.builder" />
+      <item itemvalue="Python tests.Doctests in builder" />
+      <item itemvalue="Shell Script.build.sh" />
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="Python.install" />
         <item itemvalue="Shell Script.build.sh" />
         <item itemvalue="Python.builder" />
         <item itemvalue="Python tests.Doctests in builder" />
-        <item itemvalue="Python.install" />
         <item itemvalue="Python.w" />
       </list>
     </recent_temporary>
