@@ -22,27 +22,7 @@
     <select />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="232f6e19-5cb1-41b7-8b12-9b1150540616" name="Default Changelist" comment="fix tensorboard kwargs">
-      <change afterPath="$PROJECT_DIR$/build.sh" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/features.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/install.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/deployment.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/deployment.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/setup.py" beforeDir="false" afterPath="$PROJECT_DIR$/setup.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/thexp/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/thexp/__init__.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/thexp/analyse/charts.py" beforeDir="false" afterPath="$PROJECT_DIR$/thexp/analyse/charts.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/thexp/analyse/reader.py" beforeDir="false" afterPath="$PROJECT_DIR$/thexp/analyse/reader.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/thexp/cli/templete/data/dataxy.py-tpl" beforeDir="false" afterPath="$PROJECT_DIR$/thexp/cli/templete/data/dataxy.py-tpl" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/thexp/cli/templete/trainers/__init__.py-tpl" beforeDir="false" afterPath="$PROJECT_DIR$/thexp/cli/templete/trainers/__init__.py-tpl" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/thexp/cli/templete/trainers/_trainer.py-tpl" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/thexp/cli/templete/trainers/mixin/datasets.py-tpl" beforeDir="false" afterPath="$PROJECT_DIR$/thexp/cli/templete/trainers/mixin/datasets.py-tpl" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/thexp/cli/templete/trainers/mixin/models.py-tpl" beforeDir="false" afterPath="$PROJECT_DIR$/thexp/cli/templete/trainers/mixin/models.py-tpl" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/thexp/contrib/data/splits.py" beforeDir="false" afterPath="$PROJECT_DIR$/thexp/contrib/data/splits.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/thexp/frame/builder.py" beforeDir="false" afterPath="$PROJECT_DIR$/thexp/frame/builder.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/thexp/frame/trainer.py" beforeDir="false" afterPath="$PROJECT_DIR$/thexp/frame/trainer.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/thexp/nest/trainer/acc.py" beforeDir="false" afterPath="$PROJECT_DIR$/thexp/nest/trainer/acc.py" afterDir="false" />
-    </list>
+    <list default="true" id="232f6e19-5cb1-41b7-8b12-9b1150540616" name="Default Changelist" comment="fix tensorboard kwargs" />
     <list id="b3718b25-7204-4605-af22-7efa5eb0e45c" name="imporove" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -438,6 +418,7 @@
       <workItem from="1611542638935" duration="32000" />
       <workItem from="1611544371231" duration="3493000" />
       <workItem from="1611744266991" duration="1189000" />
+      <workItem from="1611906298300" duration="420000" />
     </task>
     <task id="LOCAL-00005" summary="change">
       <created>1589939036175</created>
@@ -880,7 +861,7 @@
     <SUITE FILE_PATH="coverage/thexp$mem.coverage" NAME="mem Coverage Results" MODIFIED="1587047997860" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/examples/more" />
     <SUITE FILE_PATH="coverage/thexp$util.coverage" NAME="util Coverage Results" MODIFIED="1590540500158" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="C:/ProgramData/Anaconda3/Lib/site-packages/git" />
     <SUITE FILE_PATH="coverage/thexp$3_logger.coverage" NAME="3.logger Coverage Results" MODIFIED="1589509296950" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/examples" />
-    <SUITE FILE_PATH="coverage/thexp$install.coverage" NAME="install Coverage Results" MODIFIED="1611460688924" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/thexp$install.coverage" NAME="install Coverage Results" MODIFIED="1611906528824" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/thexp$7_expview__1_.coverage" NAME="7.expview (1) Coverage Results" MODIFIED="1589082055409" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/../thexp-test" />
     <SUITE FILE_PATH="coverage/thexp$10_databundler.coverage" NAME="10.databundler Coverage Results" MODIFIED="1588742213809" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/examples" />
     <SUITE FILE_PATH="coverage/thexp$ttt.coverage" NAME="ttt Coverage Results" MODIFIED="1589505131835" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/examples/more" />
