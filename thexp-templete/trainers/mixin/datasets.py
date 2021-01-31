@@ -1,5 +1,5 @@
 from thexp import Trainer
-from trainers import GlobalParams
+from trainers import *
 from thexp.contrib.data import splits
 from thexp import DatasetBuilder
 

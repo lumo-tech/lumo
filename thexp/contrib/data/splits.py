@@ -54,11 +54,16 @@ def semi_split(labels, n_percls, val_size=10000, include_sup=True, repeat_sup=Tr
     return indexs, un_indexs, val_indexs
 
 
-def train_val_split(target, val_size=10000):
+def train_val_split(target, val_size=10000, train_size=None):
     import numpy as np
-
-    idx = np.arange(len(target))
+    size = len(target)
+    idx = np.arange(size)
     np.random.shuffle(idx)
+
+    if train_size is not None:
+        assert size > val_size + train_size, "should less than {}, but {}".format(size, train_size + val_size)
+        return idx[val_size:val_size + train_size], idx[:val_size]
+
     return idx[val_size:], idx[:val_size]
 
 

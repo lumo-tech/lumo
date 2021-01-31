@@ -58,6 +58,8 @@
       <change afterPath="$PROJECT_DIR$/tests/sav/keep.0000002.ckpt.json" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/tests/sav/keep.0000003.ckpt.json" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/tests/sav/keep.0000004.ckpt.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/thexp/nest/engine.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/thexp/nest/wrap.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../thexp-demo/.idea/thexp-test3.iml" beforeDir="false" afterPath="$PROJECT_DIR$/../thexp-demo/.idea/thexp-test3.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../thexp-demo/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../thexp-demo/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../thexp-demo/onefile.py" beforeDir="false" afterPath="$PROJECT_DIR$/../thexp-demo/simple/main.py" afterDir="false" />
@@ -523,14 +525,11 @@
       <workItem from="1608774107274" duration="1005000" />
       <workItem from="1609035101522" duration="1794000" />
       <workItem from="1609119977830" duration="11526000" />
-      <workItem from="1609211633207" duration="1700000" />
-    </task>
-    <task id="LOCAL-00060" summary="fix problem of default setting; add tmp_dir parameter">
-      <created>1600327228142</created>
-      <option name="number" value="00060" />
-      <option name="presentableId" value="LOCAL-00060" />
-      <option name="project" value="LOCAL" />
-      <updated>1600327228142</updated>
+      <workItem from="1609211633207" duration="3292000" />
+      <workItem from="1609418271530" duration="698000" />
+      <workItem from="1609834979444" duration="2744000" />
+      <workItem from="1609916808999" duration="2591000" />
+      <workItem from="1610509362464" duration="735000" />
     </task>
     <task id="LOCAL-00061" summary="add tmp_dir environment feature">
       <created>1600327239788</created>
@@ -868,7 +867,14 @@
       <option name="project" value="LOCAL" />
       <updated>1609143239665</updated>
     </task>
-    <option name="localTasksCounter" value="109" />
+    <task id="LOCAL-00109" summary="将大写变量看做常量">
+      <created>1609231307618</created>
+      <option name="number" value="00109" />
+      <option name="presentableId" value="LOCAL-00109" />
+      <option name="project" value="LOCAL" />
+      <updated>1609231307618</updated>
+    </task>
+    <option name="localTasksCounter" value="110" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -891,7 +897,6 @@
       <path value="$PROJECT_DIR$/../thexp-test" />
       <path value="$PROJECT_DIR$/../thexp-test2" />
     </ignored-roots>
-    <MESSAGE value="add distribution features" />
     <MESSAGE value="support distributied-training" />
     <MESSAGE value="add distributed-training support" />
     <MESSAGE value="fix LRSchedule, if lr_sche is None, this callback will be unhooked automaticly." />
@@ -916,7 +921,8 @@
     <MESSAGE value="优化了 re 的表示形式" />
     <MESSAGE value="for quicker start" />
     <MESSAGE value="update gitignore for thexp template" />
-    <option name="LAST_COMMIT_MESSAGE" value="update gitignore for thexp template" />
+    <MESSAGE value="将大写变量看做常量" />
+    <option name="LAST_COMMIT_MESSAGE" value="将大写变量看做常量" />
   </component>
   <component name="WindowStateProjectService">
     <state x="552" y="181" key="#Deployment" timestamp="1601641722084">
@@ -928,44 +934,44 @@
     </state>
     <state x="419" y="214" key="#com.intellij.fileTypes.FileTypeChooser/0.0.1280.680@0.0.1280.680" timestamp="1606868332747" />
     <state x="629" y="328" key="#com.intellij.fileTypes.FileTypeChooser/0.0.1920.1040@0.0.1920.1040" timestamp="1609231008320" />
-    <state x="765" y="239" key="#com.intellij.ide.util.MemberChooser" timestamp="1609143581347">
+    <state x="765" y="239" key="#com.intellij.ide.util.MemberChooser" timestamp="1609835197996">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="510" y="112" key="#com.intellij.ide.util.MemberChooser/0.0.1280.680@0.0.1280.680" timestamp="1606871159361" />
-    <state x="765" y="239" key="#com.intellij.ide.util.MemberChooser/0.0.1920.1040@0.0.1920.1040" timestamp="1609143581347" />
+    <state x="765" y="239" key="#com.intellij.ide.util.MemberChooser/0.0.1920.1040@0.0.1920.1040" timestamp="1609835197996" />
     <state x="690" y="266" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog" timestamp="1609231005566">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="690" y="266" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1609231005566" />
-    <state x="654" y="154" key="CommitChangelistDialog2" timestamp="1609143278570">
+    <state x="654" y="154" key="CommitChangelistDialog2" timestamp="1609231306050">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="460" y="0" key="CommitChangelistDialog2/0.0.1280.680@0.0.1280.680" timestamp="1608450270865" />
-    <state x="654" y="154" key="CommitChangelistDialog2/0.0.1920.1040@0.0.1920.1040" timestamp="1609143278570" />
+    <state x="654" y="154" key="CommitChangelistDialog2/0.0.1920.1040@0.0.1920.1040" timestamp="1609231306050" />
     <state x="746" y="284" key="FileChooserDialogImpl" timestamp="1609141956257">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="746" y="284" key="FileChooserDialogImpl/0.0.1920.1040@0.0.1920.1040" timestamp="1609141956257" />
-    <state width="1877" height="218" key="GridCell.Tab.0.bottom" timestamp="1609231050138">
+    <state width="1877" height="218" key="GridCell.Tab.0.bottom" timestamp="1609250997124">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state width="1237" height="125" key="GridCell.Tab.0.bottom/0.0.1280.680@0.0.1280.680" timestamp="1606871663563" />
-    <state width="1877" height="218" key="GridCell.Tab.0.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1609231050138" />
-    <state width="1877" height="218" key="GridCell.Tab.0.center" timestamp="1609231050138">
+    <state width="1877" height="218" key="GridCell.Tab.0.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1609250997124" />
+    <state width="1877" height="218" key="GridCell.Tab.0.center" timestamp="1609250997124">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state width="1237" height="125" key="GridCell.Tab.0.center/0.0.1280.680@0.0.1280.680" timestamp="1606871663563" />
-    <state width="1877" height="218" key="GridCell.Tab.0.center/0.0.1920.1040@0.0.1920.1040" timestamp="1609231050138" />
-    <state width="1877" height="218" key="GridCell.Tab.0.left" timestamp="1609231050137">
+    <state width="1877" height="218" key="GridCell.Tab.0.center/0.0.1920.1040@0.0.1920.1040" timestamp="1609250997124" />
+    <state width="1877" height="218" key="GridCell.Tab.0.left" timestamp="1609250997123">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state width="1237" height="125" key="GridCell.Tab.0.left/0.0.1280.680@0.0.1280.680" timestamp="1606871663563" />
-    <state width="1877" height="218" key="GridCell.Tab.0.left/0.0.1920.1040@0.0.1920.1040" timestamp="1609231050137" />
-    <state width="1877" height="218" key="GridCell.Tab.0.right" timestamp="1609231050138">
+    <state width="1877" height="218" key="GridCell.Tab.0.left/0.0.1920.1040@0.0.1920.1040" timestamp="1609250997123" />
+    <state width="1877" height="218" key="GridCell.Tab.0.right" timestamp="1609250997124">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state width="1237" height="125" key="GridCell.Tab.0.right/0.0.1280.680@0.0.1280.680" timestamp="1606871663563" />
-    <state width="1877" height="218" key="GridCell.Tab.0.right/0.0.1920.1040@0.0.1920.1040" timestamp="1609231050138" />
+    <state width="1877" height="218" key="GridCell.Tab.0.right/0.0.1920.1040@0.0.1920.1040" timestamp="1609250997124" />
     <state width="1877" height="285" key="GridCell.Tab.1.bottom" timestamp="1609164216682">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
@@ -990,10 +996,10 @@
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="461" y="164" key="SettingsEditor/0.0.1920.1040@0.0.1920.1040" timestamp="1607675417473" />
-    <state x="552" y="252" key="Vcs.Push.Dialog.v2" timestamp="1609124775388">
+    <state x="552" y="252" key="Vcs.Push.Dialog.v2" timestamp="1609231290088">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="552" y="252" key="Vcs.Push.Dialog.v2/0.0.1920.1040@0.0.1920.1040" timestamp="1609124775388" />
+    <state x="552" y="252" key="Vcs.Push.Dialog.v2/0.0.1920.1040@0.0.1920.1040" timestamp="1609231290088" />
     <state x="647" y="280" width="759" height="594" key="find.popup" timestamp="1609145592544">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
