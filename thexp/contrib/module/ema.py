@@ -34,7 +34,7 @@ def EMA(model: Module, alpha=0.999) -> Module:
             for (_, ema_param), (_, param) in zip(ema_model.state_dict().items(), model.state_dict().items()):
                 ema_param.to(param.device)
                 if not isinstance(param, (LongTensor, CLongTensor)):
-                    ema_param.data.mul_(alpha_).add_(1 - alpha_, param.data)
+                    ema_param.data.mul_(alpha_).add_(param.data, alpha=1 - alpha_)
                 else:
                     ema_param.data.copy_(alpha_ * ema_param + (1 - alpha_) * param)
 

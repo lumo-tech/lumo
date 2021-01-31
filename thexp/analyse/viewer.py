@@ -239,7 +239,7 @@ class TestViewer(_Viewer):
 
     @property
     def name(self) -> str:
-        return self.json_info[_INFOJ.test_name]
+        return os.path.basename(self.root)
 
     @property
     def root(self):
@@ -294,13 +294,14 @@ class TestViewer(_Viewer):
             if not os.path.exists(self.fn_global_info):
                 self._json_info = attr()
                 res = self._json_info
-            with open(self.fn_global_info, encoding='utf-8') as r:
-                try:
-                    self._json_info = attr(json.load(r))
-                    res = self._json_info
-                except json.JSONDecodeError as je:
-                    print('Error when decoding test {}, path = {}'.format(self.name, self.root))
-                    res = attr()
+            else:
+                with open(self.fn_global_info, encoding='utf-8') as r:
+                    try:
+                        self._json_info = attr(json.load(r))
+                        res = self._json_info
+                    except json.JSONDecodeError as je:
+                        print('Error when decoding test {}, path = {}'.format(self.name, self.root))
+                        res = attr()
 
             res["test_dir"] = self.root
             res['visible'] = self.visible

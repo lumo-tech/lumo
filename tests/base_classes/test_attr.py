@@ -3,9 +3,19 @@ import numpy as np
 import torch
 
 
+class NAttr(attr):
+
+    def __init__(self) -> None:
+        super().__init__()
+        self.k = None
+
+
 def get_res():
     res = attr()
     res.a = 1
+    res.nn = None
+    res.kk = NAttr()
+    res.st = 'NAttr()'
     res.b = [2, 3, 4]
     res.c = {'a': 1, 'b': [5, 6, 7], 'c': {'d': [8, 9]}}
     res.d = torch.tensor(1).float()
@@ -15,16 +25,12 @@ def get_res():
     return res
 
 
-def test_walk():
-    assert False
-
-
 def test_jsonify():
-    assert False
+    res = get_res()
+    jsn = res.jsonify()
+    rres = attr().from_dict(jsn)
 
-
-def test_hash():
-    assert False
+    assert rres.hash() == res.hash()
 
 
 def test_copy():
@@ -46,7 +52,14 @@ def test_copy():
     assert copy.c.b == [5, 6, 7]
     assert copy.c.c.d == [8, 9]
     assert copy.d == torch.tensor(1)
-    assert (copy.e == torch.tensor([2,3,4])).all()
+    assert (copy.e == torch.tensor([2, 3, 4])).all()
+
+
+def test_deepcopy():
+    res = get_res()
+    from copy import deepcopy
+    copy = deepcopy(res)
+    assert res.hash() == copy.hash()
 
 
 def test_replace():
@@ -54,6 +67,3 @@ def test_replace():
     res.replace(a=6).replace(b=7)
     assert res.a == 6
     assert res.b == 7
-
-# def test_from_dict():
-#     assert False

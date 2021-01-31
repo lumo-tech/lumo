@@ -316,15 +316,20 @@ class PeriodLinear(PeriodSchedule):
 class PowerDecaySchedule(Schedule):
     """equal to tf.train.exponential_decay, decay every <decay_steps> with a base of <decay_rate> """
 
-    def __init__(self, start, decay_steps, decay_rate):
+    def __init__(self, start, decay_steps, decay_rate, end=None):
         super().__init__()
         self.start = start
         self.decay_steps = decay_steps
         self.decay_rate = decay_rate
+        self.end = end
 
     def __call__(self, cur):
         rate = np.power(self.decay_rate, cur // self.decay_steps)
-        return self.start * rate
+        res = self.start * rate
+        if self.end is not None:
+            res = max(self.end, res)
+
+        return res
 
 
 class ScheduleList(Schedule):

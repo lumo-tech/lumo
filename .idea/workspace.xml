@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
   <component name="BranchesTreeState">
     <expand>
       <path>
@@ -19,7 +22,7 @@
     <select />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="232f6e19-5cb1-41b7-8b12-9b1150540616" name="Default Changelist" comment="fix tensorboard kwargs">
+    <list default="true" id="232f6e19-5cb1-41b7-8b12-9b1150540616" name="Default Changelist" comment="add some">
       <change afterPath="$PROJECT_DIR$/../thexp-demo/simple-addtricks/arch/__init__.py" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/../thexp-demo/simple-addtricks/arch/cnn13.py" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/../thexp-demo/simple-addtricks/arch/simple.py" afterDir="false" />
@@ -44,20 +47,53 @@
       <change afterPath="$PROJECT_DIR$/../thexp-demo/simple-splittrainer/trainer/mnisttrainer.py" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/../thexp-demo/simple-splittrainer/tricks/__init__.py" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/../thexp-demo/simple-splittrainer/tricks/ema.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/FQA.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/t.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/tests/contrib/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/tests/contrib/test_module.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/tests/rnd/shuffle.rnd" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/tests/rnd/train.rnd" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/tests/sav/keep.0000000.ckpt.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/tests/sav/keep.0000001.ckpt.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/tests/sav/keep.0000002.ckpt.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/tests/sav/keep.0000003.ckpt.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/tests/sav/keep.0000004.ckpt.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../thexp-demo/.idea/thexp-test3.iml" beforeDir="false" afterPath="$PROJECT_DIR$/../thexp-demo/.idea/thexp-test3.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../thexp-demo/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../thexp-demo/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../thexp-demo/onefile.py" beforeDir="false" afterPath="$PROJECT_DIR$/../thexp-demo/simple/main.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/deployment.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/deployment.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/examples/more/schedules.py" beforeDir="false" afterPath="$PROJECT_DIR$/examples/more/schedules.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/setup.py" beforeDir="false" afterPath="$PROJECT_DIR$/setup.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/base_classes/test_attr.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/base_classes/test_attr.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/frame/test_params.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/frame/test_params.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/frame/test_saver.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/frame/test_saver.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/frame/test_trainer.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/frame/test_trainer.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/thexp-templete/trainers/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/thexp-templete/trainers/__init__.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/thexp-templete/trainers/example.py" beforeDir="false" afterPath="$PROJECT_DIR$/thexp-templete/trainers/example.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/thexp-templete/trainers/mixin/datasets.py" beforeDir="false" afterPath="$PROJECT_DIR$/thexp-templete/trainers/mixin/datasets.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/thexp/analyse/viewer.py" beforeDir="false" afterPath="$PROJECT_DIR$/thexp/analyse/viewer.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/thexp/calculate/schedule.py" beforeDir="false" afterPath="$PROJECT_DIR$/thexp/calculate/schedule.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/thexp/cli/cli.py" beforeDir="false" afterPath="$PROJECT_DIR$/thexp/cli/cli.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/thexp/contrib/data/collate.py" beforeDir="false" afterPath="$PROJECT_DIR$/thexp/contrib/data/collate.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/thexp/contrib/data/splits.py" beforeDir="false" afterPath="$PROJECT_DIR$/thexp/contrib/data/splits.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/thexp/contrib/module/ema.py" beforeDir="false" afterPath="$PROJECT_DIR$/thexp/contrib/module/ema.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/thexp/frame/callbacks.py" beforeDir="false" afterPath="$PROJECT_DIR$/thexp/frame/callbacks.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/thexp/frame/experiment.py" beforeDir="false" afterPath="$PROJECT_DIR$/thexp/frame/experiment.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/thexp/frame/params.py" beforeDir="false" afterPath="$PROJECT_DIR$/thexp/frame/params.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/thexp/frame/saver.py" beforeDir="false" afterPath="$PROJECT_DIR$/thexp/frame/saver.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/thexp/frame/trainer.py" beforeDir="false" afterPath="$PROJECT_DIR$/thexp/frame/trainer.py" afterDir="false" />
     </list>
-    <list id="b3718b25-7204-4605-af22-7efa5eb0e45c" name="imporove" comment="" />
+    <list id="b3718b25-7204-4605-af22-7efa5eb0e45c" name="imporove" comment="imporove" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
   <component name="ChangesViewManager" show_ignored="true" />
+  <component name="DjangoConsoleOptions" custom-start-script="import sys; print('Python %s on %s' % (sys.version, sys.platform))&#10;import django; print('Django %s' % django.get_version())&#10;sys.path.extend([WORKING_DIR_AND_PYTHON_PATHS])&#10;if 'setup' in dir(django): django.setup()&#10;import django_manage_shell; django_manage_shell.run(PROJECT_ROOT)">
+    <option name="myCustomStartScript" value="import sys; print('Python %s on %s' % (sys.version, sys.platform))&#10;import django; print('Django %s' % django.get_version())&#10;sys.path.extend([WORKING_DIR_AND_PYTHON_PATHS])&#10;if 'setup' in dir(django): django.setup()&#10;import django_manage_shell; django_manage_shell.run(PROJECT_ROOT)" />
+  </component>
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
@@ -99,28 +135,31 @@
     <property name="WebServerToolWindowPanel.toolwindow.show.date" value="false" />
     <property name="WebServerToolWindowPanel.toolwindow.show.permissions" value="false" />
     <property name="WebServerToolWindowPanel.toolwindow.show.size" value="false" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/thexp/utils/colored" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/thexp-templete/arch" />
+    <property name="node.js.detected.package.eslint" value="true" />
+    <property name="node.js.path.for.package.eslint" value="project" />
+    <property name="node.js.selected.package.eslint" value="(autodetect)" />
     <property name="nodejs_package_manager_path" value="npm" />
     <property name="restartRequiresConfirmation" value="false" />
-    <property name="settings.editor.selected.configurable" value="project.propVCSSupport.Mappings" />
+    <property name="settings.editor.selected.configurable" value="reference.settings.project.statistic.project.settings" />
   </component>
   <component name="RecentsManager">
-    <key name="MoveFile.RECENT_KEYS">
-      <recent name="E:\Python\iLearn\thexp\thexp\future" />
-      <recent name="E:\Python\iLearn\thexp\tests\frame" />
-      <recent name="E:\Python\iLearn\thexp\thexp\contrib\data" />
-      <recent name="E:\Python\iLearn\thexp\thexp\cli" />
-      <recent name="E:\Python\iLearn\thexp\thexp" />
-    </key>
     <key name="CopyFile.RECENT_KEYS">
-      <recent name="E:\Python\iLearn\thexp\thexp\utils\colored" />
       <recent name="E:\Python\iLearn\thexp\thexp-templete\arch" />
+      <recent name="E:\Python\iLearn\thexp\thexp\utils\colored" />
       <recent name="E:\Python\iLearn\thexp" />
       <recent name="E:\Python\iLearn\thexp\thexp\frame" />
       <recent name="E:\Python\iLearn\thexp\thexp\future\audio" />
     </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="E:\Python\iLearn\thexp\thexp\utils" />
+      <recent name="E:\Python\iLearn\thexp" />
+      <recent name="E:\Python\iLearn\thexp\thexp\future" />
+      <recent name="E:\Python\iLearn\thexp\tests\frame" />
+      <recent name="E:\Python\iLearn\thexp\thexp\contrib\data" />
+    </key>
   </component>
-  <component name="RunManager" selected="Python.w">
+  <component name="RunManager" selected="Python tests.pytest for test_params.test_baseparams">
     <configuration name="8.params" type="PythonConfigurationType" factoryName="Python">
       <module name="thexp" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -143,89 +182,6 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="create_doc" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
-      <module name="thexp" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/create_doc.py" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-      <option name="MODULE_MODE" value="false" />
-      <option name="REDIRECT_INPUT" value="false" />
-      <option name="INPUT_FILE" value="" />
-      <method v="2" />
-    </configuration>
-    <configuration name="w" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
-      <module name="thexp" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/w.py" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-      <option name="MODULE_MODE" value="false" />
-      <option name="REDIRECT_INPUT" value="false" />
-      <option name="INPUT_FILE" value="" />
-      <method v="2" />
-    </configuration>
-    <configuration name="web" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
-      <module name="thexp" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/web.py" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-      <option name="MODULE_MODE" value="false" />
-      <option name="REDIRECT_INPUT" value="false" />
-      <option name="INPUT_FILE" value="" />
-      <method v="2" />
-    </configuration>
-    <configuration name="pytest for test_meter.test_avgmeter" type="tests" factoryName="py.test" temporary="true" nameIsGenerated="true">
-      <module name="thexp" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/tests/frame" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="_new_keywords" value="&quot;&quot;" />
-      <option name="_new_parameters" value="&quot;&quot;" />
-      <option name="_new_additionalArguments" value="&quot;&quot;" />
-      <option name="_new_target" value="&quot;test_meter.test_avgmeter&quot;" />
-      <option name="_new_targetType" value="&quot;PYTHON&quot;" />
-      <method v="2" />
-    </configuration>
     <configuration name="pytest for test_params.test_baseparams" type="tests" factoryName="py.test" temporary="true" nameIsGenerated="true">
       <module name="thexp" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -243,7 +199,7 @@
       <option name="_new_targetType" value="&quot;PYTHON&quot;" />
       <method v="2" />
     </configuration>
-    <configuration name="pytest for test_rndmanager.test_rndmanager" type="tests" factoryName="py.test" temporary="true" nameIsGenerated="true">
+    <configuration name="pytest for test_params.test_deafult_warn" type="tests" factoryName="py.test" temporary="true" nameIsGenerated="true">
       <module name="thexp" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -256,26 +212,76 @@
       <option name="_new_keywords" value="&quot;&quot;" />
       <option name="_new_parameters" value="&quot;&quot;" />
       <option name="_new_additionalArguments" value="&quot;&quot;" />
-      <option name="_new_target" value="&quot;test_rndmanager.test_rndmanager&quot;" />
+      <option name="_new_target" value="&quot;test_params.test_deafult_warn&quot;" />
       <option name="_new_targetType" value="&quot;PYTHON&quot;" />
+      <method v="2" />
+    </configuration>
+    <configuration name="pytest for test_trainer.test_callbacks" type="tests" factoryName="py.test" temporary="true" nameIsGenerated="true">
+      <module name="thexp" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/tests/frame" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="_new_keywords" value="&quot;&quot;" />
+      <option name="_new_parameters" value="&quot;&quot;" />
+      <option name="_new_additionalArguments" value="&quot;&quot;" />
+      <option name="_new_target" value="&quot;test_trainer.test_callbacks&quot;" />
+      <option name="_new_targetType" value="&quot;PYTHON&quot;" />
+      <method v="2" />
+    </configuration>
+    <configuration name="pytest in test_params.py" type="tests" factoryName="py.test" temporary="true" nameIsGenerated="true">
+      <module name="thexp" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/tests/frame" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="_new_keywords" value="&quot;&quot;" />
+      <option name="_new_parameters" value="&quot;&quot;" />
+      <option name="_new_additionalArguments" value="&quot;&quot;" />
+      <option name="_new_target" value="&quot;$PROJECT_DIR$/tests/frame/test_params.py&quot;" />
+      <option name="_new_targetType" value="&quot;PATH&quot;" />
+      <method v="2" />
+    </configuration>
+    <configuration name="pytest in tests" type="tests" factoryName="py.test" temporary="true" nameIsGenerated="true">
+      <module name="thexp" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/tests" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="_new_keywords" value="&quot;&quot;" />
+      <option name="_new_parameters" value="&quot;&quot;" />
+      <option name="_new_additionalArguments" value="&quot;&quot;" />
+      <option name="_new_target" value="&quot;$PROJECT_DIR$/tests&quot;" />
+      <option name="_new_targetType" value="&quot;PATH&quot;" />
       <method v="2" />
     </configuration>
     <list>
       <item itemvalue="Python.8.params" />
-      <item itemvalue="Python.create_doc" />
-      <item itemvalue="Python.w" />
-      <item itemvalue="Python.web" />
-      <item itemvalue="Python tests.pytest for test_meter.test_avgmeter" />
+      <item itemvalue="Python tests.pytest for test_trainer.test_callbacks" />
+      <item itemvalue="Python tests.pytest in tests" />
+      <item itemvalue="Python tests.pytest for test_params.test_deafult_warn" />
+      <item itemvalue="Python tests.pytest in test_params.py" />
       <item itemvalue="Python tests.pytest for test_params.test_baseparams" />
-      <item itemvalue="Python tests.pytest for test_rndmanager.test_rndmanager" />
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Python.w" />
-        <item itemvalue="Python.create_doc" />
-        <item itemvalue="Python.web" />
-        <item itemvalue="Python tests.pytest for test_rndmanager.test_rndmanager" />
         <item itemvalue="Python tests.pytest for test_params.test_baseparams" />
+        <item itemvalue="Python tests.pytest for test_params.test_deafult_warn" />
+        <item itemvalue="Python tests.pytest in test_params.py" />
+        <item itemvalue="Python tests.pytest in tests" />
+        <item itemvalue="Python tests.pytest for test_trainer.test_callbacks" />
       </list>
     </recent_temporary>
   </component>
@@ -448,352 +454,421 @@
       <workItem from="1598574663607" duration="8614000" />
       <workItem from="1598777487003" duration="2908000" />
       <workItem from="1598839896339" duration="1923000" />
-      <workItem from="1599008990943" duration="1916000" />
+      <workItem from="1599008990943" duration="2769000" />
+      <workItem from="1599102230967" duration="3061000" />
+      <workItem from="1599265314097" duration="1134000" />
+      <workItem from="1599609254647" duration="1308000" />
+      <workItem from="1599782103519" duration="3098000" />
+      <workItem from="1600245078943" duration="4228000" />
+      <workItem from="1600324940270" duration="6458000" />
+      <workItem from="1600341011997" duration="2704000" />
+      <workItem from="1600391224998" duration="1647000" />
+      <workItem from="1600650563066" duration="1270000" />
+      <workItem from="1600669071731" duration="291000" />
+      <workItem from="1600756447537" duration="5049000" />
+      <workItem from="1600775424440" duration="4145000" />
+      <workItem from="1600819860066" duration="457000" />
+      <workItem from="1600820434664" duration="3264000" />
+      <workItem from="1600915760593" duration="1410000" />
+      <workItem from="1600999880221" duration="692000" />
+      <workItem from="1601103347545" duration="2148000" />
+      <workItem from="1601255642591" duration="5662000" />
+      <workItem from="1601350068282" duration="111000" />
+      <workItem from="1601557912895" duration="1484000" />
+      <workItem from="1601640548384" duration="4590000" />
+      <workItem from="1601780036000" duration="2720000" />
+      <workItem from="1601804710468" duration="834000" />
+      <workItem from="1601862524912" duration="5126000" />
+      <workItem from="1601887744520" duration="2161000" />
+      <workItem from="1601948611252" duration="8645000" />
+      <workItem from="1601971098880" duration="1974000" />
+      <workItem from="1602036054090" duration="609000" />
+      <workItem from="1602042319049" duration="1888000" />
+      <workItem from="1602119564880" duration="4926000" />
+      <workItem from="1602759190805" duration="2751000" />
+      <workItem from="1602830524735" duration="9000" />
+      <workItem from="1602835016151" duration="678000" />
+      <workItem from="1603163242354" duration="2480000" />
+      <workItem from="1603261630265" duration="852000" />
+      <workItem from="1603278044238" duration="620000" />
+      <workItem from="1603673908772" duration="2771000" />
+      <workItem from="1604229820678" duration="678000" />
+      <workItem from="1604453749910" duration="978000" />
+      <workItem from="1604456805582" duration="1466000" />
+      <workItem from="1604647811265" duration="1358000" />
+      <workItem from="1604746607226" duration="2329000" />
+      <workItem from="1604907274786" duration="2146000" />
+      <workItem from="1605063712552" duration="831000" />
+      <workItem from="1605489082802" duration="10813000" />
+      <workItem from="1605616912465" duration="1446000" />
+      <workItem from="1605878988728" duration="2372000" />
+      <workItem from="1606098193077" duration="3025000" />
+      <workItem from="1606180644746" duration="2287000" />
+      <workItem from="1606743290809" duration="1033000" />
+      <workItem from="1606867783932" duration="5697000" />
+      <workItem from="1606892182083" duration="2144000" />
+      <workItem from="1606957854294" duration="2316000" />
+      <workItem from="1607075246109" duration="867000" />
+      <workItem from="1607305038026" duration="2427000" />
+      <workItem from="1607426125250" duration="4711000" />
+      <workItem from="1607473775845" duration="678000" />
+      <workItem from="1607502849254" duration="1536000" />
+      <workItem from="1607597874504" duration="1004000" />
+      <workItem from="1607667902503" duration="1785000" />
+      <workItem from="1607675349767" duration="675000" />
+      <workItem from="1607950595408" duration="679000" />
+      <workItem from="1608340221930" duration="3830000" />
+      <workItem from="1608449966404" duration="908000" />
+      <workItem from="1608538011493" duration="2245000" />
+      <workItem from="1608774107274" duration="1005000" />
+      <workItem from="1609035101522" duration="1794000" />
+      <workItem from="1609119977830" duration="11526000" />
+      <workItem from="1609211633207" duration="1700000" />
     </task>
-    <task id="LOCAL-00005" summary="change">
-      <created>1589939036175</created>
-      <option name="number" value="00005" />
-      <option name="presentableId" value="LOCAL-00005" />
+    <task id="LOCAL-00060" summary="fix problem of default setting; add tmp_dir parameter">
+      <created>1600327228142</created>
+      <option name="number" value="00060" />
+      <option name="presentableId" value="LOCAL-00060" />
       <option name="project" value="LOCAL" />
-      <updated>1589939036175</updated>
+      <updated>1600327228142</updated>
     </task>
-    <task id="LOCAL-00006" summary="change">
-      <created>1589941390040</created>
-      <option name="number" value="00006" />
-      <option name="presentableId" value="LOCAL-00006" />
+    <task id="LOCAL-00061" summary="add tmp_dir environment feature">
+      <created>1600327239788</created>
+      <option name="number" value="00061" />
+      <option name="presentableId" value="LOCAL-00061" />
       <option name="project" value="LOCAL" />
-      <updated>1589941390040</updated>
+      <updated>1600327239788</updated>
     </task>
-    <task id="LOCAL-00007" summary="change">
-      <created>1589941403520</created>
-      <option name="number" value="00007" />
-      <option name="presentableId" value="LOCAL-00007" />
+    <task id="LOCAL-00062" summary="fix some bugs">
+      <created>1600341275131</created>
+      <option name="number" value="00062" />
+      <option name="presentableId" value="LOCAL-00062" />
       <option name="project" value="LOCAL" />
-      <updated>1589941403520</updated>
+      <updated>1600341275131</updated>
     </task>
-    <task id="LOCAL-00008" summary="change">
-      <created>1591834867254</created>
-      <option name="number" value="00008" />
-      <option name="presentableId" value="LOCAL-00008" />
+    <task id="LOCAL-00063" summary="fix `attr.__getattr__`, None value will return None instead of `attr` instance">
+      <created>1600391531856</created>
+      <option name="number" value="00063" />
+      <option name="presentableId" value="LOCAL-00063" />
       <option name="project" value="LOCAL" />
-      <updated>1591834867254</updated>
+      <updated>1600391531857</updated>
     </task>
-    <task id="LOCAL-00009" summary="添加一些例子">
-      <created>1593788145443</created>
-      <option name="number" value="00009" />
-      <option name="presentableId" value="LOCAL-00009" />
+    <task id="LOCAL-00064" summary="fix some bugs">
+      <created>1600391552594</created>
+      <option name="number" value="00064" />
+      <option name="presentableId" value="LOCAL-00064" />
       <option name="project" value="LOCAL" />
-      <updated>1593788145443</updated>
+      <updated>1600391552594</updated>
     </task>
-    <task id="LOCAL-00010" summary="replace rampup to schedule.py">
-      <created>1593788203731</created>
-      <option name="number" value="00010" />
-      <option name="presentableId" value="LOCAL-00010" />
+    <task id="LOCAL-00065" summary="change __repr__ of BoardQuery">
+      <created>1600650630702</created>
+      <option name="number" value="00065" />
+      <option name="presentableId" value="LOCAL-00065" />
       <option name="project" value="LOCAL" />
-      <updated>1593788203731</updated>
+      <updated>1600650630804</updated>
     </task>
-    <task id="LOCAL-00011" summary="add feature">
-      <created>1593788220930</created>
-      <option name="number" value="00011" />
-      <option name="presentableId" value="LOCAL-00011" />
+    <task id="LOCAL-00066" summary="update more schedules, define period schedule">
+      <created>1600772867244</created>
+      <option name="number" value="00066" />
+      <option name="presentableId" value="LOCAL-00066" />
       <option name="project" value="LOCAL" />
-      <updated>1593788220930</updated>
+      <updated>1600772867244</updated>
     </task>
-    <task id="LOCAL-00012" summary="add params vartype">
-      <created>1593788240106</created>
-      <option name="number" value="00012" />
-      <option name="presentableId" value="LOCAL-00012" />
+    <task id="LOCAL-00067" summary="add elementwise dot between vector and matrix">
+      <created>1600772894621</created>
+      <option name="number" value="00067" />
+      <option name="presentableId" value="LOCAL-00067" />
       <option name="project" value="LOCAL" />
-      <updated>1593788240106</updated>
+      <updated>1600772894622</updated>
     </task>
-    <task id="LOCAL-00013" summary="add frames features">
-      <created>1593788268001</created>
-      <option name="number" value="00013" />
-      <option name="presentableId" value="LOCAL-00013" />
+    <task id="LOCAL-00068" summary="update params.SCHE">
+      <created>1600773039806</created>
+      <option name="number" value="00068" />
+      <option name="presentableId" value="LOCAL-00068" />
       <option name="project" value="LOCAL" />
-      <updated>1593788268001</updated>
+      <updated>1600773039806</updated>
     </task>
-    <task id="LOCAL-00014" summary="change something">
-      <created>1593788292816</created>
-      <option name="number" value="00014" />
-      <option name="presentableId" value="LOCAL-00014" />
+    <task id="LOCAL-00069" summary="fix read repository add_value bug">
+      <created>1600773177798</created>
+      <option name="number" value="00069" />
+      <option name="presentableId" value="LOCAL-00069" />
       <option name="project" value="LOCAL" />
-      <updated>1593788292816</updated>
+      <updated>1600773177798</updated>
     </task>
-    <task id="LOCAL-00015" summary="添加了一个旋转图片的方法">
-      <created>1594477899821</created>
-      <option name="number" value="00015" />
-      <option name="presentableId" value="LOCAL-00015" />
+    <task id="LOCAL-00070" summary="change time method of LoggerCallback">
+      <created>1600773212601</created>
+      <option name="number" value="00070" />
+      <option name="presentableId" value="LOCAL-00070" />
       <option name="project" value="LOCAL" />
-      <updated>1594477899822</updated>
+      <updated>1600773212601</updated>
     </task>
-    <task id="LOCAL-00016" summary="调整了方法顺序，添加了更多的方法参数">
-      <created>1594477960242</created>
-      <option name="number" value="00016" />
-      <option name="presentableId" value="LOCAL-00016" />
+    <task id="LOCAL-00071" summary="add assert tips">
+      <created>1600773233497</created>
+      <option name="number" value="00071" />
+      <option name="presentableId" value="LOCAL-00071" />
       <option name="project" value="LOCAL" />
-      <updated>1594477960242</updated>
+      <updated>1600773233497</updated>
     </task>
-    <task id="LOCAL-00017" summary="细节调整">
-      <created>1594477971471</created>
-      <option name="number" value="00017" />
-      <option name="presentableId" value="LOCAL-00017" />
+    <task id="LOCAL-00072" summary="update schedule">
+      <created>1600773258674</created>
+      <option name="number" value="00072" />
+      <option name="presentableId" value="LOCAL-00072" />
       <option name="project" value="LOCAL" />
-      <updated>1594477971471</updated>
+      <updated>1600773258675</updated>
     </task>
-    <task id="LOCAL-00018" summary="添加了数据集相关的方法和类用于编写操作">
-      <created>1594477993358</created>
-      <option name="number" value="00018" />
-      <option name="presentableId" value="LOCAL-00018" />
+    <task id="LOCAL-00073" summary="add last version code">
+      <created>1600773279001</created>
+      <option name="number" value="00073" />
+      <option name="presentableId" value="LOCAL-00073" />
       <option name="project" value="LOCAL" />
-      <updated>1594477993358</updated>
+      <updated>1600773279001</updated>
     </task>
-    <task id="LOCAL-00019" summary="废弃该类">
-      <created>1594478002671</created>
-      <option name="number" value="00019" />
-      <option name="presentableId" value="LOCAL-00019" />
+    <task id="LOCAL-00074" summary="update schedule.py">
+      <created>1600777148877</created>
+      <option name="number" value="00074" />
+      <option name="presentableId" value="LOCAL-00074" />
       <option name="project" value="LOCAL" />
-      <updated>1594478002671</updated>
+      <updated>1600777148878</updated>
     </task>
-    <task id="LOCAL-00020" summary="添加了强增广及其对应的一系列增广方法，RandAugment">
-      <created>1594478054776</created>
-      <option name="number" value="00020" />
-      <option name="presentableId" value="LOCAL-00020" />
+    <task id="LOCAL-00075" summary="update viewer.py">
+      <created>1600819926942</created>
+      <option name="number" value="00075" />
+      <option name="presentableId" value="LOCAL-00075" />
       <option name="project" value="LOCAL" />
-      <updated>1594478054776</updated>
+      <updated>1600819926943</updated>
     </task>
-    <task id="LOCAL-00021" summary="添加了EMA模型、MetaNet和WRN，以后会持续添加可直接应用的模型结果">
-      <created>1594478092664</created>
-      <option name="number" value="00021" />
-      <option name="presentableId" value="LOCAL-00021" />
+    <task id="LOCAL-00076" summary="fix bug of testviewer.json_info">
+      <created>1600820295479</created>
+      <option name="number" value="00076" />
+      <option name="presentableId" value="LOCAL-00076" />
       <option name="project" value="LOCAL" />
-      <updated>1594478092664</updated>
+      <updated>1600820295479</updated>
     </task>
-    <task id="LOCAL-00022" summary="新增Schedule，渐变方法，或许换个名比较好">
-      <created>1594478130683</created>
-      <option name="number" value="00022" />
-      <option name="presentableId" value="LOCAL-00022" />
+    <task id="LOCAL-00077" summary="fix default value setting bug">
+      <created>1600862167762</created>
+      <option name="number" value="00077" />
+      <option name="presentableId" value="LOCAL-00077" />
       <option name="project" value="LOCAL" />
-      <updated>1594478130683</updated>
+      <updated>1600862167762</updated>
     </task>
-    <task id="LOCAL-00023" summary="添加了对yield的支持，如果返回迭代器，那么会消耗掉迭代器并返回最后一次迭代的结果">
-      <created>1594539026454</created>
-      <option name="number" value="00023" />
-      <option name="presentableId" value="LOCAL-00023" />
+    <task id="LOCAL-00078" summary="change ParamsGroups.create_param_group from instance method to staticmethod">
+      <created>1601350178556</created>
+      <option name="number" value="00078" />
+      <option name="presentableId" value="LOCAL-00078" />
       <option name="project" value="LOCAL" />
-      <updated>1594539026454</updated>
+      <updated>1601350178557</updated>
     </task>
-    <task id="LOCAL-00024" summary="将config、experiment、git repo分离，同时优化了配置读取逻辑，大幅提升了初始化效率">
-      <created>1595848908849</created>
-      <option name="number" value="00024" />
-      <option name="presentableId" value="LOCAL-00024" />
+    <task id="LOCAL-00079" summary="update builder type hint add kwargs">
+      <created>1601558455598</created>
+      <option name="number" value="00079" />
+      <option name="presentableId" value="LOCAL-00079" />
       <option name="project" value="LOCAL" />
-      <updated>1595848908849</updated>
+      <updated>1601558455599</updated>
     </task>
-    <task id="LOCAL-00025" summary="fix">
-      <created>1596100918851</created>
-      <option name="number" value="00025" />
-      <option name="presentableId" value="LOCAL-00025" />
+    <task id="LOCAL-00080" summary="update builder.py">
+      <created>1601558574148</created>
+      <option name="number" value="00080" />
+      <option name="presentableId" value="LOCAL-00080" />
       <option name="project" value="LOCAL" />
-      <updated>1596100918851</updated>
+      <updated>1601558574148</updated>
     </task>
-    <task id="LOCAL-00026" summary="add generic type hint">
-      <created>1596329243830</created>
-      <option name="number" value="00026" />
-      <option name="presentableId" value="LOCAL-00026" />
+    <task id="LOCAL-00081" summary="add distribution features">
+      <created>1601887803271</created>
+      <option name="number" value="00081" />
+      <option name="presentableId" value="LOCAL-00081" />
       <option name="project" value="LOCAL" />
-      <updated>1596329243830</updated>
+      <updated>1601887803271</updated>
     </task>
-    <task id="LOCAL-00027" summary="update docs">
-      <created>1597220079903</created>
-      <option name="number" value="00027" />
-      <option name="presentableId" value="LOCAL-00027" />
+    <task id="LOCAL-00082" summary="support distributied-training">
+      <created>1601950605643</created>
+      <option name="number" value="00082" />
+      <option name="presentableId" value="LOCAL-00082" />
       <option name="project" value="LOCAL" />
-      <updated>1597220079903</updated>
+      <updated>1601950605644</updated>
     </task>
-    <task id="LOCAL-00028" summary="update docs">
-      <created>1597220221928</created>
-      <option name="number" value="00028" />
-      <option name="presentableId" value="LOCAL-00028" />
+    <task id="LOCAL-00083" summary="add distributed-training support">
+      <created>1601950620494</created>
+      <option name="number" value="00083" />
+      <option name="presentableId" value="LOCAL-00083" />
       <option name="project" value="LOCAL" />
-      <updated>1597220221928</updated>
+      <updated>1601950620494</updated>
     </task>
-    <task id="LOCAL-00029" summary="update imgs">
-      <created>1597220277514</created>
-      <option name="number" value="00029" />
-      <option name="presentableId" value="LOCAL-00029" />
+    <task id="LOCAL-00084" summary="add distributed-training support">
+      <created>1601950635233</created>
+      <option name="number" value="00084" />
+      <option name="presentableId" value="LOCAL-00084" />
       <option name="project" value="LOCAL" />
-      <updated>1597220277514</updated>
+      <updated>1601950635233</updated>
     </task>
-    <task id="LOCAL-00030" summary="update docs">
-      <created>1597220527955</created>
-      <option name="number" value="00030" />
-      <option name="presentableId" value="LOCAL-00030" />
+    <task id="LOCAL-00085" summary="fix LRSchedule, if lr_sche is None, this callback will be unhooked automaticly.">
+      <created>1604647972197</created>
+      <option name="number" value="00085" />
+      <option name="presentableId" value="LOCAL-00085" />
       <option name="project" value="LOCAL" />
-      <updated>1597220527955</updated>
+      <updated>1604647972198</updated>
     </task>
-    <task id="LOCAL-00031" summary="update docs">
-      <created>1597221904706</created>
-      <option name="number" value="00031" />
-      <option name="presentableId" value="LOCAL-00031" />
+    <task id="LOCAL-00086" summary="add np.ndarray bool type support">
+      <created>1604907439508</created>
+      <option name="number" value="00086" />
+      <option name="presentableId" value="LOCAL-00086" />
       <option name="project" value="LOCAL" />
-      <updated>1597221904706</updated>
+      <updated>1604907439509</updated>
     </task>
-    <task id="LOCAL-00032" summary="update docs">
-      <created>1597222021007</created>
-      <option name="number" value="00032" />
-      <option name="presentableId" value="LOCAL-00032" />
+    <task id="LOCAL-00087" summary="colored module">
+      <created>1606134172796</created>
+      <option name="number" value="00087" />
+      <option name="presentableId" value="LOCAL-00087" />
       <option name="project" value="LOCAL" />
-      <updated>1597222021007</updated>
+      <updated>1606134172797</updated>
     </task>
-    <task id="LOCAL-00033" summary="update docs">
-      <created>1597224837890</created>
-      <option name="number" value="00033" />
-      <option name="presentableId" value="LOCAL-00033" />
+    <task id="LOCAL-00088" summary="move callbacks() function before models() and datasets()">
+      <created>1606134228849</created>
+      <option name="number" value="00088" />
+      <option name="presentableId" value="LOCAL-00088" />
       <option name="project" value="LOCAL" />
-      <updated>1597224837890</updated>
+      <updated>1606134228849</updated>
     </task>
-    <task id="LOCAL-00034" summary="fix tensorboard kwargs">
-      <created>1597225684284</created>
-      <option name="number" value="00034" />
-      <option name="presentableId" value="LOCAL-00034" />
+    <task id="LOCAL-00089" summary="add some features">
+      <created>1606134242735</created>
+      <option name="number" value="00089" />
+      <option name="presentableId" value="LOCAL-00089" />
       <option name="project" value="LOCAL" />
-      <updated>1597225684284</updated>
+      <updated>1606134242736</updated>
     </task>
-    <task id="LOCAL-00035" summary="fix tensorboard kwargs">
-      <created>1597225887364</created>
-      <option name="number" value="00035" />
-      <option name="presentableId" value="LOCAL-00035" />
+    <task id="LOCAL-00090" summary="add some features">
+      <created>1606134258124</created>
+      <option name="number" value="00090" />
+      <option name="presentableId" value="LOCAL-00090" />
       <option name="project" value="LOCAL" />
-      <updated>1597225887364</updated>
+      <updated>1606134258124</updated>
     </task>
-    <task id="LOCAL-00036" summary="change version">
-      <created>1597226180064</created>
-      <option name="number" value="00036" />
-      <option name="presentableId" value="LOCAL-00036" />
+    <task id="LOCAL-00091" summary="add on_initial_end() function;&#10;add HoldMemory callback">
+      <created>1606134291500</created>
+      <option name="number" value="00091" />
+      <option name="presentableId" value="LOCAL-00091" />
       <option name="project" value="LOCAL" />
-      <updated>1597226180064</updated>
+      <updated>1606134291500</updated>
     </task>
-    <task id="LOCAL-00037" summary="change exp flags">
-      <created>1598100208698</created>
-      <option name="number" value="00037" />
-      <option name="presentableId" value="LOCAL-00037" />
+    <task id="LOCAL-00092" summary="add some features">
+      <created>1606134307704</created>
+      <option name="number" value="00092" />
+      <option name="presentableId" value="LOCAL-00092" />
       <option name="project" value="LOCAL" />
-      <updated>1598100208698</updated>
+      <updated>1606134307704</updated>
     </task>
-    <task id="LOCAL-00038" summary="fix log/exp schedule">
-      <created>1598487811135</created>
-      <option name="number" value="00038" />
-      <option name="presentableId" value="LOCAL-00038" />
+    <task id="LOCAL-00093" summary="implement a more elegant way to apply for GPU memory safely">
+      <created>1607429981411</created>
+      <option name="number" value="00093" />
+      <option name="presentableId" value="LOCAL-00093" />
       <option name="project" value="LOCAL" />
-      <updated>1598487811135</updated>
+      <updated>1607429981412</updated>
     </task>
-    <task id="LOCAL-00039" summary="add SCHE.Log/Exp">
-      <created>1598487828843</created>
-      <option name="number" value="00039" />
-      <option name="presentableId" value="LOCAL-00039" />
+    <task id="LOCAL-00094" summary="fix a thread problem">
+      <created>1607502953912</created>
+      <option name="number" value="00094" />
+      <option name="presentableId" value="LOCAL-00094" />
       <option name="project" value="LOCAL" />
-      <updated>1598487828843</updated>
+      <updated>1607502953912</updated>
     </task>
-    <task id="LOCAL-00040" summary="Add ReportSche">
-      <created>1598488042562</created>
-      <option name="number" value="00040" />
-      <option name="presentableId" value="LOCAL-00040" />
+    <task id="LOCAL-00095" summary="优化了随机种子设置的逻辑">
+      <created>1607668335755</created>
+      <option name="number" value="00095" />
+      <option name="presentableId" value="LOCAL-00095" />
       <option name="project" value="LOCAL" />
-      <updated>1598488042562</updated>
+      <updated>1607668335759</updated>
     </task>
-    <task id="LOCAL-00041" summary="add __len__ of delegate">
-      <created>1598488065010</created>
-      <option name="number" value="00041" />
-      <option name="presentableId" value="LOCAL-00041" />
+    <task id="LOCAL-00096" summary="尝试修复了 DataBundler 包含多个 DataLoader 且在多线程模式下使用 cycle 时的 kill signal 错误">
+      <created>1608450021135</created>
+      <option name="number" value="00096" />
+      <option name="presentableId" value="LOCAL-00096" />
       <option name="project" value="LOCAL" />
-      <updated>1598488065010</updated>
+      <updated>1608450021136</updated>
     </task>
-    <task id="LOCAL-00042" summary="add more features">
-      <created>1598488999539</created>
-      <option name="number" value="00042" />
-      <option name="presentableId" value="LOCAL-00042" />
+    <task id="LOCAL-00097" summary="修复了 EvalCallback 训练结束后的回调">
+      <created>1608450056958</created>
+      <option name="number" value="00097" />
+      <option name="presentableId" value="LOCAL-00097" />
       <option name="project" value="LOCAL" />
-      <updated>1598488999539</updated>
+      <updated>1608450056958</updated>
     </task>
-    <task id="LOCAL-00043" summary="fix order problem">
-      <created>1598489014654</created>
-      <option name="number" value="00043" />
-      <option name="presentableId" value="LOCAL-00043" />
+    <task id="LOCAL-00098" summary="优化了 EvalCallback 的逻辑">
+      <created>1608450213586</created>
+      <option name="number" value="00098" />
+      <option name="presentableId" value="LOCAL-00098" />
       <option name="project" value="LOCAL" />
-      <updated>1598489014654</updated>
+      <updated>1608450213586</updated>
     </task>
-    <task id="LOCAL-00044" summary="add log/params command">
-      <created>1598489027781</created>
-      <option name="number" value="00044" />
-      <option name="presentableId" value="LOCAL-00044" />
+    <task id="LOCAL-00099" summary="方法优化">
+      <created>1608450255636</created>
+      <option name="number" value="00099" />
+      <option name="presentableId" value="LOCAL-00099" />
       <option name="project" value="LOCAL" />
-      <updated>1598489027781</updated>
+      <updated>1608450255636</updated>
     </task>
-    <task id="LOCAL-00045" summary="update doc">
-      <created>1598616545627</created>
-      <option name="number" value="00045" />
-      <option name="presentableId" value="LOCAL-00045" />
+    <task id="LOCAL-00100" summary="fix some bugs">
+      <created>1608538691629</created>
+      <option name="number" value="00100" />
+      <option name="presentableId" value="LOCAL-00100" />
       <option name="project" value="LOCAL" />
-      <updated>1598616545627</updated>
+      <updated>1608538691629</updated>
     </task>
-    <task id="LOCAL-00046" summary="update eng doc">
-      <created>1598616555338</created>
-      <option name="number" value="00046" />
-      <option name="presentableId" value="LOCAL-00046" />
+    <task id="LOCAL-00101" summary="提升了设置随机种子的体验，不同机器间的 mark 现在是相同的了">
+      <created>1608538723512</created>
+      <option name="number" value="00101" />
+      <option name="presentableId" value="LOCAL-00101" />
       <option name="project" value="LOCAL" />
-      <updated>1598616555338</updated>
+      <updated>1608538723512</updated>
     </task>
-    <task id="LOCAL-00047" summary="fix spell error">
-      <created>1598777785302</created>
-      <option name="number" value="00047" />
-      <option name="presentableId" value="LOCAL-00047" />
+    <task id="LOCAL-00102" summary="add *.pkl">
+      <created>1608538755176</created>
+      <option name="number" value="00102" />
+      <option name="presentableId" value="LOCAL-00102" />
       <option name="project" value="LOCAL" />
-      <updated>1598777785302</updated>
+      <updated>1608538755177</updated>
     </task>
-    <task id="LOCAL-00048" summary="update docs">
-      <created>1599018258851</created>
-      <option name="number" value="00048" />
-      <option name="presentableId" value="LOCAL-00048" />
+    <task id="LOCAL-00103" summary="fix some files">
+      <created>1608538939351</created>
+      <option name="number" value="00103" />
+      <option name="presentableId" value="LOCAL-00103" />
       <option name="project" value="LOCAL" />
-      <updated>1599018258851</updated>
+      <updated>1608538939351</updated>
     </task>
-    <task id="LOCAL-00049" summary="fix tensorboard kwargs">
-      <created>1599018294859</created>
-      <option name="number" value="00049" />
-      <option name="presentableId" value="LOCAL-00049" />
+    <task id="LOCAL-00104" summary="支持了 TestsQuery 的模糊搜索">
+      <created>1609124636956</created>
+      <option name="number" value="00104" />
+      <option name="presentableId" value="LOCAL-00104" />
       <option name="project" value="LOCAL" />
-      <updated>1599018294859</updated>
+      <updated>1609124636957</updated>
     </task>
-    <task id="LOCAL-00050" summary="new big version">
-      <created>1599018365400</created>
-      <option name="number" value="00050" />
-      <option name="presentableId" value="LOCAL-00050" />
+    <task id="LOCAL-00105" summary="优化了 re 的来源">
+      <created>1609124655232</created>
+      <option name="number" value="00105" />
+      <option name="presentableId" value="LOCAL-00105" />
       <option name="project" value="LOCAL" />
-      <updated>1599018365401</updated>
+      <updated>1609124655232</updated>
     </task>
-    <task id="LOCAL-00051" summary="commit">
-      <created>1599018377732</created>
-      <option name="number" value="00051" />
-      <option name="presentableId" value="LOCAL-00051" />
+    <task id="LOCAL-00106" summary="优化了 re 的表示形式">
+      <created>1609124749864</created>
+      <option name="number" value="00106" />
+      <option name="presentableId" value="LOCAL-00106" />
       <option name="project" value="LOCAL" />
-      <updated>1599018377732</updated>
+      <updated>1609124749864</updated>
     </task>
-    <task id="LOCAL-00052" summary="update docs">
-      <created>1599018743012</created>
-      <option name="number" value="00052" />
-      <option name="presentableId" value="LOCAL-00052" />
+    <task id="LOCAL-00107" summary="for quicker start">
+      <created>1609143061067</created>
+      <option name="number" value="00107" />
+      <option name="presentableId" value="LOCAL-00107" />
       <option name="project" value="LOCAL" />
-      <updated>1599018743012</updated>
+      <updated>1609143061067</updated>
     </task>
-    <task id="LOCAL-00053" summary="update docs">
-      <created>1599018921815</created>
-      <option name="number" value="00053" />
-      <option name="presentableId" value="LOCAL-00053" />
+    <task id="LOCAL-00108" summary="update gitignore for thexp template">
+      <created>1609143239664</created>
+      <option name="number" value="00108" />
+      <option name="presentableId" value="LOCAL-00108" />
       <option name="project" value="LOCAL" />
-      <updated>1599018921815</updated>
+      <updated>1609143239665</updated>
     </task>
-    <option name="localTasksCounter" value="54" />
+    <option name="localTasksCounter" value="109" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -816,162 +891,123 @@
       <path value="$PROJECT_DIR$/../thexp-test" />
       <path value="$PROJECT_DIR$/../thexp-test2" />
     </ignored-roots>
-    <MESSAGE value="废弃该类" />
-    <MESSAGE value="添加了强增广及其对应的一系列增广方法，RandAugment" />
-    <MESSAGE value="添加了EMA模型、MetaNet和WRN，以后会持续添加可直接应用的模型结果" />
-    <MESSAGE value="新增Schedule，渐变方法，或许换个名比较好" />
-    <MESSAGE value="添加了对yield的支持，如果返回迭代器，那么会消耗掉迭代器并返回最后一次迭代的结果" />
-    <MESSAGE value="将config、experiment、git repo分离，同时优化了配置读取逻辑，大幅提升了初始化效率" />
-    <MESSAGE value="fix" />
-    <MESSAGE value="add generic type hint" />
-    <MESSAGE value="update imgs" />
-    <MESSAGE value="change version" />
-    <MESSAGE value="change exp flags" />
-    <MESSAGE value="fix log/exp schedule" />
-    <MESSAGE value="add SCHE.Log/Exp" />
-    <MESSAGE value="Add ReportSche" />
-    <MESSAGE value="add __len__ of delegate" />
-    <MESSAGE value="add more features" />
-    <MESSAGE value="fix order problem" />
-    <MESSAGE value="add log/params command" />
-    <MESSAGE value="update doc" />
-    <MESSAGE value="update eng doc" />
-    <MESSAGE value="fix spell error" />
-    <MESSAGE value="fix tensorboard kwargs" />
-    <MESSAGE value="new big version" />
-    <MESSAGE value="commit" />
-    <MESSAGE value="update docs" />
-    <option name="LAST_COMMIT_MESSAGE" value="update docs" />
+    <MESSAGE value="add distribution features" />
+    <MESSAGE value="support distributied-training" />
+    <MESSAGE value="add distributed-training support" />
+    <MESSAGE value="fix LRSchedule, if lr_sche is None, this callback will be unhooked automaticly." />
+    <MESSAGE value="add np.ndarray bool type support" />
+    <MESSAGE value="colored module" />
+    <MESSAGE value="move callbacks() function before models() and datasets()" />
+    <MESSAGE value="add on_initial_end() function;&#10;add HoldMemory callback" />
+    <MESSAGE value="add some features" />
+    <MESSAGE value="implement a more elegant way to apply for GPU memory safely" />
+    <MESSAGE value="fix a thread problem" />
+    <MESSAGE value="优化了随机种子设置的逻辑" />
+    <MESSAGE value="尝试修复了 DataBundler 包含多个 DataLoader 且在多线程模式下使用 cycle 时的 kill signal 错误" />
+    <MESSAGE value="修复了 EvalCallback 训练结束后的回调" />
+    <MESSAGE value="优化了 EvalCallback 的逻辑" />
+    <MESSAGE value="方法优化" />
+    <MESSAGE value="fix some bugs" />
+    <MESSAGE value="提升了设置随机种子的体验，不同机器间的 mark 现在是相同的了" />
+    <MESSAGE value="add *.pkl" />
+    <MESSAGE value="fix some files" />
+    <MESSAGE value="支持了 TestsQuery 的模糊搜索" />
+    <MESSAGE value="优化了 re 的来源" />
+    <MESSAGE value="优化了 re 的表示形式" />
+    <MESSAGE value="for quicker start" />
+    <MESSAGE value="update gitignore for thexp template" />
+    <option name="LAST_COMMIT_MESSAGE" value="update gitignore for thexp template" />
   </component>
   <component name="WindowStateProjectService">
-    <state x="552" y="181" key="#Deployment" timestamp="1596365712335">
+    <state x="552" y="181" key="#Deployment" timestamp="1601641722084">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="552" y="181" key="#Deployment/0.0.1920.1040@0.0.1920.1040" timestamp="1596365712335" />
-    <state x="552" y="178" width="816" height="779" key="#Intentions" timestamp="1596422496254">
+    <state x="552" y="181" key="#Deployment/0.0.1920.1040@0.0.1920.1040" timestamp="1601641722084" />
+    <state x="629" y="328" key="#com.intellij.fileTypes.FileTypeChooser" timestamp="1609231008320">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="552" y="178" width="816" height="779" key="#Intentions/0.0.1920.1040@0.0.1920.1040" timestamp="1596422496254" />
-    <state x="842" y="381" key="#Notifications" timestamp="1599008992210">
+    <state x="419" y="214" key="#com.intellij.fileTypes.FileTypeChooser/0.0.1280.680@0.0.1280.680" timestamp="1606868332747" />
+    <state x="629" y="328" key="#com.intellij.fileTypes.FileTypeChooser/0.0.1920.1040@0.0.1920.1040" timestamp="1609231008320" />
+    <state x="765" y="239" key="#com.intellij.ide.util.MemberChooser" timestamp="1609143581347">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="842" y="381" key="#Notifications/0.0.1920.1040@0.0.1920.1040" timestamp="1599008992210" />
-    <state x="552" y="160" key="#Plugins" timestamp="1596422495917">
+    <state x="510" y="112" key="#com.intellij.ide.util.MemberChooser/0.0.1280.680@0.0.1280.680" timestamp="1606871159361" />
+    <state x="765" y="239" key="#com.intellij.ide.util.MemberChooser/0.0.1920.1040@0.0.1920.1040" timestamp="1609143581347" />
+    <state x="690" y="266" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog" timestamp="1609231005566">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="552" y="160" key="#Plugins/0.0.1920.1040@0.0.1920.1040" timestamp="1596422495917" />
-    <state x="414" y="174" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1596194222046">
+    <state x="690" y="266" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1609231005566" />
+    <state x="654" y="154" key="CommitChangelistDialog2" timestamp="1609143278570">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="414" y="174" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1596194222046" />
-    <state x="629" y="328" key="#com.intellij.fileTypes.FileTypeChooser" timestamp="1597287778677">
+    <state x="460" y="0" key="CommitChangelistDialog2/0.0.1280.680@0.0.1280.680" timestamp="1608450270865" />
+    <state x="654" y="154" key="CommitChangelistDialog2/0.0.1920.1040@0.0.1920.1040" timestamp="1609143278570" />
+    <state x="746" y="284" key="FileChooserDialogImpl" timestamp="1609141956257">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="629" y="328" key="#com.intellij.fileTypes.FileTypeChooser/0.0.1920.1040@0.0.1920.1040" timestamp="1597287778677" />
-    <state x="765" y="239" key="#com.intellij.ide.util.MemberChooser" timestamp="1597799601619">
+    <state x="746" y="284" key="FileChooserDialogImpl/0.0.1920.1040@0.0.1920.1040" timestamp="1609141956257" />
+    <state width="1877" height="218" key="GridCell.Tab.0.bottom" timestamp="1609231050138">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="765" y="239" key="#com.intellij.ide.util.MemberChooser/0.0.1920.1040@0.0.1920.1040" timestamp="1597799601619" />
-    <state x="690" y="269" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog" timestamp="1597219256309">
+    <state width="1237" height="125" key="GridCell.Tab.0.bottom/0.0.1280.680@0.0.1280.680" timestamp="1606871663563" />
+    <state width="1877" height="218" key="GridCell.Tab.0.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1609231050138" />
+    <state width="1877" height="218" key="GridCell.Tab.0.center" timestamp="1609231050138">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="690" y="269" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1597219256309" />
-    <state x="806" y="418" key="#com.jetbrains.python.refactoring.move.PyMoveModuleMembersDialog" timestamp="1596422003568">
+    <state width="1237" height="125" key="GridCell.Tab.0.center/0.0.1280.680@0.0.1280.680" timestamp="1606871663563" />
+    <state width="1877" height="218" key="GridCell.Tab.0.center/0.0.1920.1040@0.0.1920.1040" timestamp="1609231050138" />
+    <state width="1877" height="218" key="GridCell.Tab.0.left" timestamp="1609231050137">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="806" y="418" key="#com.jetbrains.python.refactoring.move.PyMoveModuleMembersDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1596422003568" />
-    <state x="973" y="118" key="CommitChangelistDialog2" timestamp="1599018920588">
+    <state width="1237" height="125" key="GridCell.Tab.0.left/0.0.1280.680@0.0.1280.680" timestamp="1606871663563" />
+    <state width="1877" height="218" key="GridCell.Tab.0.left/0.0.1920.1040@0.0.1920.1040" timestamp="1609231050137" />
+    <state width="1877" height="218" key="GridCell.Tab.0.right" timestamp="1609231050138">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="973" y="118" key="CommitChangelistDialog2/0.0.1920.1040@0.0.1920.1040" timestamp="1599018920588" />
-    <state width="617" height="466" key="DebuggerActiveHint" timestamp="1596444608283">
+    <state width="1237" height="125" key="GridCell.Tab.0.right/0.0.1280.680@0.0.1280.680" timestamp="1606871663563" />
+    <state width="1877" height="218" key="GridCell.Tab.0.right/0.0.1920.1040@0.0.1920.1040" timestamp="1609231050138" />
+    <state width="1877" height="285" key="GridCell.Tab.1.bottom" timestamp="1609164216682">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="617" height="466" key="DebuggerActiveHint/0.0.1920.1040@0.0.1920.1040" timestamp="1596444608283" />
-    <state x="92" y="92" width="1736" height="856" key="DiffContextDialog" timestamp="1596439092200">
+    <state width="1237" height="166" key="GridCell.Tab.1.bottom/0.0.1280.680@0.0.1280.680" timestamp="1606871537459" />
+    <state width="1877" height="285" key="GridCell.Tab.1.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1609164216682" />
+    <state width="1877" height="285" key="GridCell.Tab.1.center" timestamp="1609164216682">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="92" y="92" width="1736" height="856" key="DiffContextDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1596439092200" />
-    <state x="746" y="284" key="FileChooserDialogImpl" timestamp="1598575333719">
+    <state width="1237" height="166" key="GridCell.Tab.1.center/0.0.1280.680@0.0.1280.680" timestamp="1606871537459" />
+    <state width="1877" height="285" key="GridCell.Tab.1.center/0.0.1920.1040@0.0.1920.1040" timestamp="1609164216682" />
+    <state width="1877" height="285" key="GridCell.Tab.1.left" timestamp="1609164216682">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="746" y="284" key="FileChooserDialogImpl/0.0.1920.1040@0.0.1920.1040" timestamp="1598575333719" />
-    <state width="1877" height="160" key="GridCell.Tab.0.bottom" timestamp="1598535806823">
+    <state width="1237" height="166" key="GridCell.Tab.1.left/0.0.1280.680@0.0.1280.680" timestamp="1606871537458" />
+    <state width="1877" height="285" key="GridCell.Tab.1.left/0.0.1920.1040@0.0.1920.1040" timestamp="1609164216682" />
+    <state width="1877" height="285" key="GridCell.Tab.1.right" timestamp="1609164216682">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1877" height="160" key="GridCell.Tab.0.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1598535806823" />
-    <state width="1877" height="160" key="GridCell.Tab.0.center" timestamp="1598535806823">
+    <state width="1237" height="166" key="GridCell.Tab.1.right/0.0.1280.680@0.0.1280.680" timestamp="1606871537459" />
+    <state width="1877" height="285" key="GridCell.Tab.1.right/0.0.1920.1040@0.0.1920.1040" timestamp="1609164216682" />
+    <state x="461" y="164" key="SettingsEditor" timestamp="1607675417473">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1877" height="160" key="GridCell.Tab.0.center/0.0.1920.1040@0.0.1920.1040" timestamp="1598535806823" />
-    <state width="1877" height="160" key="GridCell.Tab.0.left" timestamp="1598535806823">
+    <state x="461" y="164" key="SettingsEditor/0.0.1920.1040@0.0.1920.1040" timestamp="1607675417473" />
+    <state x="552" y="252" key="Vcs.Push.Dialog.v2" timestamp="1609124775388">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1877" height="160" key="GridCell.Tab.0.left/0.0.1920.1040@0.0.1920.1040" timestamp="1598535806823" />
-    <state width="1877" height="160" key="GridCell.Tab.0.right" timestamp="1598535806823">
+    <state x="552" y="252" key="Vcs.Push.Dialog.v2/0.0.1920.1040@0.0.1920.1040" timestamp="1609124775388" />
+    <state x="647" y="280" width="759" height="594" key="find.popup" timestamp="1609145592544">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1877" height="160" key="GridCell.Tab.0.right/0.0.1920.1040@0.0.1920.1040" timestamp="1598535806823" />
-    <state width="1877" height="286" key="GridCell.Tab.1.bottom" timestamp="1597417640963">
+    <state x="431" y="144" width="573" height="536" key="find.popup/0.0.1280.680@0.0.1280.680" timestamp="1609035121055" />
+    <state x="647" y="280" width="759" height="594" key="find.popup/0.0.1920.1040@0.0.1920.1040" timestamp="1609145592544" />
+    <state x="836" y="256" key="ftp.server.browser" timestamp="1601260525904">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1877" height="286" key="GridCell.Tab.1.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1597417640963" />
-    <state width="1877" height="286" key="GridCell.Tab.1.center" timestamp="1597417640963">
+    <state x="836" y="256" key="ftp.server.browser/0.0.1920.1040@0.0.1920.1040" timestamp="1601260525904" />
+    <state x="623" y="225" width="672" height="678" key="search.everywhere.popup" timestamp="1609211643749">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1877" height="286" key="GridCell.Tab.1.center/0.0.1920.1040@0.0.1920.1040" timestamp="1597417640963" />
-    <state width="1877" height="286" key="GridCell.Tab.1.left" timestamp="1597417640963">
-      <screen x="0" y="0" width="1920" height="1040" />
-    </state>
-    <state width="1877" height="286" key="GridCell.Tab.1.left/0.0.1920.1040@0.0.1920.1040" timestamp="1597417640963" />
-    <state width="1877" height="286" key="GridCell.Tab.1.right" timestamp="1597417640963">
-      <screen x="0" y="0" width="1920" height="1040" />
-    </state>
-    <state width="1877" height="286" key="GridCell.Tab.1.right/0.0.1920.1040@0.0.1920.1040" timestamp="1597417640963" />
-    <state x="463" y="165" key="SettingsEditor" timestamp="1599018953487">
-      <screen x="0" y="0" width="1920" height="1040" />
-    </state>
-    <state x="463" y="165" key="SettingsEditor/0.0.1920.1040@0.0.1920.1040" timestamp="1599018953487" />
-    <state x="681" y="261" width="540" height="524" key="StructurePopup" timestamp="1593763881502">
-      <screen x="0" y="0" width="1920" height="1040" />
-    </state>
-    <state x="681" y="261" width="540" height="524" key="StructurePopup/0.0.1920.1040@0.0.1920.1040" timestamp="1593763881502" />
-    <state x="552" y="252" key="Vcs.Push.Dialog.v2" timestamp="1599018933754">
-      <screen x="0" y="0" width="1920" height="1040" />
-    </state>
-    <state x="552" y="252" key="Vcs.Push.Dialog.v2/0.0.1920.1040@0.0.1920.1040" timestamp="1599018933754" />
-    <state width="968" height="528" key="XDebugger.FullValuePopup" timestamp="1595936657112">
-      <screen x="0" y="0" width="1920" height="1040" />
-    </state>
-    <state width="968" height="528" key="XDebugger.FullValuePopup/0.0.1920.1040@0.0.1920.1040" timestamp="1595936657112" />
-    <state x="652" y="347" key="com.intellij.ide.util.TipDialog" timestamp="1594338611329">
-      <screen x="0" y="0" width="1920" height="1040" />
-    </state>
-    <state x="652" y="347" key="com.intellij.ide.util.TipDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1594338611329" />
-    <state x="504" y="248" key="com.intellij.xdebugger.impl.breakpoints.ui.BreakpointsDialogFactory$2" timestamp="1595936983212">
-      <screen x="0" y="0" width="1920" height="1040" />
-    </state>
-    <state x="504" y="248" key="com.intellij.xdebugger.impl.breakpoints.ui.BreakpointsDialogFactory$2/0.0.1920.1040@0.0.1920.1040" timestamp="1595936983212" />
-    <state x="647" y="280" width="759" height="594" key="find.popup" timestamp="1597646741325">
-      <screen x="0" y="0" width="1920" height="1040" />
-    </state>
-    <state x="647" y="280" width="759" height="594" key="find.popup/0.0.1920.1040@0.0.1920.1040" timestamp="1597646741325" />
-    <state x="836" y="256" key="ftp.server.browser" timestamp="1593501038029">
-      <screen x="0" y="0" width="1920" height="1040" />
-    </state>
-    <state x="836" y="256" key="ftp.server.browser/0.0.1920.1040@0.0.1920.1040" timestamp="1593501038029" />
-    <state x="827" y="424" key="publish.login" timestamp="1593490174760">
-      <screen x="0" y="0" width="1920" height="1040" />
-    </state>
-    <state x="827" y="424" key="publish.login/0.0.1920.1040@0.0.1920.1040" timestamp="1593490174760" />
-    <state x="701" y="167" key="refactoring.ChangeSignatureDialog" timestamp="1593746645966">
-      <screen x="0" y="0" width="1920" height="1040" />
-    </state>
-    <state x="701" y="167" key="refactoring.ChangeSignatureDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1593746645966" />
-    <state x="623" y="225" width="672" height="678" key="search.everywhere.popup" timestamp="1597893255346">
-      <screen x="0" y="0" width="1920" height="1040" />
-    </state>
-    <state x="623" y="225" width="672" height="678" key="search.everywhere.popup/0.0.1920.1040@0.0.1920.1040" timestamp="1597893255346" />
+    <state x="415" y="147" width="672" height="444" key="search.everywhere.popup/0.0.1280.680@0.0.1280.680" timestamp="1608342064036" />
+    <state x="623" y="225" width="672" height="678" key="search.everywhere.popup/0.0.1920.1040@0.0.1920.1040" timestamp="1609211643749" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -983,18 +1019,53 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/thexp/analyse/querys.py</url>
-          <line>228</line>
+          <line>245</line>
           <option name="timeStamp" value="17" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/thexp/base_classes/attr.py</url>
-          <line>163</line>
-          <option name="timeStamp" value="21" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/thexp/utils/timing.py</url>
           <line>91</line>
           <option name="timeStamp" value="22" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/thexp/calculate/schedule.py</url>
+          <line>266</line>
+          <option name="timeStamp" value="25" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/thexp/cli/cli.py</url>
+          <line>211</line>
+          <option name="timeStamp" value="26" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/thexp/cli/cli.py</url>
+          <line>213</line>
+          <option name="timeStamp" value="28" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/setup.py</url>
+          <line>35</line>
+          <option name="timeStamp" value="29" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/tests/base_classes/test_attr.py</url>
+          <line>30</line>
+          <option name="timeStamp" value="38" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/tests/base_classes/test_attr.py</url>
+          <line>60</line>
+          <option name="timeStamp" value="40" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/thexp/base_classes/attr.py</url>
+          <line>93</line>
+          <option name="timeStamp" value="41" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/thexp/frame/trainer.py</url>
+          <line>221</line>
+          <option name="timeStamp" value="43" />
         </line-breakpoint>
       </breakpoints>
       <default-breakpoints>
@@ -1006,29 +1077,33 @@
       </default-breakpoints>
     </breakpoint-manager>
     <watches-manager>
+      <configuration name="tests">
+        <watch expression="np.array(1).tolist()" language="Python" />
+      </configuration>
       <configuration name="PythonConfigurationType">
-        <watch expression="[x for x in np.linspace(0, key_size - 1, key_size * 3 - 2, endpoint=True)]" language="Python" />
-        <watch expression="module.__name__" language="Python" />
-        <watch expression="inspect.ismodule(module)" language="Python" />
-        <watch expression="np.exp(-5)" language="Python" />
+        <watch expression="func_map" language="Python" />
+        <watch expression="args[0]" language="Python" />
       </configuration>
     </watches-manager>
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
-    <SUITE FILE_PATH="coverage/thexp$schedule.coverage" NAME="schedule Coverage Results" MODIFIED="1593777972401" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/thexp/calculate" />
+    <SUITE FILE_PATH="coverage/thexp$pytest_for_test_attr_test_deepcopy.coverage" NAME="pytest for test_attr.test_deepcopy Coverage Results" MODIFIED="1605617128326" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/tests/base_classes" />
+    <SUITE FILE_PATH="coverage/thexp$schedule.coverage" NAME="schedule Coverage Results" MODIFIED="1600325870746" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/thexp/calculate" />
     <SUITE FILE_PATH="coverage/thexp$w.coverage" NAME="w Coverage Results" MODIFIED="1598490863854" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/thexp$reset.coverage" NAME="reset Coverage Results" MODIFIED="1590573092989" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/../thexp-test3" />
     <SUITE FILE_PATH="coverage/thexp$7_exp.coverage" NAME="7.exp Coverage Results" MODIFIED="1590714983342" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/../thexp-test3" />
+    <SUITE FILE_PATH="coverage/thexp$t.coverage" NAME="t Coverage Results" MODIFIED="1601949133779" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/thexp$9_reporter.coverage" NAME="9.reporter Coverage Results" MODIFIED="1587004764869" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/examples" />
     <SUITE FILE_PATH="coverage/thexp$ex_trainer__2_.coverage" NAME="ex_trainer (2) Coverage Results" MODIFIED="1590542382505" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/../thexp-test2" />
     <SUITE FILE_PATH="coverage/thexp$avg_item.coverage" NAME="avg_item Coverage Results" MODIFIED="1583995674748" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/examples/more" />
     <SUITE FILE_PATH="coverage/thexp$onefile.coverage" NAME="onefile Coverage Results" MODIFIED="1590759544723" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/../thexp-test3" />
     <SUITE FILE_PATH="coverage/thexp$ex_trainer.coverage" NAME="ex_trainer Coverage Results" MODIFIED="1590731136814" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/../thexp-test3" />
+    <SUITE FILE_PATH="coverage/thexp$pytest_for_test_trainer_test_callbacks.coverage" NAME="pytest for test_trainer.test_callbacks Coverage Results" MODIFIED="1606871537423" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/tests/frame" />
     <SUITE FILE_PATH="coverage/thexp$query.coverage" NAME="query Coverage Results" MODIFIED="1595812553912" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/thexp/analyser" />
     <SUITE FILE_PATH="coverage/thexp$rename_templete.coverage" NAME="rename_templete Coverage Results" MODIFIED="1595939431489" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/thexp$pytest_in_test_attr_py.coverage" NAME="pytest in test_attr.py Coverage Results" MODIFIED="1596012991291" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/tests/base_classes" />
     <SUITE FILE_PATH="coverage/thexp$temp__1_.coverage" NAME="temp (1) Coverage Results" MODIFIED="1596103933952" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/thexp$pytest_for_test_params_test_baseparams.coverage" NAME="pytest for test_params.test_baseparams Coverage Results" MODIFIED="1596720766785" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/tests/frame" />
+    <SUITE FILE_PATH="coverage/thexp$pytest_in_test_attr_py.coverage" NAME="pytest in test_attr.py Coverage Results" MODIFIED="1605617211100" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/tests/base_classes" />
+    <SUITE FILE_PATH="coverage/thexp$pytest_for_test_params_test_baseparams.coverage" NAME="pytest for test_params.test_baseparams Coverage Results" MODIFIED="1609231050121" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/tests/frame" />
     <SUITE FILE_PATH="coverage/thexp$memory.coverage" NAME="memory Coverage Results" MODIFIED="1586953694595" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/thexp/calculate" />
     <SUITE FILE_PATH="coverage/thexp$markdown_writer.coverage" NAME="markdown_writer Coverage Results" MODIFIED="1587002656840" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/thexp/utils" />
     <SUITE FILE_PATH="coverage/thexp$temp.coverage" NAME="temp Coverage Results" MODIFIED="1591626062379" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/examples/more" />
@@ -1057,6 +1132,7 @@
     <SUITE FILE_PATH="coverage/thexp$trainer.coverage" NAME="trainer Coverage Results" MODIFIED="1586085233727" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/thexp/frame" />
     <SUITE FILE_PATH="coverage/thexp$runweb.coverage" NAME="runweb Coverage Results" MODIFIED="1590759403311" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/thexp$timeit.coverage" NAME="timeit Coverage Results" MODIFIED="1586085147242" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/thexp/utils" />
+    <SUITE FILE_PATH="coverage/thexp$pytest_for_test_params_test_deafult_warn.coverage" NAME="pytest for test_params.test_deafult_warn Coverage Results" MODIFIED="1609231025197" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/tests/frame" />
     <SUITE FILE_PATH="coverage/thexp$util.coverage" NAME="util Coverage Results" MODIFIED="1590540500158" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="C:/ProgramData/Anaconda3/Lib/site-packages/git" />
     <SUITE FILE_PATH="coverage/thexp$markdown_writer__1_.coverage" NAME="markdown_writer (1) Coverage Results" MODIFIED="1587002971749" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/thexp/future" />
     <SUITE FILE_PATH="coverage/thexp$7_expview.coverage" NAME="7.expview Coverage Results" MODIFIED="1589524700270" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/examples" />
@@ -1072,10 +1148,12 @@
     <SUITE FILE_PATH="coverage/thexp$none_item.coverage" NAME="none_item Coverage Results" MODIFIED="1583973291705" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/examples/more" />
     <SUITE FILE_PATH="coverage/thexp$1_trainer.coverage" NAME="1.trainer Coverage Results" MODIFIED="1596455084053" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/examples" />
     <SUITE FILE_PATH="coverage/thexp$test_trainer.coverage" NAME="test_trainer Coverage Results" MODIFIED="1595938307549" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/tests/frame" />
+    <SUITE FILE_PATH="coverage/thexp$pytest_in_tests.coverage" NAME="pytest in tests Coverage Results" MODIFIED="1608538405454" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/tests" />
     <SUITE FILE_PATH="coverage/thexp$reverts__1_.coverage" NAME="reverts (1) Coverage Results" MODIFIED="1590574414370" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/../thexp-test3" />
     <SUITE FILE_PATH="coverage/thexp$dataxy.coverage" NAME="dataxy Coverage Results" MODIFIED="1596514159955" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/thexp-templete/data" />
     <SUITE FILE_PATH="coverage/thexp$pytest_for_test_meter_test_avgmeter__1_.coverage" NAME="pytest for test_meter.test_avgmeter (1) Coverage Results" MODIFIED="1596722840972" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/tests/frame" />
     <SUITE FILE_PATH="coverage/thexp$1_1_trainer.coverage" NAME="1.1.trainer Coverage Results" MODIFIED="1589786569007" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/examples" />
+    <SUITE FILE_PATH="coverage/thexp$pytest_in_test_trainer_py.coverage" NAME="pytest in test_trainer.py Coverage Results" MODIFIED="1606871436525" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/tests/frame" />
     <SUITE FILE_PATH="coverage/thexp$reverts.coverage" NAME="reverts Coverage Results" MODIFIED="1590542664136" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/../thexp-test2" />
     <SUITE FILE_PATH="coverage/thexp$shake.coverage" NAME="shake Coverage Results" MODIFIED="1595206128128" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/thexp/torch/module" />
     <SUITE FILE_PATH="coverage/thexp$web.coverage" NAME="web Coverage Results" MODIFIED="1597198989559" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
@@ -1086,7 +1164,7 @@
     <SUITE FILE_PATH="coverage/thexp$5_saver.coverage" NAME="5.saver Coverage Results" MODIFIED="1589511688374" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/examples" />
     <SUITE FILE_PATH="coverage/thexp$3_logger.coverage" NAME="3.logger Coverage Results" MODIFIED="1589509296950" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/examples" />
     <SUITE FILE_PATH="coverage/thexp$iter2obj.coverage" NAME="iter2obj Coverage Results" MODIFIED="1584168042456" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/examples/more" />
-    <SUITE FILE_PATH="coverage/thexp$pytest_in_test_params_py.coverage" NAME="pytest in test_params.py Coverage Results" MODIFIED="1596639692906" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/tests" />
+    <SUITE FILE_PATH="coverage/thexp$pytest_in_test_params_py.coverage" NAME="pytest in test_params.py Coverage Results" MODIFIED="1609147129363" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/tests/frame" />
     <SUITE FILE_PATH="coverage/thexp$2_meters.coverage" NAME="2.meters Coverage Results" MODIFIED="1589598864795" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/examples" />
     <SUITE FILE_PATH="coverage/thexp$timeit__1_.coverage" NAME="timeit (1) Coverage Results" MODIFIED="1586085309261" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/examples/more" />
   </component>
