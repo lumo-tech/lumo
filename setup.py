@@ -23,7 +23,7 @@ setup(
     include_package_data=True,
     install_requires=[
         'torch',
-        'tensorboard', 'matplotlib', 'numpy', 'pandas', 'scipy', 'sklearn',
+        'matplotlib', 'numpy==1.18.0', 'pandas',
         'fire',
         'gitpython',
     ],

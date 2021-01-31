@@ -14,8 +14,8 @@ class DatasetMixin(Trainer):
         raise NotImplementedError()
 
 
-class TempleteDatasetMixin(DatasetMixin):
-    """Templete"""
+class BaseSupDatasetMixin(DatasetMixin):
+    """Base Supervised Dataset"""
 
     def datasets(self, params: GlobalParams):
         dataset_fn = datasets[params.dataset]
@@ -34,18 +34,21 @@ class TempleteDatasetMixin(DatasetMixin):
         )
 
         train_dataloader = (
-            DatasetBuilder(train_x[train_idx], train_y[train_idx])
+            DatasetBuilder(train_x, train_y)
                 .add_x(transform=toTensor).add_y()
+                .subset(train_idx)
                 .DataLoader(batch_size=params.batch_size,
                             num_workers=params.num_workers,
                             shuffle=True)
         )
 
         val_datalaoder = (
-            DatasetBuilder(train_x[val_idx], train_y[val_idx])
+            DatasetBuilder(train_x, train_y)
                 .add_x(transform=toTensor).add_y()
+                .subset(val_idx)
                 .DataLoader(batch_size=params.batch_size,
                             num_workers=params.num_workers)
+
         )
 
         self.regist_databundler(train=train_dataloader,

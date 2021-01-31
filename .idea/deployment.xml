@@ -2,18 +2,10 @@
 <project version="4">
   <component name="PublishConfigData" autoUpload="Always">
     <serverData>
-      <paths name="aliyun">
+      <paths name="sailist@119.23.70.249:22">
         <serverdata>
           <mappings>
-            <mapping local="$PROJECT_DIR$" web="/" />
-          </mappings>
-        </serverdata>
-      </paths>
-      <paths name="ilearn">
-        <serverdata>
-          <mappings>
-            <mapping deploy="/jupyter_data/thexp" local="$PROJECT_DIR$" web="/" />
-            <mapping local="" />
+            <mapping deploy="/tmp/pycharm_project_5" local="$PROJECT_DIR$" />
           </mappings>
         </serverdata>
       </paths>
