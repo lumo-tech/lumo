@@ -102,6 +102,22 @@ class Globals:
         from ..utils.repository import git_root
         return git_root()
 
+    def require(self, key, level=_CONFIGL.globals):
+        """
+        如果有则返回，没有则要求 input
+        Args:
+            key:
+            level:
+
+        Returns:
+
+        """
+        res = self[key]
+        if res is None:
+            res = input('输入 {} 的值，该值级别为 {}:'.format(key, level))
+            self.add_value(key,res,level)
+        return res
+
 
 class Config:
     """
@@ -169,7 +185,7 @@ class Config:
             repo = self.repo
             if repo is not None:
                 writer = repo.config_writer()
-                writer.add_value(_GITKEY.section_name,key,value)
+                writer.add_value(_GITKEY.section_name, key, value)
                 writer.write()
                 writer.release()
             self._config_dict[key] = value
