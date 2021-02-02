@@ -1,7 +1,7 @@
 import atexit
 import json
 import os
-import re
+from thexp.utils import re
 import sys
 import warnings
 from collections import namedtuple

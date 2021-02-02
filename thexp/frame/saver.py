@@ -3,7 +3,7 @@
 """
 import json
 import os
-import re
+from thexp.utils import re
 from collections import namedtuple
 from typing import List
 

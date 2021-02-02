@@ -9,7 +9,7 @@ from ..calculate.schedule import Schedule, ScheduleList
 from .meter import AvgMeter
 from .meter import Meter
 from .params import Params
-from .trainer import Trainer
+from .trainer import BaseTrainer
 from ..base_classes.trickitems import NoneItem, AvgItem
 from ..globals import _ML
 from ..utils.timing import format_second
@@ -35,7 +35,7 @@ class BaseCallback():
             """同一个异常第一次调用的时候运行"""
 
             @wraps(func)
-            def on_exception(trainer: Trainer, tfunc, params: Params, e: BaseException, *args, **kwargs):
+            def on_exception(trainer: BaseTrainer, tfunc, params: Params, e: BaseException, *args, **kwargs):
                 self.ecp = getattr(self, "ecp", None)
                 res = None
                 if self.ecp != e:
@@ -53,11 +53,11 @@ class BaseCallback():
         self.on_exception = ecp_wrap(self.on_exception)
         return self
 
-    def on_hooked(self, trainer: Trainer, params: Params):
+    def on_hooked(self, trainer: BaseTrainer, params: Params):
         """called when callback hooked trainer"""
         pass
 
-    def on_first_exception(self, trainer: Trainer, func, params: Params, e: BaseException, *args, **kwargs):
+    def on_first_exception(self, trainer: BaseTrainer, func, params: Params, e: BaseException, *args, **kwargs):
         """
         when an exception was raised in some function, on_exception() will be called.
 
@@ -68,7 +68,7 @@ class BaseCallback():
         """
         pass
 
-    def on_exception(self, trainer: Trainer, func, params: Params, e: BaseException, *args, **kwargs):
+    def on_exception(self, trainer: BaseTrainer, func, params: Params, e: BaseException, *args, **kwargs):
         """called when exception raised in some function"""
         return False
 
@@ -76,11 +76,11 @@ class BaseCallback():
         """Any reason when callback cannot hook on trainer"""
         pass
 
-    def on_begin(self, trainer: Trainer, func, params: Params, *args, **kwargs):
+    def on_begin(self, trainer: BaseTrainer, func, params: Params, *args, **kwargs):
         """called before trainer.func is called"""
         pass
 
-    def on_end(self, trainer: Trainer, func, params: Params, meter, *args, **kwargs):
+    def on_end(self, trainer: BaseTrainer, func, params: Params, meter, *args, **kwargs):
         pass
 
     def __le__(self, other):
@@ -89,7 +89,7 @@ class BaseCallback():
     def __lt__(self, other):
         return self.priority < other.priority
 
-    def hook(self, trainer: Trainer):
+    def hook(self, trainer: BaseTrainer):
         """自动将自己已有的on_func_begin/on_func_end方法绑定"""
         # trainer.add_callback(self)
         if self.only_main_process and trainer.params.local_rank > 0:
@@ -115,7 +115,7 @@ class TrainCallback(BaseCallback):
     实现了一般训练过程中的函数函数回调，主要将 on_begin() / on_end() 方法分发到各具体的回调方法中
     """
 
-    def on_begin(self, trainer: Trainer, func, params: Params, *args, **kwargs):
+    def on_begin(self, trainer: BaseTrainer, func, params: Params, *args, **kwargs):
         if func.__name__ == "train":
             self.on_train_begin(trainer, func, params, *args, **kwargs)
         elif func.__name__ == "train_epoch":
@@ -128,25 +128,25 @@ class TrainCallback(BaseCallback):
             self.on_eval_begin(trainer, func, params, *args, **kwargs)
         # elif func.__name__ in ""
 
-    def on_initial_end(self, trainer: Trainer, func, params: Params, meter: Meter, *args, **kwargs):
+    def on_initial_end(self, trainer: BaseTrainer, func, params: Params, meter: Meter, *args, **kwargs):
         pass
 
-    def on_train_begin(self, trainer: Trainer, func, params: Params, *args, **kwargs):
+    def on_train_begin(self, trainer: BaseTrainer, func, params: Params, *args, **kwargs):
         pass
 
-    def on_train_epoch_begin(self, trainer: Trainer, func, params: Params, *args, **kwargs):
+    def on_train_epoch_begin(self, trainer: BaseTrainer, func, params: Params, *args, **kwargs):
         pass
 
-    def on_test_begin(self, trainer: Trainer, func, params: Params, *args, **kwargs):
+    def on_test_begin(self, trainer: BaseTrainer, func, params: Params, *args, **kwargs):
         pass
 
-    def on_eval_begin(self, trainer: Trainer, func, params: Params, *args, **kwargs):
+    def on_eval_begin(self, trainer: BaseTrainer, func, params: Params, *args, **kwargs):
         pass
 
-    def on_train_batch_begin(self, trainer: Trainer, func, params: Params, *args, **kwargs):
+    def on_train_batch_begin(self, trainer: BaseTrainer, func, params: Params, *args, **kwargs):
         pass
 
-    def on_end(self, trainer: Trainer, func, params: Params, meter, *args, **kwargs):
+    def on_end(self, trainer: BaseTrainer, func, params: Params, meter, *args, **kwargs):
         if func.__name__ == "train":
             self.on_train_end(trainer, func, params, meter, *args, **kwargs)
         elif func.__name__ == "train_epoch":
@@ -160,25 +160,25 @@ class TrainCallback(BaseCallback):
         elif func.__name__ == 'initial':
             self.on_initial_end(trainer, func, params, meter, *args, **kwargs)
 
-    def on_train_end(self, trainer: Trainer, func, params: Params, meter: Meter, *args, **kwargs):
+    def on_train_end(self, trainer: BaseTrainer, func, params: Params, meter: Meter, *args, **kwargs):
         pass
 
-    def on_train_epoch_end(self, trainer: Trainer, func, params: Params, meter: Meter, *args, **kwargs):
+    def on_train_epoch_end(self, trainer: BaseTrainer, func, params: Params, meter: Meter, *args, **kwargs):
         pass
 
-    def on_test_end(self, trainer: Trainer, func, params: Params, meter: Meter, *args, **kwargs):
+    def on_test_end(self, trainer: BaseTrainer, func, params: Params, meter: Meter, *args, **kwargs):
         pass
 
-    def on_eval_end(self, trainer: Trainer, func, params: Params, meter: Meter, *args, **kwargs):
+    def on_eval_end(self, trainer: BaseTrainer, func, params: Params, meter: Meter, *args, **kwargs):
         pass
 
-    def on_train_batch_end(self, trainer: Trainer, func, params: Params, meter: Meter, *args, **kwargs):
+    def on_train_batch_end(self, trainer: BaseTrainer, func, params: Params, meter: Meter, *args, **kwargs):
         pass
 
 
 class EvalCallback(TrainCallback):
     """
-    决定在训练过程中，eval 和 test 的频率，当 Trainer 中没有注册训练集或测试集时，相应的过程会被跳过
+    决定在训练过程中，eval 和 test 的频率，当 BaseTrainer 中没有注册训练集或测试集时，相应的过程会被跳过
     """
     only_main_process = True
 
@@ -190,7 +190,7 @@ class EvalCallback(TrainCallback):
         self._last_eval = -1
         self._last_test = -1
 
-    def _test_or_eval(self, params: Params, trainer: Trainer):
+    def _test_or_eval(self, params: Params, trainer: BaseTrainer):
         if self.eval_in_per_epoch is not None and self.eval_in_per_epoch > 0:
             if params.eidx % self.eval_in_per_epoch == self.eval_in_per_epoch - 1:
                 self._last_eval = params.eidx
@@ -200,10 +200,10 @@ class EvalCallback(TrainCallback):
                 self._last_test = params.eidx
                 trainer.test()
 
-    def on_train_epoch_end(self, trainer: Trainer, func, params: Params, meter: Meter, *args, **kwargs):
+    def on_train_epoch_end(self, trainer: BaseTrainer, func, params: Params, meter: Meter, *args, **kwargs):
         self._test_or_eval(params, trainer)
 
-    def on_train_end(self, trainer: Trainer, func, params: Params, meter: Meter, *args, **kwargs):
+    def on_train_end(self, trainer: BaseTrainer, func, params: Params, meter: Meter, *args, **kwargs):
         if self._last_eval != params.eidx:
             trainer.eval()
         if self._last_test != params.eidx:
@@ -215,7 +215,7 @@ class EvalCallback(TrainCallback):
 
 class LoggerCallback(TrainCallback):
     """
-    用于日志输出的回调，当 Trainer 在 epoch / batch 等级别的训练结束、异常发生等过程后，Logger 会对这些事件，
+    用于日志输出的回调，当 BaseTrainer 在 epoch / batch 等级别的训练结束、异常发生等过程后，Logger 会对这些事件，
     或方法返回的结果进行输出。
 
     一般情况下 Logger 支持所有类型输出，但如果使用 Meter 类进行包装，会有更好的输出形式
@@ -226,7 +226,7 @@ class LoggerCallback(TrainCallback):
     def __init__(self, avg=True):
         self.avg = avg
 
-    def on_hooked(self, trainer: Trainer, params: Params):
+    def on_hooked(self, trainer: BaseTrainer, params: Params):
         super().on_hooked(trainer, params)
         trainer.logger.raw(' '.join(sys.argv))
         trainer.logger.info("Exp BaseDir", os.path.abspath(trainer.experiment.exp_dir))
@@ -236,7 +236,7 @@ class LoggerCallback(TrainCallback):
         self.start = 0
         self.cur = None
 
-    def on_train_begin(self, trainer: Trainer, func, params: Params, *args, **kwargs):
+    def on_train_begin(self, trainer: BaseTrainer, func, params: Params, *args, **kwargs):
         from ..utils.timing import TimeIt
 
         self.start = params.eidx
@@ -245,14 +245,14 @@ class LoggerCallback(TrainCallback):
         trainer.logger.info(trainer._databundler_dict)
         super().on_train_begin(trainer, func, params, *args, **kwargs)
 
-    def on_train_end(self, trainer: Trainer, func, params: Params, meter: Meter, *args, **kwargs):
+    def on_train_end(self, trainer: BaseTrainer, func, params: Params, meter: Meter, *args, **kwargs):
         self.traintime.end()
         if meter is None:
             meter = ""
         trainer.logger.info("train end", meter)
         trainer.logger.info("train time: {}".format(format_second(self.traintime["use"])))
 
-    def on_train_epoch_begin(self, trainer: Trainer, func, params: Params, *args, **kwargs):
+    def on_train_epoch_begin(self, trainer: BaseTrainer, func, params: Params, *args, **kwargs):
         from ..utils.timing import TimeIt
 
         if self.avg:
@@ -261,7 +261,7 @@ class LoggerCallback(TrainCallback):
         self.epochtime.start()
         trainer.logger.info("{}/{}".format(params.eidx, params.epoch))
 
-    def on_train_epoch_end(self, trainer: Trainer, func, params: Params, meter: Meter, *args, **kwargs):
+    def on_train_epoch_end(self, trainer: BaseTrainer, func, params: Params, meter: Meter, *args, **kwargs):
         self.traintime.mark("epoch")
         self.epochtime.end()
         if self.cur is None:
@@ -280,7 +280,7 @@ class LoggerCallback(TrainCallback):
 
         super().on_train_epoch_end(trainer, func, params, meter, *args, **kwargs)
 
-    def on_train_batch_end(self, trainer: Trainer, func, params: Params, meter: Meter, *args, **kwargs):
+    def on_train_batch_end(self, trainer: BaseTrainer, func, params: Params, meter: Meter, *args, **kwargs):
         if meter is None:
             meter = ""
         else:
@@ -289,21 +289,21 @@ class LoggerCallback(TrainCallback):
                 meter = self.meter
         trainer.logger.inline("{}/{}".format(params.idx + 1, len(trainer.train_dataloader)), meter, fix=1)
 
-    def on_first_exception(self, trainer: Trainer, func, params: Params, e: BaseException, *args, **kwargs):
+    def on_first_exception(self, trainer: BaseTrainer, func, params: Params, e: BaseException, *args, **kwargs):
         trainer.logger.error("{} raised".format(e.__class__.__name__))
 
-    def on_test_begin(self, trainer: Trainer, func, params: Params, *args, **kwargs):
+    def on_test_begin(self, trainer: BaseTrainer, func, params: Params, *args, **kwargs):
         trainer.logger.info("tests start")
 
-    def on_eval_begin(self, trainer: Trainer, func, params: Params, *args, **kwargs):
+    def on_eval_begin(self, trainer: BaseTrainer, func, params: Params, *args, **kwargs):
         trainer.logger.info("eval start")
 
-    def on_eval_end(self, trainer: Trainer, func, params: Params, meter: Meter, *args, **kwargs):
+    def on_eval_end(self, trainer: BaseTrainer, func, params: Params, meter: Meter, *args, **kwargs):
         if meter is None:
             meter = ""
         trainer.logger.info("eval end", meter)
 
-    def on_test_end(self, trainer: Trainer, func, params: Params, meter: Meter, *args, **kwargs):
+    def on_test_end(self, trainer: BaseTrainer, func, params: Params, meter: Meter, *args, **kwargs):
         if meter is None:
             meter = ""
         trainer.logger.info("tests end", meter)
@@ -323,7 +323,7 @@ class ModelCheckpoint(TrainCallback):
         self.last_val = NoneItem()
         self.start_epoch = start_epoch
 
-    def on_train_epoch_end(self, trainer: Trainer, func, params: Params, meter: Meter, *args, **kwargs):
+    def on_train_epoch_end(self, trainer: BaseTrainer, func, params: Params, meter: Meter, *args, **kwargs):
         self.update("train", trainer, params, meter)
 
     def update(self, cur_mode, trainer, param, meter):
@@ -347,10 +347,10 @@ class ModelCheckpoint(TrainCallback):
                     trainer.save_checkpoint(meter.serialize())
                     self.last_val = item
 
-    def on_test_end(self, trainer: Trainer, func, params: Params, meter: Meter, *args, **kwargs):
+    def on_test_end(self, trainer: BaseTrainer, func, params: Params, meter: Meter, *args, **kwargs):
         self.update("test", trainer, params, meter)
 
-    def on_eval_end(self, trainer: Trainer, func, params: Params, meter: Meter, *args, **kwargs):
+    def on_eval_end(self, trainer: BaseTrainer, func, params: Params, meter: Meter, *args, **kwargs):
         self.update("eval", trainer, params, meter)
 
     def __repr__(self) -> str:
@@ -366,7 +366,7 @@ class TimingCheckpoint(TrainCallback):
     def __init__(self, per_epoch=50):
         self.per_epoch = per_epoch
 
-    def on_train_epoch_end(self, trainer: Trainer, func, params: Params, meter: Meter, *args, **kwargs):
+    def on_train_epoch_end(self, trainer: BaseTrainer, func, params: Params, meter: Meter, *args, **kwargs):
         if params.eidx % self.per_epoch == 0 and params.eidx > 0:
             trainer.save_keypoint(meter.serialize(), replacement=True)
 
@@ -382,7 +382,7 @@ class KeyErrorSave(TrainCallback):
     def __init__(self, wait_input=False):
         self.wait_input = wait_input
 
-    def on_first_exception(self, trainer: Trainer, func, params: Params, e: BaseException, *args, **kwargs):
+    def on_first_exception(self, trainer: BaseTrainer, func, params: Params, e: BaseException, *args, **kwargs):
         if isinstance(e, (KeyboardInterrupt)):
             trainer.logger.info("KeyErrorSave trigged, save checkpoint")
             trainer.save_keypoint({"mode": "KeyboardInterrupt"})
@@ -408,7 +408,7 @@ class CUDAErrorHold(TrainCallback):
     def __init__(self, wait_input=False):
         self.wait_input = wait_input
 
-    def on_first_exception(self, trainer: Trainer, func, params: Params, e: BaseException, *args, **kwargs):
+    def on_first_exception(self, trainer: BaseTrainer, func, params: Params, e: BaseException, *args, **kwargs):
         if isinstance(e, (RuntimeError)):
             if "cuda" in str(e).lower() and 'out of memory' in str(e).lower():
                 trainer.logger.info("CUDA Error trigged, enter to continue or type any to exit")
@@ -430,7 +430,7 @@ class AutoRecord(TrainCallback):
         from collections import defaultdict
         self._ignore_dict = defaultdict(set)
 
-    def on_hooked(self, trainer: Trainer, params: Params):
+    def on_hooked(self, trainer: BaseTrainer, params: Params):
         self.start = 0
         trainer.experiment.add_tag("record", 'writer')
 
@@ -440,24 +440,24 @@ class AutoRecord(TrainCallback):
     def _key_name(self, mode, key):
         return "{}_{}_".format(key, mode)
 
-    def on_test_end(self, trainer: Trainer, func, params: Params, meter: Meter, *args, **kwargs):
+    def on_test_end(self, trainer: BaseTrainer, func, params: Params, meter: Meter, *args, **kwargs):
         if isinstance(meter, Meter):
             for k, v in meter.numeral_items():
                 if k in self._ignore_dict[_ML.test]:
                     continue
                 trainer.writer.add_scalar(self._key_name("test", k), v, params.eidx)
 
-    def on_train_begin(self, trainer: Trainer, func, params: Params, *args, **kwargs):
+    def on_train_begin(self, trainer: BaseTrainer, func, params: Params, *args, **kwargs):
         self.start = params.eidx
 
-    def on_eval_end(self, trainer: Trainer, func, params: Params, meter: Meter, *args, **kwargs):
+    def on_eval_end(self, trainer: BaseTrainer, func, params: Params, meter: Meter, *args, **kwargs):
         if isinstance(meter, Meter):
             for k, v in meter.numeral_items():
                 if k in self._ignore_dict[_ML.eval]:
                     continue
                 trainer.writer.add_scalar(self._key_name("eval", k), v, params.eidx)
 
-    def on_train_epoch_end(self, trainer: Trainer, func, params: Params, meter: AvgMeter, *args, **kwargs):
+    def on_train_epoch_end(self, trainer: BaseTrainer, func, params: Params, meter: AvgMeter, *args, **kwargs):
         if isinstance(meter, Meter):
             for k, v in meter.numeral_items():
                 if k in self._ignore_dict[_ML.train]:
@@ -468,7 +468,7 @@ class AutoRecord(TrainCallback):
 class EMAUpdate(TrainCallback):
     only_main_process = True
 
-    def on_train_batch_end(self, trainer: Trainer, func, params: Params, meter: Meter, *args, **kwargs):
+    def on_train_batch_end(self, trainer: BaseTrainer, func, params: Params, meter: Meter, *args, **kwargs):
         super().on_train_batch_end(trainer, func, params, meter, *args, **kwargs)
         for k, v in trainer.model_dict.items():
             if k.lower().startswith('ema'):
@@ -481,7 +481,7 @@ class LRSchedule(TrainCallback):
         self.apply = apply
         self.use_eidx = use_eidx
 
-    def on_hooked(self, trainer: Trainer, params: Params):
+    def on_hooked(self, trainer: BaseTrainer, params: Params):
         super().on_hooked(trainer, params)
         if self.schedule is None:
             if 'lr_sche' not in params:
@@ -490,7 +490,7 @@ class LRSchedule(TrainCallback):
             else:
                 self.schedule = params.lr_sche
 
-    def on_train_epoch_end(self, trainer: Trainer, func, params: Params, meter: Meter, *args, **kwargs):
+    def on_train_epoch_end(self, trainer: BaseTrainer, func, params: Params, meter: Meter, *args, **kwargs):
         super().on_train_epoch_end(trainer, func, params, meter, *args, **kwargs)
         for k, v in trainer.optimizer_dict.items():
             if self.use_eidx:
@@ -510,7 +510,7 @@ class SuccessQuery(TrainCallback):
     """allow you exit by type KeyboardInterupt in success mode"""
     only_single_gpu = True
 
-    def on_first_exception(self, trainer: Trainer, func, params: Params, e: BaseException, *args, **kwargs):
+    def on_first_exception(self, trainer: BaseTrainer, func, params: Params, e: BaseException, *args, **kwargs):
         super().on_first_exception(trainer, func, params, e, *args, **kwargs)
         if isinstance(e, (KeyboardInterrupt)):
             tp = input("success?(Y/N, default N)")
@@ -531,13 +531,13 @@ class ReportSche(TrainCallback):
     only_main_process = True
     priority = 100
 
-    def on_hooked(self, trainer: Trainer, params: Params):
+    def on_hooked(self, trainer: BaseTrainer, params: Params):
         self.sche_lis = []
         for k, v in params.items():  # type:str, Any
             if isinstance(v, (Schedule, ScheduleList)) and 'sche' in k.lower():
                 self.sche_lis.append((k, v))
 
-    def on_train_epoch_end(self, trainer: Trainer, func, params: Params, meter: Meter, *args, **kwargs):
+    def on_train_epoch_end(self, trainer: BaseTrainer, func, params: Params, meter: Meter, *args, **kwargs):
         super().on_train_epoch_end(trainer, func, params, meter, *args, **kwargs)
         m = Meter()
         for k, v in self.sche_lis:

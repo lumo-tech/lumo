@@ -256,7 +256,7 @@ class BaseParams(OptimMixin):
                     warnings.simplefilter('always', NewParamWarning)
                     warnings.warn(
                         "'{}' is a new param,please check your spelling.\n it's more recommended to define in advance.".format(
-                            k))
+                            k), NewParamWarning)
                 self[k] = v
 
         fire.Fire(func)

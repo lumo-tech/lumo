@@ -3,7 +3,7 @@
 """
 import torch
 from torch import nn
-from thexp import Params, Trainer
+from thexp import Params, Trainer, callbacks, Meter
 
 
 class MyModel(nn.Module):
@@ -17,8 +17,18 @@ class MyModel(nn.Module):
         return x
 
 
+class TCallbacks(callbacks.TrainCallback):
+    def __init__(self):
+        self.mark = set()
+
+    def on_initial_end(self, trainer: Trainer, func, params: Params, meter: Meter, *args, **kwargs):
+        super().on_initial_end(trainer, func, params, meter, *args, **kwargs)
+        self.mark.add(1)
+
+
 class MyTrainer(Trainer):
 
+<<<<<<< HEAD
     def datasets(self, params: Params):
         from torchvision.datasets.fakedata import FakeData
         from torchvision.transforms import ToTensor
@@ -26,6 +36,11 @@ class MyTrainer(Trainer):
         from torch.utils.data import DataLoader
         loader = DataLoader(dataset,batch_size=32)
         self.regist_databundler(train=loader)
+=======
+    def callbacks(self, params: Params):
+        super().callbacks(params)
+        TCallbacks().hook(self)
+>>>>>>> 6be1e2bcab13c35be13538e88abf87cfcc0bcda6
 
     def models(self, params: Params):
         super().models(params)
@@ -40,12 +55,29 @@ class MyTrainer(Trainer):
         super().train_batch(eidx, idx, global_step, batch_data, params, device)
 
 
+def get_params():
+    p = Params()
+    p.git_commit = False
+    return p
+
+
 def test_trainer():
-    trainer = MyTrainer(Params())
+    trainer = MyTrainer(get_params())
 
     trainer.params.eidx = 3
     fn = trainer.save_keypoint()
+<<<<<<< HEAD
     trainer.train()
     assert trainer.params.eidx == trainer.params.epoch+1
+=======
+
+    trainer.params.eidx = 0
+>>>>>>> 6be1e2bcab13c35be13538e88abf87cfcc0bcda6
     trainer.load_checkpoint(fn)
     assert trainer.params.eidx == 3
+
+
+def test_callbacks():
+    trainer = MyTrainer(get_params())
+
+    assert 1 in list(trainer._callback_set)[0].mark

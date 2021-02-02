@@ -1,9 +1,10 @@
 from thexp import Params
 from thexp.frame import BaseParams
 import os
+import pickle
 
 
-def test_baseparams():
+def create_params():
     params = BaseParams()
     params.optim = params.create_optim('SGD', lr=0.1, momentum=0.9)
     params.sche = params.SCHE.Cos()
@@ -13,11 +14,15 @@ def test_baseparams():
     )
     params.dataset = params.choice('dataset', 'cifar10', 'cifar100', 'svhn', 'stl10')
     params.n_classes = 10
-    params.bind('dataset', 'cifar100', 'n_classes', 100)
     params.margin = params.arange('margin', 1.4, 0.5, 2)
 
     params.dataset = 'cifar100'
-    assert params.n_classes == 100
+    params.new2 = 5
+    return params
+
+
+def test_baseparams():
+    params = create_params()
 
     params.to_json('tmp')
     params2 = BaseParams()
@@ -41,9 +46,40 @@ def test_baseparams():
     assert params == params2
 
     assert params.optim.args.lr == 0.1
-    params.dynamic_bind('batch_size', 'optim.args.lr', lambda x: 3 / x)
-    params.batch_size = 128
-    assert params.optim.args.lr == 3 / params.batch_size
+
+    params.new1 = params.default(5)
+    assert params.new1 == 5
+
+    params.new2 = params.default(6)
+    assert params.new2 == 5
+
+    assert 'new3' not in params
+    with open('a.pkl', 'wb') as w:
+        pickle.dump(params._param_dict, w)
+    with open('a.pkl', 'rb') as r:
+        _param_dict = pickle.load(r)
+    assert params._param_dict == _param_dict
+
+    with open('b.pkl', 'wb') as w:
+        pickle.dump(params, w)
+    with open('b.pkl', 'rb') as r:
+        params3 = pickle.load(r)
+    assert params == params3
+
+    os.remove('a.pkl')
+    os.remove('b.pkl')
+
+
+def test_deafult_warn():
+    import warnings
+
+    params = create_params()
+    with warnings.catch_warnings(record=True) as w:
+        params.k = params.default(10, True)
+        params.k2 = params.default(11, True)
+        assert len(w) == 2
+
+
 
 
 def test_params():

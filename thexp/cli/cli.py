@@ -185,6 +185,28 @@ def params(*args, **kwargs):
         exit(1)
 
 
+@regist_func(func_map)
+def last(*args,**kwargs):
+    N = args[0]
+
+    repos = Q.repos()
+    frepo = kwargs.get('repo',None)
+    if repos is not None:
+        repos = repos[frepo]
+
+    exps = repos.exps()
+    fexp = kwargs.get('exp',None)
+    if fexp is not None:
+        exps = exps[fexp]
+
+    tests = exps.tests()
+    tests
+
+
+
+
+
+
 def main(*args, **kwargs):
     # print(args, kwargs)
     if len(args) == 0 or 'help' in kwargs:

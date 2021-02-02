@@ -1,7 +1,7 @@
 """
 
 """
-import re
+from thexp.utils import re
 from thexp.decorators import deprecated, warn
 from thexp import __VERSION__
 import torch
@@ -66,5 +66,3 @@ class AutoCollate():
             return [self(samples) for samples in transposed]
 
         raise TypeError(default_collate_err_msg_format.format(elem_type))
-
-

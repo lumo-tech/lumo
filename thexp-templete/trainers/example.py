@@ -42,7 +42,7 @@ class BaseTrainer(callbacks.BaseCBMixin,
         return meter
 
     def to_logits(self, xs) -> torch.Tensor:
-        return self.model(torch.rand(xs.shape[0], params.n_classes))
+        return self.model(xs)
 
 
 if __name__ == '__main__':
