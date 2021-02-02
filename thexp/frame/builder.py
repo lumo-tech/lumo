@@ -18,6 +18,9 @@ class _Value:
         self.value = value
         self.name = name
 
+    def __repr__(self):
+        return "{}={}".format(self.name, self.value.__repr__())
+
 
 class X(_Value): pass
 
@@ -640,9 +643,9 @@ if __name__ == '__main__':
     loader = (
         BatchDatasetBuilder(torch.arange(1, 101))
             .add_x(name='x')
-        .zip_mode()
+            .zip_mode()
             .add_delegate(MyDelegate())
-            .add_delegate(MyBatchDelegate(),name='f')
+            .add_delegate(MyBatchDelegate(), name='f')
             .add_delegate(MyBatchDelegate())
     )
     print(loader._delegates)
