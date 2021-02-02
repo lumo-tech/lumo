@@ -85,6 +85,7 @@ class BaseTrainer(metaclass=Merge):
                     if any(_handles):
                         return None
                     else:
+                        # TODO 添加 rich 输出，更优雅的退出
                         raise e
 
                 for callback in _call_set:
@@ -605,7 +606,7 @@ class BaseTrainer(metaclass=Merge):
             self.logger.raw(k)
             if k in state_dict:
                 model = self._model_dict[k]
-                if hasattr(model,"_load_state_dict"):
+                if hasattr(model, "_load_state_dict"):
                     model._load_state_dict(state_dict[k], strict=strict)
                 else:
                     model.load_state_dict(state_dict[k], strict=strict)

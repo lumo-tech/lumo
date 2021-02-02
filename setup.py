@@ -1,5 +1,5 @@
 from setuptools import setup, find_packages
-from thexp import __VERSION__
+from thexp.version import __VERSION__
 from rename_templete import copy_templete
 
 copy_templete()

@@ -4,6 +4,7 @@ from thexp.contrib.data import splits
 from thexp import DatasetBuilder
 
 from data.transforms import ToTensor
+from data import delegate
 from data.dataxy import datasets
 
 toTensor = ToTensor()
@@ -42,7 +43,7 @@ class BaseSupDatasetMixin(DatasetMixin):
                             shuffle=True)
         )
 
-        val_datalaoder = (
+        val_dataloader = (
             DatasetBuilder(train_x, train_y)
                 .add_x(transform=toTensor).add_y()
                 .subset(val_idx)
@@ -52,7 +53,7 @@ class BaseSupDatasetMixin(DatasetMixin):
         )
 
         self.regist_databundler(train=train_dataloader,
-                                eval=val_datalaoder,
+                                eval=val_dataloader,
                                 test=test_dataloader)
 
         self.to(self.device)

@@ -19,6 +19,14 @@ class MyModel(nn.Module):
 
 class MyTrainer(Trainer):
 
+    def datasets(self, params: Params):
+        from torchvision.datasets.fakedata import FakeData
+        from torchvision.transforms import ToTensor
+        dataset = FakeData(image_size=(3,32,32),transform=ToTensor())
+        from torch.utils.data import DataLoader
+        loader = DataLoader(dataset,batch_size=32)
+        self.regist_databundler(train=loader)
+
     def models(self, params: Params):
         super().models(params)
         self.rnd.mark('test')
@@ -38,6 +46,6 @@ def test_trainer():
     trainer.params.eidx = 3
     fn = trainer.save_keypoint()
     trainer.train()
-    assert trainer.params.eidx == trainer.params.epoch
+    assert trainer.params.eidx == trainer.params.epoch+1
     trainer.load_checkpoint(fn)
     assert trainer.params.eidx == 3
