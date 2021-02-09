@@ -42,7 +42,11 @@ class DataBundler:
 
     def __len__(self):
         if self.iter_mode == 'zip':
-            return min(len(loader) for name, (loader, func) in self.dataloaders.items() if func.__name__ != 'cycle')
+            return min(
+                len(loader)
+                for name, (loader, func) in self.dataloaders.items()
+                if func.__name__ != 'safe_cycle'
+            )
         elif self.iter_mode == "chain":
             return sum(self.len_list())
 
@@ -165,9 +169,10 @@ class DataBundler:
     def choice_batch(self) -> tuple:
         return next(iter(self))
 
-    def choice_sample(self) -> tuple:
-        xs, ys = next(iter(self))  # type:(torch.Tensor,torch.Tensor)
-        return (xs[0], ys[0])
+    # TODO 不能只通过 xs,ys 来
+    # def choice_sample(self) -> tuple:
+    #     xs, ys = next(iter(self))  # type:(torch.Tensor,torch.Tensor)
+    #     return (xs[0], ys[0])
 
     def zip_mode(self):
         """切换为zip方式提供所有添加的数据集"""

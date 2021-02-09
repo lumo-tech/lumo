@@ -15,7 +15,11 @@ from .dates import curent_date
 from ..globals import _GITKEY, _OS_ENV, _FNAME
 
 torch_file = ['*.pth', '*.npy', '*.ckpt']
-thexp_gitignores = ['.thexp/', _FNAME.repo, _FNAME.expsdirs, '.idea/', '*.thexp.*', '*.pkl'] + torch_file
+thexp_gitignores = ['.thexp/', _FNAME.repo, _FNAME.expsdirs, '*.thexp.*', '*.pkl',
+                    '.idea/',
+                    '.cache/',
+
+                    ] + torch_file
 
 py_gitignore = "\n".join(['# Byte-compiled / optimized / DLL files',
                           '__pycache__/', '*.py[cod]',
