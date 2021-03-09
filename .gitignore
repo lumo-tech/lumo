@@ -149,3 +149,4 @@ repo.v1.json
 *.ckpt
 *.thexp.*
 *.pkl
+.cache/
