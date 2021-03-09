@@ -1,6 +1,7 @@
 #  code from https://github.com/DocF/Soft-NMS/blob/master/soft_nms.py
 import numpy as np
 
+
 def py_cpu_softnms(dets, sc, Nt=0.3, sigma=0.5, thresh=0.001, method=2):
     """
     py_cpu_softnms
@@ -34,7 +35,7 @@ def py_cpu_softnms(dets, sc, Nt=0.3, sigma=0.5, thresh=0.001, method=2):
         pos = i + 1
 
         #
-        if i != N-1:
+        if i != N - 1:
             maxscore = np.max(scores[pos:], axis=0)
             maxpos = np.argmax(scores[pos:], axis=0)
         else:

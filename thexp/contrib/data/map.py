@@ -15,5 +15,3 @@ def create_id_dict(targets):
         id_dict[target].append(i)
 
     return id_dict
-
-

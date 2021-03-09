@@ -1,5 +1,5 @@
 import copy
-from typing import List, Optional
+from typing import List
 
 
 # from thexp.analyse.query import make_hashable

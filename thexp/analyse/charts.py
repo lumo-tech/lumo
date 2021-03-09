@@ -2,13 +2,11 @@
 绘图类，用于和tensorboard配合
 """
 from collections import defaultdict, OrderedDict
-
-from itertools import chain, cycle
-
-from typing import List, Dict, Union
-import numpy as np
+from itertools import chain
 from numbers import Number
+from typing import List, Dict, Union
 
+import numpy as np
 
 try:
     from pyecharts import charts
@@ -16,7 +14,9 @@ try:
 
 except:
     import warnings
+
     warnings.warn("You need to install pyecharts to use charts.py, try pip install pyecharts.")
+
 
 class Chart:
     def echarts(self):

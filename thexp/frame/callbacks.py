@@ -2,15 +2,16 @@
 
 """
 
-import os, sys
+import os
+import sys
 from functools import wraps
 
-from ..calculate.schedule import Schedule, ScheduleList
 from .meter import AvgMeter
 from .meter import Meter
 from .params import Params
 from .trainer import BaseTrainer
 from ..base_classes.trickitems import NoneItem, AvgItem
+from ..calculate.schedule import Schedule, ScheduleList
 from ..globals import _ML
 from ..utils.timing import format_second
 

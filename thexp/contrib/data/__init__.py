@@ -2,5 +2,5 @@
 
 """
 
-from .dataloader import DataLoader
 from . import splits
+from .dataloader import DataLoader

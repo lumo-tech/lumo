@@ -149,7 +149,7 @@ class Logger:
         if self.use_stdout:
             print(*args, end=end, flush=True)
 
-    def toggle_stdout(self, val:bool):
+    def toggle_stdout(self, val: bool):
         """"""
         self.use_stdout = val
 

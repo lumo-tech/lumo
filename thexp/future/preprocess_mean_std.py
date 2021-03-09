@@ -1,9 +1,5 @@
 # 计算 均值和标准差， copied from https://zhuanlan.zhihu.com/p/104019160
-import os
-import cv2
 import numpy as np
-from torch.utils.data import Dataset
-from PIL import Image
 
 
 def compute_mean_and_std(dataset):
@@ -13,7 +9,7 @@ def compute_mean_and_std(dataset):
     mean_b = 0
 
     for img, _ in dataset:
-        img = np.asarray(img) # change PIL Image to numpy array
+        img = np.asarray(img)  # change PIL Image to numpy array
         mean_b += np.mean(img[:, :, 0])
         mean_g += np.mean(img[:, :, 1])
         mean_r += np.mean(img[:, :, 2])

@@ -35,5 +35,3 @@ class ENVIRON_:
 
     IS_PYCHARM = os.environ.get("PYCHARM_HOSTED", 0) == "1"
     IS_PYCHARM_DEBUG = eval(os.environ.get('IPYTHONENABLE', "False"))
-
-

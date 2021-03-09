@@ -4,11 +4,11 @@
 # https://github.com/google-research/fixmatch/blob/master/libml/ctaugment.py
 import random
 
-import numpy as np
 import PIL
-import PIL.ImageOps
-import PIL.ImageEnhance
 import PIL.ImageDraw
+import PIL.ImageEnhance
+import PIL.ImageOps
+import numpy as np
 from PIL import Image
 
 PARAMETER_MAX = 10

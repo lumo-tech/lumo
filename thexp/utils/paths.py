@@ -1,12 +1,12 @@
 """
 Methods about files/paths/hash
 """
-from thexp.utils import re
 import hashlib
 import json
 import os
 from functools import lru_cache
 
+from thexp.utils import re
 from ..globals import _GITKEY
 
 

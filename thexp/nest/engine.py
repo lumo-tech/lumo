@@ -1,5 +1,6 @@
-import torch
 from typing import List
+
+import torch
 
 from thexp import Trainer, Params, callbacks
 
@@ -23,7 +24,7 @@ class Runner():
     def __init__(self, params: Params, train_dataloader=None, eval_dataloader=None, test_dataloader=None,
                  metric: List = None, callbacks: List[callbacks.BaseCallback] = None):
         self.trainer = InnerTrainer(params)
-        self.metric = metric # TODO 参考 keras 的 Metric 如何绑定的
+        self.metric = metric  # TODO 参考 keras 的 Metric 如何绑定的
         self.callbacks = callbacks
         for cb in callbacks:
             cb.hook(self.trainer)

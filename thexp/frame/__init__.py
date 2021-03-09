@@ -3,9 +3,9 @@
 """
 
 from .builder import DatasetBuilder, Delegate
+from .configs import globs
 from .databundler import DataBundler
 from .experiment import Experiment
-from .configs import globs
 from .logger import Logger
 from .meter import Meter, AvgMeter
 from .params import Params, BaseParams

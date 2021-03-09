@@ -9,7 +9,7 @@ from typing import List
 from uuid import uuid4
 
 from git import Git, Repo
-from thexp import __VERSION__
+
 from thexp.utils.paths import renormpath
 from .dates import curent_date
 from ..globals import _GITKEY, _OS_ENV, _FNAME

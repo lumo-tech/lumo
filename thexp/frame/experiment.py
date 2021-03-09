@@ -1,14 +1,13 @@
 import atexit
 import json
 import os
-from thexp.utils import re
 import sys
 import warnings
 from collections import namedtuple
 
 from thexp.globals import _CONFIGL, _GITKEY, _FNAME, _OS_ENV, _PLUGIN_KEY, _BUILTIN_PLUGIN, _PLUGIN_DIRNAME
+from thexp.utils import re
 from thexp.utils.dates import curent_date
-
 from .configs import globs
 
 test_dir_pt = re.compile("[0-9]{4}\.[a-z0-9]{7}")

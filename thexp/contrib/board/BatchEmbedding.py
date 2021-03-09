@@ -7,6 +7,7 @@ import torch
 
 class BatchEmbedding():
     """用于将多个 batch 的输入一同添加到 tensorboard 中"""
+
     def __init__(self, writer, global_step=None, tag="default"):
         self.writer = writer
         self.global_step = global_step
@@ -26,4 +27,3 @@ class BatchEmbedding():
                                   self.label_imgs,
                                   tag=self.tag,
                                   global_step=self.global_step)
-

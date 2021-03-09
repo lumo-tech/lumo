@@ -6,8 +6,9 @@
 
 # Updated: May 2017 for Speaker Recognition collaboration.
 
-from .audio_tools import *
 import numpy as np
+
+from .audio_tools import *
 
 
 #### Display tools
@@ -111,7 +112,6 @@ def vad_x(file):
     vad = nrg_vad(sframes, percent_high_nrg)
     x_samples = deframe(vad, win_len, hop_len)
     return ns[np.where(x_samples.squeeze().astype(np.int) == 1)]
-
 
 
 if __name__ == '__main__':

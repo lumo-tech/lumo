@@ -1,4 +1,4 @@
-from typing import Tuple, Union, List
+from typing import Tuple, Union
 
 from torch import nn
 from torch.nn.modules.batchnorm import _BatchNorm

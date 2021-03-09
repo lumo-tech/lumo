@@ -1,6 +1,7 @@
+import hashlib
 import random
 from typing import Union
-import hashlib
+
 import numpy as np
 import torch
 
