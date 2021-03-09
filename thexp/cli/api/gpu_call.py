@@ -1,9 +1,7 @@
-import subprocess
-from typing import List, Union
-
 import torch
-
+from typing import List, Union
 from thexp.utils import re
+import subprocess
 
 
 def is_available():
@@ -36,13 +34,15 @@ def all_memory_cached(device_id: Union[List[int], int] = None, process=False):
         if count == 0:
             break
 
+
     if device_id is not None:
         res = res[device_id]
+
 
     if process:
         # TODO 待验证
         match_num = re.compile('([0-9]+)')
         for i in range(len(res)):
-            res[i] = re.findall(match_num, res[i])
+            res[i] = re.findall(match_num,res[i])
 
     return res

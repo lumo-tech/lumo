@@ -2,9 +2,8 @@
 
 """
 from collections import OrderedDict
-from itertools import chain
+from itertools import cycle, chain
 from typing import Optional, overload, Union
-
 import torch
 
 from thexp.contrib.device import to_device

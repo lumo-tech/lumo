@@ -6,6 +6,7 @@ import json
 import os
 import pprint as pp
 import warnings
+from collections import defaultdict
 from collections.abc import Iterable
 from datetime import timedelta
 from typing import Any, overload
@@ -17,9 +18,9 @@ from ..base_classes.attr import attr
 from ..base_classes.defaults import default
 from ..base_classes.errors import BoundCheckError, NewParamWarning
 from ..base_classes.params_vars import ParamsFactory, OptimParams, OptimMixin
+from ..utils.environ import ENVIRON_
 from ..calculate import schedule
 from ..decorators.deprecated import deprecated
-from ..utils.environ import ENVIRON_
 
 
 class BaseParams(OptimMixin):

@@ -32,6 +32,8 @@ thexp params <test_name>
 thexp config user --k=v
 thexp config repo --k=v
 """
+import sys
+from thexp import __VERSION__
 from thexp import Q
 
 from thexp.decorators import regist_func
@@ -184,21 +186,25 @@ def params(*args, **kwargs):
 
 
 @regist_func(func_map)
-def last(*args, **kwargs):
+def last(*args,**kwargs):
     N = args[0]
 
     repos = Q.repos()
-    frepo = kwargs.get('repo', None)
+    frepo = kwargs.get('repo',None)
     if repos is not None:
         repos = repos[frepo]
 
     exps = repos.exps()
-    fexp = kwargs.get('exp', None)
+    fexp = kwargs.get('exp',None)
     if fexp is not None:
         exps = exps[fexp]
 
     tests = exps.tests()
     tests
+
+
+
+
 
 
 def main(*args, **kwargs):
@@ -212,7 +218,6 @@ def main(*args, **kwargs):
         func_map[branch](*args[1:], **kwargs)
     else:
         print(doc)
-
 
 # Fire 不能嵌套在 __main__ 判断里，否则 sys.argv 识别会出问题，目前原因未知
 fire.Fire(main)

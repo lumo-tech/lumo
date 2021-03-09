@@ -1,10 +1,10 @@
-from copy import deepcopy
-from typing import TypeVar
-
-import torch
-from torch import LongTensor
 from torch import nn
+import torch
+from copy import deepcopy
+from torch import FloatTensor, LongTensor
 from torch.cuda import LongTensor as CLongTensor
+
+from typing import Generic, TypeVar
 
 Module = TypeVar('Module', nn.Module, str)
 

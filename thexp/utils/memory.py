@@ -1,13 +1,11 @@
 import functools
+import time
+import torch
 import os
 import subprocess
-import time
-from functools import partial
-
-import torch
-
-from thexp.base_classes.tree import tree
 from . import re
+from thexp.base_classes.tree import tree
+from functools import partial
 
 match_mem = re.compile('([0-9]+) +([0-9]+)[^|]* ([0-9]+)MiB')
 

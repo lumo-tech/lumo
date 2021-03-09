@@ -1,10 +1,11 @@
 # copied from https://github.com/sksq96/pytorch-summary
 
-from collections import OrderedDict
-
-import numpy as np
 import torch
 import torch.nn as nn
+from torch.autograd import Variable
+
+from collections import OrderedDict
+import numpy as np
 
 
 def summary(model, input_size, batch_size=-1, device=torch.device('cuda:0'), dtypes=None):
@@ -17,7 +18,7 @@ def summary(model, input_size, batch_size=-1, device=torch.device('cuda:0'), dty
 
 def summary_string(model, input_size, batch_size=-1, device=torch.device('cuda:0'), dtypes=None):
     if dtypes == None:
-        dtypes = [torch.FloatTensor] * len(input_size)
+        dtypes = [torch.FloatTensor]*len(input_size)
 
     summary_str = ''
 

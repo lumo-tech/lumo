@@ -19,11 +19,10 @@ value.
 Except for the base `Schedule` class, some other subclasses of `Schedule`  which may be general used is provided, too. All can
  be easily understand by their names and plot curves.
 """
-from typing import List
-
 import numpy as np
-
 from thexp.base_classes.attr import attr
+from functools import lru_cache
+from typing import List
 
 
 class Schedule(attr):

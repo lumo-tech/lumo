@@ -5,6 +5,7 @@
 from torch.utils.data.dataloader import DataLoader as _DataLoader
 
 # from thexp.utils.decorators.deprecated import deprecated
+from thexp import __VERSION__
 
 
 class DataLoader(_DataLoader):

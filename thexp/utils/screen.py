@@ -11,7 +11,7 @@ import numpy as np
 
 
 def get_consolo_width():
-    return shutil.get_terminal_size().columns - 1  # -1 for windows consolo
+    return shutil.get_terminal_size().columns - 1 # -1 for windows consolo
 
 
 def support_multiline():
@@ -53,7 +53,7 @@ class ScreenStr():
         return self.content
 
     @classmethod
-    def set_speed(cls, dt: float = 0.05):
+    def set_speed(cls,dt: float = 0.05):
         cls.dt = dt
 
     @classmethod
@@ -68,7 +68,7 @@ class ScreenStr():
             return res
 
     @classmethod
-    def cacu_offset_(cls, out_width):
+    def cacu_offset_(cls,out_width):
 
         delta = cls.deltatime()
         cls.t += delta * cls.dt
@@ -87,7 +87,7 @@ class ScreenStr():
     a = 1
 
     @classmethod
-    def cacu_offset(cls, h):
+    def cacu_offset(cls,h):
         """_/-\_"""
         delta = cls.deltatime()
         cls.t += delta * cls.dt

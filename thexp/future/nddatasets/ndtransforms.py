@@ -4,7 +4,6 @@
 import numpy as np
 import torch
 
-
 # from torchvision.transforms import *
 
 
@@ -34,22 +33,20 @@ class ToNumpy():
 
 
 class ToHWC():
-    def __call__(self, x: np.ndarray):
+    def __call__(self, x:np.ndarray):
         if x.ndim == 2:
             return x
-        if x.shape[-1] <= 4:
+        if x.shape[-1] <=4 :
             return x
-        return x.transpose([2, 0, 1])
-
+        return x.transpose([2,0,1])
 
 class ToCHW():
-    def __call__(self, x: np.ndarray):
+    def __call__(self, x:np.ndarray):
         if x.ndim == 2:
             return x
-        if x.shape[-1] > 4:
+        if x.shape[-1] >4 :
             return x
-        return x.transpose([2, 0, 1])
-
+        return x.transpose([2,0,1])
 
 class RandomHorizontalFlip():
     """Flip randomly the image.
@@ -61,8 +58,7 @@ class RandomHorizontalFlip():
     def __call__(self, x):
         if np.random.rand() < self.p:
             x = np.fliplr(x)
-        return x.copy()  # directly return x will cause  'negative' error when doing Torch.from_numpy
-
+        return x.copy() # directly return x will cause  'negative' error when doing Torch.from_numpy
 
 class RandomCrop():
     def __init__(self, size, padding=4, fill=0):

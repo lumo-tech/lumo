@@ -32,27 +32,27 @@ Q.tests('xxx').compare().file(a='...',b=None,skip=0) #
 """
 import json
 import numbers
-import os
+
 import warnings
-from collections import OrderedDict
-from datetime import datetime, timedelta
+import numpy as np
+import os
 from itertools import chain
+from collections import OrderedDict
+from ..base_classes.trickitems import NoneItem
 from pprint import pformat
 from typing import List, Iterator, Set
-
-import numpy as np
+from datetime import datetime, timedelta
 import pandas as pd
 
 from thexp.base_classes.list import llist
 from thexp.globals import _FNAME
 from thexp.utils.paths import home_dir
-from .constrain import Constrain, ParamConstrain, MeterConstrain
 from .reader import BoardReader
 from .viewer import TestViewer
-from ..base_classes.trickitems import NoneItem
-from ..globals import _BUILTIN_PLUGIN
-from ..utils import re
 from ..utils.iters import is_same_type
+from ..globals import _BUILTIN_PLUGIN
+from .constrain import Constrain, ParamConstrain, MeterConstrain
+from ..utils import re
 
 # 虽然好像没什么用但还是设置上了
 pd.set_option('display.max_colwidth', 160)
@@ -577,7 +577,6 @@ class TestsQuery:
     ts.mark("mark")
     ts.unmark("mark")
     """
-
     def __init__(self, test_dirs: List[str]):
         self.test_dirs = llist(test_dirs)
         self.test_names = [os.path.basename(i) for i in self.test_dirs]

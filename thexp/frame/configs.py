@@ -115,7 +115,7 @@ class Globals:
         res = self[key]
         if res is None:
             res = input('输入 {} 的值，该值级别为 {}:'.format(key, level))
-            self.add_value(key, res, level)
+            self.add_value(key,res,level)
         return res
 
 

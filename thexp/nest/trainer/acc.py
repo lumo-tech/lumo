@@ -4,14 +4,11 @@ for calculating and recording accuracy.
 import torch
 
 from thexp import Meter, Params
-
 try:
     import sklearn
 except:
     import warnings
-
     warnings.warn("You need to install scikit-learn to use UnsupervisedAccMixin class ")
-
 
 class AccMixin():
     pass
@@ -67,6 +64,7 @@ class UnsupervisedAccMixin(AccMixin):
         return acc
 
     def test_eval_logic(self, dataloader, param: Params):
+        from thexp.calculate import accuracy as acc
         from sklearn import metrics
         import numpy as np
         with torch.no_grad():

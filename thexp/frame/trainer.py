@@ -5,23 +5,22 @@ import bisect
 import os
 import pprint as pp
 import warnings
-from collections.abc import Iterator
-from functools import lru_cache
-from functools import wraps
-from typing import Any, Union, Dict
 
 # from ..utils.lazy import torch, np
 import numpy as np
 import torch
-from torch.optim.optimizer import Optimizer
+from functools import lru_cache
+from functools import wraps
 from torch.utils.data.dataloader import DataLoader
-
+from torch.optim.optimizer import Optimizer
+from typing import Any, Union, List, Dict
+from collections.abc import Iterator
 from .databundler import DataBundler
 from .meter import AvgMeter, Meter
 from .params import Params
 from .saver import Saver
 from ..base_classes.metaclasses import Merge
-from ..globals import _BUILTIN_PLUGIN, _PLUGIN_KEY, _OS_ENV
+from ..globals import _BUILTIN_PLUGIN, _FNAME, _PLUGIN_DIRNAME, _PLUGIN_KEY, _OS_ENV
 
 
 def mp_agent(rank, self, op):
@@ -916,3 +915,5 @@ class DistributedTrainer():
         mp.spawn(mp_agent,
                  args=(trainer, self.op),
                  nprocs=trainer.params.world_size)
+
+

@@ -1,16 +1,15 @@
 """
 
 """
-import copy
 import warnings
-from collections import OrderedDict
-from typing import Any, Iterable
-
-import numpy as np
+import copy
 import torch
+import numpy as np
+from collections import OrderedDict
 
-from thexp.base_classes.metaclasses import meta_attr
+from typing import Any, Iterable
 from thexp.base_classes.trickitems import _ContainWrap
+from thexp.base_classes.metaclasses import meta_attr
 
 _attr_clss = {}
 

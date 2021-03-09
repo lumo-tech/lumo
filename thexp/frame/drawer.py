@@ -4,8 +4,8 @@
 import os
 
 from ..base_classes.defaults import draw_dict
-from ..decorators import deprecated
 from ..utils.dates import curent_date
+from ..decorators import deprecated
 
 
 @deprecated('1.4.0', '1.5.0')

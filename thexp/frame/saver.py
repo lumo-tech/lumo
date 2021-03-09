@@ -3,13 +3,12 @@
 """
 import json
 import os
+from thexp.utils import re
 from collections import namedtuple
 from typing import List
 
-import torch
-
-from thexp.utils import re
 from ..utils.paths import listdir_by_time
+import torch
 
 ckpt_tuple = namedtuple("Checkpoint", ["checkpoint", 'info'])
 

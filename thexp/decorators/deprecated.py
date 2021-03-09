@@ -17,7 +17,7 @@ import functools
 import textwrap
 import warnings
 from datetime import date
-
+from warnings import warn
 from thexp import __VERSION__
 
 __version__ = "2.1.0"

@@ -5,6 +5,7 @@ import pprint as pp
 from collections import namedtuple
 from typing import List
 
+
 Scalars = namedtuple('ScalarEvent', ['wall_times', 'values', 'steps'])
 
 

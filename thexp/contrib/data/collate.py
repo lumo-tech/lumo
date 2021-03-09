@@ -1,11 +1,11 @@
 """
 
 """
+from thexp.utils import re
+from thexp.decorators import deprecated, warn
+from thexp import __VERSION__
 import torch
 from torch._six import container_abcs, string_classes, int_classes
-
-from thexp.decorators import deprecated, warn
-from thexp.utils import re
 
 np_str_obj_array_pattern = re.compile(r'[SaUO]')
 default_collate_err_msg_format = (
