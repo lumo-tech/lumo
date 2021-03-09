@@ -1,8 +1,6 @@
 from collections.abc import Iterable as CIterable
-import math
-
 from itertools import chain
-from typing import Callable, List, Union, Iterable, overload, Iterator, Sized
+from typing import Callable, List, Union, Iterable, overload, Sized
 
 from torch.utils.data import Dataset, Sampler
 
@@ -279,10 +277,13 @@ class DatasetBuilder(Dataset):
             res = attr()
             if self._add_id:
                 res['_indexs'] = index
-            for ph in ids:
-                res[ph.name] = ph.value
-            for ph in xs:
-                res[ph.name] = ph.value
+            for ph in chain(ids, xs, ys):
+                if isinstance(ph.value, dict):
+                    for k, v in ph.value.items():
+                        if isinstance(k, str) and len(k.strip('_')) == len(k):
+                            res[k] = v
+                else:
+                    res[ph.name] = ph.value
             for ph in ys:
                 res[ph.name] = ph.value
 
@@ -494,7 +495,6 @@ class BatchDatasetBuilder(DatasetBuilder):
 
     def __getitem__(self, batch_index: Iterable):
 
-        from thexp.base_classes.attr import attr
         if self._zip:
             batch_data = []
             for i in batch_index:
