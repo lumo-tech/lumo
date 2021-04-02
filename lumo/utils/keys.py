@@ -32,11 +32,11 @@ def join(*args):
     return "_".join(args)
 
 
-class CONFIG:
+class CFG:
     class PATH:  # key for path
         GLOBAL_EXP = 'global_exp'
         LOCAL_EXP = 'local_exp'
-        STORAGE = 'storage'  # local first, then global
+        EXP_ROOT = 'exp_root'  # local first, then global
         REPO = 'repo'  # project_root
         CWD = 'working_dir'
         DATASET = 'datasets'
@@ -49,7 +49,7 @@ class CONFIG:
             GLOBAL_EXP = os.path.expanduser("~/.lumo/experiments")
             DATASET = os.path.expanduser("~/.lumo/datasets")
             PRETRAINS = os.path.expanduser("~/.lumo/pretrains")
-            CACHE = os.path.expanduser("~/.cache/lumo")
+            CACHE = os.path.expanduser("~/.lumo/.cache")
             LOCAL_CACHE = '.cache'
 
     class STATE:
@@ -66,6 +66,7 @@ class CONFIG:
         GLOBAL = 'global'
         RUNTIME = 'runtime'
 
+    REPO_NAME = 'name'
     BRANCH_NAME = 'experiment'
 
 
@@ -73,14 +74,19 @@ class FN:
     PHASH = '.hash'
     CONFIGJS = 'config.json'
     REPOSJS = 'repos.json'
+    TESTLOG = 'tests.log'
     VERSION = f'.lumo.{__version__}'
+
+    D_LINE = '.line'
+    D_JSON = '.json'
+    D_PKL = '.pkl'
 
 
 class EXP:  # used in Experiment
     STATE = 'state'  # dumped info key
     EXCEPTION = 'exception'
+    PROJECT = 'project'
     EXECUTE = 'execute'
-    # RUNTIME = 'runtime'
     GIT = 'git'
 
     VERSION = 'version'

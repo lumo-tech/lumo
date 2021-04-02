@@ -109,7 +109,10 @@ def load_string(fn):
 
 
 @safe_dump()
-def dump_string(string: str, fn):
-    with open(fn, 'w', encoding='utf-8') as w:
+def dump_string(string: str, fn, append=False):
+    mode = 'w'
+    if append:
+        mode = 'a'
+    with open(fn, mode, encoding='utf-8') as w:
         w.write(string)
     return fn

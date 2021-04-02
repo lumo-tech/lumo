@@ -6,18 +6,9 @@
 from typing import Any
 
 
-class Self:
-    def __getattr__(self, item):
-        return item
-
-    def __getitem__(self, item):
-        return item
-
-
 class NoneItem:
     """
-    可以和任何元素做加减乘除，在计算的过程中根据运算
-    该类相当于 零元（0）或单位元（1）
+    Can be seen as identity element or zero element
     """
 
     @staticmethod
@@ -125,10 +116,3 @@ class AvgItem:
         return self._item[item]
 
 
-class _ContainsWrap():
-    """
-    用于 attr 内部，区分关键词 in 的判断行为发起的 __getitem__ 和平时的attr['some'] 发起的__getitem__ 的不同。
-    """
-
-    def __init__(self, value):
-        self.value = value

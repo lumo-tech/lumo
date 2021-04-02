@@ -9,10 +9,10 @@ from lumo.kit.environ import globs
 from lumo.utils import paths
 from lumo.utils import safe_io as io
 from lumo.utils.dates import strftime
-from lumo.utils.keys import CONFIG, EXP, FN, LIBRARY_NAME
+from lumo.utils.keys import CFG, EXP, FN, LIBRARY_NAME
 from lumo.utils.repository import commit as git_commit
 
-PATH_DEFAULT = CONFIG.PATH.DEFAULT
+PATH_DEFAULT = CFG.PATH.DEFAULT
 
 if TYPE_CHECKING:
     from .exphook import ExpHook
@@ -48,8 +48,13 @@ class Experiment:
         self._exp_name = exp_name
         self._test_name = test_name
 
-        from .exphook import RegistRepo,RecordAbort
-        self.add_hook(RegistRepo()).add_hook(RecordAbort())
+        from .exphook import RegistRepo, RecordAbort, LogTestLocally, LogTestGlobally
+        (
+            self.add_hook(RegistRepo())
+                .add_hook(RecordAbort())
+                .add_hook(LogTestLocally())
+                .add_hook(LogTestGlobally())
+        )
 
     def _create_dir(self, root, dirname):
         res = paths.checkpath(root, dirname)
@@ -103,14 +108,14 @@ class Experiment:
         return self._create_fn(basename, dirname, self.test_root)
 
     def load_info(self, key):
-        fn = self.test_fn(self._create_info_basename(key), '.json')
+        fn = self.test_fn(self._create_info_basename(key), FN.D_JSON)
         if not os.path.exists(fn):
             return None
         return attr.from_dict(io.load_json(fn))
 
     def dump_info(self, key, info: dict, append=False):
         info = attr(info).jsonify()
-        fn = self.test_fn(self._create_info_basename(key), '.json')
+        fn = self.test_fn(self._create_info_basename(key), FN.D_JSON)
         if append and os.path.exists(fn):
             old_info = self.load_info(key)
             for k, v in info.items():
@@ -120,36 +125,37 @@ class Experiment:
         return fn
 
     def load_pkl(self, key):
-        fn = self.test_fn(self._create_bin_basename(key), '.pkl')
+        fn = self.test_fn(self._create_bin_basename(key), FN.D_PKL)
         if not os.path.exists(fn):
             return None
         with open(fn, 'r') as r:
             return pickle.load(r)
 
     def dump_pkl(self, key, info):
-        fn = self.test_fn(self._create_bin_basename(key), '.pkl')
+        fn = self.test_fn(self._create_bin_basename(key), FN.D_PKL)
         with open(fn, 'wb') as w:
             pickle.dump(info, w)
         return fn
 
     def writeline(self, key, value: str):
-        fn = self.test_fn(f".{key}", '.line')
+        fn = self.test_fn(f"{key}.txt", FN.D_LINE)
         with open(fn, 'w', encoding='utf-8') as w:
             w.write(value)
 
     def readline(self, key):
-        fn = self.test_fn(f".{key}", '.line')
+        fn = self.test_fn(f"{key}.txt", FN.D_LINE)
         if not os.path.exists(fn):
             return ''
         with open(fn, 'r', encoding='utf-8') as r:
             return ''.join(r.readlines())
 
     def readlines(self, raw=False) -> Union[dict, str]:
-        line_root = os.path.join(self.test_root, '.line')
-        fs = os.listdir(line_root)
+        line_root = os.path.join(self.test_root, FN.D_LINE)
+        fs_ = os.listdir(line_root)
+        fs_ = [f for f in fs_ if f.endswith('.txt')]
         res = {}
-        for f in fs:
-            key = f[1:]
+        for f in fs_:
+            key = f[:-1]
             line = self.readline(key)
             res[key] = line
         if raw:
@@ -193,6 +199,10 @@ class Experiment:
         return io.load_string(hash_fn)
 
     @property
+    def project_name(self):
+        return os.path.basename(self.project_root)
+
+    @property
     def exp_name(self):
         return self._exp_name
 
@@ -210,40 +220,40 @@ class Experiment:
     @property
     def storage_root(self):
         """experiments root dir, default is `~/.lumo/experiments`"""
-        path = globs.get_first(CONFIG.PATH.LOCAL_EXP, CONFIG.PATH.GLOBAL_EXP,
+        path = globs.get_first(CFG.PATH.LOCAL_EXP, CFG.PATH.GLOBAL_EXP,
                                default=PATH_DEFAULT.GLOBAL_EXP)
 
         return paths.checkpath(path)
 
     @property
-    def cache_root(self):
-        """cache root for lumo"""
-        res = globs.get_first(CONFIG.PATH.CACHE,
+    def cache_root(self) -> str:
+        """cache root for lumo, default"""
+        res = globs.get_first(CFG.PATH.CACHE,
                               default=PATH_DEFAULT.CACHE)
         return paths.checkpath(res)
 
     @property
-    def exp_root(self):
+    def exp_root(self) -> str:
         """root dir for current experiment"""
         return paths.checkpath(self.storage_root, self.exp_name)
 
     @property
-    def test_root(self):
+    def test_root(self) -> str:
         """Root dir for current test"""
         return paths.checkpath(self.exp_root, self.test_name)
 
     @property
-    def project_root(self):
+    def project_root(self) -> str:
         """git repository root(working dir)"""
         return paths.repo_dir()
 
     @property
-    def project_cache_root(self):
+    def project_cache_root(self) -> str:
         """<project_root>/.cache"""
         return paths.checkpath(self.project_root, PATH_DEFAULT.LOCAL_CACHE)
 
     @property
-    def commit_hash(self):
+    def commit_hash(self) -> str:
         from lumo.utils.repository import _commits_map
         res = _commits_map.get(LIBRARY_NAME, None)
         if res is not None:
@@ -256,21 +266,26 @@ class Experiment:
         })
 
         self.dump_info(EXP.EXECUTE, {
-            CONFIG.PATH.REPO: self.project_root,
-            CONFIG.PATH.CACHE: os.getcwd(),
-            'hash': self.project_hash,
+            CFG.PATH.REPO: self.project_root,
+            CFG.PATH.CACHE: os.getcwd(),
             'exec_file': sys.argv[0],
             'exec_bin': sys.executable,
             'exec_argv': sys.argv
         })
-        no_commit = globs.get_first(CONFIG.STATE.DISABLE_GIT,
-                                    default=CONFIG.STATE.DEFAULT.DISABLE_GIT)
+
+        self.dump_info(EXP.PROJECT, {
+            'hash': self.project_hash,
+            'root': self.project_root,
+        })
+
+        no_commit = globs.get_first(CFG.STATE.DISABLE_GIT,
+                                    default=CFG.STATE.DEFAULT.DISABLE_GIT)
         if not no_commit:
             commit_ = git_commit(key=LIBRARY_NAME, info=self.test_root).hexsha[:8]
             self.writeline('commit', commit_)
             self.dump_info(EXP.GIT, {
                 'commit': commit_,
-                CONFIG.PATH.REPO: self.project_root,
+                CFG.PATH.REPO: self.project_root,
             })
         from lumo import __version__
         self.dump_info(EXP.VERSION, {

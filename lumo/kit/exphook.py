@@ -2,6 +2,7 @@ import os
 import stat
 import sys
 
+from lumo.utils.keys import FN
 from .experiment import Experiment
 
 
@@ -23,9 +24,10 @@ class LastCmd(ExpHook):
 
 class LogCmd(ExpHook):
     """a './cache/cmds.log' file will be generated, """
+
     def on_start(self, exp: Experiment):
         from lumo.utils.dates import strftime
-        fn = exp.project_cache_fn(f'{strftime("%y-%m-%d")}.log','cmds')
+        fn = exp.project_cache_fn(f'{strftime("%y-%m-%d")}.log', 'cmds')
         res = exp.exec_argv
 
         with open(fn, 'a', encoding='utf-8') as w:
@@ -35,24 +37,42 @@ class LogCmd(ExpHook):
             w.write('\n\n')
 
 
+class LogTestGlobally(ExpHook):
+    def on_start(self, exp: Experiment):
+        from lumo.utils.paths import home_dir
+        fn = os.path.join(home_dir(), FN.TESTLOG)
+        with open(fn, 'a', encoding='utf-8') as w:
+            w.write(f'{exp.test_root}\n')
+
+
+class LogTestLocally(ExpHook):
+    def on_start(self, exp: Experiment):
+        from lumo.utils.paths import local_dir
+        fn = os.path.join(local_dir(), FN.TESTLOG)
+        with open(fn, 'a', encoding='utf-8') as w:
+            w.write(f'{exp.test_root}\n')
+
+
 class RegistRepo(ExpHook):
     def on_start(self, exp: Experiment):
         from lumo.utils.paths import home_dir
-        from lumo.utils.keys import CONFIG,FN
+        from lumo.utils.keys import CFG, FN
         from lumo.utils import safe_io as io
         fn = os.path.join(home_dir(), FN.REPOSJS)
+        res = None
         if os.path.exists(fn):
             res = io.load_json(fn)
-        else:
+        if res is None:
             res = {}
 
         inner = res.setdefault(exp.project_hash, {})
-        repos = inner.setdefault(CONFIG.PATH.REPO, [])
+        inner[CFG.REPO_NAME] = exp.project_name
+        repos = inner.setdefault(CFG.PATH.REPO, [])
         if exp.project_root not in repos:
             repos.append(exp.project_root)
-        storages = inner.setdefault(CONFIG.PATH.DATASET, [])
-        if exp.storage_root not in storages:
-            storages.append(exp.storage_root)
+        storages = inner.setdefault(CFG.PATH.EXP_ROOT, [])
+        if exp.exp_root not in storages:
+            storages.append(exp.exp_root)
 
         io.dump_json(res, fn)
 

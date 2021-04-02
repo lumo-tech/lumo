@@ -6,7 +6,7 @@ from pprint import pformat
 from typing import Any
 
 from lumo.utils import safe_io as io
-from lumo.utils.keys import CONFIG
+from lumo.utils.keys import CFG
 from lumo.utils.paths import local_config_path, global_config_path
 
 
@@ -33,27 +33,37 @@ class Globals:
         return None
 
     def __setitem__(self, key, value):
-        self._configs[CONFIG.FIELD.RUNTIME][key] = value
+        self._configs[CFG.FIELD.RUNTIME][key] = value
 
     def __repr__(self):
         return "Environ({})".format(pformat(self.items()))
 
+    def load_local_config(self, repo_root):
+        fn = local_config_path(repo_root)
+        if os.path.exists(fn):
+            res = io.load_json(fn)
+        else:
+            res = {}
+        self._configs[repo_root] = res
+        self._configs.move_to_end(repo_root, False)
+        return res
+
     @property
     def runtime_config(self):
-        return self._configs[CONFIG.FIELD.RUNTIME]
+        return self._configs[CFG.FIELD.RUNTIME]
 
     @property
     def repository_config(self):
-        return self._configs[CONFIG.FIELD.REPO]
+        return self._configs[CFG.FIELD.REPO]
 
     @property
     def globals_config(self):
-        return self._configs[CONFIG.FIELD.GLOBAL]
+        return self._configs[CFG.FIELD.GLOBAL]
 
-    def set(self, key, value, level=CONFIG.FIELD.GLOBAL):
+    def set(self, key, value, level=CFG.FIELD.GLOBAL):
         self._configs[level][key] = value
 
-    def get(self, key, level=CONFIG.FIELD.GLOBAL, default=None):
+    def get(self, key, level=CFG.FIELD.GLOBAL, default=None):
         """"""
         return self._configs[level][key, default]
 
@@ -67,12 +77,12 @@ class Globals:
     def items(self):
         """return all config, like dict.items()"""
         return {
-            CONFIG.FIELD.GLOBAL: self._configs[CONFIG.FIELD.GLOBAL].items(),
-            CONFIG.FIELD.REPO: self._configs[CONFIG.FIELD.REPO].items(),
-            CONFIG.FIELD.RUNTIME: self._configs[CONFIG.FIELD.RUNTIME].items(),
+            CFG.FIELD.GLOBAL: self._configs[CFG.FIELD.GLOBAL].items(),
+            CFG.FIELD.REPO: self._configs[CFG.FIELD.REPO].items(),
+            CFG.FIELD.RUNTIME: self._configs[CFG.FIELD.RUNTIME].items(),
         }
 
-    def require(self, key, level=CONFIG.FIELD.REPO):
+    def require(self, key, level=CFG.FIELD.REPO):
         """
         Return value if exists, or require user to input value for the specified`key`.
 
@@ -96,17 +106,17 @@ class Config:
     """
     Single Level Config
     """
-    config_levels = [CONFIG.FIELD.RUNTIME, CONFIG.FIELD.REPO, CONFIG.FIELD.GLOBAL, ]
+    config_levels = [CFG.FIELD.RUNTIME, CFG.FIELD.REPO, CFG.FIELD.GLOBAL, ]
 
     def __init__(self, config_level):
         assert config_level in Config.config_levels, 'config level must in {}'.format(Config.config_levels)
         self._config_level = config_level
         self._config_fn = None
         self._config_dict = {}
-        if config_level == CONFIG.FIELD.REPO:
+        if config_level == CFG.FIELD.REPO:
             self._config_fn = local_config_path()
             self._config_dict = io.load_json(self._config_fn)
-        elif config_level == CONFIG.FIELD.GLOBAL:
+        elif config_level == CFG.FIELD.GLOBAL:
             self._config_fn = global_config_path()
             self._config_dict = io.load_json(self._config_fn)
         else:
@@ -151,15 +161,15 @@ class Config:
 
     @property
     def running_level(self):
-        return self._config_level == CONFIG.FIELD.RUNTIME
+        return self._config_level == CFG.FIELD.RUNTIME
 
     @property
     def globals_level(self):
-        return self._config_level == CONFIG.FIELD.GLOBAL
+        return self._config_level == CFG.FIELD.GLOBAL
 
     @property
     def repo_level(self):
-        return self._config_level == CONFIG.FIELD.REPO
+        return self._config_level == CFG.FIELD.REPO
 
 
 globs = Globals()

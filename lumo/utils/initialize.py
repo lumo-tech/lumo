@@ -2,16 +2,16 @@ import os
 
 from lumo.utils import safe_io as io
 from lumo.utils.hash import hash
-from lumo.utils.keys import CONFIG
+from lumo.utils.keys import CFG
 
 
 def _default_config():
-    DEFAULT = CONFIG.PATH.DEFAULT
+    DEFAULT = CFG.PATH.DEFAULT
     return {
-        CONFIG.PATH.GLOBAL_EXP: DEFAULT.GLOBAL_EXP,
-        CONFIG.PATH.DATASET: DEFAULT.DATASET,
-        CONFIG.PATH.PRETRAINS: DEFAULT.PRETRAINS,
-        CONFIG.PATH.CACHE: DEFAULT.CACHE,
+        CFG.PATH.GLOBAL_EXP: DEFAULT.GLOBAL_EXP,
+        CFG.PATH.DATASET: DEFAULT.DATASET,
+        CFG.PATH.PRETRAINS: DEFAULT.PRETRAINS,
+        CFG.PATH.CACHE: DEFAULT.CACHE,
     }
 
 

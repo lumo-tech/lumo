@@ -10,7 +10,6 @@ import numpy as np
 import torch
 
 from lumo.base_classes.metaclasses import meta_attr
-from lumo.base_classes.trickitems import _ContainsWrap
 from lumo.utils.keys import RESERVE
 
 _attr_clss = {}
@@ -46,13 +45,13 @@ class attr(OrderedDict, metaclass=meta_attr):
 
     def __getitem__(self, k):
         cwk = k
-        if isinstance(k, _ContainsWrap):
+        if isinstance(k, _contains):
             k = k.value
 
         k = str(k)
         ks = k.split(".")
         if len(ks) == 1:
-            if isinstance(cwk, _ContainsWrap):
+            if isinstance(cwk, _contains):
                 return super().__getitem__(ks[0])
 
             try:
@@ -63,8 +62,8 @@ class attr(OrderedDict, metaclass=meta_attr):
 
         cur = self
         for tk in ks:
-            if isinstance(cwk, _ContainsWrap):
-                cur = cur.__getitem__(_ContainsWrap(tk))
+            if isinstance(cwk, _contains):
+                cur = cur.__getitem__(_contains(tk))
             else:
                 cur = cur.__getitem__(tk)
         return cur
@@ -89,7 +88,7 @@ class attr(OrderedDict, metaclass=meta_attr):
 
     def __contains__(self, o: object) -> bool:
         try:
-            _ = self[_ContainsWrap(o)]
+            _ = self[_contains(o)]
             return True
         except:
             return False
@@ -124,7 +123,11 @@ class attr(OrderedDict, metaclass=meta_attr):
     def raw_items(self):
         return self.items(toggle=True)
 
-    def pickify(self):
+    def pickify(self) -> dict:
+        """
+        Return a serialized dict which can be dumped by pickle.
+        You can deserialize this dict by `from_dict()`
+        """
         res = dict()
         for k, v in self.raw_items():
             if isinstance(v, attr):
@@ -155,8 +158,8 @@ class attr(OrderedDict, metaclass=meta_attr):
 
     def jsonify(self) -> dict:
         """
-        获取可被json化的dict，目前仅支持 数字类型、字符串、bool、list/set 类型
-        :return:
+        Return a serialized dict which can be dumped in json format.
+        You can deserialize this dict by `from_dict()`
         """
         import numbers
         res = dict()
@@ -192,12 +195,15 @@ class attr(OrderedDict, metaclass=meta_attr):
         return res
 
     def hash(self) -> str:
+        """return a hash string, both order/key/value changes will change the hash value."""
         return hash(self)
 
     def copy(self):
+        """deep copy"""
         return self.__copy__()
 
     def replace(self, **kwargs):
+        """An alias of update()"""
         for k, v in kwargs.items():
             self[k] = v
         return self
@@ -252,11 +258,26 @@ class attr(OrderedDict, metaclass=meta_attr):
 
 
 class _none(attr):
-    pass
+    """
+    A tricky item used in attr to replace None value when serializing.
+    """
 
 
-class _tpttr(attr):  # pytorch/numpy wrapper
+class _tpttr(attr):
+    """
+    A tricky item used in attr to parse pytorch and numpy array.
+    """
+
     def __init__(self, arr):
         super().__init__()
         self.arr = arr.tolist()
         self.torch = isinstance(arr, torch.Tensor)
+
+
+class _contains():
+    """
+    A tricky item that used in attr to discriminate the difference between `get()` and `contains()`
+    """
+
+    def __init__(self, value):
+        self.value = value

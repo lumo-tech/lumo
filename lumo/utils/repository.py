@@ -6,7 +6,7 @@ from functools import lru_cache
 
 from git import Repo, Commit
 
-from lumo.utils.keys import FN,CONFIG
+from lumo.utils.keys import FN,CFG
 from lumo.utils.paths import repo_dir
 
 bin_file = ['*.pth', '*.npy', '*.ckpt',
@@ -166,7 +166,7 @@ def load_repo(dir='./') -> Repo:
     path = repo_dir(dir)
 
     if path is None:
-        if CONFIG.STATE.OS_NAME.DISABLE_GIT not in os.environ:
+        if CFG.STATE.OS_NAME.DISABLE_GIT not in os.environ:
             print("fatal: not a git repository (or any of the parent directories)")
             print("-----------------------")
             path = input("type root path to init this project, \n(default: {}, type '!' to ignore".format(os.getcwd()))
@@ -197,7 +197,7 @@ def load_repo(dir='./') -> Repo:
 _commits_map = {}
 
 
-def commit(repo: Repo = None, key=None, branch_name=CONFIG.BRANCH_NAME, info: str = None) -> Commit:
+def commit(repo: Repo = None, key=None, branch_name=CFG.BRANCH_NAME, info: str = None) -> Commit:
     """
     ```
         TODO behavior need to be verified.

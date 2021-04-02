@@ -17,8 +17,10 @@ def home_dir():
     return path
 
 
-def local_dir():
-    path = repo_dir()
+def local_dir(repo_=None):
+    if repo_ is None:
+        repo_ = os.getcwd()
+    path = repo_dir(repo_)
     if path is None:
         return None
     path = os.path.join(path, '.lumo')
@@ -53,8 +55,8 @@ def global_config_path():
     return os.path.join(home_dir(), "config.json")
 
 
-def local_config_path():
-    return os.path.join(local_dir(), 'config.json')
+def local_config_path(repo_=None):
+    return os.path.join(local_dir(repo_), 'config.json')
 
 
 def checkpath(*path):
@@ -63,3 +65,8 @@ def checkpath(*path):
     if not os.path.exists(res):
         return None
     return res
+
+
+def compare_path(a, b):
+    a, b = os.path.realpath(a), os.path.realpath(b)
+    return os.path.normpath(a) == os.path.normpath(b)
