@@ -1,0 +1,128 @@
+import os
+import sys
+from sys import platform
+
+from lumo import __version__
+
+LIBRARY_NAME = 'lumo'
+
+
+class ENV:
+    IS_WIN = (platform == "win32")
+    IS_MAC = (platform == "darwin")
+    IS_LINUX = (platform == "linux" or platform == "linux2")
+
+    IS_REMOTE = any([i in os.environ for i in ['SHELL',
+                                               'SHLVL',
+                                               'SSH_CLIENT',
+                                               'SSH_CONNECTION',
+                                               'SSH_TTY']])
+    IS_LOCAL = not IS_REMOTE
+
+    IS_PYCHARM = os.environ.get("PYCHARM_HOSTED", 0) == "1"
+    IS_PYCHARM_DEBUG = eval(os.environ.get('IPYTHONENABLE', "False"))
+
+    ENV = "jupyter" if "jupyter_core" in sys.modules else "python"
+
+    HAS_GIT = True  # TODO check state
+
+
+def join(*args):
+    args = [i for i in args if i is not None]
+    return "_".join(args)
+
+
+class CONFIG:
+    class PATH:  # key for path
+        GLOBAL_EXP = 'global_exp'
+        LOCAL_EXP = 'local_exp'
+        STORAGE = 'storage'  # local first, then global
+        REPO = 'repo'  # project_root
+        CWD = 'working_dir'
+        DATASET = 'datasets'
+        PRETRAINS = 'pretrains'
+        TMPDIR = 'TMPDIR'
+        TMP_DIR = 'TMP_DIR'
+        CACHE = 'cache'
+
+        class DEFAULT:  # default values
+            GLOBAL_EXP = os.path.expanduser("~/.lumo/experiments")
+            DATASET = os.path.expanduser("~/.lumo/datasets")
+            PRETRAINS = os.path.expanduser("~/.lumo/pretrains")
+            CACHE = os.path.expanduser("~/.cache/lumo")
+            LOCAL_CACHE = '.cache'
+
+    class STATE:
+        DISABLE_GIT = 'nocommit'
+
+        class OS_NAME:
+            DISABLE_GIT = 'LUMO_NOCOMMIT'
+
+        class DEFAULT:
+            DISABLE_GIT = not ENV.HAS_GIT
+
+    class FIELD:
+        REPO = 'repository'
+        GLOBAL = 'global'
+        RUNTIME = 'runtime'
+
+    BRANCH_NAME = 'experiment'
+
+
+class FN:
+    PHASH = '.hash'
+    CONFIGJS = 'config.json'
+    REPOSJS = 'repos.json'
+    VERSION = f'.lumo.{__version__}'
+
+
+class EXP:  # used in Experiment
+    STATE = 'state'  # dumped info key
+    EXCEPTION = 'exception'
+    EXECUTE = 'execute'
+    # RUNTIME = 'runtime'
+    GIT = 'git'
+
+    VERSION = 'version'
+
+
+class DIST:
+    RANK = 'local_rank'
+
+
+class DL:
+    XS = 'xs'
+    INPUTS = 'inputs'
+    OUTPUTS = 'outputs'
+    LOGITS = 'logits'
+    FEAT = 'features'
+    MODEL = 'model'
+
+    TOKEN_IDS = 'token_ids'
+
+
+class RESERVE:
+    ATTR_TYPE = '_type'
+
+
+class TRAINER:
+    path = 'path'
+    doc = 'doc'
+    basename = 'basename'
+    class_name = 'class_name'
+
+    class DKEY:
+        models = 'models'
+        optims = 'optims'
+        buffers = 'buffers'
+        others = 'others'
+        initial = 'initial'
+        train_epoch_toggle = 'train_epoch_toggle'
+        train_toggle = 'train_toggle'
+        device = 'device'
+        devices = 'devices'
+        ini_models = 'initial.models'
+        ini_datasets = 'initial.datasets'
+        ini_callbacks = 'initial.callbacks'
+        params = 'params'
+        exp = 'exp'

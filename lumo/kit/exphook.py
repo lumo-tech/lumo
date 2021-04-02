@@ -1,0 +1,71 @@
+import os
+import stat
+import sys
+
+from .experiment import Experiment
+
+
+class ExpHook():
+    def regist(self, exp: Experiment): self.exp = exp
+
+    def on_start(self, exp: Experiment): pass
+
+    def on_end(self, exp: Experiment): pass
+
+
+class LastCmd(ExpHook):
+    def on_start(self, exp: Experiment):
+        with open('lastcmd.sh', 'w', encoding='utf-8') as w:
+            w.write(' '.join(exp.exec_argv))
+        st = os.stat('lastcmd.sh')
+        os.chmod('lastcmd.sh', st.st_mode | stat.S_IEXEC)
+
+
+class LogCmd(ExpHook):
+    """a './cache/cmds.log' file will be generated, """
+    def on_start(self, exp: Experiment):
+        from lumo.utils.dates import strftime
+        fn = exp.project_cache_fn(f'{strftime("%y-%m-%d")}.log','cmds')
+        res = exp.exec_argv
+
+        with open(fn, 'a', encoding='utf-8') as w:
+            w.write(f'{strftime("%H:%M:%S")}, {exp.test_root}, {res[0]}, {exp.commit_hash}\n')
+            res[0] = os.path.basename(res[0])
+            w.write(f"> {' '.join(res)}")
+            w.write('\n\n')
+
+
+class RegistRepo(ExpHook):
+    def on_start(self, exp: Experiment):
+        from lumo.utils.paths import home_dir
+        from lumo.utils.keys import CONFIG,FN
+        from lumo.utils import safe_io as io
+        fn = os.path.join(home_dir(), FN.REPOSJS)
+        if os.path.exists(fn):
+            res = io.load_json(fn)
+        else:
+            res = {}
+
+        inner = res.setdefault(exp.project_hash, {})
+        repos = inner.setdefault(CONFIG.PATH.REPO, [])
+        if exp.project_root not in repos:
+            repos.append(exp.project_root)
+        storages = inner.setdefault(CONFIG.PATH.DATASET, [])
+        if exp.storage_root not in storages:
+            storages.append(exp.storage_root)
+
+        io.dump_json(res, fn)
+
+
+class RecordAbort(ExpHook):
+    def __init__(self):
+        sys.excepthook = self.exc_end
+
+    def exc_end(self, exc_type, exc_val, exc_tb):
+        import traceback
+        self.exp.writeline('exception', "".join(traceback.format_exception(exc_type, exc_val, exc_tb)))
+        self.exp.end(
+            end_code=1,
+            exc_type=traceback.format_exception_only(exc_type, exc_val)[-1].strip()
+        )
+        traceback.print_exception(exc_type, exc_val, exc_tb)
