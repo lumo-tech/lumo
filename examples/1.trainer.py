@@ -45,15 +45,15 @@ from lumo.frame import Meter, Params, Trainer
 class MyTrainer(Trainer):
     __exp_name__ = "DemoExp"
 
-    def callbacks(self, params: Params):
+    def icallbacks(self, params: Params):
         from lumo import callbacks
         callbacks.LoggerCallback().hook(self)  # 添加日志输出功能
         callbacks.AutoRecord().hook(self)
 
-    def datasets(self, params: Params):
+    def idatasets(self, params: Params):
         from torchvision import transforms
         from torchvision.datasets import FakeData
-        from lumo.contrib.data.dataloader import DataLoader
+        from torch.utils.data import DataLoader
 
         dataset = FakeData(size=32 * 10, image_size=(28, 28), transform=transforms.ToTensor())
         train_loader = eval_loader = test_loader = DataLoader(dataset, shuffle=True, batch_size=32, drop_last=True)
@@ -64,7 +64,7 @@ class MyTrainer(Trainer):
             eval=eval_loader,
         )
 
-    def models(self, params: Params):
+    def imodels(self, params: Params):
         from torch.optim import SGD
         self.model = MyModel()
         self.optim = SGD(self.model.parameters(), lr=params.lr)

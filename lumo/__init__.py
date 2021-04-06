@@ -1,14 +1,22 @@
 """
 
 """
-from .version import __version__
+__version__ = "1.5.4.4"
 
+from .utils.paths import global_config_path as _
 
-from .kit import *
+from .kit import (
+    BaseParams, Params,
+    Meter, AvgMeter,
 
+    DataBridge, DatasetBuilder, DataDelegate,
+    Saver, Random,
 
-import lumo.calculate  # initialize schedule attr classes
+    Trainer, DistributedTrainer, callbacks,
+    TrainerExperiment, exphook,
+    globs
+)
 
+from . import calculate  # initialize schedule attr classes
 
-from .utils.paths import global_config_path
-global_config_path() # check and initialize global config
+_()  # check and initialize global config

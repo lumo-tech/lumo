@@ -23,7 +23,7 @@ class ParamGrouper:
     Most of pytorch Optimizers have the hyperparam `weight decay`, but if you use `model.parameters()` as the
      Optimizer's parameter, it will decay all parameters including bias,
 
-    《Bag of Tricks for Image Classification with Convolutional Neural Networks》 suggests that only
+    《Bag of Tricks for Image Classification with Convolutional Neural Networks》 suggests that only
     decay weight of linear or convolution layer.
 
     The best practice to do this in pytorch is to build param_groups for the parameter of Optimizer, and this class
@@ -38,8 +38,6 @@ class ParamGrouper:
     ...     grouper.create_param_group(grouper.bias_params(with_norm=False), **noptim),
     ...     grouper.create_param_group(grouper.norm_params(), **noptim),
     ... ]
-
-
     """
 
     def __init__(self, *module: nn.Module):

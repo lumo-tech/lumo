@@ -8,10 +8,8 @@ from typing import Any
 import numpy as np
 import torch
 
+from ..base_classes.errors import MeterNameException
 from ..base_classes.trickitems import NoneItem
-
-
-class MeterNameException(Exception): pass
 
 
 class _Format:

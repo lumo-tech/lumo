@@ -5,3 +5,5 @@
 """
 
 from . import schedule
+from . import accuracy
+from . import tensor

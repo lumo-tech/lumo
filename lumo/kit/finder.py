@@ -179,7 +179,11 @@ class Query:
         return self
 
     def has_info(self, key):
-        self.conditions.add(LambdaCondition(lambda x: x.jsons.get('key', None) is not None))
+        self.conditions.add(LambdaCondition(lambda x: x.jsons.get(key, None) is not None))
+        return self
+
+    def has_line(self, key):
+        self.conditions.add(LambdaCondition(lambda x: x.lines.get(key, None) is not None))
         return self
 
     def in_time(self, start=None, end=None):
@@ -214,18 +218,24 @@ class Finder:
 
     def refresh(self):
         fn = os.path.join(home_dir(), FN.TESTLOG)
-        with open(fn, 'r', encoding='utf-8') as r:
-            self._test_dirs = list(OrderedDict.fromkeys(i.strip() for i in r if os.path.exists(i.strip())).keys())
+        if not os.path.exists(fn):
+            return
+        res = io.load_string(fn)
+        if res is None:
+            res = ''
+        res = res.split('\n')
+        self._test_dirs = list(OrderedDict.fromkeys(i.strip() for i in res if os.path.exists(i.strip())).keys())
 
         self._tests = Filter(Test(os.path.basename(i), i) for i in self._test_dirs)
 
-    def tests(self, *conditions):
+    def tests(self, *conditions, nonflag=None):
         """can be found in each expdir"""
         tests = self._tests
         for condition in conditions:
             tests = condition(tests)
-
-        return self._tests
+        if len(tests) == 0:
+            return nonflag
+        return tests
 
     def lastest(self) -> Test:
         return self._tests[-1]

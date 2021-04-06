@@ -1,5 +1,5 @@
 from setuptools import setup, find_packages
-from lumo.version import __version__
+from lumo import __version__
 from rename_templete import copy_templete
 
 copy_templete()

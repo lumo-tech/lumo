@@ -13,14 +13,16 @@ import numpy as np
 import torch
 from torch import distributed as dist
 from torch.optim.optimizer import Optimizer
-
+from torch.utils.data import DataLoader
+from torch import nn
 from lumo.base_classes import attr
 from lumo.base_classes.metaclasses import Merge
 from lumo.kit.logger import Logger
-from lumo.kit.builder import Dataset
+from lumo.kit.saver import Saver
+from lumo.kit.builder import Dataset, DatasetWrap, BaseBuilder
 from lumo.kit.environ import globs
 from lumo.kit.experiment import TrainerExperiment
-from lumo.kit.meter import Meter
+from lumo.kit.meter import Meter, AvgMeter
 from lumo.kit.params import Params, BaseParams
 from lumo.utils.keys import TRAINER
 
@@ -66,15 +68,10 @@ def mp_agent(rank, trainer, op):
     trainer.regist_device(torch.device(trainer.params.device))
     torch.cuda.set_device(trainer.params.local_rank)
     print('in rank {}'.format(rank))
-    trainer.models(trainer.params)
-    trainer.datasets(trainer.params)
-    trainer.callbacks(trainer.params)
+    trainer.imodels(trainer.params)
+    trainer.idatasets(trainer.params)
+    trainer.icallbacks(trainer.params)
     op(trainer)
-
-
-class TArg(BaseParams):
-    def __init__(self):
-        super().__init__()
 
 
 class BaseTrainer(metaclass=Merge):
@@ -97,10 +94,10 @@ class BaseTrainer(metaclass=Merge):
 
     __exp_name__ = None
     _call_backs = {
-        "initial",
         "train", "train_epoch", "train_step", "test", "eval", "train_on_batch",
         "regist_databundler", "train_batch", "test_eval_logic", "test_eval_logic_v2", "predict",
-        "load_keypoint", "load_checkpoint", "load_model", "save_keypoint", "save_checkpoint", "save_model",
+        "load_keypoint", "load_checkpoint", "load_model",
+        "save_keypoint", "save_checkpoint", "save_model",
     }
 
     def __new__(cls, *args, **kwargs):
@@ -172,17 +169,21 @@ class BaseTrainer(metaclass=Merge):
             "others": {},
             'device': torch.device('cpu'),
             'devices': {},
-            'initial': {
+            'initialized': {
                 'models': False,
                 'datasets': False,
-                'callbacks': False,
+                'dataloader': False,
             },
             'train_epoch_toggle': False,
             'train_toggle': False,
-            'params' : params,
-            'exp' : TrainerExperiment(_gene_class_exp_name(self)),
+            'params': params,
+            'exp': TrainerExperiment(_gene_class_exp_name(self)),
         })
-        self._datasets = attr()  # type:Dict[str,Dataset]
+        self._saver = None
+        self._logger = None
+
+        self._datasets = attr()  # type:attr[str,BaseBuilder]
+        self._dataloaders = attr()  # type:attr[str,DataLoader]
 
         # self.experiment = TrainerExperiment(_gene_class_exp_name(self))  # type: TrainerExperiment
 
@@ -216,8 +217,19 @@ class BaseTrainer(metaclass=Merge):
         res = self._state_dicts.pickify()
         return res
 
+    def __getattr__(self, item):
+        if item in self._state_dicts:
+            return self._state_dicts[item]
+        return self.__getattribute__(item)
+
+    def __getattribute__(self, name: str) -> Any:
+        try:
+            return super().__getattribute__(name)
+        except:
+            return getattr(self._state_dicts, name)
+
     def _initialize_globs(self):
-        if dist.is_initialized():
+        if dist.is_available() and dist.is_initialized():
             globs['rank'] = dist.get_rank()
             globs['world_size'] = dist.get_world_size()
         else:
@@ -229,35 +241,194 @@ class BaseTrainer(metaclass=Merge):
                 globs[k] = v
                 if isinstance(v, str):
                     os.environ[k] = v
+
+    def _initialize_dataloader(self):
+        for k, v in self.datasets.items():  # type: str,BaseBuilder
+            if k in self._dataloaders:
+                continue
+
+            dataloader = v.build_dataloader()  # TODO
+            self._dataloaders[k] = dataloader
+
+        self._state_dicts['initialized']['dataloader'] = True
+
     @property
-    def exp(self)->TrainerExperiment:
+    def train_toggle(self):
+        return self._state_dicts['train_toggle']
+
+    @property
+    def train_epoch_toggle(self):
+        return self._state_dicts['train_epoch_toggle']
+
+    @property
+    def exp(self) -> TrainerExperiment:
         return self._state_dicts[TRAINER.DKEY.exp]
 
     @property
-    def logger(self):
+    def logger(self) -> Logger:
         if self._logger is None:
             self._logger = Logger()
             self._logger.add_log_dir(self.exp.log_dir)
         return self._logger
 
-
+    @property
+    def params(self) -> ParamsType:
+        return self._state_dicts[TRAINER.DKEY.params]
 
     @property
-    def params(self)->ParamsType:
-        return self._state_dicts[TRAINER.DKEY.params]
+    def saver(self) -> Saver:
+        if self._saver is None:
+            self._saver = Saver(self.exp.saver_dir)
+        return self._saver
+
+    @property
+    def visdom(self):
+        import visdom
+        vis = visdom.Visom(env=self.exp.test_name)
+        return vis
+
+    @property
+    def safe_writer(self):
+        """see trainer.writer"""
+        import tensorflow as tf
+        import tensorboard as tb
+        tf.io.gfile = tb.compat.tensorflow_stub.io.gfile
+        return self.writer
+
+    @property
+    def writer(self):
+        from torch.utils.tensorboard import SummaryWriter
+
+        kwargs = self.exp.board_args
+        res = SummaryWriter(**kwargs)
+
+        def close(*args, **kwargs):
+            res.flush()
+            res.close()
+
+        self.exp.add_exit_hook(close)
+        return res
 
     @property
     def device(self) -> torch.device:
         return self._state_dicts[TRAINER.DKEY.device]
+
+    @property
+    def datasets(self) -> attr[str, BaseBuilder]:
+        if not self.isinit_datasets:
+            self.idatasets(params=self.params)
+        return self._datasets
+
+    @property
+    def dataloaders(self):
+        if not self.isinit_dataloader:
+            self._initialize_dataloader()
+        return self._dataloaders
+
+    @property
+    def train_dataloader(self):
+        return self.dataloaders.get('train', None)
+
+    @property
+    def val_dataloader(self):
+        return self.dataloaders.get('val', None)
+
+    @property
+    def test_dataloader(self):
+        return self.dataloaders.get('test', None)
+
+    @property
+    def models(self) -> Dict[str, nn.Module]:
+        if not self.isinit_models:
+            self.imodels(params=self.params)
+        return self._state_dicts['models']
+
+    @property
+    def optims(self) -> Dict[str, Optimizer]:
+        if not self.isinit_models:
+            self.imodels(params=self.params)
+        return self._state_dicts['optims']
+
+    @property
+    def buffers(self) -> attr:
+        return self._state_dicts['buffers']
+
+    @property
+    def others(self) -> attr:
+        return self._state_dicts['others']
+
+    @property
+    def devices(self) -> attr[str, torch.device]:
+        return self._state_dicts['devices']
+
+    @property
+    def isinit_dataloader(self) -> bool:
+        return self._state_dicts['initialized']['dataloader']
+
+    @property
+    def isinit_datasets(self) -> bool:
+        return self._state_dicts['initialized']['datasets']
+
+    @property
+    def isinit_models(self) -> bool:
+        return self._state_dicts['initialized']['models']
+
+    # initialize and construct methods
+
+    def initialize(self):
+        if not self.isinit_models:
+            self.imodels(self.params)
+            return
+        if not self.isinit_datasets:
+            self.idatasets(self.params)
+        self.icallbacks(self.params)
+        self._state_dicts['initialized'] = True
+
+    def icallbacks(self, params: Params):
+        """初始化回调函数"""
+        pass
+
+    def idatasets(self, params: Params):
+        """初始化数据集"""
+        pass
+
+    def imodels(self, params: Params):
+        """初始化模型"""
+        pass
+
+    def ioptim(self,params:Params):
+        """"""
+        pass
 
     def regist_device(self, device: torch.device):
         self._state_dicts[TRAINER.DKEY.device] = device
         if device.type == 'cuda':
             torch.cuda.set_device(device)
 
-    def regist_dataset(self, train: Dataset = None, val: Dataset = None, test: Dataset = None,
-                       **others: Dict[str, Dataset]):
-        pass
+    def regist_dataset(self, train: BaseBuilder = None, val: BaseBuilder = None, test: BaseBuilder = None,
+                       **others: BaseBuilder):
+        if train is not None:
+            self._datasets['train'] = DatasetWrap.check_then_wrap(train)
+        if val is not None:
+            self._datasets['val'] = DatasetWrap.check_then_wrap(val)
+        if test is not None:
+            self._datasets['test'] = DatasetWrap.check_then_wrap(test)
+
+        for k, v in others.items():
+            self._datasets[k] = DatasetWrap.check_then_wrap(v)
+
+    def regist_dataloader(self, train: DataLoader = None, val: DataLoader = None,
+                          test: DataLoader = None,
+                          **others: DataLoader):
+        if train is not None:
+            self._dataloaders['train'] = train
+        if val is not None:
+            self._dataloaders['val'] = val
+        if test is not None:
+            self._dataloaders['test'] = test
+
+        for k, v in others.items():
+            self._dataloaders[k] = v
 
     def add_callback(self, callback):
         """
@@ -279,25 +450,14 @@ class BaseTrainer(metaclass=Merge):
 
         callback._trainer = self
         callback.on_hooked(self, self.params)
-        self.logger.info("{} hooked on {}.".format(callback, self))
         return True
 
     def reload_callback(self, callback):
-        """重新加载某 callback"""
         self.remove_callback(callback.__class__)
         return self.add_callback(callback)
 
     def remove_callback(self, callback):
-        """
-        移除已加载的 callback
-        Args:
-            callback: 可以是回调类名、实例、或回调类类型
-
-        Returns:
-            是否移除成功，若返回False，则表明没有找到对应的 callback
-            若返回 True，则表明该 callback 已被完好移除
-        """
-        msg = None
+        """"""
         from .callbacks import BaseCallback
 
         try:
@@ -325,69 +485,166 @@ class BaseTrainer(metaclass=Merge):
         return True
 
     def change_mode(self, train=True):
-        for k, v in self._model_dict.items():
+        for k, v in self.models.items():
             if train:
                 v.train()
             else:
                 v.eval()
 
+    # train/evalutaion/test logical
+    def toggle_train(self, flag: bool = None):
+        if flag is None:
+            flag = not self.train_toggle
+        self._state_dicts['train_toggle'] = flag
+
+    def toggle_train_epoch(self, flag: bool = None):
+        if flag is None:
+            flag = not self.train_epoch_toggle
+        self._state_dicts['train_epoch_toggle'] = flag
+
     def train(self):
-        pass
+        params = self.params
+        while params.eidx < params.epoch:
+            self.train_epoch(params.eidx, params=self.params)
+            params.eidx += 1
+            if self.train_toggle:
+                self.toggle_train(False)
+                break
 
-    def train_epoch(self):
-        pass
-
-    def train_batch(self):
-        pass
+    def train_epoch(self, eidx, params: ParamsType):
+        avg = AvgMeter()
+        self.change_mode(True)
+        for idx, batch_data in enumerate(self.train_dataloader):
+            params.idx = idx
+            res = self.train_batch(eidx, idx, params.global_step, batch_data, params)
+            if res is not None:
+                avg.update(res)
+            params.global_step += 1
+            if self.train_epoch_toggle:
+                self.toggle_train_epoch(False)
+                break
 
     def test(self):
-        pass
+        loader = self.test_dataloader
+        if loader is None:
+            return
+
+        avg = AvgMeter()
+        for idx, batch_data in enumerate(loader):
+            res = self.inference(batch_data)
+            avg.update(res)
+        return avg
 
     def evaluate(self):
-        pass
+        loader = self.val_dataloader
+        if loader is None:
+            return
+
+        avg = AvgMeter()
+        for idx, batch_data in enumerate(loader):
+            res = self.inference(batch_data)
+            avg.update(res)
+        return avg
 
     def predict(self, batch):
         """alias of inference"""
         self.inference(batch)
 
+    def train_batch(self, eidx, idx, global_steps, batch_data, params: ParamsType):
+        raise NotImplementedError()
+
     def inference(self, batch):
-        pass
+        raise NotImplementedError()
 
     def inference_sample(self, sample):
         raise NotImplementedError()
 
-    def callbacks(self, params: Params):
-        """初始化回调函数"""
-        pass
+    # state preservation
 
-    def datasets(self, params: Params):
-        """初始化数据集"""
-        pass
+    def load_checkpoints(self, fn=None, obj: dict = None):
+        if fn is not None:
+            obj = self.saver.load_state_dict(fn)
+        if obj is None:
+            raise ValueError(f'{fn} is invalid file.')
+        for k in self._state_dicts:
+            if k not in {'models', 'optims',
+                         'device', 'devices',
+                         'initialized',
+                         'train_epoch_toggle', 'train_toggle',
+                         'exp'}:
+                if k in obj:
+                    self._state_dicts[k] = obj[k]
 
-    def models(self, params: Params):
-        """初始化模型"""
-        pass
+        def _load_state_dict(src, tgt):
+            for k, v in src.items():
+                if k in tgt:
+                    tgt[k].load_state_dict(v)
+
+        if 'models' in obj:
+            models = self.models
+            _load_state_dict(obj['models'], models)
+        if 'optims' in obj:
+            optims = self.optims
+            _load_state_dict(obj['optims'], optims)
+
+    def save_checkpoints(self, meta_info: dict = None):
+        res = {}
+        for k, v in self._state_dicts.items():
+            if k not in {'models', 'optims',
+                         'device', 'devices',
+                         'initialized',
+                         'train_epoch_toggle', 'train_toggle',
+                         'exp'}:
+                res[k] = v
+        res['models'] = self.models_state_dict()
+        res['optims'] = self.optims_state_dict()
+
+    def load_models_state_dict(self, fn=None, obj: dist = None):
+        if fn is not None:
+            obj = self.saver.load_state_dict(fn)
+        if obj is None:
+            raise ValueError(f'{fn} is invalid file.')
+
+        for k, v in self.models.items():
+            if k in obj:
+                v.load_state_dict(obj[k])
+                obj.pop(k)
+
+    def optims_state_dict(self):
+        res = {}
+        for k, v in self.optims.items():
+            res[k] = v.state_dict()
+        return res
+
+    def models_state_dict(self):
+        res = {}
+        for k, v in self.models.items():
+            res[k] = v.state_dict()
+        return res
+
+    def save_models_state_dict(self, meta_info: dict = None):
+        models_state_dict = self.models_state_dict()
+        fn = self.saver.save_model(self.params.eidx, models_state_dict,
+                                   meta_info=meta_info)
+        return fn
 
 
 class Trainer(BaseTrainer):
 
-    def callbacks(self, params: Params):
+    def icallbacks(self, params: Params):
         pass
 
-    def datasets(self, params: Params):
+    def idatasets(self, params: Params):
         pass
 
-    def models(self, params: Params):
+    def imodels(self, params: Params):
         pass
 
-    def train_batch(self, eidx, idx, global_step, batch_data, params: Params, device: torch.device):
-        pass
+    def train_batch(self, eidx, idx, global_steps, batch_data, params: ParamsType):
+        raise NotImplementedError()
 
-    def extra_state_dict(self) -> dict:
-        return super().extra_state_dict()
-
-    def load_extra_state_dict(self, state_dict, strict=False):
-        super().load_extra_state_dict(state_dict, strict)
+    def inference(self, batch):
+        raise NotImplementedError()
 
 
 class WrapTrainer(Trainer):
@@ -396,9 +653,6 @@ class WrapTrainer(Trainer):
                  test_dataloader=None):
         super().__init__(params)
 
-    def train_batch(self, eidx, idx, global_step, batch_data, params: Params, device: torch.device):
-        super().train_batch(eidx, idx, global_step, batch_data, params, device)
-
 
 class DistributedTrainer():
     def __init__(self, trainer_cls, params: Params, op):
@@ -406,52 +660,16 @@ class DistributedTrainer():
         self.params = params
         self.op = op
 
+    def _ini_dist_models(self, trainer: BaseTrainer):
+        # trainer.models
+        pass
+
     def run(self):
-        trainer = self.trainer_cls.__new__(self.trainer_cls)  # type:Trainer
-        trainer._model_dict = {}  # type:Dict[str,torch.nn.Module]
-        trainer._optim_dict = {}  # type:Dict[str,Optimizer]
-        trainer._other_state_dict = {}
-        trainer._vector_dict = {}
-        trainer._checkpoint_plug = {}
-        trainer._datasets_dict = {}  # type:Dict[str,DataBundler]
-        trainer.train_epoch_toggle = False
-        trainer.train_toggle = False
-        trainer.experiment = None
+        trainer = self.trainer_cls(self.params)  # type:Trainer
+        # trainer = self.trainer_cls.__new__(self.trainer_cls)   # type:Trainer
 
         params = self.params
-        if self.params is not None:
-            trainer.params = params
-            if isinstance(params.device, str):
-                trainer.regist_device(torch.device(params.device))
-            else:
-                assert False
-
-            if params.contains('tmp_dir'):
-                if params.tmp_dir is not None:
-                    os.environ['TMPDIR'] = params.tmp_dir
-
-            if params.local_rank >= 1:
-                from lumo import globs
-                globs['rank'] = params.local_rank
-        else:
-            trainer.params = Params()
-
-        from .experiment import Experiment
-        # build experiment
-        trainer.params.initial()
-
-        if not trainer.params.get('git_commit', True):
-            os.environ[_OS_ENV.THEXP_COMMIT_DISABLE] = '1'
-
-        exp_name = _gene_class_exp_name(trainer)
-        trainer.experiment = Experiment(exp_name)
-
-        # rigist and save params of this training procedure
-        trainer.experiment.add_params(params)
-
-        # regist trainer info
-        trainer_kwargs = _gene_trainer_info(trainer)
-        trainer.experiment.add_plugin(_BUILTIN_PLUGIN.trainer, trainer_kwargs)
+        params.initial()
 
         params.distributed = True
         import torch.multiprocessing as mp

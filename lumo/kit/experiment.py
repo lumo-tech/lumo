@@ -312,6 +312,13 @@ class Experiment:
         self._hooks.append(hook)
         return self
 
+    def add_exit_hook(self, func):
+        import atexit
+        def exp_func():
+            func(self)
+
+        atexit.register(exp_func)
+
 
 class TrainerExperiment(Experiment):
 
@@ -334,8 +341,11 @@ class TrainerExperiment(Experiment):
         return self.test_fn('params.yaml')
 
     @property
-    def board_dir(self):
-        return self.test_dir('writer')
+    def board_args(self):
+        return {
+            'filename_suffix': '.bd',
+            'log_dir': self.test_dir('board')
+        }
 
     @property
     def saver_dir(self):

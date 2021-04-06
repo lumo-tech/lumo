@@ -2,13 +2,11 @@ from collections import OrderedDict
 from copy import copy
 from itertools import accumulate
 from operator import add
-from typing import Sized, Sequence, Union, Callable, Dict, Any, Optional, List
+from typing import Sized, Sequence, Union, Callable, Dict, Any, Optional, List, overload
 
 from torch.utils.data import Dataset, sampler, distributed
 
 from .delegate import DataDelegate, Data, DelegateDataTypeError
-
-__all__ = ['BaseBuilder', 'DatasetBuilder']
 
 
 class BaseBuilder(Dataset):
@@ -126,22 +124,38 @@ class BaseBuilder(Dataset):
         self._batch_sampler = batch_sampler
         return self
 
+    @overload
+    def sample_distributed(self, num_replicas=None, rank=None, shuffle=True):
+        ...
+
+    @overload
     def sample_distributed(self, rank: Optional[int] = None,
                            num_replicas: Optional[int] = None,
                            shuffle: bool = True,
                            seed: int = 0, drop_last: bool = False):
-        """
-        Be sure call this in each subprocess respectively, not in main process, when train distributed.
-        Args:
-            see class `torch.util.data.distributed.DistributedSampler` for detail
-        """
-        source = self
-        if self._sampler is not None:
-            source = self._sampler
-        _sampler = distributed.DistributedSampler(source, rank=rank, num_replicas=num_replicas,
-                                                  shuffle=shuffle, seed=seed, drop_last=drop_last)
-        self._sampler = _sampler
-        return self
+        ...
+
+    # def sample_distributed(self, *args, **kwargs):
+    #     """
+    #     Be sure call this in each subprocess respectively, not in main process, when train distributed.
+    #     Args:
+    #         see class `torch.util.data.distributed.DistributedSampler` for detail
+    #     """
+    #     source = self
+    #     if self._sampler is not None:
+    #         source = self._sampler
+    #     _sampler = distributed.DistributedSampler(source, rank=rank, num_replicas=num_replicas,
+    #                                               shuffle=shuffle, seed=seed, drop_last=drop_last)
+    #
+    #     self._sampler = _sampler
+    #     return self
+
+    @overload
+    def dataLoader(self, batch_size=1, shuffle=False, sampler=None,
+                   batch_sampler=None, num_workers=0, collate_fn=None,
+                   pin_memory=False, drop_last=False, timeout=0,
+                   worker_init_fn=None, multiprocessing_context=None):
+        ...
 
     def dataLoader(self, *args, **kwargs):
         self._dataloader_args = (args, kwargs)
@@ -153,6 +167,26 @@ class BaseBuilder(Dataset):
             raise ValueError('Dataloader args not exists, call dataloader(*args,**kwargs) to pass parameters')
         args, kwargs = self._dataloader_args
         return DataLoader(self, *args, **kwargs)
+
+
+class DatasetWrap(BaseBuilder):
+
+    def __init__(self, dataset):
+        super().__init__()
+        self._dataset = dataset
+
+    def __getitem__(self, index):
+        return self._dataset[index]
+
+    def __len__(self):
+        return len(self._dataset)
+
+    @classmethod
+    def check_then_wrap(cls, dataset: Dataset):
+        if isinstance(dataset, BaseBuilder):
+            return dataset
+        else:
+            return cls(dataset)
 
 
 class DatasetBuilder(BaseBuilder):

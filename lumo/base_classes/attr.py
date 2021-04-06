@@ -153,6 +153,8 @@ class attr(OrderedDict, metaclass=meta_attr):
                 res[k] = nv
             elif v is None:
                 res[k] = _none().pickify()
+            else:
+                res[k] = v
 
         return res
 

@@ -34,7 +34,9 @@ def repo_dir(root="./", ignore_info=False):
     """
     判断某目录是否在git repo 目录内（包括子目录），如果是，返回该 repo 的根目录
     :param root:  要判断的目录。默认为程序运行目录
-    :return: 如果是，返回该repo的根目录（包含 .git/ 的目录）
+    :return:
+
+    如果是，返回该repo的根目录（包含 .git/ 的目录）
         否则，返回空
     """
     cur = os.getcwd()

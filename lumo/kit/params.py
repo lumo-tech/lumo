@@ -17,7 +17,6 @@ import fire
 import torch
 
 from lumo.base_classes.attr import attr
-from lumo.base_classes.defaults import default
 from lumo.base_classes.errors import BoundCheckError, NewParamWarning
 from lumo.base_classes.params_vars import OptimParams, OptimMixin
 
@@ -128,7 +127,7 @@ class BaseParams(OptimMixin):
         return False
 
     def _check(self, name, value):
-        if isinstance(value, default):
+        if isinstance(value, default_param):
             value = value.default
         if name not in self._constrain:
             return True
@@ -462,3 +461,21 @@ class Params(BaseParams):
         self.optim = None  # type:OptimParams
         self.git_commit = True
         self.tmp_dir = None  # type:str # set TMPDIR environment
+
+
+class OptimParmas(BaseParams):
+
+    def __init__(self):
+        super().__init__()
+
+
+class DataLoaderParams(BaseParams):
+    def __init__(self):
+        super().__init__()
+
+        self.batch_size = 1
+        self.num_workers = 0
+        self.pin_memory = False
+        self.collate_fn = None
+        self.drop_last = False
+        self.timeout = 0,

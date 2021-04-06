@@ -1,12 +1,16 @@
 from torch import nn
 import torch
 from copy import deepcopy
-from torch import FloatTensor, LongTensor
-from torch.cuda import LongTensor as CLongTensor
+from torch import LongTensor
 
-from typing import Generic, TypeVar
+if torch.cuda.is_available():
+    from torch.cuda import LongTensor as CLongTensor
+else:
+    CLongTensor = LongTensor
 
-Module = TypeVar('Module', nn.Module, str)
+from typing import TypeVar
+
+Module = TypeVar('Module', bound=nn.Module)
 
 
 def EMA(model: Module, alpha=0.999) -> Module:
