@@ -12,7 +12,6 @@ from .kit import (
     DataBridge, DatasetBuilder, DataDelegate,
     Saver, Random,
 
-    Trainer, DistributedTrainer, callbacks,
     TrainerExperiment, exphook,
     globs
 )

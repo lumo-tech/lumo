@@ -14,7 +14,6 @@ setup(
     license='Apache License 2.0',
     include_package_data=True,
     install_requires=[
-        'torch',
         'matplotlib', 'numpy==1.18.0', 'pandas',
         'fire','psutil',
         'gitpython',

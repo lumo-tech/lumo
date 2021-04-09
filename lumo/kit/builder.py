@@ -2,9 +2,9 @@ from collections import OrderedDict
 from copy import copy
 from itertools import accumulate
 from operator import add
-from typing import Sized, Sequence, Union, Callable, Dict, Any, Optional, List, overload
+from typing import Sized, Sequence, Union, Callable, Dict, Any, List, overload
 
-from torch.utils.data import Dataset, sampler, distributed
+from torch.utils.data import Dataset, sampler
 
 from .delegate import DataDelegate, Data, DelegateDataTypeError
 
@@ -125,32 +125,6 @@ class BaseBuilder(Dataset):
         return self
 
     @overload
-    def sample_distributed(self, num_replicas=None, rank=None, shuffle=True):
-        ...
-
-    @overload
-    def sample_distributed(self, rank: Optional[int] = None,
-                           num_replicas: Optional[int] = None,
-                           shuffle: bool = True,
-                           seed: int = 0, drop_last: bool = False):
-        ...
-
-    # def sample_distributed(self, *args, **kwargs):
-    #     """
-    #     Be sure call this in each subprocess respectively, not in main process, when train distributed.
-    #     Args:
-    #         see class `torch.util.data.distributed.DistributedSampler` for detail
-    #     """
-    #     source = self
-    #     if self._sampler is not None:
-    #         source = self._sampler
-    #     _sampler = distributed.DistributedSampler(source, rank=rank, num_replicas=num_replicas,
-    #                                               shuffle=shuffle, seed=seed, drop_last=drop_last)
-    #
-    #     self._sampler = _sampler
-    #     return self
-
-    @overload
     def dataLoader(self, batch_size=1, shuffle=False, sampler=None,
                    batch_sampler=None, num_workers=0, collate_fn=None,
                    pin_memory=False, drop_last=False, timeout=0,
@@ -187,6 +161,48 @@ class DatasetWrap(BaseBuilder):
             return dataset
         else:
             return cls(dataset)
+
+
+class PandasBuilder(BaseBuilder):
+    def __init__(self, df, white_mode=True):
+        super().__init__()
+        import pandas as pd
+        self.table: pd.DataFrame = df  #
+        self.white_mode = white_mode
+        self.keys = set()
+
+    @property
+    def columns(self):
+        return self.table.columns
+
+    def add_white(self, key: str):
+        assert key in self.table.columns and self.white_mode
+        self.keys.add(key)
+
+    def add_black(self, key: str):
+        assert key in self.table.columns and not self.white_mode
+        self.keys.add(key)
+
+    def chunk(self, chunksize, drop_last=False):
+        assert chunksize > 0
+        batch_num = len(self.table) // chunksize
+        if drop_last:
+            end = chunksize * batch_num
+        else:
+            end = len(self.table)
+        for i in range(0, end, chunksize):
+            yield self.table.iloc[i:i + chunksize]
+
+    def __len__(self):
+        return len(self.table)
+
+    def __getitem__(self, index):
+        res = self.table.iloc[index].to_dict()
+        if self.white_mode:
+            res = {k: v for k, v in res.item() if k in self.keys}
+        else:
+            res = {k: v for k, v in res.items() if k not in self.keys}
+        return res
 
 
 class DatasetBuilder(BaseBuilder):
