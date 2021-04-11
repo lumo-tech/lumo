@@ -426,23 +426,23 @@ class DistributionParams(BaseParams):
     def __init__(self):
         super().__init__()
         self.backend = 'nccl'
-        self.distributed = False
-        self.world_size = -1
-        self.local_rank = -1  # if not -1, means will use
-        self.init_method = 'env://'
+        self.world_size = 1
+        self.num_nodes = 1
+        self.local_rank = -1
+        self.init_method = 'tcp://localhost:12345'
 
     @overload
     def init_process_group(self, backend,
                            init_method=None,
                            timeout=timedelta(minutes=30),
-                           world_size=-1,
+                           world_size=1,
                            rank=-1,
                            store=None,
                            group_name=''):
         pass
 
-    def init_process_group(self, *args, **kwargs):
-        self.init_process_group_args = (args, kwargs)
+    def init_process_group(self, **kwargs):
+        self.init_process_group_args = (kwargs)
         return self.init_process_group_args
 
 
@@ -455,9 +455,9 @@ class Params(BaseParams):
         self.idx = 0
         self.global_step = 0
         self.device = "cuda:0" if torch.cuda.is_available() else "cpu"
-        self.device_ids = []
         self.dataset = None
-        self.architecture = None
+        self.arch = None
+        self.stage = self.choice('init', 'train', 'test', 'val')
         self.optim = None  # type:OptimParams
         self.git_commit = True
         self.tmp_dir = None  # type:str # set TMPDIR environment

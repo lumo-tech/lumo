@@ -120,7 +120,7 @@ class TRAINER:
     class DKEY:
         models = 'models'
         optims = 'optims'
-        buffers = 'buffers'
+        tensor = 'tensor'
         others = 'others'
         initial = 'initial'
         train_epoch_toggle = 'train_epoch_toggle'
