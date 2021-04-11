@@ -1,8 +1,13 @@
 from setuptools import setup, find_packages
 from lumo import __version__
-from rename_templete import copy_templete
+# from rename_templete import copy_templete
 
-copy_templete()
+# copy_templete()
+
+"""
+python3 setup.py sdist bdist_wheel
+pip install dist/$(python3 install.py)
+"""
 
 setup(
     name='lumo',

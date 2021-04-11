@@ -112,18 +112,50 @@ class Config:
         assert config_level in Config.config_levels, 'config level must in {}'.format(Config.config_levels)
         self._config_level = config_level
         self._config_fn = None
-        self._config_dict = {}
-        if config_level == CFG.FIELD.REPO:
+        self._config_dict = None
+
+    @property
+    def config_level(self):
+        return self._config_level
+
+    @property
+    def running_level(self):
+        return self.config_level == CFG.FIELD.RUNTIME
+
+    @property
+    def globals_level(self):
+        return self.config_level == CFG.FIELD.GLOBAL
+
+    @property
+    def repo_level(self):
+        return self.config_level == CFG.FIELD.REPO
+
+    @property
+    def config_fn(self):
+        if self.config_level == CFG.FIELD.REPO:
             self._config_fn = local_config_path()
             self._config_dict = io.load_json(self._config_fn)
-        elif config_level == CFG.FIELD.GLOBAL:
+        elif self.config_level == CFG.FIELD.GLOBAL:
             self._config_fn = global_config_path()
             self._config_dict = io.load_json(self._config_fn)
         else:
             self._initial_os_env()
+        return self._config_fn
+
+    @property
+    def config_dict(self):
+        if self.config_level == CFG.FIELD.REPO:
+            self._config_dict = io.load_json(self.config_fn)
+        elif self.config_level == CFG.FIELD.GLOBAL:
+            self._config_dict = io.load_json(self.config_fn)
+        else:
+            self._config_dict = {}
+            self._initial_os_env()
 
         if self._config_dict is None:
             self._config_dict = {}
+
+        return self._config_dict
 
     def _initial_os_env(self):
         for k, v in os.environ.items():
@@ -132,44 +164,28 @@ class Config:
 
     def __setitem__(self, key, value: str):
         key = str(key).lower()
-        self._config_dict[key] = value
+        self.config_dict[key] = value
         self._flush_config()
 
     def __getitem__(self, key, default=None):
         key = str(key)
-        return self._config_dict.get(key, default)
+        return self.config_dict.get(key, default)
 
     def __contains__(self, item):
-        return item in self._config_dict
+        return item in self.config_dict
 
     def __repr__(self) -> str:
         return pformat(self.items())
 
     def _flush_config(self):
         if self._config_fn is not None:
-            io.dump_json(self._config_dict, self._config_fn)
+            io.dump_json(self.config_dict, self._config_fn)
 
     def get(self, key, default=None):
         return self[key, default]
 
     def items(self):
-        return self._config_dict.items()
-
-    @property
-    def config_level(self):
-        return self._config_level
-
-    @property
-    def running_level(self):
-        return self._config_level == CFG.FIELD.RUNTIME
-
-    @property
-    def globals_level(self):
-        return self._config_level == CFG.FIELD.GLOBAL
-
-    @property
-    def repo_level(self):
-        return self._config_level == CFG.FIELD.REPO
+        return self.config_dict.items()
 
 
 globs = Globals()
