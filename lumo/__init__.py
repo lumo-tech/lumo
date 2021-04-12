@@ -1,19 +1,20 @@
 """
 
 """
-__version__ = "0.1.0"
+__version__ = "0.1.1.3"
 
 from .utils.paths import global_config_path as _
 
 from .kit import (
+    F, Q,
     BaseParams, Params,
     Meter, AvgMeter,
 
-    DataBridge, DatasetBuilder, DataDelegate,
+    DatasetBuilder, DataDelegate, DataModule,
     Saver, Random,
 
     TrainerExperiment, exphook,
-    globs
+    globs, Trainer, callbacks
 )
 
 from . import calculate  # initialize schedule attr classes

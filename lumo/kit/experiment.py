@@ -3,7 +3,7 @@ import pickle
 import sys
 import traceback
 from typing import Union, TYPE_CHECKING
-
+from uuid import uuid1
 from lumo.base_classes import attr
 from lumo.kit.environ import globs
 from lumo.utils import paths
@@ -176,7 +176,7 @@ class Experiment:
         return f"{key}.json"
 
     def __enter__(self):
-        self.start()
+        return self.start()
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         extra = {}
@@ -212,7 +212,7 @@ class Experiment:
         if self._test_name is None:
             from lumo.utils.dates import strftime
             fs = os.listdir(self.exp_root)
-            date_str = strftime('%m%d%y')
+            date_str = strftime('%y%m%d')
             fs = [i for i in fs if i.startswith(date_str)]
             self._test_name = f"{date_str}.{len(fs):03d}t"
         return self._test_name
@@ -263,6 +263,7 @@ class Experiment:
     def dump_experiment_info(self):
         self.dump_info(EXP.STATE, {
             'start': strftime(),
+            'end': strftime()
         })
 
         self.dump_info(EXP.EXECUTE, {
@@ -287,6 +288,8 @@ class Experiment:
                 'commit': commit_,
                 CFG.PATH.REPO: self.project_root,
             })
+        self.writeline('uuid', uuid1().hex)
+
         from lumo import __version__
         self.dump_info(EXP.VERSION, {
             'lumo': __version__,
@@ -297,6 +300,7 @@ class Experiment:
         self.dump_experiment_info()
         for hook in self._hooks:  # type: ExpHook
             hook.on_start(self)
+        return self
 
     def end(self, enc_code=0, **extra):
         self.dump_info(EXP.STATE, {
@@ -306,6 +310,7 @@ class Experiment:
 
         for hook in self._hooks:  # type: ExpHook
             hook.on_end(self)
+        return self
 
     def add_hook(self, hook: 'ExpHook'):
         hook.regist(self)
@@ -342,14 +347,20 @@ class TrainerExperiment(Experiment):
 
     @property
     def board_args(self):
+        log_dir = self.test_dir('board')
+        self.writeline('writer', log_dir)
         return {
             'filename_suffix': '.bd',
-            'log_dir': self.test_dir('board')
+            'log_dir': log_dir,
         }
 
     @property
     def saver_dir(self):
         return self.test_dir('saver')
+
+    @property
+    def rnd_dir(self):
+        return self.project_cache_dir('rnd')
 
     def dump_experiment_info(self):
         super().dump_experiment_info()
@@ -365,3 +376,8 @@ class TrainerExperiment(Experiment):
             }, append=True)
         except:
             pass
+
+    def dump_train_info(self, epoch):
+        self.dump_info(EXP.TRAINER, {
+            'epoch': epoch
+        }, append=True)

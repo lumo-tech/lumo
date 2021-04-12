@@ -3,6 +3,7 @@ Help you find the experiments you have done.
 """
 
 import os
+import shutil
 from collections import OrderedDict
 from dataclasses import dataclass
 from functools import lru_cache
@@ -14,18 +15,90 @@ from lumo.utils import safe_io as io
 from lumo.utils.dates import date_from_str
 from lumo.utils.keys import FN, EXP
 from lumo.utils.paths import home_dir, compare_path
-from lumo.utils.repository import load_repo
+from lumo.utils.repository import load_repo, repo_dir
 
 
-@dataclass()
-class Test():
+class TestProp():
+    @property
+    def command(self):
+        raise NotImplementedError()
+
+    @property
+    def exp_name(self):
+        raise NotImplementedError()
+
+    @property
+    def exp_root(self):
+        raise NotImplementedError()
+
+    @property
+    def project_name(self):
+        raise NotImplementedError()
+
+    @property
+    def repo_root(self):
+        raise NotImplementedError()
+
+    @property
+    def repo_hash(self):
+        raise NotImplementedError()
+
+    @property
+    def start_time(self):
+        raise NotImplementedError()
+
+    @property
+    def end_time(self):
+        raise NotImplementedError()
+
+    @property
+    def end_code(self):
+        raise NotImplementedError()
+
+    @property
+    def grepo(self) -> Repo:
+        raise NotImplementedError()
+
+    @property
+    def gcommit(self) -> Commit:
+        raise NotImplementedError()
+
+    @property
+    def commit_hash(self) -> str:
+        raise NotImplementedError()
+
+    @property
+    @lru_cache(1)
+    def lines(self) -> Dict[str, Dict]:
+        raise NotImplementedError()
+
+    @property
+    @lru_cache(1)
+    def jsons(self):
+        raise NotImplementedError()
+
+    @property
+    def pkl_keys(self):
+        raise NotImplementedError()
+
+    @property
+    def uuid(self):
+        raise NotImplementedError()
+
+    @property
+    def largest_epoch(self):
+        raise NotImplementedError()
+
+
+@dataclass(unsafe_hash=True)
+class Test(TestProp):
     name: str
     root: str
 
     @property
     def command(self):
-        exe = self.lines[EXP.EXECUTE]['exec_bin']
-        argv = self.lines[EXP.EXECUTE]['exec_argv']
+        exe = self.jsons[EXP.EXECUTE]['exec_bin']
+        argv = self.jsons[EXP.EXECUTE]['exec_argv']
         return ' '.join([exe, *argv])
 
     @property
@@ -42,23 +115,23 @@ class Test():
 
     @property
     def repo_root(self):
-        return self.lines[EXP.PROJECT]['root']
+        return self.jsons[EXP.PROJECT]['root']
 
     @property
     def repo_hash(self):
-        return self.lines[EXP.PROJECT]['hash']
+        return self.jsons[EXP.PROJECT]['hash']
 
     @property
     def start_time(self):
-        return date_from_str(self.lines[EXP.STATE]['start'])
+        return date_from_str(self.jsons[EXP.STATE]['start'])
 
     @property
     def end_time(self):
-        return date_from_str(self.lines[EXP.STATE].get('end', None))
+        return date_from_str(self.jsons[EXP.STATE].get('end', None))
 
     @property
     def end_code(self):
-        return self.lines[EXP.STATE].get('end_code', 1)
+        return self.jsons[EXP.STATE].get('end_code', 1)
 
     @property
     def grepo(self) -> Repo:
@@ -73,16 +146,15 @@ class Test():
     @property
     def commit_hash(self) -> str:
         """None if nocommit in this test, or commit hash will be returned"""
-        return self.lines.get(EXP.GIT, {}).get('commit', None)
+        return self.jsons.get(EXP.GIT, {}).get('commit', None)
 
     @property
-    @lru_cache(1)
-    def lines(self) -> Dict[str, Dict]:
+    def lines(self) -> Dict[str, str]:
         dir_ = os.path.join(self.root, FN.D_LINE)
         if not os.path.exists(dir_):
             return {}
         fs_ = os.listdir(dir_)
-        fs_ = [i for i in fs_ if i.endswith('.')]
+        fs_ = [i for i in fs_ if i.endswith(FN.SUFFIX.D_LINE)]
         res = {}
         for f in fs_:
             k = os.path.splitext(f)[0]
@@ -91,7 +163,6 @@ class Test():
         return res
 
     @property
-    @lru_cache(1)
     def jsons(self):
         dir_ = os.path.join(self.root, FN.D_JSON)
         if not os.path.exists(dir_):
@@ -119,6 +190,14 @@ class Test():
             k = os.path.splitext(f)[0]
             res.add(k)
         return res
+
+    @property
+    def uuid(self):
+        return self.lines.get(EXP.UUID, '')
+
+    @property
+    def largest_epoch(self):
+        return self.jsons.get(EXP.TRAINER, {}).get('epoch', 0)
 
     def pkl(self, key):
         """
@@ -148,6 +227,12 @@ class LambdaCondition(Condition):
 
     def filter(self, test: Test) -> bool:
         return self.func(test)
+
+
+class Identity(Condition):
+
+    def filter(self, test: Test) -> bool:
+        return True
 
 
 class Or(Condition):
@@ -193,6 +278,14 @@ class Query:
             self.conditions.add(LambdaCondition(lambda x: x.end_time > end is not None))
         return self
 
+    def train_longer_than(self, epoch=0):
+        self.conditions.add(LambdaCondition(lambda x: x.largest_epoch > epoch))
+        return self
+
+    def train_shorter_than(self, epoch=1):
+        self.conditions.add(LambdaCondition(lambda x: x.largest_epoch <= epoch))
+        return self
+
     def in_repo(self, name=None, path=None, full=False):
         if name is not None:
             if full:
@@ -201,7 +294,17 @@ class Query:
                 self.conditions.add(LambdaCondition(lambda x: name in x.project_name))  # type:Test
         elif path is not None:
             self.conditions.add(LambdaCondition(lambda x: compare_path(path, x.repo_root)))  # type:Test
+        else:
+            path = repo_dir()
+            if path is not None:
+                return self.in_repo(path=path)
+            else:
+                return Identity()
+
         return self
+
+    def build(self):
+        return self.conditions
 
 
 class Finder:
@@ -213,7 +316,7 @@ class Finder:
             res = {}
         self.meta = res
         self._test_dirs = []
-        self._tests = Filter()
+        self._tests = Tests()
         self.refresh()
 
     def refresh(self):
@@ -224,9 +327,13 @@ class Finder:
         if res is None:
             res = ''
         res = res.split('\n')
-        self._test_dirs = list(OrderedDict.fromkeys(i.strip() for i in res if os.path.exists(i.strip())).keys())
 
-        self._tests = Filter(Test(os.path.basename(i), i) for i in self._test_dirs)
+        self._test_dirs = list(OrderedDict.fromkeys(
+            filter(lambda x: os.path.exists(x.strip()), res)
+        ).keys())
+        self._test_dirs = sorted(self._test_dirs, key=lambda x: os.stat(x).st_atime)
+
+        self._tests = Tests(Test(os.path.basename(i), i) for i in self._test_dirs)
 
     def tests(self, *conditions, nonflag=None):
         """can be found in each expdir"""
@@ -235,7 +342,7 @@ class Finder:
             tests = condition(tests)
         if len(tests) == 0:
             return nonflag
-        return tests
+        return Tests(tests)
 
     def lastest(self) -> Test:
         return self._tests[-1]
@@ -244,8 +351,99 @@ class Finder:
         return self._tests[-n:]
 
 
-class Filter(list):
-    pass
+class Tests(TestProp, List[Test]):
+
+    def _to_df(self, value: list, column: str):
+        import pandas as pd
+        df = pd.DataFrame()
+        df[column] = value
+        df.index = self.names
+        return df
+
+    @property
+    def command(self):
+        return self._to_df([i.command for i in self], 'command')
+
+    @property
+    def exp_name(self):
+        return self._to_df([i.exp_name for i in self], 'exp_name')
+
+    @property
+    def exp_root(self):
+        return self._to_df([i.exp_root for i in self], 'exp_root')
+
+    @property
+    def project_name(self):
+        return self._to_df([i.project_name for i in self], 'project_name')
+
+    @property
+    def repo_root(self):
+        return self._to_df([i.repo_root for i in self], 'repo_root')
+
+    @property
+    def repo_hash(self):
+        return self._to_df([i.repo_hash for i in self], 'repo_hash')
+
+    @property
+    def start_time(self):
+        return self._to_df([i.start_time for i in self], 'start_time')
+
+    @property
+    def end_time(self):
+        return self._to_df([i.end_time for i in self], 'end_time')
+
+    @property
+    def end_code(self):
+        return self._to_df([i.end_code for i in self], 'end_code')
+
+    @property
+    def grepo(self):
+        return self._to_df([i.grepo for i in self], 'grepo')
+
+    @property
+    def gcommit(self):
+        return self._to_df([i.gcommit for i in self], 'gcommit')
+
+    @property
+    def commit_hash(self):
+        return self._to_df([i.commit_hash for i in self], 'commit_hash')
+
+    @property
+    def lines(self):
+        return [i.lines for i in self]
+
+    @property
+    def jsons(self):
+        return [i.jsons for i in self]
+
+    @property
+    def pkl_keys(self):
+        return [i.pkl_keys for i in self]
+
+    @property
+    def names(self):
+        return [i.name for i in self]
+
+    @property
+    def uuid(self):
+        return self._to_df([i.uuid for i in self], 'uuid')
+
+    @property
+    def latest(self):
+        return self[-1]
+
+    @property
+    def largest_epoch(self):
+        return self._to_df([i.largest_epoch for i in self], 'largest_epoch')
+
+    @property
+    def root(self):
+        return self._to_df([i.root for i in self], 'root')
+
+    def delete(self):
+        for i in self:
+            shutil.rmtree(i.root)
 
 
 F = Finder()
+Q = Query()

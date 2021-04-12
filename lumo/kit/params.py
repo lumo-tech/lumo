@@ -18,14 +18,14 @@ import torch
 
 from lumo.base_classes.attr import attr
 from lumo.base_classes.errors import BoundCheckError, NewParamWarning
-from lumo.base_classes.params_vars import OptimParams, OptimMixin
+from lumo.base_classes.params_vars import OptimBuilder, OptimMixin
 
 arange_param = namedtuple('arange_param', ['default', 'left', 'right'], defaults=[None, float('-inf'), float('inf')])
 choice_param = namedtuple('choice_param', ['default', 'choices'], defaults=[None, []])
 default_param = namedtuple('default_param', ['default', 'warn'], defaults=[True])
 
 
-class BaseParams(OptimMixin):
+class BaseParams():
     """
     Params make it easy to get/set/load/dump your config, if you use easy_dict before, you can see Params as a easy_dict ppplus.
 
@@ -446,36 +446,27 @@ class DistributionParams(BaseParams):
         return self.init_process_group_args
 
 
+class OptimParams(BaseParams, OptimMixin):
+
+    def __init__(self):
+        super().__init__()
+
+
 class Params(BaseParams):
+    OPTIM = OptimParams()
+
+    # DataLoaderParams = DataLoaderParams
 
     def __init__(self):
         super().__init__()
         self.epoch = 10
-        self.eidx = 1
+        self.eidx = 0
         self.idx = 0
         self.global_step = 0
         self.device = "cuda:0" if torch.cuda.is_available() else "cpu"
         self.dataset = None
         self.arch = None
         self.stage = self.choice('init', 'train', 'test', 'val')
-        self.optim = None  # type:OptimParams
+        self.optim = None  # type:OptimBuilder
         self.git_commit = True
         self.tmp_dir = None  # type:str # set TMPDIR environment
-
-
-class OptimParmas(BaseParams):
-
-    def __init__(self):
-        super().__init__()
-
-
-class DataLoaderParams(BaseParams):
-    def __init__(self):
-        super().__init__()
-
-        self.batch_size = 1
-        self.num_workers = 0
-        self.pin_memory = False
-        self.collate_fn = None
-        self.drop_last = False
-        self.timeout = 0,

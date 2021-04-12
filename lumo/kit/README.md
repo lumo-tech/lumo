@@ -7,9 +7,7 @@ For file read/write and get/set, I designed
 For data processing, I designed
 
 - [Builder], to hold nearly all dataset formats and special operations by one class,
-- [Delegate], a torch dataset-like class to hold other dataset formats and operations that builder can't,
-- [Bridge], which helps you perform Tensor dtype and/or device conversion on batch data, that is, a global `to()`
-  function.
+- [Delegate], a torch dataset-like class to hold other dataset formats and operations that builder can't.
 
 For managing experiments, I designed
 

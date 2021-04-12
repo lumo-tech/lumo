@@ -3,7 +3,7 @@ Used for recording data
 """
 from collections import OrderedDict
 from numbers import Number
-from typing import Any
+from typing import Any, Union
 
 import numpy as np
 import torch
@@ -66,7 +66,7 @@ class _AvgItem:
     avg.sum = 6
     """
 
-    def __init__(self, weight_decay=0.75, precision=4) -> None:
+    def __init__(self, weight_decay=0.5, precision=4) -> None:
         super().__init__()
         self._avg = None
         self._last = None
@@ -298,6 +298,11 @@ class AvgMeter(Meter):
                 self.int(name)
             elif isinstance(value, float) and name not in self._format_dict:
                 self.float(name)
+            elif isinstance(value, torch.Tensor) and name not in self._format_dict:
+                if len(value.shape) == 0 or (sum(value.shape) == 1):
+                    self.tensorfloat(name)
+                else:
+                    self.str_in_line(name)
 
             if name in self._meter_dict and isinstance(self._meter_dict[name], _AvgItem):
                 self._meter_dict[name].update(value)
@@ -320,7 +325,7 @@ class AvgMeter(Meter):
     def avg_item(self):
         return _AvgItem(weight_decay=0.75, precision=self._prec)
 
-    def update(self, meter: dict):
+    def update(self, meter: Union[Meter, dict]):
         if meter is None:
             return
         for k, v in meter.items():
@@ -333,6 +338,8 @@ class AvgMeter(Meter):
         log_dict = OrderedDict()
         for k, v in self._meter_dict.items():
             if k in self._format_dict:
+                if isinstance(v, _AvgItem):
+                    v = v.avg
                 v = self._format_dict[k](v)
             log_dict[k] = v
         return log_dict

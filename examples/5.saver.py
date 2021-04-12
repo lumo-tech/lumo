@@ -1,22 +1,20 @@
-"""
-
-"""
-import sys
-sys.path.insert(0,"../")
-from lumo import __version__
-print(__version__)
-
-
 from lumo import Saver
 
-saver = Saver("./sav",max_to_keep=3)
-for i in range(10):
-    saver.save_keypoint(i,{"a":i},{"b":i})
-for i in range(10):
-    saver.save_checkpoint(i,{"a":i},{"b":i})
-for i in range(10):
-    saver.save_model(i,{"a":i},{"b":i})
+saver = Saver('./sav')
+saver.save_checkpoint(1, {1, 2, 3})
+saver.save_checkpoint(2, {1, 2, 3})
+saver.save_checkpoint(3, {1, 2, 3})
+saver.save_checkpoint(4, {1, 2, 3}, is_best=True)
+saver.save_keypoint(3, {1, 2, 3})
+saver.save_keypoint(3, {1, 2, 3})
+fn = saver.save_model(4, {1, 2, 3}, is_best=True)
 
-print(saver.find_keypoints())
-print(saver.find_checkpoints())
-print(saver.find_models())
+print(fn)
+
+print(saver.load_state_dict(fn))
+
+# saver.load_state_dict()
+print(saver.list_models())
+print(saver.list_checkpoints())
+print(saver.list_keypoints())
+

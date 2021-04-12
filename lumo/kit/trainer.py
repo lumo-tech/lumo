@@ -7,12 +7,11 @@ import sys
 import bisect
 import inspect
 import os
-from collections.abc import Iterator
 from dataclasses import dataclass
-from functools import wraps
-from typing import Any, Dict, TypeVar, Union, Optional
+from functools import wraps, lru_cache
+from typing import Any, Dict, TypeVar, Union, Optional, Tuple, Sequence, Mapping
+import random
 
-# from ..utils.lazy import torch, np
 import numpy as np
 import torch
 from torch import distributed as dist
@@ -20,16 +19,19 @@ from torch import nn
 from torch.optim import Optimizer
 from torch.utils.data import DataLoader
 
+from .datamodule import DataModule
+from .environ import globs
+from .experiment import TrainerExperiment
+from .logger import Logger
+from .saver import Saver
+from .meter import Meter, AvgMeter
+from .rnd import RndManager
+from .params import Params, DistributionParams
 from lumo.base_classes import attr
 from lumo.base_classes.metaclasses import Merge
-from lumo.kit.datamodule import DataModule
-from lumo.kit.environ import globs
-from lumo.kit.experiment import TrainerExperiment
-from lumo.kit.logger import Logger
-from lumo.kit.meter import Meter, AvgMeter
-from lumo.kit.params import Params, DistributionParams
 from lumo.utils.keys import TRAINER
 from lumo.utils.connect import find_free_network_port
+from lumo.utils.device import get_to_device_func, construct_device_args_kwargs
 
 ParamsType = TypeVar('ParamsType', bound=Params)
 
@@ -41,6 +43,9 @@ class initial_tuple():
     models: bool = False
     callbacks: bool = False
     optims: bool = False
+    train_dataloader: bool = False
+    val_dataloader: bool = False
+    test_dataloader: bool = False
 
 
 class TrainerStage(Enum):
@@ -72,6 +77,13 @@ def mp_agent(rank, trainer, op, dataloader):
     op(dataloader)
 
 
+def to_device_enumrate(loader: DataLoader, device_args_kwargs):
+    to_device = get_to_device_func()
+    for idx, batch in enumerate(loader):
+        batch = to_device(batch, device_args_kwargs)
+        yield idx, batch
+
+
 class _LoopImp():
     def stop_train(self):
         raise NotImplementedError()
@@ -88,19 +100,19 @@ class _LoopImp():
     def train_epoch(self, dataloader: DataLoader):
         raise NotImplementedError()
 
-    def train_step(self, idx, batch):
+    def train_step(self, idx, batch, *args, **kwargs):
         raise NotImplementedError()
 
     def evaluate(self, dataloader: Union[DataLoader, DataModule]):
         raise NotImplementedError()
 
-    def evaluate_step(self, idx, batch) -> Union[Dict, Meter]:
+    def evaluate_step(self, idx, batch, *args, **kwargs) -> Union[Dict, Meter]:
         raise NotImplementedError()
 
     def test(self, dataloader: Union[DataLoader, DataModule]):
         raise NotImplementedError()
 
-    def test_step(self, idx, batch) -> Union[Dict, Meter]:
+    def test_step(self, idx, batch, *args, **kwargs) -> Union[Dict, Meter]:
         raise NotImplementedError()
 
     def inference(self, batch):
@@ -132,18 +144,26 @@ class _BaseTrainer(metaclass=Merge):
     __exp_name__ = None
     _call_backs = {
         "initial",
-        "train", "train_epoch", "train_step", "test", "eval", "train_on_batch", "train_batch", "predict",
+        "train", "train_epoch", "train_step",
+        "test", "test_step", "evaluate", "evaluate_step",
+        "predict",
         "load_keypoint", "load_checkpoint", "load_model", "save_keypoint", "save_checkpoint", "save_model",
     }
 
-    _check_initial = {
-        'train', 'text', 'eval'
-    }
+    def _exit_hook(self, exc_type, exc, tb, *args):
+        import traceback
+        res = traceback.format_exception(exc_type, exc, tb)
+        res = [i for i in res if 'in _newfunc' not in i]
+        print(''.join(res), file=sys.stderr)
 
     def __new__(cls, *args, **kwargs):
         self = super().__new__(cls)
         if cls.__exp_name__ is None:
             cls.__exp_name__ = cls.__name__.lower().replace("trainer", "Exp")
+
+        from lumo.utils.exithook import replace
+
+        replace(self._exit_hook)
 
         def wrapper(func, _call_set: list):
             """
@@ -163,12 +183,6 @@ class _BaseTrainer(metaclass=Merge):
                     callback.on_begin(self, func, self.params, *aargs, **kkwargs)
                 try:
                     _meter = func(*aargs, **kkwargs)
-                    # 如果返回迭代器，那么会消耗掉迭代器，并只返回最后一次运行的结果（如果有）
-                    if isinstance(_meter, Iterator):
-                        _m = Meter()
-                        for _m in _meter:
-                            pass
-                        _meter = _m
                 except BaseException as e:
                     _handles = [callback.on_exception(self, func, self.params, e, *aargs, **kkwargs)
                                 for callback in _call_set]
@@ -176,7 +190,6 @@ class _BaseTrainer(metaclass=Merge):
                     if any(_handles):
                         return None
                     else:
-                        # TODO 添加 rich 输出，更优雅的退出
                         raise e
 
                 for callback in _call_set:
@@ -222,8 +235,15 @@ class _BaseTrainer(metaclass=Merge):
             "others": {},
             'device': torch.device('cpu'),
             'params': params,
-            'exp': TrainerExperiment(self._gene_class_exp_name()),
+            'exp': TrainerExperiment(self._gene_class_exp_name()).start(),
         })
+        self._initialize_globs()
+
+        self._logger = None
+        self._rnd = None
+        self._saver = None
+        self._datamodule = None
+
         self.initial = initial_tuple()
         self.train_epoch_toggle = False
         self.train_toggle = False
@@ -233,7 +253,6 @@ class _BaseTrainer(metaclass=Merge):
             self.regist_device(_device)
 
         self._check_cb_init()
-        self._initialize_globs()
 
     def __setattr__(self, name: str, value: Any) -> None:
         super().__setattr__(name, value)
@@ -274,6 +293,10 @@ class _BaseTrainer(metaclass=Merge):
                 globs[k] = v
                 if isinstance(v, str):
                     os.environ[k] = v
+
+    @staticmethod
+    def _iter_dataloader(dataloader, device):
+        pass
 
     def _check_optim_init(self):
         if not self.initial.optims:
@@ -330,21 +353,41 @@ class _BaseTrainer(metaclass=Merge):
         return self._state_dicts[TRAINER.DKEY.params]
 
     @property
+    def rnd(self) -> RndManager:
+        if self._rnd is None:
+            self._rnd = RndManager(self.exp.rnd_dir)
+        return self._rnd
+
+    @property
+    def saver(self) -> Saver:
+        if self._saver is None:
+            self._saver = Saver(self.exp.saver_dir)
+        return self._saver
+
+    @property
     def device(self) -> torch.device:
         return self._state_dicts[TRAINER.DKEY.device]
 
     @property
-    def models(self) -> Dict[str, nn.Module]:
-        self._check_models_init()
+    def device_arg_kwargs(self) -> Tuple[Sequence, dict]:
+        return construct_device_args_kwargs(self.device)
+
+    @property
+    def _models(self):
         return self._state_dicts[TRAINER.DKEY.models]
 
     @property
-    def optims(self) -> Dict[str, Optimizer]:
+    def model_dict(self) -> Dict[str, nn.Module]:
+        self._check_models_init()
+        return self._models
+
+    @property
+    def optim_dict(self) -> Dict[str, Optimizer]:
         self._check_optim_init()
         return self._state_dicts[TRAINER.DKEY.optims]
 
     @property
-    def buffer(self) -> Dict[str, Dict[str, Union[np.ndarray, torch.Tensor]]]:
+    def buffers(self) -> Dict[str, Dict[str, Union[np.ndarray, torch.Tensor]]]:
         return self._state_dicts[TRAINER.DKEY.tensor]
 
     @property
@@ -356,13 +399,97 @@ class _BaseTrainer(metaclass=Merge):
         return self._state_dicts[TRAINER.DKEY.tensor]['th']
 
     @property
-    def others(self) -> Dict[str,]:
+    def others(self) -> Dict[str, Any]:
         return self._state_dicts[TRAINER.DKEY.others]
+
+    @property
+    def safe_writer(self):
+        """see trainer.writer"""
+        import tensorflow as tf
+        import tensorboard as tb
+        tf.io.gfile = tb.compat.tensorflow_stub.io.gfile
+        return self.writer
+
+    @property
+    @lru_cache()
+    def writer(self):
+        """
+        Notes:
+        ------
+        When using add_embedding, there may raise some exceptions cased by version conflict, here is some solutions:
+
+        1. tensorflow_core._api.v1.io.gfile' or'tensorflow_core._api.v2.io.gfile' has no attribute 'get_filesystem'
+        first, try upgrade tensorboard and tensorflow as followed version:
+            tensorboard==2.0.2
+            tensorflow==2.0.0
+
+        if you still have the same problem, use this code as a temporary solution:
+
+            import tensorflow as tf
+            import tensorboard as tb
+            tf.io.gfile = tb.compat.tensorflow_stub.io.gfile
+
+        use `trainer.safe_writer` to get a writter with these code added inside thexp.
+
+        solution is referred by https://github.com/pytorch/pytorch/issues/30966
+
+
+        2. You may cause PermissionError like: [Errno 13] Permission denied: '/tmp/.tensorboard-info/pid-20281.info'
+        the solution is to set environment variable TMPDIR
+
+            export TMPDIR=/tmp/$USER;
+            mkdir -p $TMPDIR;
+            tensorboard --logdir ...
+
+        code in line:
+            export TMPDIR=/tmp/$USER; mkdir -p $TMPDIR; tensorboard --logdir ....
+
+        solution is referred by https://github.com/tensorflow/tensorboard/issues/2010
+
+        Returns:
+            A SummaryWriter instance
+        """
+        from torch.utils.tensorboard import SummaryWriter
+
+        kwargs = self.exp.board_args
+        res = SummaryWriter(**kwargs)
+
+        def close(*args):
+            res.flush()
+            res.close()
+
+        self.exp.add_exit_hook(close)
+        return res
+
+    @property
+    def datamodule(self):
+        if self._datamodule is None:
+            self._datamodule = DataModule()
+        return self._datamodule
+
+    @property
+    def train_dataloader(self):
+        return self.datamodule.train_dataloader
+
+    @property
+    def val_dataloader(self):
+        return self.datamodule.val_dataloader
+
+    @property
+    def test_dataloader(self):
+        return self.datamodule.test_dataloader
 
     def regist_device(self, device: torch.device):
         self._state_dicts[TRAINER.DKEY.device] = device
         if device.type == 'cuda':
             torch.cuda.set_device(device)
+
+    def regist_dataloader(self, train: DataLoader = None, val: DataLoader = None, test: DataLoader = None,
+                          datamodule: DataModule = None):
+        if datamodule is not None:
+            self._datamodule = datamodule
+        else:
+            self._datamodule.regist_dataloader(train=train, val=val, test=test)
 
     def add_callback(self, callback):
         """
@@ -430,35 +557,30 @@ class _BaseTrainer(metaclass=Merge):
         return True
 
     def change_mode(self, train=True):
-        for k, v in self.models.items():
+        for k, v in self.model_dict.items():
             if train:
                 v.train()
             else:
                 v.eval()
 
     def optim_state_dict(self):
-        return {k: v.state_dict() for k, v in self.optims.items()}
+        return {k: v.state_dict() for k, v in self.optim_dict.items()}
 
     def model_state_dict(self):
-        return {k: v.state_dict() for k, v in self.models.items()}
+        return {k: v.state_dict() for k, v in self.model_dict.items()}
 
     def buffer_state_dict(self):
-        return self.buffer
+        return self.buffers
 
     def other_state_dict(self):
         return {k: v.state_dict() for k, v in self.others.items()}
-
-    def inner_state_dict(self):
-        return {
-            self._state_dicts
-        }
 
     def state_dict(self):
         res = {
             'models': self.model_state_dict(),
             'optims': self.optim_state_dict(),
-            'buffer': self.buffer_state_dict(),
             'other': self.other_state_dict(),
+            'buffer': self.buffer_state_dict(),
         }
         for k, v in self._state_dicts.items():
             if k not in res:
@@ -479,32 +601,68 @@ class _BaseTrainer(metaclass=Merge):
             else:
                 self._state_dicts[k] = v
 
+    def _build_trainer_meta_info(self, meta_info: Union[str, dict] = None):
+        info = {}
+        info['eidx'] = self.eidx
+        if meta_info is not None:
+            if isinstance(meta_info, str):
+                info['msg'] = meta_info
+            if isinstance(meta_info, dict):
+                info.update(meta_info)
+        return info
+
+    def save_checkpoint(self, max_keep=10, is_best=False, meta_info: Union[str, dict] = None):
+        info = self._build_trainer_meta_info(meta_info)
+        return self.saver.save_checkpoint(self.eidx, self.state_dict(),
+                                          meta_info=info,
+                                          max_keep=max_keep,
+                                          is_best=is_best)
+
+    def save_keypoint(self, meta_info: Union[str, dict] = None):
+        info = self._build_trainer_meta_info(meta_info)
+        return self.saver.save_keypoint(self.eidx, self.state_dict(),
+                                        meta_info=info)
+
+    def save_model(self, is_best=False, meta_info: Union[str, dict] = None):
+        info = self._build_trainer_meta_info(meta_info)
+        return self.saver.save_model(self.eidx, self.state_dict(),
+                                     meta_info=info,
+                                     is_best=is_best)
+
     def ioptims(self, params: ParamsType):
         pass
 
     def icallbacks(self, params: ParamsType):
-        """初始化回调函数"""
         pass
 
     def imodels(self, params: ParamsType):
-        """初始化模型"""
         pass
 
 
 class Trainer(_LoopImp, _BaseTrainer):
+
+    def _wrap_result(self, meter: Union[Mapping, Meter, Sequence, torch.Tensor]):
+        if meter is None:
+            return {}
+        if isinstance(meter, (Mapping, Meter)):
+            return meter
+        elif isinstance(meter, Sequence):
+            return {f'm{i}': v for i, v in enumerate(meter)}
+        elif isinstance(meter, (torch.Tensor, np.ndarray)):
+            return {'metric': meter}
 
     def _check_dist_environ(self, loader: DataLoader):
         if self.is_dist:
             from torch.nn.parallel import DistributedDataParallel
             from torch.utils.data.distributed import DistributedSampler
             from torch.utils.data.sampler import RandomSampler, WeightedRandomSampler
-            for k in self.models:
-                model = self.models[k]
+            for k in self.model_dict:
+                model = self.model_dict[k]
                 if not isinstance(model, DistributedDataParallel):
                     model = DistributedDataParallel(model,
                                                     find_unused_parameters=True,
                                                     device_ids=[self.local_rank])
-                self.models[k] = model
+                self.model_dict[k] = model
 
             setattr(loader, f'_{loader.__class__.__name__}__initialized', False)
             if loader.batch_sampler is not None:  #
@@ -518,6 +676,7 @@ class Trainer(_LoopImp, _BaseTrainer):
                                          shuffle=shuffle,
                                          drop_last=loader.drop_last)
             loader.sampler = sampler
+            loader.persistent_workers = True
             setattr(loader, f'_{loader.__class__.__name__}__initialized', True)
 
     @property
@@ -534,10 +693,27 @@ class Trainer(_LoopImp, _BaseTrainer):
         self.params.stage = stage.name
         self.change_mode(stage.name == TrainerStage.train.name)
 
-    def train(self, dataloader: Union[DataLoader, DataModule]):
+    def to_device(self, item: Optional[Union[nn.Module, torch.Tensor, Sequence, Mapping]] = None,
+                  device_args_kwargs=None):
+        if device_args_kwargs is None:
+            device_args_kwargs = self.device_arg_kwargs
+        from lumo.utils.device import _to_device
+        if item is None:
+            for v in self._models.values():
+                v.to(self.device)
+        else:
+            return _to_device(item, device_args_kwargs)
+
+    def train(self, dataloader: Union[DataLoader, DataModule] = None):
         self.to_stage(TrainerStage.train)
-        if isinstance(dataloader, DataModule):
+        if dataloader is None:
+            dataloader = self.train_dataloader
+        elif isinstance(dataloader, DataModule):
+            dataloader.idataloader(self.params, 'train', self.initial.train_dataloader)
+            self.initial.train_dataloader = True
             dataloader = dataloader.train_dataloader
+        self.datamodule.regist_dataloader(train=dataloader)
+
         if dataloader is None:
             return TrainerResult(TrainerStage.train, 1, 'no train_dataloader')
 
@@ -549,25 +725,30 @@ class Trainer(_LoopImp, _BaseTrainer):
             if self.train_toggle:
                 self.train_toggle = False
                 return TrainerResult(TrainerStage.train, 1, 'stoped midway')
+            self.exp.dump_train_info(self.params.eidx)
+
         return TrainerResult(TrainerStage.train, 0)
 
     def train_epoch(self, dataloader: DataLoader):
         avg = AvgMeter()
-        for idx, batch in enumerate(dataloader):
-            meter = self.train_step(idx, batch)
-            if isinstance(meter, (dict, Meter)):
-                avg.update(meter)
+        for idx, batch in to_device_enumrate(dataloader, self.device_arg_kwargs):
+            meter = self.train_step(idx, batch, self.params)
+            avg.update(self._wrap_result(meter))
+
             self.params.global_step += 1
             self.params.idx = idx
             if self.train_epoch_toggle:
                 self.train_epoch_toggle = False
                 break
+        return avg
 
-    def train_step(self, idx, batch):
+    def train_step(self, idx, batch, params: ParamsType, *args, **kwargs):
         pass
 
-    def evaluate(self, dataloader: Union[DataLoader, DataModule]):
+    def evaluate(self, dataloader: Union[DataLoader, DataModule] = None):
         self.to_stage(TrainerStage.evaluate)
+        if dataloader is None:
+            dataloader = self.val_dataloader
         if isinstance(dataloader, DataModule):
             dataloader = dataloader.val_dataloader
         if dataloader is None:
@@ -575,16 +756,18 @@ class Trainer(_LoopImp, _BaseTrainer):
 
         self._check_dist_environ(dataloader)
         avg = AvgMeter()
-        for idx, batch in enumerate(dataloader):
-            meter = self.evaluate_step(idx, batch)
-            avg.update(meter)
+        for idx, batch in to_device_enumrate(dataloader, self.device_arg_kwargs):
+            meter = self.evaluate_step(idx, batch, self.params)
+            avg.update(self._wrap_result(meter))
         return TrainerResult(TrainerStage.evaluate, 0)
 
-    def evaluate_step(self, idx, batch) -> Union[Dict, Meter]:
-        return self.test_step(idx, batch)
+    def evaluate_step(self, idx, batch, params: ParamsType, *args, **kwargs) -> Union[Dict, Meter]:
+        return self.test_step(idx, batch, params, *args, **kwargs)
 
-    def test(self, dataloader: Union[DataLoader, DataModule]):
+    def test(self, dataloader: Union[DataLoader, DataModule] = None):
         self.to_stage(TrainerStage.test)
+        if dataloader is None:
+            dataloader = self.test_dataloader
         if isinstance(dataloader, DataModule):
             dataloader = dataloader.test_dataloader
         if dataloader is None:
@@ -592,12 +775,12 @@ class Trainer(_LoopImp, _BaseTrainer):
 
         self._check_dist_environ(dataloader)
         avg = AvgMeter()
-        for idx, batch in enumerate(dataloader):
-            meter = self.test_step(idx, batch)
-            avg.update(meter)
+        for idx, batch in to_device_enumrate(dataloader, self.device_arg_kwargs):
+            meter = self.test_step(idx, batch, self.params)
+            avg.update(self._wrap_result(meter))
         return TrainerResult(TrainerStage.test, 0)
 
-    def test_step(self, idx, batch) -> Union[Dict, Meter]:
+    def test_step(self, idx, batch, params: ParamsType, *args, **kwargs) -> Union[Dict, Meter]:
         pass
 
     def inference(self, batch):
@@ -606,6 +789,15 @@ class Trainer(_LoopImp, _BaseTrainer):
     def predict(self, batch):
         """alias of inference"""
         self.inference(batch)
+
+    def ioptims(self, params: ParamsType):
+        pass
+
+    def icallbacks(self, params: ParamsType):
+        pass
+
+    def imodels(self, params: ParamsType):
+        pass
 
 
 class SingleMachineDDPSpawnDist(_LoopImp):
@@ -639,12 +831,14 @@ class SingleMachineDDPSpawnDist(_LoopImp):
 class SingleMachineDDPDist(SingleMachineDDPSpawnDist):
 
     def train(self, dataloader: Union[DataLoader, DataModule]):
-        self._call_children_scripts()
+        if self.trainer.local_rank >= 0:
+            mp_agent(self.trainer.local_rank, self.trainer, self.trainer.train, dataloader)
+        else:
+            self._call_children_scripts()
 
     def _call_children_scripts(self):
         # bookkeeping of spawned processes
-        assert self.global_rank == 0
-        self._check_can_spawn_children()
+        assert self.world_size == 0
         self._has_spawned_children = True
 
         # DDP Environment variables
@@ -677,5 +871,5 @@ class SingleMachineDDPDist(SingleMachineDDPSpawnDist):
 
             # starting all processes at once can cause issues
             # with dataloaders delay between 1-10 seconds
-            delay = np.random.uniform(1, 5, 1)[0]
+            delay = random.randint(2, 5)
             time.sleep(delay)

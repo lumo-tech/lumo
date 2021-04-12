@@ -1,8 +1,8 @@
 import os
 import stat
 import sys
-
 from lumo.utils.keys import FN
+from lumo.utils.exithook import wrap_before
 from .experiment import Experiment
 
 
@@ -79,13 +79,14 @@ class RegistRepo(ExpHook):
 
 class RecordAbort(ExpHook):
     def __init__(self):
-        sys.excepthook = self.exc_end
+        wrap_before(self.exc_end)
 
     def exc_end(self, exc_type, exc_val, exc_tb):
         import traceback
-        self.exp.writeline('exception', "".join(traceback.format_exception(exc_type, exc_val, exc_tb)))
+        res = traceback.format_exception(exc_type, exc_val, exc_tb)
+        res = [i for i in res if 'in _newfunc' not in i]
+        self.exp.writeline('exception', "".join(res))
         self.exp.end(
             end_code=1,
             exc_type=traceback.format_exception_only(exc_type, exc_val)[-1].strip()
         )
-        traceback.print_exception(exc_type, exc_val, exc_tb)

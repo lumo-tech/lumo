@@ -144,6 +144,9 @@ class Config:
 
     @property
     def config_dict(self):
+        if self._config_dict is not None:
+            return self._config_dict
+
         if self.config_level == CFG.FIELD.REPO:
             self._config_dict = io.load_json(self.config_fn)
         elif self.config_level == CFG.FIELD.GLOBAL:
@@ -168,7 +171,7 @@ class Config:
         self._flush_config()
 
     def __getitem__(self, key, default=None):
-        key = str(key)
+        key = str(key).lower()
         return self.config_dict.get(key, default)
 
     def __contains__(self, item):

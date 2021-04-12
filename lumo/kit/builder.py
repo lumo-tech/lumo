@@ -2,14 +2,34 @@ from collections import OrderedDict
 from copy import copy
 from itertools import accumulate
 from operator import add
-from typing import Sized, Sequence, Union, Callable, Dict, Any, List, overload
-
-from torch.utils.data import Dataset, sampler
+from typing import Sized, Sequence, Union, Callable, Dict, Any, List, overload, ClassVar, TypeVar
+from functools import partial, wraps
+from torch.utils.data import Dataset, sampler as sp, DataLoader
 
 from .delegate import DataDelegate, Data, DelegateDataTypeError
 
+Loader = TypeVar('Loader')
+
+
+def _loader_partial(loader: Loader, *args, **kwargs) -> Loader:
+    args = list(args)
+
+    @wraps(loader)
+    def inner(*iargs, **ikwargs):
+        nonlocal args
+        kwargs.update(ikwargs)
+        if len(iargs) > len(args):
+            args = iargs
+        else:
+            args[:len(iargs)] = iargs
+
+        return loader(*args, **kwargs)
+
+    return inner
+
 
 class BaseBuilder(Dataset):
+
     def __init__(self):
         self._check_delegate_flag = set()
 
@@ -18,7 +38,7 @@ class BaseBuilder(Dataset):
         self._chain = False
         self._sub_indices = None
         self._reindices = None
-        self._dataloader_args = None
+        self._dataloader_kwargs = None
 
     def __repr__(self):
         return (f"{self.__class__.__name__}()")
@@ -30,6 +50,14 @@ class BaseBuilder(Dataset):
         if self._sub_indices is not None:
             return len(self._sub_indices)
         return self.raw_len
+
+    @property
+    def sampler(self):
+        return self._sampler
+
+    @property
+    def batch_sampler(self):
+        return self._batch_sampler
 
     @property
     def raw_len(self):
@@ -97,50 +125,56 @@ class BaseBuilder(Dataset):
         return self
 
     def random_sampler(self, replacement: bool = False, generator=None):
-        _sampler = sampler.RandomSampler(self, replacement=replacement, generator=generator
-                                         , num_samples=len(self))
+        _sampler = sp.RandomSampler(self, replacement=replacement, generator=generator)
         self.sample_by(_sampler)
         return self
 
     def weighted_random_sampler(self, weights: Sequence[float],
                                 replacement: bool = True, generator=None):
-        _sampler = sampler.WeightedRandomSampler(weights=weights,
-                                                 num_samples=len(self),
-                                                 replacement=replacement,
-                                                 generator=generator)
+        _sampler = sp.WeightedRandomSampler(weights=weights,
+                                            num_samples=len(self),
+                                            replacement=replacement,
+                                            generator=generator)
         self.sample_by(_sampler)
         return self
 
     def sequential_sampler(self):
-        _sampler = sampler.SequentialSampler(self)
+        _sampler = sp.SequentialSampler(self)
         self.sample_by(_sampler)
         return self
 
-    def sample_by(self, sampler: sampler.Sampler):
+    def sample_by(self, sampler: sp.Sampler):
         self._sampler = sampler
         return self
 
-    def batch_sample_by(self, batch_sampler: sampler.BatchSampler):
+    def batch_sample_by(self, batch_sampler: sp.BatchSampler):
         self._batch_sampler = batch_sampler
         return self
 
     @overload
-    def dataLoader(self, batch_size=1, shuffle=False, sampler=None,
-                   batch_sampler=None, num_workers=0, collate_fn=None,
-                   pin_memory=False, drop_last=False, timeout=0,
-                   worker_init_fn=None, multiprocessing_context=None):
+    def dataloader_args(self, batch_size=1, shuffle=False, sampler=None,
+                        batch_sampler=None, num_workers=0, collate_fn=None,
+                        pin_memory=False, drop_last=False, timeout=0,
+                        worker_init_fn=None, multiprocessing_context=None, *args, **kwargs):
         ...
 
-    def dataLoader(self, *args, **kwargs):
-        self._dataloader_args = (args, kwargs)
+    def dataloader_args(self, **kwargs):
+        self._dataloader_kwargs = kwargs
         return self
 
-    def build_dataloader(self):
-        from torch.utils.data import DataLoader
-        if self._dataloader_args is None:
-            raise ValueError('Dataloader args not exists, call dataloader(*args,**kwargs) to pass parameters')
-        args, kwargs = self._dataloader_args
-        return DataLoader(self, *args, **kwargs)
+    @property
+    def DataLoader(self) -> ClassVar[DataLoader]:
+        kwargs = {}
+        if self._dataloader_kwargs is not None:
+            kwargs.update(self._dataloader_kwargs)
+
+        kwargs['sampler'] = self.sampler
+        kwargs['batch_sampler'] = self.batch_sampler
+
+        res = _loader_partial(DataLoader, self, **kwargs)
+        res.__doc__ = DataLoader.__doc__
+        res.__annotations__ = DataLoader.__annotations__
+        return res
 
 
 class DatasetWrap(BaseBuilder):
@@ -209,7 +243,9 @@ class DatasetBuilder(BaseBuilder):
     """
     """
 
-    def __init__(self):
+    def __init__(self, xs=None, ys=None, auto_output=False,
+                 xs_ipt_transform=None, ys_ipt_transform=None,
+                 xs_opt_transform=None, ys_opt_transform=None):
         super().__init__()
         self._dataset_len = None
         self._input_dict = OrderedDict()
@@ -220,6 +256,15 @@ class DatasetBuilder(BaseBuilder):
         self._input_transform = OrderedDict()
         self._output_transform = OrderedDict()
         self._global_transform = []
+
+        if xs is not None:
+            self.add_input('xs', xs, xs_ipt_transform)
+            if auto_output:
+                self.add_output('xs', 'xs', xs_opt_transform)
+        if ys is not None:
+            self.add_input('ys', ys, ys_opt_transform)
+            if auto_output:
+                self.add_output('ys', 'ys', ys_opt_transform)
 
     def __repr__(self):
         return (f"{self.__class__.__name__}("
@@ -361,7 +406,7 @@ class DatasetBuilder(BaseBuilder):
         self._idnames.append(name)
         return self
 
-    def add_input(self, name, source: Union[Sized, DataDelegate]):
+    def add_input(self, name, source: Union[Sized, DataDelegate], transform=None):
         """
         Add an source/input stream.
         Args:
@@ -371,9 +416,11 @@ class DatasetBuilder(BaseBuilder):
         self._check_len(source)
         self._check_source_name(name, added=True)
         self._input_dict[name] = source
+        if transform is not None:
+            self.add_input_transform(name, transform)
         return self
 
-    def add_output(self, name, outkey):
+    def add_output(self, name, outkey, transform=None):
         """
         Add an output stream.
         Args:
@@ -383,6 +430,8 @@ class DatasetBuilder(BaseBuilder):
         self._check_source_name(name, added=False)
         self._check_outkey_name(outkey)
         self._output_dict[outkey] = name
+        if transform is not None:
+            self.add_output_transform(outkey, transform)
         return self
 
     def add_input_transform(self, name, transform: Callable[[Any], Any]):

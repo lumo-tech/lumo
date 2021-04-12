@@ -2,7 +2,7 @@ import os
 import shutil
 import textwrap
 from collections import namedtuple
-from typing import Optional
+from typing import Optional, Union, List
 
 from lumo.utils import safe_io as io
 
@@ -24,7 +24,12 @@ class Saver:
     """
 
     def __init__(self, save_dir):
-        self.save_dir = save_dir
+        self._save_dir = save_dir
+
+    @property
+    def save_dir(self):
+        os.makedirs(self._save_dir, exist_ok=True)
+        return self._save_dir
 
     def _guess_abs_path(self, fn: str) -> str:
         path = fn
@@ -42,13 +47,15 @@ class Saver:
         def _create_path():
             res = []
             res.append(prefix)
-            res.append(f"{offset:01d}")
+            if not replacement:
+                res.append(f"{offset:01d}")
             if ignore_number:
                 res.append(None)
             else:
                 res.append(f"{step:06d}")
             res.append(suffix)
-            return '.'.join(res)
+            fn = '.'.join(list(filter(lambda x: x is not None, res)))
+            return os.path.join(self.save_dir, fn)
 
         path = _create_path()
         if not replacement:
@@ -57,7 +64,7 @@ class Saver:
                 path = _create_path()
         return path
 
-    def dump_state_dict(self, obj, fn, meta_info: dict = None):
+    def dump_state_dict(self, obj, fn, meta_info: Union[str, dict] = None):
         """
 
         Args:
@@ -70,6 +77,8 @@ class Saver:
         """
         fn = io.dump_state_dict(obj, fn)
         if meta_info is not None:
+            if isinstance(meta_info, str):
+                meta_info = {'msg': meta_info}
             json_fn = f"{fn}.json"
             io.dump_json(meta_info, json_fn)
         return fn
@@ -93,7 +102,7 @@ class Saver:
             if something went wrong, `ckpt` or `info` will be a None object.
         """
         path = self._guess_abs_path(fn)
-        ckpt = io.load_state_dict(path)
+        ckpt = io.load_state_dict(path, map_location=map_location)
 
         if not with_meta:
             return ckpt
@@ -116,7 +125,7 @@ class Saver:
         info = io.load_json(info_path)
         return info
 
-    def save_keypoints(self, steps: int, state_dict, meta_info: dict = None) -> str:
+    def save_keypoint(self, steps: int, state_dict, meta_info: Union[str, dict] = None) -> str:
         """
         save a object which is keypoint.
         Args:
@@ -131,8 +140,8 @@ class Saver:
         self.dump_state_dict(state_dict, path, meta_info=meta_info)
         return path
 
-    def save_checkpoints(self, step: int, state_dict, meta_info: dict = None,
-                         max_keep=10, is_best=False) -> Optional[str]:
+    def save_checkpoint(self, step: int, state_dict, meta_info: Union[str, dict] = None,
+                        max_keep=10, is_best=False) -> Optional[str]:
         """
         save a object as a deleteable
 
@@ -150,18 +159,22 @@ class Saver:
         """
         path = self._create_state_dict_name(step, replacement=True, prefix='checkpoints')
         res = self.dump_state_dict(state_dict, path, meta_info=meta_info)
+        history = self.list_checkpoints()
+        if len(history) > max_keep:
+            [os.remove(i) for i in history[:-max_keep]]
+
         if res:
             if is_best:
                 best_path = self._create_state_dict_name(step,
                                                          replacement=True,
-                                                         prefix='best.checkpoints',
+                                                         prefix='best.checkpoint',
                                                          ignore_number=True)
                 shutil.copy2(path, best_path)
             return path
         else:
             return None
 
-    def save_model(self, step: int, state_dict, meta_info: dict = None, is_best=False) -> str:
+    def save_model(self, step: int, state_dict, meta_info: Union[str, dict] = None, is_best=False) -> str:
         """
         save model
 
@@ -188,6 +201,61 @@ class Saver:
             return path
         else:
             return None
+
+    def load_checkpoint(self, index=-1, best_if_exist=True, fn=None, with_meta=False, map_location='cpu'):
+        if fn is None and best_if_exist:
+            fn = self.best_checkpoint()
+        if fn is None:
+            try:
+                fn = self.list_checkpoints()[index]
+            except:
+                pass
+        if fn is not None:
+            return self.load_state_dict(fn, with_meta, map_location)
+
+    def load_keypoint(self, index=-1, fn=None, with_meta=False, map_location='cpu'):
+        if fn is None:
+            try:
+                fn = self.list_keypoints()[index]
+            except:
+                pass
+        if fn is not None:
+            return self.load_state_dict(fn, with_meta, map_location)
+
+    def load_model(self, index=-1, best_if_exist=True, fn=None, with_meta=False, map_location='cpu'):
+        if fn is None and best_if_exist:
+            fn = self.best_model()
+        if fn is None:
+            try:
+                fn = self.list_models()[index]
+            except:
+                pass
+        if fn is not None:
+            return self.load_state_dict(fn, with_meta, map_location)
+
+    def best_checkpoint(self):
+        fn = os.path.join(self.save_dir, 'best.checkpoint.pt')
+        if os.path.exists(fn):
+            return fn
+        return None
+
+    def best_model(self):
+        fn = os.path.join(self.save_dir, 'best.model.pt')
+        if os.path.exists(fn):
+            return fn
+        return None
+
+    def list_checkpoints(self) -> List[str]:
+        return sorted(list(filter(lambda x: x.startswith('checkpoints'), os.listdir(self.save_dir))),
+                      key=lambda x: os.stat(os.path.join(self.save_dir, x)).st_atime)
+
+    def list_keypoints(self) -> List[str]:
+        return sorted(list(filter(lambda x: x.startswith('key'), os.listdir(self.save_dir))),
+                      key=lambda x: os.stat(os.path.join(self.save_dir, x)).st_atime)
+
+    def list_models(self) -> List[str]:
+        return sorted(list(filter(lambda x: x.startswith('model'), os.listdir(self.save_dir))),
+                      key=lambda x: os.stat(os.path.join(self.save_dir, x)).st_atime)
 
     def list(self):
         return sorted(os.listdir(self.save_dir))

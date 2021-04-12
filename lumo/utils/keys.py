@@ -81,6 +81,11 @@ class FN:
     D_JSON = '.json'
     D_PKL = '.pkl'
 
+    class SUFFIX:
+        D_LINE = '.txt'
+        D_JSON = '.json'
+        D_PKL = '.pkl'
+
 
 class EXP:  # used in Experiment
     STATE = 'state'  # dumped info key
@@ -90,6 +95,9 @@ class EXP:  # used in Experiment
     GIT = 'git'
 
     VERSION = 'version'
+    UUID = 'uuid'
+
+    TRAINER = 'trainer'
 
 
 class DIST:

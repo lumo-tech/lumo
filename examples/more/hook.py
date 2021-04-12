@@ -1,8 +1,6 @@
 """
 
 """
-import traceback
-import atexit
 import sys
 
 class ExitHooks(object):
@@ -16,18 +14,20 @@ class ExitHooks(object):
         sys.excepthook = self.exc_handler
 
     def exit(self, code=0):
-        self.exit_code = code
         with open("1","w") as f:
             f.write(str(code))
+        self.exit_code = code
         self._orig_exit(code)
 
     def exc_handler(self, exc_type, exc, tb,*args):
+        import traceback
+
         self.exception = exc
-        # print(traceback.format_exception(exc_type,exc,tb))
+        print(traceback.format_exception(exc_type,exc,tb))
         # print(traceback.format_exception_only(exc_type,exc))
         # traceback.print_exception(exc_type,exc,tb)
 
 hooks = ExitHooks()
 hooks.hook()
 
-raise Exception("asdasdasd")
+raise KeyboardInterrupt()
