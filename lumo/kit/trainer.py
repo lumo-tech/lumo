@@ -147,7 +147,7 @@ class _BaseTrainer(metaclass=Merge):
         "train", "train_epoch", "train_step",
         "test", "test_step", "evaluate", "evaluate_step",
         "predict",
-        "load_keypoint", "load_checkpoint", "load_model", "save_keypoint", "save_checkpoint", "save_model",
+        "save_keypoint", "save_checkpoint", "save_model",
     }
 
     def _exit_hook(self, exc_type, exc, tb, *args):
@@ -589,7 +589,7 @@ class _BaseTrainer(metaclass=Merge):
         return res
 
     def _load_fun_state_dict(self, src: dict, tgt: dict):
-        for k, v in tgt:
+        for k, v in tgt.items():
             if k in src:
                 v.load_state_dict(src[k])
 
@@ -652,32 +652,7 @@ class Trainer(_LoopImp, _BaseTrainer):
             return {'metric': meter}
 
     def _check_dist_environ(self, loader: DataLoader):
-        if self.is_dist:
-            from torch.nn.parallel import DistributedDataParallel
-            from torch.utils.data.distributed import DistributedSampler
-            from torch.utils.data.sampler import RandomSampler, WeightedRandomSampler
-            for k in self.model_dict:
-                model = self.model_dict[k]
-                if not isinstance(model, DistributedDataParallel):
-                    model = DistributedDataParallel(model,
-                                                    find_unused_parameters=True,
-                                                    device_ids=[self.local_rank])
-                self.model_dict[k] = model
-
-            setattr(loader, f'_{loader.__class__.__name__}__initialized', False)
-            if loader.batch_sampler is not None:  #
-                sampler = loader.batch_sampler.sampler
-            else:
-                sampler = loader.sampler
-            shuffle = False
-            if isinstance(sampler, (RandomSampler, WeightedRandomSampler)):
-                shuffle = True
-            sampler = DistributedSampler(loader.dataset,
-                                         shuffle=shuffle,
-                                         drop_last=loader.drop_last)
-            loader.sampler = sampler
-            loader.persistent_workers = True
-            setattr(loader, f'_{loader.__class__.__name__}__initialized', True)
+        pass
 
     @property
     def training(self):
@@ -800,14 +775,43 @@ class Trainer(_LoopImp, _BaseTrainer):
         pass
 
 
-class SingleMachineDDPSpawnDist(_LoopImp):
+class SingleMachineDDPSpawnDist(Trainer):
     pcls = DistributionParams
 
-    def __init__(self, trainer: Trainer, params: DistributionParams):
-        self.trainer = trainer
-        self.params = params
+    def __init__(self, params: ParamsType, dist_params: DistributionParams):
+        super().__init__(params)
+
+        self.dist_params = params
         if params.world_size == -1:
             params.world_size = torch.cuda.device_count()
+
+    def _check_dist_environ(self, loader: DataLoader):
+        if self.is_dist:
+            from torch.nn.parallel import DistributedDataParallel
+            from torch.utils.data.distributed import DistributedSampler
+            from torch.utils.data.sampler import RandomSampler, WeightedRandomSampler
+            for k in self.model_dict:
+                model = self.model_dict[k]
+                if not isinstance(model, DistributedDataParallel):
+                    model = DistributedDataParallel(model,
+                                                    find_unused_parameters=True,
+                                                    device_ids=[self.local_rank])
+                self.model_dict[k] = model
+
+            setattr(loader, f'_{loader.__class__.__name__}__initialized', False)
+            if loader.batch_sampler is not None:  #
+                sampler = loader.batch_sampler.sampler
+            else:
+                sampler = loader.sampler
+            shuffle = False
+            if isinstance(sampler, (RandomSampler, WeightedRandomSampler)):
+                shuffle = True
+            sampler = DistributedSampler(loader.dataset,
+                                         shuffle=shuffle,
+                                         drop_last=loader.drop_last)
+            loader.sampler = sampler
+            loader.persistent_workers = True
+            setattr(loader, f'_{loader.__class__.__name__}__initialized', True)
 
     @property
     def num_nodes(self):
@@ -821,10 +825,10 @@ class SingleMachineDDPSpawnDist(_LoopImp):
     def num_gpus(self):
         return self.num_nodes * self.world_size
 
-    def train(self, dataloader: Union[DataLoader, DataModule]):
+    def train(self, dataloader: Union[DataLoader, DataModule] = None):
         import torch.multiprocessing as mp
         mp.spawn(mp_agent,
-                 args=(self.trainer, self.trainer.train, dataloader),
+                 args=(self, super().train, dataloader),
                  nprocs=self.world_size)
 
 

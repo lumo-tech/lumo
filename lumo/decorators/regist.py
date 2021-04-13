@@ -1,7 +1,9 @@
 from typing import Union, Dict, List, Callable
+from functools import partial
+from collections import OrderedDict
 
 
-def regist_func(val: Union[Dict[str, Callable], List[Callable]], name_=None):
+def regist_func_to(val: Union[Dict[str, Callable], List[Callable]], name_=None):
     def wrap(func):
         if name_ is None:
             name = func.__name__
@@ -15,3 +17,28 @@ def regist_func(val: Union[Dict[str, Callable], List[Callable]], name_=None):
         return func
 
     return wrap
+
+
+class Register():
+    def __init__(self, name):
+        self.name = name
+        self.source = OrderedDict()
+
+    def __str__(self):
+        inner = str([(k, v) for k, v in self.source.items()])
+        return f"Register({self.name}{inner})"
+
+    def __repr__(self):
+        return self.__str__()
+
+    def __getitem__(self, item):
+        return self.source.get(item, None)
+
+    def __call__(self, wrapped, name=None):
+        if name is None:
+            name = wrapped.__name__
+        assert name is not None
+        self.source[name] = wrapped
+
+    def regist(self, name=None):
+        return partial(self, name=name)
