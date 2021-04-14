@@ -26,8 +26,11 @@ from .logger import Logger
 from .saver import Saver
 from .meter import Meter, AvgMeter
 from .rnd import RndManager
+from .datamodule import DataModule
+from .mixin import ModelMix, CallbackMix
+
 from .params import DistributionParams, ParamsType
-from lumo.base_classes import attr
+from lumo.base_classes import attr, TrainerStage
 from lumo.base_classes.metaclasses import Merge
 from lumo.utils.keys import TRAINER
 from lumo.utils.connect import find_free_network_port
@@ -74,57 +77,7 @@ def to_device_enumrate(loader: DataLoader, device_args_kwargs: Tuple[Sequence, D
         yield idx, batch
 
 
-class InitialABC():
-    def ioptims(self, params: ParamsType):
-        raise NotImplementedError()
-
-    def icallbacks(self, params: ParamsType):
-        raise NotImplementedError()
-
-    def imodels(self, params: ParamsType):
-        raise NotImplementedError()
-
-
-class _LoopImp():
-    def stop_train(self):
-        raise NotImplementedError()
-
-    def stop_train_epoch(self):
-        raise NotImplementedError()
-
-    def to_stage(self, stage: TrainerStage):
-        raise NotImplementedError()
-
-    def train(self, dataloader: Union[DataLoader, DataModule]):
-        raise NotImplementedError()
-
-    def train_epoch(self, dataloader: DataLoader):
-        raise NotImplementedError()
-
-    def train_step(self, idx, batch, *args, **kwargs):
-        raise NotImplementedError()
-
-    def evaluate(self, dataloader: Union[DataLoader, DataModule]):
-        raise NotImplementedError()
-
-    def evaluate_step(self, idx, batch, *args, **kwargs) -> Union[Dict, Meter]:
-        raise NotImplementedError()
-
-    def test(self, dataloader: Union[DataLoader, DataModule]):
-        raise NotImplementedError()
-
-    def test_step(self, idx, batch, *args, **kwargs) -> Union[Dict, Meter]:
-        raise NotImplementedError()
-
-    def inference(self, batch):
-        raise NotImplementedError()
-
-    def predict(self, batch):
-        """alias of inference"""
-        raise NotImplementedError()
-
-
-class _BaseTrainer(InitialABC, metaclass=Merge):
+class _BaseTrainer(ModelMix, CallbackMix, metaclass=Merge):
     """
     1. 组装所有的插件
     2. 提供完整的训练流程 api
@@ -504,13 +457,24 @@ class _BaseTrainer(InitialABC, metaclass=Merge):
         if callback not in self._callback_set and cb_name in self._callback_name_set:
             msg = "Callback duplicate."
             callback.on_hook_failed(self, msg)
+            return
+
+        if callback.only_main_process and self.local_rank > 0:
+            msg = f"{callback.__class__.__name__} only_main_process but in local_rank {self.local_rank}"
+            callback.on_hook_failed(self, msg)
+            return
+
+        if callback.only_single_gpu and self.is_dist:
+            msg = f"{callback.__class__.__name__} only_single_gpu but dist={self.is_dist}"
+            callback.on_hook_failed(self, msg)
+            return
 
         if msg is not None:
             return False
         bisect.insort(self._callback_set, callback)
         self._callback_name_set.add(cb_name)
 
-        callback._trainer = self
+        callback._hooked = self
         callback.on_hooked(self, self.params)
         self.logger.info("{} hooked on {}.".format(callback, self))
         return True
@@ -631,7 +595,46 @@ class _BaseTrainer(InitialABC, metaclass=Merge):
                                      is_best=is_best)
 
 
-class Trainer(_LoopImp, _BaseTrainer):
+class DLLoopMix():
+    def stop_train(self):
+        raise NotImplementedError()
+
+    def stop_train_epoch(self):
+        raise NotImplementedError()
+
+    def to_stage(self, stage: TrainerStage):
+        raise NotImplementedError()
+
+    def train(self, dataloader: Union[DataLoader, DataModule]):
+        raise NotImplementedError()
+
+    def train_epoch(self, dataloader: DataLoader):
+        raise NotImplementedError()
+
+    def train_step(self, idx, batch, *args, **kwargs):
+        raise NotImplementedError()
+
+    def evaluate(self, dataloader: Union[DataLoader, DataModule]):
+        raise NotImplementedError()
+
+    def evaluate_step(self, idx, batch, *args, **kwargs) -> Union[Dict, Meter]:
+        raise NotImplementedError()
+
+    def test(self, dataloader: Union[DataLoader, DataModule]):
+        raise NotImplementedError()
+
+    def test_step(self, idx, batch, *args, **kwargs) -> Union[Dict, Meter]:
+        raise NotImplementedError()
+
+    def inference(self, batch):
+        raise NotImplementedError()
+
+    def predict(self, batch):
+        """alias of inference"""
+        raise NotImplementedError()
+
+
+class Trainer(DLLoopMix, _BaseTrainer):
 
     def _wrap_result(self, meter: Union[Mapping, Meter, Sequence, torch.Tensor, np.ndarray]):
         if meter is None:

@@ -8,13 +8,13 @@ from functools import wraps
 
 from .trainer import Trainer
 
+from .mixin import CallbackMix
 from .meter import AvgMeter
 from .meter import Meter
 from .params import Params
 from ..base_classes.trickitems import NoneItem, AvgItem
 from ..calculate.schedule import Schedule, ScheduleList
 from ..utils.timing import format_second
-
 
 class BaseCallback():
     """
@@ -30,20 +30,20 @@ class BaseCallback():
 
     def __new__(cls, *_, **__):
         self = super().__new__(cls)
-        self._trainer = None
+        self._hooked = None
 
         def ecp_wrap(func):
             """同一个异常第一次调用的时候运行"""
 
             @wraps(func)
-            def on_exception(trainer: Trainer, tfunc, params: Params, e: BaseException, *args, **kwargs):
+            def on_exception(hooked: Trainer, tfunc, params: Params, e: BaseException, *args, **kwargs):
                 self.ecp = getattr(self, "ecp", None)
                 res = None
                 if self.ecp != e:
-                    res = self.on_first_exception(trainer, tfunc, params, e, *args, **kwargs)
+                    res = self.on_first_exception(hooked, tfunc, params, e, *args, **kwargs)
                     self.ecp = e
 
-                eres = func(trainer, tfunc, params, e, *args, **kwargs)
+                eres = func(hooked, tfunc, params, e, *args, **kwargs)
                 if res is None:
                     return eres
                 else:
@@ -54,11 +54,11 @@ class BaseCallback():
         self.on_exception = ecp_wrap(self.on_exception)
         return self
 
-    def on_hooked(self, trainer: Trainer, params: Params):
+    def on_hooked(self, source: Trainer, params: Params):
         """called when callback hooked trainer"""
         pass
 
-    def on_first_exception(self, trainer: Trainer, func, params: Params, e: BaseException, *args, **kwargs):
+    def on_first_exception(self, source: Trainer, func, params: Params, e: BaseException, *args, **kwargs):
         """
         when an exception was raised in some function, on_exception() will be called.
 
@@ -69,19 +69,19 @@ class BaseCallback():
         """
         pass
 
-    def on_exception(self, trainer: Trainer, func, params: Params, e: BaseException, *args, **kwargs):
+    def on_exception(self, source: Trainer, func, params: Params, e: BaseException, *args, **kwargs):
         """called when exception raised in some function"""
         return False
 
-    def on_hook_failed(self, trainer, message):
+    def on_hook_failed(self, source, message):
         """Any reason when callback cannot hook on trainer"""
         pass
 
-    def on_begin(self, trainer: Trainer, func, params: Params, *args, **kwargs):
+    def on_begin(self, source: Trainer, func, params: Params, *args, **kwargs):
         """called before trainer.func is called"""
         pass
 
-    def on_end(self, trainer: Trainer, func, params: Params, meter, *args, **kwargs):
+    def on_end(self, source: Trainer, func, params: Params, meter, *args, **kwargs):
         pass
 
     def __le__(self, other):
@@ -90,18 +90,11 @@ class BaseCallback():
     def __lt__(self, other):
         return self.priority < other.priority
 
-    def hook(self, trainer: Trainer):
-        """自动将自己已有的on_func_begin/on_func_end方法绑定"""
-        # trainer.add_callback(self)
-        if self.only_main_process and trainer.local_rank > 0:
-            pass
-        elif self.only_single_gpu and trainer.is_dist:
-            pass
-        else:
-            trainer.reload_callback(self)
+    def hook(self, source: CallbackMix):
+        source.reload_callback(self)
 
     def unhook(self):
-        self._trainer.remove_callback(self)
+        self._hooked.remove_callback(self)
 
     def _repr_by_val(self, *vals):
         vstr = "; ".join(["{}={}".format(val, str(getattr(self, val, None))) for val in vals])
@@ -116,21 +109,21 @@ class TrainCallback(BaseCallback):
     实现了一般训练过程中的函数函数回调，主要将 on_begin() / on_end() 方法分发到各具体的回调方法中
     """
 
-    def on_begin(self, trainer: Trainer, func, params: Params, *args, **kwargs):
+    def on_begin(self, source: Trainer, func, params: Params, *args, **kwargs):
         if func.__name__ == "train":
-            self.on_train_begin(trainer, func, params, *args, **kwargs)
+            self.on_train_begin(source, func, params, *args, **kwargs)
         elif func.__name__ == "train_epoch":
-            self.on_train_epoch_begin(trainer, func, params, *args, **kwargs)
+            self.on_train_epoch_begin(source, func, params, *args, **kwargs)
         elif func.__name__ == "train_step":
-            self.on_train_step_begin(trainer, func, params, *args, **kwargs)
+            self.on_train_step_begin(source, func, params, *args, **kwargs)
         elif func.__name__ == "evaluate":
-            self.on_eval_begin(trainer, func, params, *args, **kwargs)
+            self.on_eval_begin(source, func, params, *args, **kwargs)
         elif func.__name__ == "evaluate_step":
-            self.on_eval_step_begin(trainer, func, params, *args, **kwargs)
+            self.on_eval_step_begin(source, func, params, *args, **kwargs)
         elif func.__name__ == "test":
-            self.on_test_begin(trainer, func, params, *args, **kwargs)
+            self.on_test_begin(source, func, params, *args, **kwargs)
         elif func.__name__ == "test_step":
-            self.on_test_step_begin(trainer, func, params, *args, **kwargs)
+            self.on_test_step_begin(source, func, params, *args, **kwargs)
 
     def on_train_begin(self, trainer: Trainer, func, params: Params, *args, **kwargs):
         pass
@@ -153,21 +146,21 @@ class TrainCallback(BaseCallback):
     def on_test_step_begin(self, trainer: Trainer, func, params: Params, *args, **kwargs):
         pass
 
-    def on_end(self, trainer: Trainer, func, params: Params, meter, *args, **kwargs):
+    def on_end(self, source: Trainer, func, params: Params, meter, *args, **kwargs):
         if func.__name__ == "train":
-            self.on_train_end(trainer, func, params, meter, *args, **kwargs)
+            self.on_train_end(source, func, params, meter, *args, **kwargs)
         elif func.__name__ == "train_epoch":
-            self.on_train_epoch_end(trainer, func, params, meter, *args, **kwargs)
+            self.on_train_epoch_end(source, func, params, meter, *args, **kwargs)
         elif func.__name__ == "train_step":
-            self.on_train_step_end(trainer, func, params, meter, *args, **kwargs)
+            self.on_train_step_end(source, func, params, meter, *args, **kwargs)
         elif func.__name__ == "evaluate":
-            self.on_eval_end(trainer, func, params, meter, *args, **kwargs)
+            self.on_eval_end(source, func, params, meter, *args, **kwargs)
         elif func.__name__ == "evaluate_step":
-            self.on_eval_step_end(trainer, func, params, meter, *args, **kwargs)
+            self.on_eval_step_end(source, func, params, meter, *args, **kwargs)
         elif func.__name__ == "test":
-            self.on_test_end(trainer, func, params, meter, *args, **kwargs)
+            self.on_test_end(source, func, params, meter, *args, **kwargs)
         elif func.__name__ == "test_step":
-            self.on_test_step_end(trainer, func, params, meter, *args, **kwargs)
+            self.on_test_step_end(source, func, params, meter, *args, **kwargs)
 
     def on_train_end(self, trainer: Trainer, func, params: Params, meter: Meter, *args, **kwargs):
         pass
@@ -240,13 +233,13 @@ class LoggerCallback(TrainCallback):
     def __init__(self, avg=True):
         self.avg = avg
 
-    def on_hooked(self, trainer: Trainer, params: Params):
-        super().on_hooked(trainer, params)
-        trainer.logger.raw(' '.join(sys.argv))
-        trainer.logger.info("Exp BaseDir", os.path.abspath(trainer.exp.exp_root))
-        trainer.logger.info("Exp Trainer", trainer.__class__.__name__)
-        trainer.logger.info("Exp Params")
-        trainer.logger.raw(params)
+    def on_hooked(self, source: Trainer, params: Params):
+        super().on_hooked(source, params)
+        source.logger.raw(' '.join(sys.argv))
+        source.logger.info("Exp BaseDir", os.path.abspath(source.exp.exp_root))
+        source.logger.info("Exp Trainer", source.__class__.__name__)
+        source.logger.info("Exp Params")
+        source.logger.raw(params)
         self.start = 0
         self.cur = None
         self._meter = None
@@ -311,8 +304,8 @@ class LoggerCallback(TrainCallback):
         meter = self.meter
         trainer.logger.inline("{}/{}".format(params.idx + 1, len(trainer.train_dataloader)), meter, fix=1)
 
-    def on_first_exception(self, trainer: Trainer, func, params: Params, e: BaseException, *args, **kwargs):
-        trainer.logger.error("{} raised".format(e.__class__.__name__))
+    def on_first_exception(self, source: Trainer, func, params: Params, e: BaseException, *args, **kwargs):
+        source.logger.error("{} raised".format(e.__class__.__name__))
 
     def on_test_begin(self, trainer: Trainer, func, params: Params, *args, **kwargs):
         trainer.logger.info("[[Test]]")
@@ -404,10 +397,10 @@ class KeyErrorSave(TrainCallback):
     def __init__(self, wait_input=False):
         self.wait_input = wait_input
 
-    def on_first_exception(self, trainer: Trainer, func, params: Params, e: BaseException, *args, **kwargs):
+    def on_first_exception(self, source: Trainer, func, params: Params, e: BaseException, *args, **kwargs):
         if isinstance(e, (KeyboardInterrupt)):
-            trainer.logger.info("KeyErrorSave trigged, save checkpoint")
-            trainer.save_keypoint({"mode": "KeyboardInterrupt"})
+            source.logger.info("KeyErrorSave trigged, save checkpoint")
+            source.save_keypoint({"mode": "KeyboardInterrupt"})
 
             tp = "n"
             if self.wait_input:
@@ -427,7 +420,7 @@ class BoardRecord(TrainCallback):
     def __init__(self) -> None:
         super().__init__()
 
-    def on_hooked(self, trainer: Trainer, params: Params):
+    def on_hooked(self, source: Trainer, params: Params):
         self.start = 0
 
     def _key_name(self, mode, key):
@@ -468,11 +461,11 @@ class LRSchedule(TrainCallback):
         self.apply = apply
         self.use_eidx = use_eidx
 
-    def on_hooked(self, trainer: Trainer, params: Params):
-        super().on_hooked(trainer, params)
+    def on_hooked(self, source: Trainer, params: Params):
+        super().on_hooked(source, params)
         if self.schedule is None:
             if 'lr_sche' not in params:
-                trainer.logger.warn('lr_sche not exists in params and be assigned, {} will be unhooked after.')
+                source.logger.warn('lr_sche not exists in params and be assigned, {} will be unhooked after.')
                 self.unhook()
             else:
                 self.schedule = params.lr_sche
@@ -501,7 +494,7 @@ class ReportSche(TrainCallback):
     only_main_process = True
     priority = 100
 
-    def on_hooked(self, trainer: Trainer, params: Params):
+    def on_hooked(self, source: Trainer, params: Params):
         self.sche_lis = []
         for k, v in params.items():  # type:str, Any
             if isinstance(v, (Schedule, ScheduleList)) and 'sche' in k.lower():
