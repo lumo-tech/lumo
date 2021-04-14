@@ -9,7 +9,7 @@ import inspect
 import os
 from dataclasses import dataclass
 from functools import wraps, lru_cache
-from typing import Any, Dict, TypeVar, Union, Optional, Tuple, Sequence, Mapping
+from typing import Any, Dict, Union, Optional, Tuple, Sequence, Mapping
 import random
 
 import numpy as np
@@ -26,16 +26,13 @@ from .logger import Logger
 from .saver import Saver
 from .meter import Meter, AvgMeter
 from .rnd import RndManager
-from .params import Params, DistributionParams
+from .params import DistributionParams, ParamsType
 from lumo.base_classes import attr
 from lumo.base_classes.metaclasses import Merge
 from lumo.utils.keys import TRAINER
 from lumo.utils.connect import find_free_network_port
 from lumo.utils.device import get_to_device_func, construct_device_args_kwargs
-
-ParamsType = TypeVar('ParamsType', bound=Params)
-
-from enum import Enum
+from ..base_classes.enums import TrainerStage
 
 
 @dataclass()
@@ -46,13 +43,6 @@ class initial_tuple():
     train_dataloader: bool = False
     val_dataloader: bool = False
     test_dataloader: bool = False
-
-
-class TrainerStage(Enum):
-    init = -1
-    train = 0
-    test = 1
-    evaluate = 2
 
 
 class TrainerResult(attr):
@@ -77,7 +67,7 @@ def mp_agent(rank, trainer, op, dataloader):
     op(dataloader)
 
 
-def to_device_enumrate(loader: DataLoader, device_args_kwargs):
+def to_device_enumrate(loader: DataLoader, device_args_kwargs: Tuple[Sequence, Dict]):
     to_device = get_to_device_func()
     for idx, batch in enumerate(loader):
         batch = to_device(batch, device_args_kwargs)
@@ -641,7 +631,7 @@ class _BaseTrainer(metaclass=Merge):
 
 class Trainer(_LoopImp, _BaseTrainer):
 
-    def _wrap_result(self, meter: Union[Mapping, Meter, Sequence, torch.Tensor]):
+    def _wrap_result(self, meter: Union[Mapping, Meter, Sequence, torch.Tensor, np.ndarray]):
         if meter is None:
             return {}
         if isinstance(meter, (Mapping, Meter)):
@@ -681,10 +671,11 @@ class Trainer(_LoopImp, _BaseTrainer):
 
     def train(self, dataloader: Union[DataLoader, DataModule] = None):
         self.to_stage(TrainerStage.train)
+        self.to_device()
         if dataloader is None:
             dataloader = self.train_dataloader
         elif isinstance(dataloader, DataModule):
-            dataloader.idataloader(self.params, 'train', self.initial.train_dataloader)
+            dataloader.idataloader(self.params, TrainerStage.train, self.initial.train_dataloader)
             self.initial.train_dataloader = True
             dataloader = dataloader.train_dataloader
         self.datamodule.regist_dataloader(train=dataloader)
@@ -725,6 +716,8 @@ class Trainer(_LoopImp, _BaseTrainer):
         if dataloader is None:
             dataloader = self.val_dataloader
         if isinstance(dataloader, DataModule):
+            dataloader.idataloader(self.params, TrainerStage.evaluate, self.initial.val_dataloader)
+            self.initial.val_dataloader = True
             dataloader = dataloader.val_dataloader
         if dataloader is None:
             return TrainerResult(TrainerStage.evaluate, 1, 'no eval_dataloader')
@@ -744,6 +737,8 @@ class Trainer(_LoopImp, _BaseTrainer):
         if dataloader is None:
             dataloader = self.test_dataloader
         if isinstance(dataloader, DataModule):
+            dataloader.idataloader(self.params, TrainerStage.test, self.initial.test_dataloader)
+            self.initial.test_dataloader = True
             dataloader = dataloader.test_dataloader
         if dataloader is None:
             return TrainerResult(TrainerStage.test, 1, 'no test_dataloader')

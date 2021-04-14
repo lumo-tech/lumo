@@ -11,7 +11,7 @@ from collections import namedtuple
 from collections.abc import Iterable
 from datetime import timedelta
 from itertools import chain
-from typing import Any, overload
+from typing import Any, overload, TypeVar
 
 import fire
 import torch
@@ -19,6 +19,7 @@ import torch
 from lumo.base_classes.attr import attr
 from lumo.base_classes.errors import BoundCheckError, NewParamWarning
 from lumo.base_classes.params_vars import OptimBuilder, OptimMixin
+from lumo.calculate import schedule
 
 arange_param = namedtuple('arange_param', ['default', 'left', 'right'], defaults=[None, float('-inf'), float('inf')])
 choice_param = namedtuple('choice_param', ['default', 'choices'], defaults=[None, []])
@@ -456,6 +457,20 @@ class Params(BaseParams):
     OPTIM = OptimParams()
 
     # DataLoaderParams = DataLoaderParams
+    class SCHE:
+        Cos = schedule.CosSchedule
+        Linear = schedule.LinearSchedule
+        Log = schedule.LogSchedule
+        Exp = schedule.ExpSchedule
+        Power = schedule.PowerDecaySchedule
+        Const = schedule.ConstantSchedule
+
+        PeriodCos = schedule.PeriodCosSchedule
+        PeriodHalfCos = schedule.PeriodHalfCosSchedule
+        PeriodLinear = schedule.PeriodLinear
+        PeriodTriangle = schedule.PeriodTriangleSchedule
+
+        List = schedule.ScheduleList
 
     def __init__(self):
         super().__init__()
@@ -470,3 +485,6 @@ class Params(BaseParams):
         self.optim = None  # type:OptimBuilder
         self.git_commit = True
         self.tmp_dir = None  # type:str # set TMPDIR environment
+
+
+ParamsType = TypeVar('ParamsType', bound=Params)

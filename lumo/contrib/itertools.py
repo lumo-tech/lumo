@@ -33,3 +33,11 @@ def window2(seq: Iterable, n: int, strid: int = 1, drop_last: bool = False):
             step += 1
     if not drop_last:
         yield result
+
+
+def lfilter(func, iterable):
+    return list(filter(func, iterable))
+
+
+def lmap(func, iterable):
+    return list(map(func, iterable))

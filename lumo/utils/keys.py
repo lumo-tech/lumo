@@ -1,8 +1,14 @@
 import os
+import torch
+import numpy as np
 import sys
 from sys import platform
+from typing import Mapping, TypeVar, Type
+
+T = TypeVar('T')
 
 from lumo import __version__
+from lumo.contrib.itertools import lfilter
 
 LIBRARY_NAME = 'lumo'
 
@@ -140,3 +146,25 @@ class TRAINER:
         ini_callbacks = 'initial.callbacks'
         params = 'params'
         exp = 'exp'
+
+
+class K:
+    @staticmethod
+    def join(*args):
+        return '_'.join([i for i in args if i is not None])
+
+    @staticmethod
+    def get_str(mem: Mapping, key, default=None) -> str:
+        return mem.get(key, default)
+
+    @staticmethod
+    def get_pt(mem: Mapping, key, default=None) -> torch.Tensor:
+        return mem.get(key, default)
+
+    @staticmethod
+    def get_np(mem: Mapping, key, default=None) -> np.ndarray:
+        return mem.get(key, default)
+
+    @staticmethod
+    def get_type(mem: Mapping, key, default=None, *, type: Type[T]) -> T:
+        return mem.get(key, default)

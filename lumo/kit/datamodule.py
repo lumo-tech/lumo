@@ -1,10 +1,9 @@
-from typing import Union, NoReturn, Dict, overload, TYPE_CHECKING
-
+from typing import Union, NoReturn, Dict, overload
+from lumo.base_classes import TrainerStage
 from torch.utils.data import DataLoader, Dataset
-from .builder import DatasetWrap
 
-if TYPE_CHECKING:
-    from .trainer import ParamsType
+from .builder import DatasetWrap
+from .params import ParamsType
 
 
 class DataModule():
@@ -40,7 +39,7 @@ class DataModule():
         kwargs = {k: v for k, v in kwargs.items() if v is not None}
         self._dataloader.update(kwargs)
 
-    def idataloader(self, params: 'ParamsType', stage: str, repeat: bool = False):
+    def idataloader(self, params: ParamsType, stage: TrainerStage, repeat: bool = False):
         pass
 
     @classmethod
@@ -48,4 +47,4 @@ class DataModule():
         self = cls()
         self._dataset = dataset
         dataset = DatasetWrap(dataset)
-        return DataLoader(dataset, sampler=dataset.sampler)
+        return dataset.DataLoader()

@@ -2,7 +2,7 @@
 一个训练 f(x) = x+1 的线性函数的例子
 """
 from lumo import Trainer, DatasetBuilder, Params, callbacks
-from lumo.kit.trainer import ParamsType
+from lumo.kit.params import ParamsType
 
 import torch
 from torch import nn
