@@ -74,6 +74,17 @@ def to_device_enumrate(loader: DataLoader, device_args_kwargs: Tuple[Sequence, D
         yield idx, batch
 
 
+class InitialABC():
+    def ioptims(self, params: ParamsType):
+        raise NotImplementedError()
+
+    def icallbacks(self, params: ParamsType):
+        raise NotImplementedError()
+
+    def imodels(self, params: ParamsType):
+        raise NotImplementedError()
+
+
 class _LoopImp():
     def stop_train(self):
         raise NotImplementedError()
@@ -113,7 +124,7 @@ class _LoopImp():
         raise NotImplementedError()
 
 
-class _BaseTrainer(metaclass=Merge):
+class _BaseTrainer(InitialABC, metaclass=Merge):
     """
     1. 组装所有的插件
     2. 提供完整的训练流程 api
@@ -618,15 +629,6 @@ class _BaseTrainer(metaclass=Merge):
         return self.saver.save_model(self.eidx, self.state_dict(),
                                      meta_info=info,
                                      is_best=is_best)
-
-    def ioptims(self, params: ParamsType):
-        pass
-
-    def icallbacks(self, params: ParamsType):
-        pass
-
-    def imodels(self, params: ParamsType):
-        pass
 
 
 class Trainer(_LoopImp, _BaseTrainer):
