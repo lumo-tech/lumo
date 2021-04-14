@@ -1,24 +1,18 @@
 from typing import Union, NoReturn, Dict, overload
 from lumo.base_classes import TrainerStage
 from torch.utils.data import DataLoader, Dataset
-
+from .mixin import DataModuleMix
 from .builder import DatasetWrap
 from .params import ParamsType
 
 
-
-
-class DataModule():
+class DataModule(DataModuleMix):
     def __init__(self, train: DataLoader = None, val: DataLoader = None, test: DataLoader = None):
         self._dataloader = {}
         self.regist_dataloader(train=train, val=val, test=test)
 
     def __getitem__(self, item):
         return self._dataloader.get(item, None)
-
-    @property
-    def dataloaders(self) -> Dict[str, DataLoader]:
-        return self._dataloader
 
     @property
     def train_dataloader(self) -> Union[NoReturn, DataLoader]:

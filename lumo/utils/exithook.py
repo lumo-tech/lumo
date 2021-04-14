@@ -22,7 +22,6 @@ def wrap_after(func):
 
 def wrap_before(func):
     old = sys.excepthook
-    print(func,old)
 
     def outer(fun):
         @wraps(fun)

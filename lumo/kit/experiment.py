@@ -343,7 +343,7 @@ class TrainerExperiment(Experiment):
     @property
     def params_fn(self):
         # self.writeline('params',)
-        return self.test_fn('params.yaml')
+        return self.test_fn('params.json')
 
     @property
     def board_args(self):

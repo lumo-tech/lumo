@@ -66,7 +66,7 @@ class _AvgItem:
     avg.sum = 6
     """
 
-    def __init__(self, weight_decay=0.5, precision=4) -> None:
+    def __init__(self, weight_decay=0.01, precision=4) -> None:
         super().__init__()
         self._avg = None
         self._last = None

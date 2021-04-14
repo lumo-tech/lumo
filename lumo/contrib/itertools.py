@@ -1,4 +1,4 @@
-from itertools import zip_longest
+from itertools import zip_longest, chain
 from typing import Sized, Iterable
 from typing import Sequence
 
@@ -41,3 +41,7 @@ def lfilter(func, iterable):
 
 def lmap(func, iterable):
     return list(map(func, iterable))
+
+
+def lchain(*iterable):
+    return list(chain(*iterable))

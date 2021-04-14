@@ -16,6 +16,7 @@ from ..base_classes.trickitems import NoneItem, AvgItem
 from ..calculate.schedule import Schedule, ScheduleList
 from ..utils.timing import format_second
 
+
 class BaseCallback():
     """
     base callback class
@@ -181,6 +182,30 @@ class TrainCallback(BaseCallback):
         pass
 
     def on_test_step_end(self, trainer: Trainer, func, params: Params, meter: Meter, *args, **kwargs):
+        pass
+
+    def on_predict_begin(self, trainer: Trainer, func, params: Params, *args, **kwargs):
+        pass
+
+    def on_predict_end(self, trainer: Trainer, func, params: Params, meter: Meter, *args, **kwargs):
+        pass
+
+    def on_inference_begin(self, trainer: Trainer, func, params: Params, *args, **kwargs):
+        pass
+
+    def on_inference_end(self, trainer: Trainer, func, params: Params, meter: Meter, *args, **kwargs):
+        pass
+
+    def on_save_keypoint_begin(self, trainer: Trainer, func, params: Params, *args, **kwargs):
+        pass
+
+    def on_save_keypoint_end(self, trainer: Trainer, func, params: Params, meter: Meter, *args, **kwargs):
+        pass
+
+    def on_save_model_begin(self, trainer: Trainer, func, params: Params, *args, **kwargs):
+        pass
+
+    def on_save_model_end(self, trainer: Trainer, func, params: Params, meter: Meter, *args, **kwargs):
         pass
 
 

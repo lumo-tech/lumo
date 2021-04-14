@@ -307,6 +307,8 @@ class Query:
         return self.conditions
 
 
+from thexp.analyse import Q
+
 class Finder:
     def __init__(self):
         fn = os.path.join(home_dir(), FN.REPOSJS)

@@ -5,7 +5,7 @@ class TrainerStage(Enum):
     init = -1
     train = 0
     test = 1
-    evaluate = 2
+    val = 2
 
     @property
     def is_train(self):
@@ -17,6 +17,6 @@ class TrainerStage(Enum):
 
     @property
     def is_eval(self):
-        return self == self.evaluate
+        return self == self.val
 
 

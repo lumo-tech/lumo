@@ -2,8 +2,9 @@ from collections import OrderedDict
 from copy import copy
 from itertools import accumulate
 from operator import add
-from typing import Sized, Sequence, Union, Callable, Dict, Any, List, overload, ClassVar, TypeVar
+from typing import Sized, Sequence, Union, Callable, Dict, Any, List, overload, Type, TypeVar, ClassVar
 from functools import partial, wraps
+from torch.utils.data._utils.collate import default_collate
 from torch.utils.data import Dataset, sampler as sp, DataLoader
 
 from .delegate import DataDelegate, Data, DelegateDataTypeError
@@ -15,17 +16,46 @@ def _loader_partial(loader: Loader, *args, **kwargs) -> Loader:
     args = list(args)
 
     @wraps(loader)
-    def inner(*iargs, **ikwargs):
+    def DataLoader(*_, **ikwargs):
         nonlocal args
+        if len(_) > 0:
+            raise ValueError('lumo makes DataLoader takes 0 positional arguments, please pass all arguments with key')
         kwargs.update(ikwargs)
-        if len(iargs) > len(args):
-            args = iargs
-        else:
-            args[:len(iargs)] = iargs
 
         return loader(*args, **kwargs)
 
-    return inner
+    return DataLoader
+
+
+class CollateBase():
+
+    def __new__(cls, *args, **kwargs) -> Any:
+        self = super().__new__(cls, *args, **kwargs)
+
+        def wrap(func):
+            @wraps(func)
+            def inner(*args, **kwargs):
+                res = self.before_collate(*args, **kwargs)
+                res = func(res)
+                res = self.after_collate(res)
+                return res
+
+            return inner
+
+        self.collate = wrap(self.collate)
+        return self
+
+    def __call__(self, *args, **kwargs):
+        return self.collate(*args, **kwargs)
+
+    def before_collate(self, sample_list):
+        return sample_list
+
+    def collate(self, sample_list):
+        return default_collate(sample_list)
+
+    def after_collate(self, batch):
+        return batch
 
 
 class BaseBuilder(Dataset):
@@ -171,9 +201,9 @@ class BaseBuilder(Dataset):
         kwargs['sampler'] = self.sampler
         kwargs['batch_sampler'] = self.batch_sampler
 
+        kwargs['collate_fn'] = CollateBase()
+
         res = _loader_partial(DataLoader, self, **kwargs)
-        res.__doc__ = DataLoader.__doc__
-        res.__annotations__ = DataLoader.__annotations__
         return res
 
 

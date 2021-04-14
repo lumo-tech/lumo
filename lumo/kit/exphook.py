@@ -18,6 +18,7 @@ class LastCmd(ExpHook):
     def on_start(self, exp: Experiment):
         with open('lastcmd.sh', 'w', encoding='utf-8') as w:
             w.write(' '.join(exp.exec_argv))
+
         st = os.stat('lastcmd.sh')
         os.chmod('lastcmd.sh', st.st_mode | stat.S_IEXEC)
 

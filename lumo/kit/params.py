@@ -20,6 +20,7 @@ from lumo.base_classes.attr import attr
 from lumo.base_classes.errors import BoundCheckError, NewParamWarning
 from lumo.base_classes.params_vars import OptimBuilder, OptimMixin
 from lumo.calculate import schedule
+from lumo.utils import safe_io as io
 
 arange_param = namedtuple('arange_param', ['default', 'left', 'right'], defaults=[None, float('-inf'), float('inf')])
 choice_param = namedtuple('choice_param', ['default', 'choices'], defaults=[None, []])
@@ -345,8 +346,7 @@ class BaseParams():
         Notes:
             Only hashable key and values will be saved, see `lumo.base_classes.attr.jsonify()` for details.
         """
-        with open(fn, 'w', encoding='utf-8') as w:
-            json.dump(self.inner_dict().jsonify(), w, indent=2)
+        io.dump_json(self.inner_dict().jsonify(), fn)
 
     def items(self):
         """like dict.items()"""
@@ -418,10 +418,6 @@ class BaseParams():
         for param in params:
             self._param_dict.update(param._param_dict)
 
-    def initial(self):
-        """"""
-        pass
-
 
 class DistributionParams(BaseParams):
     def __init__(self):
@@ -430,7 +426,12 @@ class DistributionParams(BaseParams):
         self.world_size = 1
         self.num_nodes = 1
         self.local_rank = -1
-        self.init_method = 'tcp://localhost:12345'
+
+    @property
+    def init_method(self):
+        from lumo.utils.connect import find_free_network_port
+        port = find_free_network_port()
+        return f'tcp://localhost:{port}'
 
     @overload
     def init_process_group(self, backend,
@@ -485,6 +486,9 @@ class Params(BaseParams):
         self.optim = None  # type:OptimBuilder
         self.git_commit = True
         self.tmp_dir = None  # type:str # set TMPDIR environment
+
+    def iparams(self):
+        pass
 
 
 ParamsType = TypeVar('ParamsType', bound=Params)

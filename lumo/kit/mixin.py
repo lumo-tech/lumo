@@ -1,4 +1,32 @@
+from typing import Union, NoReturn, overload, Dict
+from torch.utils.data import DataLoader
+from lumo.base_classes import TrainerStage
 from lumo.kit.params import ParamsType
+
+
+class DataModuleMix():
+    @property
+    def train_dataloader(self) -> Union[NoReturn, DataLoader]:
+        raise NotImplementedError()
+
+    @property
+    def test_dataloader(self) -> Union[NoReturn, DataLoader]:
+        raise NotImplementedError()
+
+    @property
+    def val_dataloader(self) -> Union[NoReturn, DataLoader]:
+        raise NotImplementedError()
+
+    @overload
+    def regist_dataloader(self, train: DataLoader = None, val: DataLoader = None, test: DataLoader = None,
+                          **others: Dict[str, DataLoader]):
+        ...
+
+    def regist_dataloader(self, **kwargs: dict):
+        raise NotImplementedError()
+
+    def idataloader(self, params: ParamsType, stage: TrainerStage, repeat: bool = False):
+        raise NotImplementedError()
 
 
 class CallbackMix():
