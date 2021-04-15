@@ -256,14 +256,17 @@ class _BaseTrainer(ModelMix, CallbackMix, metaclass=Merge):
     def _check_optim_init(self):
         if not self.initial.optims:
             self.ioptims(self.params)
+            self.initial.optims = True
 
     def _check_models_init(self):
         if not self.initial.models:
             self.imodels(self.params)
+            self.initial.models = True
 
     def _check_cb_init(self):
         if not self.initial.callbacks:
             self.icallbacks(self.params)
+            self.initial.callbacks = True
 
     def get_state(self, key, default=None):
         return self._state_dicts.get(key, default)
@@ -591,7 +594,7 @@ class _BaseTrainer(ModelMix, CallbackMix, metaclass=Merge):
 
     def save_model(self, is_best=False, meta_info: Union[str, dict] = None):
         info = self._build_trainer_meta_info(meta_info)
-        return self.saver.save_model(self.eidx, self.state_dict(),
+        return self.saver.save_model(self.eidx, self.model_state_dict(),
                                      meta_info=info,
                                      is_best=is_best)
 
