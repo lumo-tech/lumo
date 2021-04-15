@@ -732,7 +732,8 @@ class Trainer(DLLoopMix, _BaseTrainer):
 
     def train(self, dataloader: Union[DataLoader, DataModuleMix] = None):
         # params, initialized = self.params, self.initial.train_dataloader
-
+        self.imodels(self.params)
+        self.ioptims(self.params)
         self.to_stage(TrainerStage.train)
         dataloader = self._prepare_dataloader(TrainerStage.train, dataloader)
         if dataloader is None:
@@ -740,7 +741,7 @@ class Trainer(DLLoopMix, _BaseTrainer):
 
         self.initial.train_dataloader = True
         self._check_dist_environ(dataloader)
-        self.ioptims(self.params)
+
         while self.params.eidx < self.params.epoch:
             self.params.eidx += 1
             self.train_epoch(dataloader)

@@ -10,7 +10,7 @@ from functools import lru_cache
 from typing import Dict, List
 
 from git import Commit, Repo
-
+from lumo.base_classes import attr
 from lumo.utils import safe_io as io
 from lumo.utils.dates import date_from_str
 from lumo.utils.keys import FN, EXP
@@ -152,10 +152,10 @@ class Test(TestProp):
     def lines(self) -> Dict[str, str]:
         dir_ = os.path.join(self.root, FN.D_LINE)
         if not os.path.exists(dir_):
-            return {}
+            return attr()
         fs_ = os.listdir(dir_)
         fs_ = [i for i in fs_ if i.endswith(FN.SUFFIX.D_LINE)]
-        res = {}
+        res = attr()
         for f in fs_:
             k = os.path.splitext(f)[0]
             v = io.load_string(os.path.join(dir_, f))
@@ -166,10 +166,10 @@ class Test(TestProp):
     def jsons(self):
         dir_ = os.path.join(self.root, FN.D_JSON)
         if not os.path.exists(dir_):
-            return {}
+            return attr()
         fs_ = os.listdir(dir_)
         fs_ = [i for i in fs_ if i.endswith('.json')]
-        res = {}
+        res = attr()
         for f in fs_:
             k = os.path.splitext(f)[0]
             v = io.load_json(os.path.join(dir_, f))
@@ -306,8 +306,6 @@ class Query:
     def build(self):
         return self.conditions
 
-
-from thexp.analyse import Q
 
 class Finder:
     def __init__(self):
