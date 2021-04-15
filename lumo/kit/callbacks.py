@@ -292,6 +292,7 @@ class LoggerCallback(TrainCallback):
 
     def on_train_epoch_begin(self, trainer: Trainer, func, params: Params, *args, **kwargs):
         from ..utils.timing import TimeIt
+        self.reset_meter()
         self.epochtime = TimeIt()
         self.epochtime.start()
         trainer.logger.info("{}/{}".format(params.eidx, params.epoch))
@@ -313,9 +314,6 @@ class LoggerCallback(TrainCallback):
         tm.last = format_second(last)
         trainer.logger.info(tm)
 
-        self.reset_meter()
-        super().on_train_epoch_end(trainer, func, params, meter, *args, **kwargs)
-
     def reset_meter(self):
         if self.avg:
             meter = AvgMeter()
@@ -333,9 +331,22 @@ class LoggerCallback(TrainCallback):
         source.logger.error("{} raised".format(e.__class__.__name__))
 
     def on_test_begin(self, trainer: Trainer, func, params: Params, *args, **kwargs):
+        self.reset_meter()
         trainer.logger.info("[[Test]]")
 
+    def on_test_end(self, trainer: Trainer, func, params: Params, meter: Meter, *args, **kwargs):
+        if meter is None:
+            meter = ""
+        trainer.logger.info("[[Test End]]", meter)
+
+    def on_test_step_end(self, trainer: Trainer, func, params: Params, meter: Meter, *args, **kwargs):
+        meter = trainer._wrap_result(meter)
+        self.meter.update(meter)
+        meter = self.meter
+        trainer.logger.inline("{}/{}".format(params.idx + 1, len(trainer.test_dataloader)), meter, fix=1)
+
     def on_eval_begin(self, trainer: Trainer, func, params: Params, *args, **kwargs):
+        self.reset_meter()
         trainer.logger.info("[[Eval]]")
 
     def on_eval_end(self, trainer: Trainer, func, params: Params, meter: Meter, *args, **kwargs):
@@ -343,10 +354,11 @@ class LoggerCallback(TrainCallback):
             meter = ""
         trainer.logger.info("[[Eval End]]", meter)
 
-    def on_test_end(self, trainer: Trainer, func, params: Params, meter: Meter, *args, **kwargs):
-        if meter is None:
-            meter = ""
-        trainer.logger.info("[[Test End]]", meter)
+    def on_eval_step_end(self, trainer: Trainer, func, params: Params, meter: Meter, *args, **kwargs):
+        meter = trainer._wrap_result(meter)
+        self.meter.update(meter)
+        meter = self.meter
+        trainer.logger.inline("{}/{}".format(params.idx + 1, len(trainer.val_dataloader)), meter, fix=1)
 
 
 class MeterCheckpoint(TrainCallback):

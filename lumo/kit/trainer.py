@@ -766,12 +766,7 @@ class Trainer(DLLoopMix, _BaseTrainer):
 
     def evaluate(self, dataloader: Union[DataLoader, DataModule] = None):
         self.to_stage(TrainerStage.val)
-        if dataloader is None:
-            dataloader = self.val_dataloader
-        if isinstance(dataloader, DataModule):
-            dataloader.idataloader(self.params, TrainerStage.val, self.initial.val_dataloader)
-            self.initial.val_dataloader = True
-            dataloader = dataloader.val_dataloader
+        dataloader = self._prepare_dataloader(TrainerStage.val, dataloader)
         if dataloader is None:
             return TrainerResult(TrainerStage.val, 1, 'no eval_dataloader')
 
@@ -779,6 +774,7 @@ class Trainer(DLLoopMix, _BaseTrainer):
         with torch.no_grad():
             avg = AvgMeter()
             for idx, batch in to_device_enumrate(dataloader, self.device_arg_kwargs):
+                self.params.idx = idx
                 meter = self.evaluate_step(idx, batch, self.params)
                 avg.update(self._wrap_result(meter))
         return TrainerResult(TrainerStage.val, 0)
@@ -788,12 +784,7 @@ class Trainer(DLLoopMix, _BaseTrainer):
 
     def test(self, dataloader: Union[DataLoader, DataModule] = None):
         self.to_stage(TrainerStage.test)
-        if dataloader is None:
-            dataloader = self.test_dataloader
-        if isinstance(dataloader, DataModule):
-            dataloader.idataloader(self.params, TrainerStage.test, self.initial.test_dataloader)
-            self.initial.test_dataloader = True
-            dataloader = dataloader.test_dataloader
+        dataloader = self._prepare_dataloader(TrainerStage.test, dataloader)
         if dataloader is None:
             return TrainerResult(TrainerStage.test, 1, 'no test_dataloader')
 
@@ -801,6 +792,7 @@ class Trainer(DLLoopMix, _BaseTrainer):
         with torch.no_grad():
             avg = AvgMeter()
             for idx, batch in to_device_enumrate(dataloader, self.device_arg_kwargs):
+                self.params.idx = idx
                 meter = self.test_step(idx, batch, self.params)
                 avg.update(self._wrap_result(meter))
         return TrainerResult(TrainerStage.test, 0)
