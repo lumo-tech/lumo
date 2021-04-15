@@ -30,7 +30,7 @@ def _loader_partial(loader: Loader, *args, **kwargs) -> Loader:
 class CollateBase():
 
     def __new__(cls, *args, **kwargs) -> Any:
-        self = super().__new__(cls, *args, **kwargs)
+        self = super().__new__(cls)
 
         def wrap(func):
             @wraps(func)
