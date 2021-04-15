@@ -325,9 +325,10 @@ class DatasetBuilder(BaseBuilder):
             if name in raw:
                 raw[name] = transform(raw[name])
 
-        sample = {
-            outkey: raw[name] for outkey, name in self._output_dict.items()
-        }
+        sample = OrderedDict()
+
+        [sample.__setitem__(k, index) for k in self._idnames]
+        [sample.__setitem__(outkey, raw[name]) for outkey, name in self._output_dict.items()]
 
         for outkey, transform in self._output_transform.items():
             if outkey in sample:
