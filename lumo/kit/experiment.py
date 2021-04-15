@@ -260,6 +260,14 @@ class Experiment:
             return res.hexsha[:8]
         return ''
 
+    @property
+    def uuid(self):
+        return self.readline('uuid')
+
+    @property
+    def short_uuid(self):
+        return self.uuid[:6]
+
     def dump_experiment_info(self):
         self.dump_info(EXP.STATE, {
             'start': strftime(),

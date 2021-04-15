@@ -2,7 +2,7 @@ import os
 import stat
 import sys
 from lumo.utils.keys import FN
-from lumo.utils.exithook import wrap_before
+from lumo.utils.exithook import wrap_before, wrap_after
 from .experiment import Experiment
 
 
@@ -91,3 +91,13 @@ class RecordAbort(ExpHook):
             end_code=1,
             exc_type=traceback.format_exception_only(exc_type, exc_val)[-1].strip()
         )
+
+
+class PrintExpId(ExpHook):
+
+    def regist(self, exp: Experiment):
+        super().regist(exp)
+        self.exp.add_exit_hook(self.on_exit)
+
+    def on_exit(self, *args, **kwargs):
+        print(f"END TEST {self.exp.short_uuid}")

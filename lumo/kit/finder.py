@@ -160,6 +160,7 @@ class Test(TestProp):
             k = os.path.splitext(f)[0]
             v = io.load_string(os.path.join(dir_, f))
             if v is None:
+                os.remove(os.path.join(dir_, f))
                 continue
             res[k] = v
         return res
