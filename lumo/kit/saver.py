@@ -75,13 +75,13 @@ class Saver:
         Returns:
             saved filepath, None if something went wrong.
         """
-        fn = io.dump_state_dict(obj, fn)
-        if meta_info is not None:
+        res = io.dump_state_dict(obj, fn)
+        if res and meta_info is not None:
             if isinstance(meta_info, str):
                 meta_info = {'msg': meta_info}
             json_fn = f"{fn}.json"
             io.dump_json(meta_info, json_fn)
-        return fn
+        return res
 
     def load_state_dict(self, fn: str, with_meta=False, map_location='cpu') -> state_dict_tuple:
         """
@@ -245,16 +245,22 @@ class Saver:
             return fn
         return None
 
+    def _is_pkl(self, x: str, start, end):
+        return x.startswith(start) and x.endswith(end)
+
     def list_checkpoints(self) -> List[str]:
-        return sorted(list(filter(lambda x: x.startswith('checkpoints'), os.listdir(self.save_dir))),
+        return sorted(list(filter(lambda x: self._is_pkl(x, 'checkpoints', 'pt'),
+                                  os.listdir(self.save_dir))),
                       key=lambda x: os.stat(os.path.join(self.save_dir, x)).st_atime)
 
     def list_keypoints(self) -> List[str]:
-        return sorted(list(filter(lambda x: x.startswith('key'), os.listdir(self.save_dir))),
+        return sorted(list(filter(lambda x: self._is_pkl(x, 'key', 'pt'),
+                                  os.listdir(self.save_dir))),
                       key=lambda x: os.stat(os.path.join(self.save_dir, x)).st_atime)
 
     def list_models(self) -> List[str]:
-        return sorted(list(filter(lambda x: x.startswith('model'), os.listdir(self.save_dir))),
+        return sorted(list(filter(lambda x: self._is_pkl(x, 'model', 'pt'),
+                                  os.listdir(self.save_dir))),
                       key=lambda x: os.stat(os.path.join(self.save_dir, x)).st_atime)
 
     def list(self):

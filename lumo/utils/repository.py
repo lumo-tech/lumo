@@ -13,7 +13,7 @@ bin_file = ['*.pth', '*.npy', '*.ckpt',
             '*.ft',  # for feather
             '*.pkl'
             ]
-lib_gitignores = ['.lumo/config.json',
+lib_gitignores = ['.lumo/',
                   '*.lumo.*',
                   ] + bin_file
 
@@ -68,8 +68,11 @@ def check_gitignore(repo: Repo, force=False):
     check if file `.gitignore`  have the needed ignored items for lumo.
     """
     version_mark = os.path.join(repo.working_dir, FN.VERSION)
+    ignorefn = os.path.join(repo.working_dir, '.gitignore')
+
     if os.path.exists(version_mark) and not force:
-        return False
+        if os.path.exists(ignorefn):
+            return False
 
     old_marks = [f for f in os.listdir(repo.working_dir) if f.startswith('.lumo.')]
     for old_mark in old_marks:
@@ -80,7 +83,6 @@ def check_gitignore(repo: Repo, force=False):
     with open(version_mark, 'w') as w:
         pass
 
-    ignorefn = os.path.join(repo.working_dir, '.gitignore')
     if not os.path.exists(ignorefn):
         with open(ignorefn, 'w', encoding='utf-8') as w:
             w.write(py_gitignore)

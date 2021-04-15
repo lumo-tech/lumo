@@ -101,7 +101,7 @@ class _BaseTrainer(ModelMix, CallbackMix, metaclass=Merge):
     def _exit_hook(self, exc_type, exc, tb, *args):
         import traceback
         res = traceback.format_exception(exc_type, exc, tb)
-        res = [i for i in res if 'in _newfunc' not in i]
+        # res = [i for i in res if 'in _newfunc' not in i]
         print(''.join(res), file=sys.stderr)
 
     def __new__(cls, *args, **kwargs):
@@ -739,11 +739,12 @@ class Trainer(DLLoopMix, _BaseTrainer):
         self._check_dist_environ(dataloader)
         self.ioptims(self.params)
         while self.params.eidx < self.params.epoch:
-            self.train_epoch(dataloader)
             self.params.eidx += 1
+            self.train_epoch(dataloader)
             if self.train_toggle:
                 self.train_toggle = False
                 return TrainerResult(TrainerStage.train, 1, 'stoped midway')
+
             self.exp.dump_train_info(self.params.eidx)
 
         return TrainerResult(TrainerStage.train, 0)
@@ -751,11 +752,10 @@ class Trainer(DLLoopMix, _BaseTrainer):
     def train_epoch(self, dataloader: DataLoader):
         avg = AvgMeter()
         for idx, batch in to_device_enumrate(dataloader, self.device_arg_kwargs):
-            meter = self.train_step(idx, batch, self.params)
-            avg.update(self._wrap_result(meter))
-
             self.params.global_step += 1
             self.params.idx = idx
+            meter = self.train_step(idx, batch, self.params)
+            avg.update(self._wrap_result(meter))
             if self.train_epoch_toggle:
                 self.train_epoch_toggle = False
                 break
