@@ -159,6 +159,8 @@ class Test(TestProp):
         for f in fs_:
             k = os.path.splitext(f)[0]
             v = io.load_string(os.path.join(dir_, f))
+            if v is None:
+                continue
             res[k] = v
         return res
 
@@ -173,6 +175,8 @@ class Test(TestProp):
         for f in fs_:
             k = os.path.splitext(f)[0]
             v = io.load_json(os.path.join(dir_, f))
+            if v is None:
+                continue
             res[k] = v
         return res
 
