@@ -12,6 +12,8 @@ def _to_device(item: Union[Sequence, Mapping, torch.Tensor, nn.Module],
         return item.to(*device_args_kargs[0], **device_args_kargs[1])
 
     if isinstance(item, Sequence):
+        if isinstance(item, str):
+            return item
         return [_to_device(ele, device_args_kargs) for ele in item]
     elif isinstance(item, Mapping):
         return {k: _to_device(ele, device_args_kargs) for k, ele in item.items()}
