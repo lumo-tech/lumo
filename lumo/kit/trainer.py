@@ -303,7 +303,8 @@ class _BaseTrainer(ModelMix, CallbackMix, metaclass=Merge):
     def logger(self):
         if self._logger is None:
             self._logger = Logger()
-            self._logger.add_log_dir(self.exp.log_dir)
+            fn = self._logger.add_log_dir(self.exp.log_dir)
+            self.exp.writeline('logger', fn)
         return self._logger
 
     @property
@@ -732,12 +733,14 @@ class Trainer(DLLoopMix, _BaseTrainer):
 
     def train(self, dataloader: Union[DataLoader, DataModuleMix] = None):
         # params, initialized = self.params, self.initial.train_dataloader
-        self.imodels(self.params)
-        self.ioptims(self.params)
-        self.to_stage(TrainerStage.train)
         dataloader = self._prepare_dataloader(TrainerStage.train, dataloader)
         if dataloader is None:
             return TrainerResult(TrainerStage.train, 1, 'no train_dataloader')
+
+        self._check_models_init()
+        self._check_optim_init()
+
+        self.to_stage(TrainerStage.train)
 
         self.initial.train_dataloader = True
         self._check_dist_environ(dataloader)
@@ -769,10 +772,11 @@ class Trainer(DLLoopMix, _BaseTrainer):
         pass
 
     def evaluate(self, dataloader: Union[DataLoader, DataModule] = None):
-        self.to_stage(TrainerStage.val)
         dataloader = self._prepare_dataloader(TrainerStage.val, dataloader)
         if dataloader is None:
             return TrainerResult(TrainerStage.val, 1, 'no eval_dataloader')
+        self._check_models_init()
+        self.to_stage(TrainerStage.val)
 
         self._check_dist_environ(dataloader)
         with torch.no_grad():
@@ -787,10 +791,11 @@ class Trainer(DLLoopMix, _BaseTrainer):
         return self.test_step(idx, batch, params, *args, **kwargs)
 
     def test(self, dataloader: Union[DataLoader, DataModule] = None):
-        self.to_stage(TrainerStage.test)
         dataloader = self._prepare_dataloader(TrainerStage.test, dataloader)
         if dataloader is None:
             return TrainerResult(TrainerStage.test, 1, 'no test_dataloader')
+        self._check_models_init()
+        self.to_stage(TrainerStage.test)
 
         self._check_dist_environ(dataloader)
         with torch.no_grad():

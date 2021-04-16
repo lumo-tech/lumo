@@ -123,11 +123,17 @@ class Test(TestProp):
 
     @property
     def start_time(self):
-        return date_from_str(self.jsons[EXP.STATE]['start'])
+        val = self.jsons[EXP.STATE].get('start', None)
+        if val is not None:
+            val = date_from_str(val)
+        return val
 
     @property
     def end_time(self):
-        return date_from_str(self.jsons[EXP.STATE].get('end', None))
+        val = self.jsons[EXP.STATE].get('end', None)
+        if val is not None:
+            val = date_from_str(val)
+        return val
 
     @property
     def end_code(self):

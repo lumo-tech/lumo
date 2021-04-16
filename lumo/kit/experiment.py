@@ -350,8 +350,9 @@ class TrainerExperiment(Experiment):
 
     @property
     def params_fn(self):
-        # self.writeline('params',)
-        return self.test_fn('params.json')
+        res = self.test_fn('params.json')
+        self.writeline('params', res)
+        return res
 
     @property
     def board_args(self):
@@ -364,11 +365,15 @@ class TrainerExperiment(Experiment):
 
     @property
     def saver_dir(self):
-        return self.test_dir('saver')
+        res = self.test_dir('saver')
+        self.writeline('saver', res)
+        return res
 
     @property
     def rnd_dir(self):
-        return self.project_cache_dir('rnd')
+        res = self.project_cache_dir('rnd')
+        self.writeline('rnd', res)
+        return res
 
     def dump_experiment_info(self):
         super().dump_experiment_info()
