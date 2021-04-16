@@ -306,13 +306,7 @@ class AvgMeter(Meter):
                 else:
                     self.str_in_line(name)
 
-            if name in self._meter_dict and isinstance(self._meter_dict[name], _AvgItem):
-                self._meter_dict[name].update(value)
-            elif isinstance(value, (float)):
-                if name not in self._meter_dict:
-                    self._meter_dict[name] = self.avg_item()
-                self._meter_dict[name].update(value)
-            elif isinstance(value, (torch.Tensor, np.ndarray)):
+            if isinstance(value, (torch.Tensor, np.ndarray)):
                 if isinstance(value, torch.Tensor):
                     value = value.detach().cpu().numpy()
                 if len(value.shape) == 0 or sum(value.shape) == 1:
@@ -321,6 +315,12 @@ class AvgMeter(Meter):
                     self._meter_dict[name].update(value)
                 else:
                     self._meter_dict[name] = value
+            elif name in self._meter_dict and isinstance(self._meter_dict[name], _AvgItem):
+                self._meter_dict[name].update(value)
+            elif isinstance(value, (float)):
+                if name not in self._meter_dict:
+                    self._meter_dict[name] = self.avg_item()
+                self._meter_dict[name].update(value)
             else:
                 self._meter_dict[name] = value
 

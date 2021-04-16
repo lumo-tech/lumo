@@ -148,8 +148,14 @@ class BaseBuilder(Dataset):
         return self
 
     def shuffle(self):
+        """
+        shuffle before dataloader may decrease memory leakage
+            see https://github.com/pytorch/pytorch/issues/13246#issuecomment-436632186 for details
+        Returns:
+
+        """
         import random
-        ids = list(range(len(self.raw_len)))
+        ids = list(range(self.raw_len))
         random.shuffle(ids)
         self._reindices = ids
         return self
