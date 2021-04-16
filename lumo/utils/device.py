@@ -1,7 +1,9 @@
-from typing import List, Dict, Tuple, Union, overload, Optional
+from typing import List, Dict, Tuple, Union, overload, Optional, Sequence
 from torch import nn
 import torch
 from collections.abc import Sequence, Mapping
+
+from torch.utils.data import DataLoader
 
 
 def _to_device(item: Union[Sequence, Mapping, torch.Tensor, nn.Module],
@@ -29,6 +31,13 @@ to_device = _to_device
 
 def get_to_device_func():
     return to_device
+
+
+def to_device_enumrate(loader: DataLoader, device_args_kwargs: Tuple[Sequence, Dict]):
+    to_device = get_to_device_func()
+    for idx, batch in enumerate(loader):
+        batch = to_device(batch, device_args_kwargs)
+        yield idx, batch
 
 
 @overload

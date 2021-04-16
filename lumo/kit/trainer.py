@@ -33,7 +33,7 @@ from lumo.base_classes import attr, TrainerStage
 from lumo.base_classes.metaclasses import Merge
 from lumo.utils.keys import TRAINER
 from lumo.utils.connect import find_free_network_port
-from lumo.utils.device import get_to_device_func, construct_device_args_kwargs
+from lumo.utils.device import construct_device_args_kwargs, to_device_enumrate
 
 
 @dataclass()
@@ -66,13 +66,6 @@ def mp_agent(rank, trainer, op, dataloader):
     torch.cuda.set_device(trainer.params.local_rank)
     print('in rank {}'.format(rank))
     op(dataloader)
-
-
-def to_device_enumrate(loader: DataLoader, device_args_kwargs: Tuple[Sequence, Dict]):
-    to_device = get_to_device_func()
-    for idx, batch in enumerate(loader):
-        batch = to_device(batch, device_args_kwargs)
-        yield idx, batch
 
 
 class _BaseTrainer(ModelMix, CallbackMix, metaclass=Merge):
@@ -246,7 +239,6 @@ class _BaseTrainer(ModelMix, CallbackMix, metaclass=Merge):
                     os.environ[k] = v
 
     def _initial_exp(self):
-        from lumo.utils import safe_io as io
         self.params.to_json(self.exp.params_fn)
 
     @staticmethod

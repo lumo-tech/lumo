@@ -68,16 +68,18 @@ class _AvgItem:
 
     def __init__(self, weight_decay=0.01, precision=4) -> None:
         super().__init__()
-        self._avg = None
+        self._sum = None
+        self._count = 0
         self._last = None
         self._w = weight_decay
         self._p = precision
 
     def update(self, other):
-        if self._avg is None:
-            self._avg = other
+        if self._sum is None:
+            self._sum = other
         else:
-            self._avg = self._avg * (1 - self._w) + other * self._w
+            self._sum = self._sum + other
+        self._count += 1
         self._last = other
 
     @property
@@ -88,9 +90,9 @@ class _AvgItem:
 
     @property
     def avg(self) -> Number:
-        if self._avg is None:
+        if self._sum is None:
             return 0
-        return self._avg
+        return self._sum / self._count
 
     def __repr__(self) -> str:
         return f"{self.avg:.{self._p}f}"

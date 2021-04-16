@@ -1,7 +1,7 @@
 """
 
 """
-__version__ = "0.1.1.27"
+__version__ = "0.1.1.29"
 
 from .utils.paths import global_config_path as _
 from .utils.keys import K
@@ -13,6 +13,8 @@ from .kit import (
 
     DatasetBuilder, DataDelegate, DataModule,
     Saver, Random,
+
+    Logger,
 
     TrainerExperiment, exphook,
     globs, Trainer, callbacks
