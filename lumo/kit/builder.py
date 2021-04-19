@@ -286,6 +286,7 @@ class DatasetBuilder(BaseBuilder):
         self._dataset_len = None
         self._input_dict = OrderedDict()
         self._output_dict = OrderedDict()
+        self._delegate_keys = set()
         self._check_delegate_flag = set()
         self._idnames = []
 
@@ -313,6 +314,7 @@ class DatasetBuilder(BaseBuilder):
         index = self._map_index(index)
 
         names = set(self._output_dict.values())
+        names = names - self._delegate_keys
 
         raw = {}
         for name in names:  # type:str
@@ -466,6 +468,10 @@ class DatasetBuilder(BaseBuilder):
         """
         if not in_delegate:
             self._check_source_name(name, added=False)
+        else:
+            assert name not in self._delegate_keys
+            self._delegate_keys.add(name)
+
         self._check_outkey_name(outkey)
         self._output_dict[outkey] = name
         if transform is not None:
