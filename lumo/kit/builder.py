@@ -287,6 +287,7 @@ class DatasetBuilder(BaseBuilder):
         self._input_dict = OrderedDict()
         self._output_dict = OrderedDict()
         self._delegate_keys = set()
+        self._delegate_outs = OrderedDict()
         self._check_delegate_flag = set()
         self._idnames = []
 
@@ -314,20 +315,23 @@ class DatasetBuilder(BaseBuilder):
         index = self._map_index(index)
 
         names = set(self._output_dict.values())
-        names = names - self._delegate_keys
 
         raw = {}
         for name in names:  # type:str
             source_ = self._input_dict[name]
-            if isinstance(source_, DataDelegate):  # assign name for Delegate Data
-                sample_ = source_[index]
-                self._check_delegate_res(sample_)
-                ress = self._unpack_delegate_res(name, sample_)
-                for res in ress:
-                    raw[res.name] = res.value
-            else:  # simple data source
-                sample_ = source_[index]
-                raw[name] = sample_
+            sample_ = source_[index]
+            raw[name] = sample_
+
+        dele_unpacked_raw = {}
+        for dele_name in self._delegate_outs.values():
+            source_ = self._input_dict[dele_name]
+            if dele_name in self._input_transform:  # transform delegate item directly
+                source_ = self._input_transform[dele_name](source_)
+            sample_ = source_[index]
+            self._check_delegate_res(sample_)
+            ress = self._unpack_delegate_res(dele_name, sample_)  # then unpack delegate item
+            for res in ress:
+                dele_unpacked_raw[res.name] = res.value
 
         for name, transform in self._input_transform.items():
             if name in raw:
@@ -337,6 +341,7 @@ class DatasetBuilder(BaseBuilder):
 
         [sample.__setitem__(k, index) for k in self._idnames]
         [sample.__setitem__(outkey, raw[name]) for outkey, name in self._output_dict.items()]
+        [sample.__setitem__(dele_outkey, dele_item) for dele_outkey, dele_item in dele_unpacked_raw.items()]
 
         for outkey, transform in self._output_transform.items():
             if outkey in sample:
@@ -455,27 +460,32 @@ class DatasetBuilder(BaseBuilder):
         self._check_len(source)
         self._check_source_name(name, added=True)
         self._input_dict[name] = source
+        if isinstance(source, DataDelegate):
+            self._delegate_keys.add(name)
+
         if transform is not None:
             self.add_input_transform(name, transform)
         return self
 
-    def add_output(self, name, outkey, transform=None, in_delegate=False):
+    def add_output(self, name, outkey=None, transform=None, in_delegate=False):
         """
         Add an output stream.
         Args:
             name:
             outkey:
         """
-        if not in_delegate:
-            self._check_source_name(name, added=False)
-        else:
-            assert name not in self._delegate_keys
-            self._delegate_keys.add(name)
 
-        self._check_outkey_name(outkey)
-        self._output_dict[outkey] = name
-        if transform is not None:
-            self.add_output_transform(outkey, transform)
+        if not in_delegate:
+            assert outkey is not None
+            self._check_source_name(name, added=False)
+            self._check_outkey_name(outkey)
+            self._output_dict[outkey] = name
+            if transform is not None:
+                self.add_output_transform(outkey, transform)
+        else:
+            if outkey is None:
+                outkey = f"dele_{len(self._delegate_outs)}"
+            self._delegate_outs[outkey] = name
         return self
 
     def add_input_transform(self, name, transform: Callable[[Any], Any]):
