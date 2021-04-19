@@ -78,13 +78,13 @@ def dump_state_dict(obj, fn):
     return fn
 
 
-@safe_load()
+@safe_load(default={})
 def load_json(fn):
     with open(fn, 'r', encoding='utf-8') as r:
         return json.load(r)
 
 
-@safe_load()
+@safe_load(default={})
 def load_yaml(fn):
     import yaml
     with open(fn, 'r', encoding='utf-8') as r:

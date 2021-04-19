@@ -35,6 +35,10 @@ class DataModule(DataModuleMix):
         kwargs = {k: v for k, v in kwargs.items() if v is not None}
         self._dataloader.update(kwargs)
 
+    def regist_dataloader_with_stage(self, stage: TrainerStage, loader: DataLoader):
+        kwargs = {stage.name: loader}
+        self.regist_dataloader(**kwargs)
+
     def idataloader(self, params: ParamsType, stage: TrainerStage, repeat: bool = False):
         pass
 

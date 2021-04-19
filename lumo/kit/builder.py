@@ -457,14 +457,15 @@ class DatasetBuilder(BaseBuilder):
             self.add_input_transform(name, transform)
         return self
 
-    def add_output(self, name, outkey, transform=None):
+    def add_output(self, name, outkey, transform=None, in_delegate=False):
         """
         Add an output stream.
         Args:
             name:
             outkey:
         """
-        self._check_source_name(name, added=False)
+        if not in_delegate:
+            self._check_source_name(name, added=False)
         self._check_outkey_name(outkey)
         self._output_dict[outkey] = name
         if transform is not None:
