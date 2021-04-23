@@ -88,13 +88,14 @@ class _BaseTrainer(ModelMix, CallbackMix, metaclass=Merge):
 
     __exp_name__ = None
     _call_backs = {
-        "save_keypoint", "save_checkpoint", "save_model",
+        "save_keypoint", "save_checkpoint", "save_model", "load_state_dict",
+        'ioptims', 'icallbacks', 'imodels',
     }
 
     def _exit_hook(self, exc_type, exc, tb, *args):
         import traceback
         res = traceback.format_exception(exc_type, exc, tb)
-        # res = [i for i in res if 'in _newfunc' not in i]
+        res = [i for i in res if 'in _newfunc' not in i]
         print(''.join(res), file=sys.stderr)
 
     def __new__(cls, *args, **kwargs):
@@ -176,7 +177,7 @@ class _BaseTrainer(ModelMix, CallbackMix, metaclass=Merge):
             "others": {},
             'device': torch.device('cpu'),
             'params': params,
-            'exp': TrainerExperiment(self._gene_class_exp_name()).start(),
+            'exp': TrainerExperiment(self._gene_class_exp_name()),
         })
         params.iparams()
 
@@ -197,6 +198,7 @@ class _BaseTrainer(ModelMix, CallbackMix, metaclass=Merge):
             self.regist_device(_device)
 
         self._check_cb_init()
+        self.exp.start()
 
     def __setattr__(self, name: str, value: Any) -> None:
         super().__setattr__(name, value)
@@ -237,6 +239,9 @@ class _BaseTrainer(ModelMix, CallbackMix, metaclass=Merge):
                 globs[k] = v
                 if isinstance(v, str):
                     os.environ[k] = v
+        for k in {'nocommit'}:
+            if k in self.params:
+                globs[k] = self.params[k]
 
     def _initial_exp(self):
         self.params.to_json(self.exp.params_fn)
@@ -295,6 +300,8 @@ class _BaseTrainer(ModelMix, CallbackMix, metaclass=Merge):
     def logger(self):
         if self._logger is None:
             self._logger = Logger()
+            if self.params.get('debug', False):
+                Logger.set_verbose(Logger.V_DEBUG)
             fn = self._logger.add_log_dir(self.exp.log_dir)
             self.exp.writeline('logger', fn)
         return self._logger
@@ -473,7 +480,7 @@ class _BaseTrainer(ModelMix, CallbackMix, metaclass=Merge):
 
         callback._hooked = self
         callback.on_hooked(self, self.params)
-        self.logger.info("{} hooked on {}.".format(callback, self))
+        self.logger.info("{} hooked on {}().".format(callback, self.__class__.__name__))
         return True
 
     def reload_callback(self, callback):
@@ -555,13 +562,19 @@ class _BaseTrainer(ModelMix, CallbackMix, metaclass=Merge):
             if k in src:
                 v.load_state_dict(src[k])
 
-    def load_state_dict(self, state_dict: dict):
+    def load_state_dict(self, object: Union[str, dict]):
+        if isinstance(object, str):
+            ckpt, meta_info = self.saver.load_state_dict(object, with_meta=True)
+        else:
+            ckpt, meta_info = object, None
+
         _sub = {'models', 'optims', 'other'}
-        for k, v in state_dict.items():
+        for k, v in ckpt.items():
             if k in _sub:
                 self._load_fun_state_dict(v, self._state_dicts[k])
             else:
                 self._state_dicts[k] = v
+        return meta_info
 
     def _build_trainer_meta_info(self, meta_info: Union[str, dict] = None):
         info = {}
@@ -637,6 +650,7 @@ class Trainer(DLLoopMix, _BaseTrainer):
         "test", "test_step",
         "evaluate", "evaluate_step",
         "predict", "inference",
+        'prepare_dataloader',
     }
 
     def _wrap_result(self, meter: Union[Mapping, Meter, Sequence, torch.Tensor, np.ndarray]):
@@ -702,7 +716,7 @@ class Trainer(DLLoopMix, _BaseTrainer):
         else:
             return _to_device(item, device_args_kwargs)
 
-    def _prepare_dataloader(self, stage: TrainerStage, dataloader=None):
+    def prepare_dataloader(self, stage: TrainerStage, dataloader=None):
         params = self.params
         initialized = getattr(self.initial, f"{stage.name}_dataloader")
 
@@ -725,7 +739,7 @@ class Trainer(DLLoopMix, _BaseTrainer):
 
     def train(self, dataloader: Union[DataLoader, DataModuleMix] = None):
         # params, initialized = self.params, self.initial.train_dataloader
-        dataloader = self._prepare_dataloader(TrainerStage.train, dataloader)
+        dataloader = self.prepare_dataloader(TrainerStage.train, dataloader)
         if dataloader is None:
             return TrainerResult(TrainerStage.train, 1, 'no train_dataloader')
 
@@ -764,7 +778,7 @@ class Trainer(DLLoopMix, _BaseTrainer):
         pass
 
     def evaluate(self, dataloader: Union[DataLoader, DataModule] = None):
-        dataloader = self._prepare_dataloader(TrainerStage.val, dataloader)
+        dataloader = self.prepare_dataloader(TrainerStage.val, dataloader)
         if dataloader is None:
             return TrainerResult(TrainerStage.val, 1, 'no eval_dataloader')
         self._check_models_init()
@@ -783,7 +797,7 @@ class Trainer(DLLoopMix, _BaseTrainer):
         return self.test_step(idx, batch, params, *args, **kwargs)
 
     def test(self, dataloader: Union[DataLoader, DataModule] = None):
-        dataloader = self._prepare_dataloader(TrainerStage.test, dataloader)
+        dataloader = self.prepare_dataloader(TrainerStage.test, dataloader)
         if dataloader is None:
             return TrainerResult(TrainerStage.test, 1, 'no test_dataloader')
         self._check_models_init()

@@ -7,6 +7,10 @@ from .params import ParamsType
 
 
 class DataModule(DataModuleMix):
+    train = TrainerStage.train
+    test = TrainerStage.test
+    val = TrainerStage.val
+
     def __init__(self, train: DataLoader = None, val: DataLoader = None, test: DataLoader = None):
         self._dataloader = {}
         self.regist_dataloader(train=train, val=val, test=test)

@@ -110,7 +110,7 @@ class BaseParams():
         self._bind = d['_bound']
 
     def __repr__(self):
-        dynamic_propertys = [(k, getattr(self, k)) for k in self.__dir__() if
+        dynamic_propertys = [(k, io.safe_getattr(self, k, None)) for k in self.__dir__() if
                              isinstance(getattr(self.__class__, k, None), property)]
 
         return "{}".format(self.__class__.__name__) + pp.pformat(
@@ -484,11 +484,29 @@ class Params(BaseParams):
         self.arch = None
         self.stage = self.choice('init', 'train', 'test', 'val')
         self.optim = None  # type:OptimBuilder
-        self.git_commit = True
-        self.tmp_dir = None  # type:str # set TMPDIR environment
+        # self.tmp_dir = None  # type:str # set TMPDIR environment
 
     def iparams(self):
         pass
 
 
 ParamsType = TypeVar('ParamsType', bound=Params)
+
+
+def disable_commit():
+    params = BaseParams()
+    params.nocommit = True
+    return params
+
+
+def use_prerain(pretrain=True, pretrain_path=None):
+    params = BaseParams()
+    params.pretrain = pretrain
+    params.pretrain_path = pretrain_path
+    return params
+
+
+# class optims:
+#     @staticmethod
+#     def sgd():
+#         pass

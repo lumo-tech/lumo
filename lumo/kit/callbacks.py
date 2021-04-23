@@ -5,6 +5,7 @@
 import os
 import sys
 from functools import wraps
+import inspect
 
 from .trainer import Trainer
 
@@ -55,6 +56,12 @@ class BaseCallback():
         self.on_exception = ecp_wrap(self.on_exception)
         return self
 
+    def getfuncargs(self, func, *args, **kwargs):
+        res = inspect.getcallargs(func, *args, **kwargs)
+        if 'self' in res:
+            res.pop('self')
+        return res
+
     def on_hooked(self, source: Trainer, params: Params):
         """called when callback hooked trainer"""
         pass
@@ -80,10 +87,14 @@ class BaseCallback():
 
     def on_begin(self, source: Trainer, func, params: Params, *args, **kwargs):
         """called before trainer.func is called"""
-        pass
+        cb_func = getattr(self, f"on_{func.__name__}_begin", None)
+        if cb_func is not None:
+            cb_func(source, func, params, *args, **kwargs)
 
-    def on_end(self, source: Trainer, func, params: Params, meter, *args, **kwargs):
-        pass
+    def on_end(self, source: Trainer, func, params: Params, result, *args, **kwargs):
+        cb_func = getattr(self, f"on_{func.__name__}_end", None)
+        if cb_func is not None:
+            cb_func(source, func, params, result, *args, **kwargs)
 
     def __le__(self, other):
         return self.priority <= other.priority
@@ -110,22 +121,6 @@ class TrainCallback(BaseCallback):
     实现了一般训练过程中的函数函数回调，主要将 on_begin() / on_end() 方法分发到各具体的回调方法中
     """
 
-    def on_begin(self, source: Trainer, func, params: Params, *args, **kwargs):
-        if func.__name__ == "train":
-            self.on_train_begin(source, func, params, *args, **kwargs)
-        elif func.__name__ == "train_epoch":
-            self.on_train_epoch_begin(source, func, params, *args, **kwargs)
-        elif func.__name__ == "train_step":
-            self.on_train_step_begin(source, func, params, *args, **kwargs)
-        elif func.__name__ == "evaluate":
-            self.on_eval_begin(source, func, params, *args, **kwargs)
-        elif func.__name__ == "evaluate_step":
-            self.on_eval_step_begin(source, func, params, *args, **kwargs)
-        elif func.__name__ == "test":
-            self.on_test_begin(source, func, params, *args, **kwargs)
-        elif func.__name__ == "test_step":
-            self.on_test_step_begin(source, func, params, *args, **kwargs)
-
     def on_train_begin(self, trainer: Trainer, func, params: Params, *args, **kwargs):
         pass
 
@@ -146,22 +141,6 @@ class TrainCallback(BaseCallback):
 
     def on_test_step_begin(self, trainer: Trainer, func, params: Params, *args, **kwargs):
         pass
-
-    def on_end(self, source: Trainer, func, params: Params, meter, *args, **kwargs):
-        if func.__name__ == "train":
-            self.on_train_end(source, func, params, meter, *args, **kwargs)
-        elif func.__name__ == "train_epoch":
-            self.on_train_epoch_end(source, func, params, meter, *args, **kwargs)
-        elif func.__name__ == "train_step":
-            self.on_train_step_end(source, func, params, meter, *args, **kwargs)
-        elif func.__name__ == "evaluate":
-            self.on_eval_end(source, func, params, meter, *args, **kwargs)
-        elif func.__name__ == "evaluate_step":
-            self.on_eval_step_end(source, func, params, meter, *args, **kwargs)
-        elif func.__name__ == "test":
-            self.on_test_end(source, func, params, meter, *args, **kwargs)
-        elif func.__name__ == "test_step":
-            self.on_test_step_end(source, func, params, meter, *args, **kwargs)
 
     def on_train_end(self, trainer: Trainer, func, params: Params, meter: Meter, *args, **kwargs):
         pass
@@ -196,6 +175,8 @@ class TrainCallback(BaseCallback):
     def on_inference_end(self, trainer: Trainer, func, params: Params, meter: Meter, *args, **kwargs):
         pass
 
+
+class SaveLoadCallback(BaseCallback):
     def on_save_keypoint_begin(self, trainer: Trainer, func, params: Params, *args, **kwargs):
         pass
 
@@ -206,6 +187,38 @@ class TrainCallback(BaseCallback):
         pass
 
     def on_save_model_end(self, trainer: Trainer, func, params: Params, meter: Meter, *args, **kwargs):
+        pass
+
+    def on_save_checkpoint_begin(self, trainer: Trainer, func, params: Params, *args, **kwargs):
+        pass
+
+    def on_save_checkpoint_end(self, trainer: Trainer, func, params: Params, meter: Meter, *args, **kwargs):
+        pass
+
+    def on_load_state_dict_begin(self, trainer: Trainer, func, params: Params, *args, **kwargs):
+        pass
+
+    def on_load_state_dict_end(self, trainer: Trainer, func, params: Params, meter: Meter, *args, **kwargs):
+        pass
+
+
+class InitialCallback(BaseCallback):
+    def on_ioptims_begin(self, trainer: Trainer, func, params: Params, *args, **kwargs):
+        pass
+
+    def on_ioptims_end(self, trainer: Trainer, func, params: Params, meter: Meter, *args, **kwargs):
+        pass
+
+    def on_imodels_begin(self, trainer: Trainer, func, params: Params, *args, **kwargs):
+        pass
+
+    def on_imodels_end(self, trainer: Trainer, func, params: Params, meter: Meter, *args, **kwargs):
+        pass
+
+    def on_prepare_dataloader_begin(self, trainer: Trainer, func, params: Params, *args, **kwargs):
+        pass
+
+    def on_prepare_dataloader_end(self, trainer: Trainer, func, params: Params, meter: Meter, *args, **kwargs):
         pass
 
 
@@ -245,7 +258,7 @@ class EvalCallback(TrainCallback):
         return self._repr_by_val("eval_in_per_epoch", "test_per_epoch")
 
 
-class LoggerCallback(TrainCallback):
+class LoggerCallback(TrainCallback, InitialCallback, SaveLoadCallback):
     """
     用于日志输出的回调，当 BaseTrainer 在 epoch / batch 等级别的训练结束、异常发生等过程后，Logger 会对这些事件，
     或方法返回的结果进行输出。
@@ -259,7 +272,6 @@ class LoggerCallback(TrainCallback):
         self.avg = avg
 
     def on_hooked(self, source: Trainer, params: Params):
-        super().on_hooked(source, params)
         source.logger.raw(' '.join(sys.argv))
         source.logger.info("Exp BaseDir", os.path.abspath(source.exp.exp_root))
         source.logger.info("Exp Trainer", source.__class__.__name__)
@@ -359,6 +371,44 @@ class LoggerCallback(TrainCallback):
         self.meter.update(meter)
         meter = self.meter
         trainer.logger.inline("{}/{}".format(params.idx + 1, len(trainer.val_dataloader)), meter, fix=1)
+
+    def on_save_keypoint_begin(self, trainer: Trainer, func, params: Params, *args, **kwargs):
+        trainer.logger.info(f'Saved keypoint in {args[0]}')
+
+    def on_save_model_begin(self, trainer: Trainer, func, params: Params, *args, **kwargs):
+        trainer.logger.info(f'Saved model in {args[0]}')
+
+    def on_save_checkpoint_begin(self, trainer: Trainer, func, params: Params, *args, **kwargs):
+        trainer.logger.info(inspect.getcallargs(func, *args, **kwargs))
+
+    def on_save_checkpoint_end(self, trainer: Trainer, func, params: Params, result: str, *args, **kwargs):
+        trainer.logger.info(f'Saved checkpoint in {result}')
+
+    def on_save_model_end(self, trainer: Trainer, func, params: Params, result: str, *args, **kwargs):
+        trainer.logger.info(f'Saved mdoel in {result}')
+
+    def on_save_keypoint_end(self, trainer: Trainer, func, params: Params, result: str, *args, **kwargs):
+        trainer.logger.info(f'Saved keypoint in {result}')
+
+    def on_load_state_dict_end(self, trainer: Trainer, func, params: Params, meter: Meter, *args, **kwargs):
+        res = self.getfuncargs(func, *args, **kwargs)
+        object = res['object']
+        if isinstance(object, str):
+            trainer.logger.info(f'Load state dict from {object}')
+
+        if meter is not None:
+            trainer.logger.info(f'Loaded with meta info:')
+            trainer.logger.raw(meter)
+        else:
+            trainer.logger.info(f'Loaded.')
+
+    def on_imodels_end(self, trainer: Trainer, func, params: Params, meter: Meter, *args, **kwargs):
+        trainer.logger.info('Model initialized.')
+
+    def on_prepare_dataloader_end(self, trainer: Trainer, func, params: Params, meter: Meter, *args, **kwargs):
+        res = self.getfuncargs(func, *args, **kwargs)
+        stage = res['stage'].name
+        trainer.logger.info(f'{stage.capitalize()} dataloader prepared.')
 
 
 class MeterCheckpoint(TrainCallback):
@@ -543,3 +593,13 @@ class ReportSche(TrainCallback):
         for k, v in self.sche_lis:
             m[k] = v(params.eidx)
         trainer.logger.info(m)
+
+
+class AutoLoadModel(InitialCallback):
+
+    def on_imodels_end(self, trainer: Trainer, func, params: Params, meter: Meter, *args, **kwargs):
+        super().on_imodels_end(trainer, func, params, meter, *args, **kwargs)
+        if params.get('pretrain', False):
+            path = params.get('pretrain_path', None)
+            if path is not None:
+                trainer.load_state_dict(path)

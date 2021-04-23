@@ -92,7 +92,7 @@ class TestProp():
 
 @dataclass(unsafe_hash=True)
 class Test(TestProp):
-    name: str
+    tid: str
     root: str
 
     @property
@@ -433,7 +433,7 @@ class Tests(TestProp, List[Test]):
 
     @property
     def names(self):
-        return [i.name for i in self]
+        return [i.tid for i in self]
 
     @property
     def uuid(self):

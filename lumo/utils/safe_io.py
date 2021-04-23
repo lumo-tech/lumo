@@ -116,3 +116,10 @@ def dump_string(string: str, fn, append=False):
     with open(fn, mode, encoding='utf-8') as w:
         w.write(string)
     return fn
+
+
+def safe_getattr(self, key, default=None):
+    try:
+        return getattr(self, key, default)
+    except:
+        return default
