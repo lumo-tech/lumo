@@ -72,3 +72,9 @@ def checkpath(*path):
 def compare_path(a, b):
     a, b = os.path.realpath(a), os.path.realpath(b)
     return os.path.normpath(a) == os.path.normpath(b)
+
+
+def cache_dir():
+    path = os.path.expanduser("~/.cache/lumo/")
+    os.makedirs(path, exist_ok=True)
+    return path
