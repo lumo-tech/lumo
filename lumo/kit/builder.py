@@ -2,11 +2,11 @@ from collections import OrderedDict
 from copy import copy
 from itertools import accumulate
 from operator import add
-from typing import Sized, Sequence, Union, Callable, Dict, Any, List, overload, Type, TypeVar, ClassVar
-from functools import partial, wraps
-from torch.utils.data._utils.collate import default_collate
+from typing import Sized, Sequence, Union, Callable, Dict, Any, List, overload, TypeVar, ClassVar
+from functools import wraps
 from torch.utils.data import Dataset, sampler as sp, DataLoader
 
+from lumo.contrib.data.collate import CollateBase
 from .delegate import DataDelegate, Data, DelegateDataTypeError
 
 Loader = TypeVar('Loader')
@@ -25,37 +25,6 @@ def _loader_partial(loader: Loader, *args, **kwargs) -> Loader:
         return loader(*args, **kwargs)
 
     return DataLoader
-
-
-class CollateBase():
-
-    def __new__(cls, *args, **kwargs) -> Any:
-        self = super().__new__(cls)
-
-        def wrap(func):
-            @wraps(func)
-            def inner(*args, **kwargs):
-                res = self.before_collate(*args, **kwargs)
-                res = func(res)
-                res = self.after_collate(res)
-                return res
-
-            return inner
-
-        self.collate = wrap(self.collate)
-        return self
-
-    def __call__(self, *args, **kwargs):
-        return self.collate(*args, **kwargs)
-
-    def before_collate(self, sample_list):
-        return sample_list
-
-    def collate(self, sample_list):
-        return default_collate(sample_list)
-
-    def after_collate(self, batch):
-        return batch
 
 
 class BaseBuilder(Dataset):
@@ -185,17 +154,6 @@ class BaseBuilder(Dataset):
 
     def batch_sample_by(self, batch_sampler: sp.BatchSampler):
         self._batch_sampler = batch_sampler
-        return self
-
-    @overload
-    def dataloader_args(self, batch_size=1, shuffle=False, sampler=None,
-                        batch_sampler=None, num_workers=0, collate_fn=None,
-                        pin_memory=False, drop_last=False, timeout=0,
-                        worker_init_fn=None, multiprocessing_context=None, *args, **kwargs):
-        ...
-
-    def dataloader_args(self, **kwargs):
-        self._dataloader_kwargs = kwargs
         return self
 
     @property

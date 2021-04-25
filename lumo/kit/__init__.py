@@ -1,7 +1,7 @@
 from . import builder
 from . import exphook
 
-from .builder import DatasetBuilder, CollateBase
+from .builder import DatasetBuilder
 from .delegate import DataDelegate
 
 from .environ import globs
