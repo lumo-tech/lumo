@@ -29,6 +29,11 @@ def _to_string(item, encode=True):
     if inspect.isclass(res) or inspect.isfunction(res):
         res = f"{res.__name__}"
 
+    if not isinstance(res, str):
+        res = f"{res.__class__.__name__}"
+    else:
+        res = f"{res}{res.__class__.__name__}"
+
     res = str(res)
     if encode:
         res = res.encode()
