@@ -14,8 +14,8 @@ from accelerate.state import AcceleratorState as HugAcceleratorState
 class AcceleratorState(HugAcceleratorState):
 
     def __init__(self, fp16: bool = None, cpu: bool = False, _from_accelerator: bool = False, device=None):
-        self.cpu = cpu
         super().__init__(fp16, cpu, _from_accelerator)
+        self.cpu = cpu
         self.to_device(device)
 
     def to_device(self, device):
