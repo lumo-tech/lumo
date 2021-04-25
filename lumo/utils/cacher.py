@@ -60,11 +60,11 @@ def _cache_hash(func, *args, **kwargs) -> str:  # TODO hash any thing
 
 def _cache_suffix(item):
     if isinstance(item, (list, tuple, dict, torch.Tensor)):
-        return '.pkl'
+        return 'pkl'
     elif isinstance(item, np.ndarray):
-        return '.npy'
+        return 'npy'
     elif isinstance(item, pd.DataFrame):
-        return '.ft'
+        return 'ft'
 
 
 def _drop_pandas(item: pd.DataFrame):

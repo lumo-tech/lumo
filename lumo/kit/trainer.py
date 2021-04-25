@@ -33,7 +33,9 @@ from lumo.base_classes import attr, TrainerStage
 from lumo.base_classes.metaclasses import Merge
 from lumo.utils.keys import TRAINER
 from lumo.utils.connect import find_free_network_port
+from lumo.utils import dist
 from lumo.utils.device import construct_device_args_kwargs, to_device_enumrate
+from lumo.contrib.accelerate import Accelerator
 
 
 @dataclass()
@@ -227,12 +229,10 @@ class _BaseTrainer(ModelMix, CallbackMix, metaclass=Merge):
         return res
 
     def _initialize_globs(self):
-        globs['rank'] = -1
-        globs['world_size'] = 0
-        if dist.is_available():
-            if dist.is_initialized():
-                globs['rank'] = dist.get_rank()
-                globs['world_size'] = dist.get_world_size()
+        globs['rank'] = dist.local_rank()
+        globs['world_size'] = dist.world_size()
+        globs['LOCAL_RANK'] = globs['rank']
+        globs['WORLD_SIZE'] = dist.world_size()
 
         for k, v in self.params.items():  # type:str,Any
             if k.isupper():
@@ -282,15 +282,15 @@ class _BaseTrainer(ModelMix, CallbackMix, metaclass=Merge):
 
     @property
     def is_dist(self):
-        return self.local_rank >= 0
+        return dist.is_dist()
 
     @property
     def local_rank(self):
-        return globs['rank']
+        return dist.local_rank()
 
     @property
     def world_size(self):
-        return globs['world_size']
+        return dist.world_size()
 
     @property
     def exp(self) -> TrainerExperiment:
@@ -309,6 +309,20 @@ class _BaseTrainer(ModelMix, CallbackMix, metaclass=Merge):
     @property
     def params(self) -> ParamsType:
         return self._state_dicts[TRAINER.DKEY.params]
+
+    @property
+    def accelerator(self) -> Accelerator:
+        acce = {'device_placement': True,
+                'split_batches': False,
+                'fp16': None,
+                'cpu': False,
+                'rng_types': None,
+                'kwargs_handlers': None,
+                'device': self.params.get('device', None)}
+        for k in acce:
+            if k in self.params:
+                acce[k] = self.params[k]
+        return Accelerator(**acce)
 
     @property
     def rnd(self) -> RndManager:
@@ -333,6 +347,10 @@ class _BaseTrainer(ModelMix, CallbackMix, metaclass=Merge):
     @property
     def _models(self):
         return self._state_dicts[TRAINER.DKEY.models]
+
+    @property
+    def _optims(self):
+        return self._state_dicts[TRAINER.DKEY.optims]
 
     @property
     def model_dict(self) -> Dict[str, nn.Module]:
@@ -709,12 +727,19 @@ class Trainer(DLLoopMix, _BaseTrainer):
                   device_args_kwargs=None):
         if device_args_kwargs is None:
             device_args_kwargs = self.device_arg_kwargs
-        from lumo.utils.device import _to_device
+        from lumo.utils.device import to_device
         if item is None:
-            for v in self._models.values():
-                v.to(self.device)
+            for k in self._models:
+                v = self._models[k]
+                if not self.accelerator.device_placement:
+                    v.to(self.accelerator.device)
+                v = self.accelerator.prepare(self._models[k])
+                self._models[k] = v
+            for k in self._optims:
+                v = self.accelerator.prepare(self._optims[k])
+                self._optims[k] = v
         else:
-            return _to_device(item, device_args_kwargs)
+            return to_device(item, device_args_kwargs)
 
     def prepare_dataloader(self, stage: TrainerStage, dataloader=None):
         params = self.params
@@ -734,7 +759,7 @@ class Trainer(DLLoopMix, _BaseTrainer):
 
         if dataloader is None:
             dataloader = getattr(dataloader, f'{stage.name}_dataloader')
-
+        dataloader = self.accelerator.prepare(dataloader)
         return dataloader
 
     def train(self, dataloader: Union[DataLoader, DataModuleMix] = None):
@@ -830,79 +855,3 @@ class Trainer(DLLoopMix, _BaseTrainer):
 
     def imodels(self, params: ParamsType):
         pass
-
-
-class SingleMachineDDPSpawnDist(DLLoopMix):
-    pcls = DistributionParams
-
-    def __init__(self, trainer, params: ParamsType, dist_params: DistributionParams):
-        super().__init__(params)
-        self.trainer = trainer
-        self.dist_params = dist_params
-        if dist_params.world_size == -1:
-            dist_params.world_size = torch.cuda.device_count()
-
-    @property
-    def num_nodes(self):
-        return 1
-
-    @property
-    def world_size(self):
-        return self.dist_params.world_size
-
-    @property
-    def num_gpus(self):
-        return self.dist_params.world_size
-
-    def train(self, dataloader: Union[DataLoader, DataModule] = None):
-        import torch.multiprocessing as mp
-        mp.spawn(mp_agent,
-                 args=(self.trainer, self.trainer.train, dataloader, self.dist_params.init_method),
-                 nprocs=self.world_size)
-
-
-class SingleMachineDDPDist(SingleMachineDDPSpawnDist):
-
-    def train(self, dataloader: Union[DataLoader, DataModule] = None):
-        if self.local_rank >= 0:
-            mp_agent(self.trainer.local_rank, self.trainer, self.trainer.train, dataloader)
-        else:
-            self._call_children_scripts()
-
-    def _call_children_scripts(self):
-        # bookkeeping of spawned processes
-        assert self.world_size == 0
-        self._has_spawned_children = True
-
-        # DDP Environment variables
-        os.environ["MASTER_ADDR"] = os.environ.get("MASTER_ADDR", "127.0.0.1")
-        os.environ["MASTER_PORT"] = os.environ.get("MASTER_PORT", str(find_free_network_port()))
-
-        # allow the user to pass the node rank
-        node_rank = "0"
-        node_rank = os.environ.get("NODE_RANK", node_rank)
-        node_rank = os.environ.get("GROUP_RANK", node_rank)
-        os.environ["NODE_RANK"] = node_rank
-        os.environ["LOCAL_RANK"] = "0"
-
-        command = sys.argv
-        command[0] = os.path.abspath(command[0])
-        command = [sys.executable] + command
-
-        os.environ["WORLD_SIZE"] = f"{self.world_size}"
-
-        self.interactive_ddp_procs = []
-
-        for local_rank in range(1, self.num_gpus):
-            env_copy = os.environ.copy()
-            env_copy["LOCAL_RANK"] = f"{local_rank}"
-
-            # start process
-            # if hydra is available and initialized, make sure to set the cwd correctly
-            proc = subprocess.Popen(command, env=env_copy, cwd=None)
-            self.interactive_ddp_procs.append(proc)
-
-            # starting all processes at once can cause issues
-            # with dataloaders delay between 1-10 seconds
-            delay = random.randint(2, 5)
-            time.sleep(delay)

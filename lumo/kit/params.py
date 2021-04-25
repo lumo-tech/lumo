@@ -11,8 +11,9 @@ from collections import namedtuple
 from collections.abc import Iterable
 from datetime import timedelta
 from itertools import chain
-from typing import Any, overload, TypeVar
-
+from typing import Any, overload, TypeVar, Optional, List, Union
+from accelerate.kwargs_handlers import KwargsHandler
+from accelerate.utils import RNGType
 import fire
 import torch
 
@@ -40,6 +41,7 @@ class BaseParams():
 
     def __init__(self):
         self._param_dict = attr()
+        self._namespace = attr()
         self._repeat = -1
         self._constrain = {}
         self._lock = False
@@ -77,6 +79,9 @@ class BaseParams():
             else:
                 self._param_dict[name] = value
 
+            res = self._namespace.setdefault(self.__class__, [])
+            res.append(name)
+
     def __getattr__(self, item):
         if item not in self._param_dict and self._lock:
             raise AttributeError(item)
@@ -101,6 +106,7 @@ class BaseParams():
             '_repeat': self._repeat,
             '_lock': self._lock,
             '_bound': self._constrain,
+            '_namespace': self._namespace,
         }
 
     def __setstate__(self, d):
@@ -108,6 +114,7 @@ class BaseParams():
         self._repeat = d['_repeat']
         self._lock = d['_lock']
         self._bind = d['_bound']
+        self._namespace = d['_namespace']
 
     def __repr__(self):
         dynamic_propertys = [(k, io.safe_getattr(self, k, None)) for k in self.__dir__() if
@@ -493,6 +500,18 @@ class Params(BaseParams):
 ParamsType = TypeVar('ParamsType', bound=Params)
 
 
+class AccelerateParams(BaseParams):
+
+    def __init__(self):
+        super().__init__()
+        self.device_placement: bool = True
+        self.split_batches: bool = False
+        self.fp16: bool = None
+        self.cpu: bool = False
+        self.rng_types: Optional[List[Union[str, RNGType]]] = None
+        self.kwargs_handlers: Optional[List[KwargsHandler]] = None
+
+
 def disable_commit():
     params = BaseParams()
     params.nocommit = True
@@ -504,7 +523,6 @@ def use_prerain(pretrain=True, pretrain_path=None):
     params.pretrain = pretrain
     params.pretrain_path = pretrain_path
     return params
-
 
 # class optims:
 #     @staticmethod

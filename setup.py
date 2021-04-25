@@ -1,5 +1,6 @@
 from setuptools import setup, find_packages
 from lumo import __version__
+
 # from rename_templete import copy_templete
 
 # copy_templete()
@@ -21,7 +22,7 @@ setup(
     include_package_data=True,
     install_requires=[
         'matplotlib', 'numpy', 'pandas',
-        'fire','psutil',
+        'fire', 'psutil', 'accelerate',
         'gitpython',
     ],
     classifiers=[

@@ -268,8 +268,9 @@ class LoggerCallback(TrainCallback, InitialCallback, SaveLoadCallback):
     only_main_process = True
     priority = 100
 
-    def __init__(self, avg=True):
+    def __init__(self, avg=True, step_frequence=3):
         self.avg = avg
+        self.step_frequence = step_frequence
 
     def on_hooked(self, source: Trainer, params: Params):
         source.logger.raw(' '.join(sys.argv))
@@ -337,7 +338,8 @@ class LoggerCallback(TrainCallback, InitialCallback, SaveLoadCallback):
         meter = trainer._wrap_result(meter)
         self.meter.update(meter)
         meter = self.meter
-        trainer.logger.inline("{}/{}".format(params.idx + 1, len(trainer.train_dataloader)), meter, fix=1)
+        if params.idx % self.step_frequence == 0:
+            trainer.logger.inline("{}/{}".format(params.idx + 1, len(trainer.train_dataloader)), meter, fix=1)
 
     def on_first_exception(self, source: Trainer, func, params: Params, e: BaseException, *args, **kwargs):
         source.logger.error("{} raised".format(e.__class__.__name__))
@@ -408,7 +410,7 @@ class LoggerCallback(TrainCallback, InitialCallback, SaveLoadCallback):
     def on_prepare_dataloader_end(self, trainer: Trainer, func, params: Params, meter: Meter, *args, **kwargs):
         res = self.getfuncargs(func, *args, **kwargs)
         stage = res['stage'].name
-        trainer.logger.info(f'{stage.capitalize()} dataloader prepared.')
+        trainer.logger.info(f'{stage.capitalize()} dataloader prepared: .')
 
 
 class MeterCheckpoint(TrainCallback):

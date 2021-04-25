@@ -1,4 +1,5 @@
 from typing import List, Dict, Tuple, Union, overload, Optional, Sequence
+from decorator import decorator
 from torch import nn
 import torch
 from collections.abc import Sequence, Mapping
@@ -26,9 +27,6 @@ def _to_device(item: Union[Sequence, Mapping, torch.Tensor, nn.Module],
 def set_default_to_device_func(func):
     global to_device
     to_device = func
-
-
-to_device = _to_device
 
 
 def get_to_device_func():
@@ -61,3 +59,24 @@ def construct_device_args_kwargs(self, other: torch.Tensor, non_blocking: bool =
 
 def construct_device_args_kwargs(*args, **kwargs):
     return (args, kwargs)
+
+
+try:
+    from accelerate.data_loader import send_to_device
+except:
+    send_to_device = None
+
+
+@decorator
+def _wrap(func, item, device_arg):
+    args, kwargs = device_arg
+    device = kwargs.get('device', None)
+    if device is None:
+        device = args[0]
+    return func(item, device)
+
+
+if send_to_device is not None:
+    to_device = _wrap(send_to_device)
+else:
+    to_device = _to_device
