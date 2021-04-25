@@ -736,12 +736,12 @@ class Trainer(DLLoopMix, _BaseTrainer):
 
     def train(self, dataloader: Union[DataLoader, DataModuleMix] = None):
         # params, initialized = self.params, self.initial.train_dataloader
+        self._check_models_init()
+        self._check_optim_init()
+
         dataloader = self.prepare_dataloader(TrainerStage.train, dataloader)
         if dataloader is None:
             return TrainerResult(TrainerStage.train, 1, 'no train_dataloader')
-
-        self._check_models_init()
-        self._check_optim_init()
 
         self.to_stage(TrainerStage.train)
 

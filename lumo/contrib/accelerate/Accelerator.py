@@ -72,3 +72,7 @@ class Accelerator(HugAccelerator):
         # RNG Types
         if rng_types is None:
             self.rng_types = ["torch"] if version.parse(torch.__version__) <= version.parse("1.5.1") else ["generator"]
+
+    def prepare_data_loader(self, data_loader):
+        return super().prepare_data_loader(data_loader)
+
