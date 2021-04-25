@@ -722,9 +722,6 @@ class Trainer(DLLoopMix, _BaseTrainer):
             dataloader.idataloader(params, stage, initialized)
             self.regist_dataloader(datamodule=dataloader)
             dataloader = getattr(dataloader, f'{stage.name}_dataloader')
-        elif isinstance(dataloader, DataLoader):
-            kwargs = {stage.name: dataloader}
-            self.regist_dataloader(**kwargs)
         elif isinstance(self, DataModuleMix):
             self.idataloader(params, stage, initialized)
             dataloader = getattr(self, f'{stage.name}_dataloader')
@@ -732,6 +729,9 @@ class Trainer(DLLoopMix, _BaseTrainer):
         if dataloader is None:
             dataloader = getattr(dataloader, f'{stage.name}_dataloader')
         dataloader = self.accelerator.prepare(dataloader)
+
+        kwargs = {stage.name: dataloader}
+        self.regist_dataloader(**kwargs)
         return dataloader
 
     def train(self, dataloader: Union[DataLoader, DataModuleMix] = None):
