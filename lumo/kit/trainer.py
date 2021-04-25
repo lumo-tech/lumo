@@ -789,7 +789,7 @@ class Trainer(DLLoopMix, _BaseTrainer):
 
     def train_epoch(self, dataloader: DataLoader):
         avg = AvgMeter()
-        for idx, batch in to_device_enumrate(dataloader, self.device_arg_kwargs):
+        for idx, batch in enumerate(dataloader):
             self.params.global_step += 1
             self.params.idx = idx
             meter = self.train_step(idx, batch, self.params)
