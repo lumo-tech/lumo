@@ -8,6 +8,7 @@ import hashlib
 import os
 import inspect
 from typing import List, Tuple, Union
+
 from .paths import cache_dir
 from . import safe_io as io
 
@@ -24,6 +25,9 @@ def _to_string(item, encode=True):
 
     if isinstance(res, pd.DataFrame):
         res = f"{res.columns}{res.shape}"
+
+    if inspect.isclass(res) or inspect.isfunction(res):
+        res = f"{res.__name__}"
 
     res = str(res)
     if encode:
