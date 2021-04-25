@@ -681,34 +681,6 @@ class Trainer(DLLoopMix, _BaseTrainer):
         elif isinstance(meter, (torch.Tensor, np.ndarray)):
             return {'metric': meter}
 
-    def _check_dist_environ(self, loader: DataLoader):
-        if self.is_dist:
-            from torch.nn.parallel import DistributedDataParallel
-            from torch.utils.data.distributed import DistributedSampler
-            from torch.utils.data.sampler import RandomSampler, WeightedRandomSampler
-            for k in self.model_dict:
-                model = self.model_dict[k]
-                if not isinstance(model, DistributedDataParallel):
-                    model = DistributedDataParallel(model,
-                                                    find_unused_parameters=True,
-                                                    device_ids=[self.local_rank])
-                self.model_dict[k] = model
-
-            setattr(loader, f'_{loader.__class__.__name__}__initialized', False)
-            if loader.batch_sampler is not None:  #
-                sampler = loader.batch_sampler.sampler
-            else:
-                sampler = loader.sampler
-            shuffle = False
-            if isinstance(sampler, (RandomSampler, WeightedRandomSampler)):
-                shuffle = True
-            sampler = DistributedSampler(loader.dataset,
-                                         shuffle=shuffle,
-                                         drop_last=loader.drop_last)
-            loader.sampler = sampler
-            loader.persistent_workers = True
-            setattr(loader, f'_{loader.__class__.__name__}__initialized', True)
-
     @property
     def training(self):
         return self.params.stage == TrainerStage.train.name
@@ -774,7 +746,6 @@ class Trainer(DLLoopMix, _BaseTrainer):
         self.to_stage(TrainerStage.train)
 
         self.initial.train_dataloader = True
-        self._check_dist_environ(dataloader)
 
         while self.params.eidx < self.params.epoch:
             self.params.eidx += 1
@@ -809,7 +780,6 @@ class Trainer(DLLoopMix, _BaseTrainer):
         self._check_models_init()
         self.to_stage(TrainerStage.val)
 
-        self._check_dist_environ(dataloader)
         with torch.no_grad():
             avg = AvgMeter()
             for idx, batch in to_device_enumrate(dataloader, self.device_arg_kwargs):
@@ -828,7 +798,6 @@ class Trainer(DLLoopMix, _BaseTrainer):
         self._check_models_init()
         self.to_stage(TrainerStage.test)
 
-        self._check_dist_environ(dataloader)
         with torch.no_grad():
             avg = AvgMeter()
             for idx, batch in to_device_enumrate(dataloader, self.device_arg_kwargs):

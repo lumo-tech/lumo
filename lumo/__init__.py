@@ -1,7 +1,7 @@
 """
 
 """
-__version__ = "0.1.4.5"
+__version__ = "0.1.4.6"
 
 from .utils.paths import global_config_path as _
 from .utils.keys import K
@@ -21,7 +21,6 @@ from .kit import (
 )
 
 from .contrib.data import collate
-
 
 from . import calculate  # initialize schedule attr classes
 
