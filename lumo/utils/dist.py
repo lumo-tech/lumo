@@ -8,7 +8,7 @@ def local_rank():
         if dist.is_available() and dist.is_initialized():
             rank = dist.get_rank()
 
-    return rank
+    return int(rank)
 
 
 def world_size():
@@ -16,7 +16,7 @@ def world_size():
     if size == 0:
         if dist.is_available() and dist.is_initialized():
             size = dist.get_world_size()
-    return size
+    return int(size)
 
 
 def is_dist():

@@ -11,6 +11,7 @@ from lumo.utils import safe_io as io
 from lumo.utils.dates import strftime
 from lumo.utils.keys import CFG, EXP, FN, LIBRARY_NAME
 from lumo.utils.repository import commit as git_commit
+from lumo.utils.dist import local_rank
 
 PATH_DEFAULT = CFG.PATH.DEFAULT
 
@@ -289,7 +290,7 @@ class Experiment:
 
         no_commit = globs.get_first(CFG.STATE.DISABLE_GIT,
                                     default=CFG.STATE.DEFAULT.DISABLE_GIT)
-        if not no_commit:
+        if not no_commit and local_rank() <= 0:
             commit_ = git_commit(key=LIBRARY_NAME, info=self.test_root).hexsha[:8]
             self.writeline('commit', commit_)
             self.dump_info(EXP.GIT, {
