@@ -6,7 +6,7 @@ import torch
 from lumo import Meter, Params
 try:
     import sklearn
-except:
+except ImportError:
     import warnings
     warnings.warn("You need to install scikit-learn to use UnsupervisedAccMixin class ")
 

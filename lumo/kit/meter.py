@@ -262,12 +262,12 @@ class Meter:
             elif isinstance(v, torch.Tensor):
                 try:
                     yield k, v.detach().cpu().item()
-                except:
+                except ValueError:  # not an one element tensor
                     continue
             elif isinstance(v, np.ndarray):
                 try:
                     yield k, v.item()
-                except:
+                except ValueError:  # not an one element tensor
                     continue
 
     def update(self, meter: dict):

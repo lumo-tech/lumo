@@ -13,6 +13,21 @@ from ..utils.screen import ScreenStr
 
 loginfo = namedtuple('loginfo', ['string', 'prefix_len'])
 
+logger = None
+
+
+def get_global_logger():
+    global logger
+    if logger is None:
+        logger = Logger()
+    return logger
+
+
+def set_global_logger(logger_):
+    global logger
+    logger = logger_
+    return logger
+
 
 class Logger:
     VERBOSE = 0

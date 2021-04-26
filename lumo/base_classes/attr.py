@@ -56,7 +56,7 @@ class attr(OrderedDict, metaclass=meta_attr):
 
             try:
                 return super().__getitem__(ks[0])
-            except:
+            except KeyError:
                 self[ks[0]] = attr()
                 return self[ks[0]]
 

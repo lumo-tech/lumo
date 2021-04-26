@@ -1,4 +1,6 @@
 import os
+import time
+import random
 import pickle
 import sys
 import traceback
@@ -11,7 +13,7 @@ from lumo.utils import safe_io as io
 from lumo.utils.dates import strftime
 from lumo.utils.keys import CFG, EXP, FN, LIBRARY_NAME
 from lumo.utils.repository import commit as git_commit
-from lumo.utils.dist import local_rank
+from lumo.utils.dist import local_rank, is_dist
 
 PATH_DEFAULT = CFG.PATH.DEFAULT
 
@@ -210,12 +212,31 @@ class Experiment:
     @property
     def test_name(self):
         """Identity for current test"""
-        if self._test_name is None:
+
+        def _create_test_name():
             from lumo.utils.dates import strftime
             fs = os.listdir(self.exp_root)
             date_str = strftime('%y%m%d')
             fs = [i for i in fs if i.startswith(date_str)]
             self._test_name = f"{date_str}.{len(fs):03d}t"
+
+        if self._test_name is None:
+            if is_dist():
+                flag_fn = f'.{os.getppid()}'
+                if local_rank() > 0:
+                    time.sleep(random.randint(2, 4))
+                    fn = self.exp_fn(flag_fn)
+                    if os.path.exists(fn):
+                        with open(fn, 'r') as r:
+                            self._test_name = r.readline().strip()
+                else:
+                    self._test_name = _create_test_name()
+                    fn = self.exp_fn(flag_fn)
+                    with open(fn, 'w') as w:
+                        w.write(self._test_name)
+            else:
+                self._test_name = _create_test_name()
+
         return self._test_name
 
     @property

@@ -51,7 +51,7 @@ def hash(value) -> str:
             value = value.detach_().cpu().numpy()
         try:
             value = value.item()
-        except:
+        except ValueError:  # not an one element tensor
             value = str(value)
     if isinstance(value, (Number)):
         value = str(value)

@@ -299,7 +299,9 @@ class _BaseTrainer(ModelMix, CallbackMix, metaclass=Merge):
     @property
     def logger(self):
         if self._logger is None:
+            from lumo.kit.logger import set_global_logger
             self._logger = Logger()
+            set_global_logger(self._logger)
             if self.params.get('debug', False):
                 Logger.set_verbose(Logger.V_DEBUG)
             fn = self._logger.add_log_dir(self.exp.log_dir)

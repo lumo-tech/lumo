@@ -6,19 +6,15 @@ Usage:
 lumo init
 
 # easier way to open tensorboard 
-lumo board [--logdir=<logdir>]
-lumo board [--test=<test_name>] # find test_name and tensorboard it 
-lumo board  # default open ./board
+# lumo board [--logdir=<logdir>]
+# lumo board [--test=<test_name>] # find test_name and tensorboard it 
+# lumo board  # default open ./board
 
 # restore code snapshot of some test
 lumo reset <test_name>
 
-
 # archive code snapshot of some test
 lumo archive <test_name>
-
-# delete some test directly
-lumo delete <test_name>
 
 # print log file
 lumo log <test_name>
@@ -31,6 +27,10 @@ lumo params <test_name>
 # TODO
 lumo config user --k=v
 lumo config repo --k=v
+
+# get a free port
+lumo port
+
 """
 import sys
 from lumo import __version__
@@ -64,6 +64,7 @@ def init():
 def check(*args, **kwargs):
     from lumo.utils.repository import init_repo
     init_repo()
+
 
 #
 # def _board_with_logdir(logdir, *args, **kwargs):
@@ -202,10 +203,6 @@ def check(*args, **kwargs):
 #     tests
 
 
-
-
-
-
 def main(*args, **kwargs):
     # print(args, kwargs)
     if len(args) == 0 or 'help' in kwargs:
@@ -217,6 +214,7 @@ def main(*args, **kwargs):
         func_map[branch](*args[1:], **kwargs)
     else:
         print(doc)
+
 
 # Fire 不能嵌套在 __main__ 判断里，否则 sys.argv 识别会出问题，目前原因未知
 fire.Fire(main)
