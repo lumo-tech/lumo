@@ -341,7 +341,7 @@ class LoggerCallback(TrainCallback, InitialCallback, SaveLoadCallback):
         meter = self.meter
         if params.idx % self.step_frequence == 0:
             if params.idx % self.breakline == 0:
-                trainer.logger.info("{}/{}".format(params.idx + 1, len(trainer.train_dataloader)), meter, fix=1)
+                trainer.logger.info("{}/{}".format(params.idx + 1, len(trainer.train_dataloader)), meter)
             else:
                 trainer.logger.inline("{}/{}".format(params.idx + 1, len(trainer.train_dataloader)), meter, fix=1)
 
