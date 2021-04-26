@@ -6,8 +6,8 @@ from functools import lru_cache
 
 from git import Repo, Commit
 
-from lumo.utils.keys import FN,CFG
-from lumo.utils.paths import repo_dir
+from lumo.utils.keys import FN, CFG
+from lumo.utils.paths import repo_dir, compare_path
 
 bin_file = ['*.pth', '*.npy', '*.ckpt',
             '*.ft',  # for feather
@@ -141,7 +141,7 @@ def init_repo(dir='./') -> Repo:
     initialize a directory, including git init, lumo config and a initial commit.
     """
     path = repo_dir(dir, ignore_info=True)
-    if path is not None:
+    if path is not None and compare_path(path, dir):
         repo = Repo(path)
     else:
         repo = Repo.init(path)

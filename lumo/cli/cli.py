@@ -35,32 +35,35 @@ lumo port
 import sys
 from lumo import __version__
 
-from lumo.decorators import regist_func
+from lumo.decorators import regist_func_to
 
 func_map = {}
 
 
-@regist_func(func_map)
-def init():
+@regist_func_to(func_map)
+def init(src_dir=None):
     import shutil
     import os
 
-    templete_dir = os.path.join(os.path.dirname(__file__), 'templete')
-    src_dir = os.getcwd()
+    # templete_dir = os.path.join(os.path.dirname(__file__), 'templete')
+    if src_dir is None:
+        src_dir = os.getcwd()
     from lumo.utils.repository import init_repo
 
-    dir_name = os.path.basename(src_dir)
+    # dir_name = os.path.basename(src_dir)
     init_repo(src_dir)
-    shutil.copytree(templete_dir, os.path.join(src_dir, dir_name))
-    # os.rename(os.path.join(src_dir, 'templete'), os.path.join(src_dir, dir_name))
-    for root, dirs, files in os.walk(src_dir):
-        for file in files:
-            if file.endswith('.py-tpl'):
-                nfile = "{}.py".format(os.path.splitext(file)[0])
-                os.rename(os.path.join(root, file), os.path.join(root, nfile))
+
+    print(f'{src_dir} initialized')
+    # shutil.copytree(templete_dir, os.path.join(src_dir, dir_name))
+    # # os.rename(os.path.join(src_dir, 'templete'), os.path.join(src_dir, dir_name))
+    # for root, dirs, files in os.walk(src_dir):
+    #     for file in files:
+    #         if file.endswith('.py-tpl'):
+    #             nfile = "{}.py".format(os.path.splitext(file)[0])
+    #             os.rename(os.path.join(root, file), os.path.join(root, nfile))
 
 
-@regist_func(func_map)
+@regist_func_to(func_map)
 def check(*args, **kwargs):
     from lumo.utils.repository import init_repo
     init_repo()
@@ -205,6 +208,7 @@ def check(*args, **kwargs):
 
 def main(*args, **kwargs):
     # print(args, kwargs)
+    print(f"lumo {__version__}")
     if len(args) == 0 or 'help' in kwargs:
         print(doc)
         return

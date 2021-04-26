@@ -268,9 +268,10 @@ class LoggerCallback(TrainCallback, InitialCallback, SaveLoadCallback):
     only_main_process = True
     priority = 100
 
-    def __init__(self, avg=True, step_frequence=3):
+    def __init__(self, avg=True, step_frequence=3, breakline_in=1000):
         self.avg = avg
         self.step_frequence = step_frequence
+        self.breakline = breakline_in
 
     def on_hooked(self, source: Trainer, params: Params):
         source.logger.raw(' '.join(sys.argv))
@@ -339,7 +340,10 @@ class LoggerCallback(TrainCallback, InitialCallback, SaveLoadCallback):
         self.meter.update(meter)
         meter = self.meter
         if params.idx % self.step_frequence == 0:
-            trainer.logger.inline("{}/{}".format(params.idx + 1, len(trainer.train_dataloader)), meter, fix=1)
+            if params.idx % self.breakline == 0:
+                trainer.logger.info("{}/{}".format(params.idx + 1, len(trainer.train_dataloader)), meter, fix=1)
+            else:
+                trainer.logger.inline("{}/{}".format(params.idx + 1, len(trainer.train_dataloader)), meter, fix=1)
 
     def on_first_exception(self, source: Trainer, func, params: Params, e: BaseException, *args, **kwargs):
         source.logger.error("{} raised".format(e.__class__.__name__))

@@ -235,41 +235,6 @@ class PandasBuilder(BaseBuilder):
         return res
 
 
-class BaseHDF5Builder(BaseBuilder):
-    def __init__(self, h5path: str):
-        super().__init__()
-        import h5py
-        self.h5path = h5path
-        try:
-            self.h5file = h5py.File(h5path, 'r')
-        except OSError:
-            self._create_tmp_h5(h5path)
-        self.initial_h5attr()
-
-    def __len__(self):
-        raise NotImplementedError()
-
-    def __getitem__(self, index):
-        raise NotImplementedError()
-
-    def _create_tmp_h5(self, h5path):
-        import h5py
-        c = 0
-        h5file = None
-        while h5file is not None:
-            nh5path = f"{h5path}_builder_tmp{c}.h5"
-            try:
-                if not os.path.exists(nh5path):
-                    shutil.copy(h5path, nh5path)
-                h5file = h5py.File(nh5path, 'r')
-            except OSError:
-                c += 1
-        return h5file
-
-    def initial_h5attr(self):
-        pass
-
-
 class DatasetBuilder(BaseBuilder):
     """
     """

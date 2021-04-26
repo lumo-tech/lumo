@@ -70,6 +70,11 @@ def checkpath(*path):
 
 
 def compare_path(a, b):
+    if a is None and b is None:
+        return True
+    if a is None or b is None:
+        return False
+
     a, b = os.path.realpath(a), os.path.realpath(b)
     return os.path.normpath(a) == os.path.normpath(b)
 
