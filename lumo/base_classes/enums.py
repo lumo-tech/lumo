@@ -2,6 +2,7 @@ from enum import Enum
 
 
 class TrainerStage(Enum):
+    debug = -2
     init = -1
     train = 0
     test = 1
@@ -18,5 +19,3 @@ class TrainerStage(Enum):
     @property
     def is_eval(self):
         return self == self.val
-
-

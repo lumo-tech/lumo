@@ -10,6 +10,7 @@ class DataModule(DataModuleMix):
     train = TrainerStage.train
     test = TrainerStage.test
     val = TrainerStage.val
+    debug = TrainerStage.debug
 
     def __init__(self, train: DataLoader = None, val: DataLoader = None, test: DataLoader = None):
         self._dataloader = {}

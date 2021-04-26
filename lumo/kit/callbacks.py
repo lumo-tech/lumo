@@ -335,15 +335,20 @@ class LoggerCallback(TrainCallback, InitialCallback, SaveLoadCallback):
             meter = Meter()
         self._meter = meter
 
+    def _need_log(self, step):
+        return self.step_frequence > 0 and step % self.step_frequence == 0
+
+    def _need_breakline(self, step):
+        return self.breakline > 0 and step % self.breakline == 0
+
     def on_train_step_end(self, trainer: Trainer, func, params: Params, meter: Meter, *args, **kwargs):
         meter = trainer._wrap_result(meter)
         self.meter.update(meter)
         meter = self.meter
-        if params.idx % self.step_frequence == 0:
-            if params.idx % self.breakline == 0:
-                trainer.logger.info("{}/{}".format(params.idx + 1, len(trainer.train_dataloader)), meter)
-            else:
-                trainer.logger.inline("{}/{}".format(params.idx + 1, len(trainer.train_dataloader)), meter, fix=1)
+        if self._need_breakline(params.idx):
+            trainer.logger.newline()
+        if self._need_log(params.idx):
+            trainer.logger.inline("{}/{}".format(params.idx + 1, len(trainer.train_dataloader)), meter, fix=1)
 
     def on_first_exception(self, source: Trainer, func, params: Params, e: BaseException, *args, **kwargs):
         source.logger.error("{} raised".format(e.__class__.__name__))

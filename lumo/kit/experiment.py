@@ -86,6 +86,9 @@ class Experiment:
     def cache_dir(self, dirname):
         return self._create_dir(self.cache_root, dirname)
 
+    def cache_fn(self, name, dirname=None):
+        return self._create_fn(name, dirname, self.cache_root)
+
     def project_cache_fn(self, name, dirname=None):
         return self._create_fn(name, dirname, self.project_cache_root)
 

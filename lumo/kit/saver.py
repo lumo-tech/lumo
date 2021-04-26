@@ -221,6 +221,7 @@ class Saver:
                 pass
         if fn is not None:
             return self.load_state_dict(fn, with_meta, map_location)
+        return None
 
     def load_keypoint(self, index=-1, fn=None, with_meta=False, map_location='cpu'):
         if fn is None:
@@ -230,6 +231,7 @@ class Saver:
                 pass
         if fn is not None:
             return self.load_state_dict(fn, with_meta, map_location)
+        return None
 
     def load_model(self, index=-1, best_if_exist=False, fn=None, with_meta=False, map_location='cpu'):
         if fn is None and best_if_exist:
@@ -241,6 +243,7 @@ class Saver:
                 pass
         if fn is not None:
             return self.load_state_dict(fn, with_meta, map_location)
+        return None
 
     def best_checkpoint(self):
         fn = os.path.join(self.save_dir, 'best.checkpoint.pt')

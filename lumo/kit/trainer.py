@@ -28,11 +28,10 @@ from .rnd import RndManager
 from .datamodule import DataModule
 from .mixin import ModelMix, CallbackMix, DataModuleMix
 
-from .params import DistributionParams, ParamsType
+from .params import ParamsType
 from lumo.base_classes import attr, TrainerStage
 from lumo.base_classes.metaclasses import Merge
 from lumo.utils.keys import TRAINER
-from lumo.utils.connect import find_free_network_port
 from lumo.utils import dist
 from lumo.utils.device import construct_device_args_kwargs, to_device_enumrate
 from lumo.contrib.accelerate import Accelerator
@@ -589,6 +588,10 @@ class _BaseTrainer(ModelMix, CallbackMix, metaclass=Merge):
             ckpt, meta_info = object, None
 
         _sub = {'models', 'optims', 'other'}
+        if ckpt is None:
+            self.logger.error('state_dict object is None, `load_state_dict()` ignored.')
+            return meta_info
+
         for k, v in ckpt.items():
             if k in _sub:
                 self._load_fun_state_dict(v, self._state_dicts[k])
