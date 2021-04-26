@@ -3,7 +3,7 @@ Methods about git.
 """
 import os
 from functools import lru_cache
-
+from typing import Tuple
 from git import Repo, Commit
 
 from lumo.utils.keys import FN, CFG
@@ -136,20 +136,25 @@ class branch:
         self.repo.head.reference = self.old_branch
 
 
-def init_repo(dir='./') -> Repo:
+def init_repo(dir='./') -> Tuple[Repo, bool]:
     """
     initialize a directory, including git init, lumo config and a initial commit.
     """
     path = repo_dir(dir, ignore_info=True)
+    init = False
     if path is not None and compare_path(path, dir):
         repo = Repo(path)
     else:
-        repo = Repo.init(path)
-        if check_gitignore(repo=repo, force=True):
-            repo.git.add('.')
-            repo.index.commit('initial commit')
+        repo = Repo.init(dir)
+        init = True
+
+    if check_gitignore(repo=repo, force=True):
+        repo.git.add('.')
+        repo.index.commit('initial commit')
+        init = True
+
     check_have_commit(repo)
-    return repo
+    return repo, init
 
 
 @lru_cache()
@@ -237,3 +242,72 @@ def commit(repo: Repo = None, key=None, branch_name=CFG.BRANCH_NAME, info: str =
     if key is not None:
         _commits_map[key] = commit_
     return commit_
+
+
+def reset(commit):
+    """
+    TODO
+    将工作目录中的文件恢复到某个commit
+    恢复快照的 git 流程:
+        git branch experiment
+        git add . & git commit -m ... // 保证文件最新，防止冲突报错，这一步由 Experiment() 代为完成
+        git checkout <commit-id> // 恢复文件到 <commit-id>
+        git checkout -b reset // 将当前状态附到新的临时分支 reset 上
+        git branch experiment // 切换回 experiment 分支
+        git add . & git commit -m ... // 将当前状态重新提交到最新
+            // 此时experiment 中最新的commit 为恢复的<commit-id>
+        git branch -D reset  // 删除临时分支
+        git branch master // 最终回到原来分支，保证除文件变动外git状态完好
+    Returns:
+        An Experiment represents this reset operation
+    """
+    commit = commit
+
+    old_path = os.getcwd()
+    os.chdir(commit.tree.abspath)
+    exp = Experiment('Reset')
+
+    repo = self.repo
+    from thexp.utils.repository import branch
+    with branch(commit.repo, _GITKEY.thexp_branch) as new_branch:
+        repo.git.checkout(commit.hexsha)
+        repo.git.checkout('-b', 'reset')
+        repo.head.reference = new_branch
+        repo.git.add('.')
+        ncommit = repo.index.commit("Reset from {}".format(commit.hexsha))
+        repo.git.branch('-d', 'reset')
+    exp.add_plugin('reset', {
+        'test_name': self.name,  # 从哪个状态恢复
+        'from': exp.commit.hexsha,  # reset 运行时的快照
+        'where': commit.hexsha,  # 恢复到哪一次 commit，是恢复前的保存的状态
+        'to': ncommit.hexsha,  # 对恢复后的状态再次进行提交，此时 from 和 to 两次提交状态应该完全相同
+    })
+
+    exp.end()
+    os.chdir(old_path)
+    return exp
+
+
+def archive(commit):
+    """
+    TODO
+    将某次 test 对应 commit 的文件打包，相关命令为
+        git archive -o <filename> <commit-hash>
+    Returns:
+        An Experiment represents this archive operation
+    """
+
+    old_path = os.getcwd()
+    os.chdir(commit.tree.abspath)
+    exp = Experiment('Archive')
+
+    revert_path = exp.makedir('archive')
+    revert_fn = os.path.join(revert_path, "code.zip")
+    exp.add_plugin('archive', {'file': revert_fn,
+                               'test_name': self.name})
+    with open(revert_fn, 'wb') as w:
+        self.repo.archive(w, commit)
+
+    exp.end()
+    os.chdir(old_path)
+    return exp

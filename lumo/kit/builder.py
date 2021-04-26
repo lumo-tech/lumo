@@ -244,6 +244,8 @@ class DatasetBuilder(BaseBuilder):
                  xs_opt_transform=None, ys_opt_transform=None):
         super().__init__()
         self._dataset_len = None
+        self._safe = False
+        self._last = None
         self._input_dict = OrderedDict()
         self._output_dict = OrderedDict()
         self._delegate_keys = set()
@@ -271,7 +273,7 @@ class DatasetBuilder(BaseBuilder):
                 f"size: {len(self)}; "
                 f")")
 
-    def __getitem__(self, index):
+    def _get_item(self, index):
         index = self._map_index(index)
 
         names = set(self._output_dict.values())
@@ -313,6 +315,24 @@ class DatasetBuilder(BaseBuilder):
         if self._chain:
             return list(sample.values())
         return sample
+
+    def __getitem__(self, index):
+        if self._safe:
+            try:
+                sample = self._get_item(index)
+                self._last = sample
+            except BaseException as e:
+                import traceback
+                from lumo.kit.logger import get_global_logger
+                logger = get_global_logger()
+                if self._last is not None:
+                    except_str = traceback.format_exception(type(e), e, e.__traceback__)
+                    logger.error(index, except_str)
+                    return self._last
+                else:
+                    raise e
+        else:
+            return self._get_item(index)
 
     @property
     def raw_len(self):
@@ -486,6 +506,10 @@ class DatasetBuilder(BaseBuilder):
 
     def add_global_transform(self, transform: Callable[[Dict[str, Any]], Any]):
         self._global_transform.append(transform)
+        return self
+
+    def safe(self):
+        self._safe = True
         return self
 
     def copy(self):

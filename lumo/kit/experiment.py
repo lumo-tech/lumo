@@ -218,7 +218,8 @@ class Experiment:
             fs = os.listdir(self.exp_root)
             date_str = strftime('%y%m%d')
             fs = [i for i in fs if i.startswith(date_str)]
-            self._test_name = f"{date_str}.{len(fs):03d}t"
+            _test_name = f"{date_str}.{len(fs):03d}t"
+            return _test_name
 
         if self._test_name is None:
             if is_dist():

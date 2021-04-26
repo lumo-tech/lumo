@@ -136,7 +136,7 @@ class Saver:
         Returns:
 
         """
-        path = self._create_state_dict_name(steps, replacement=False, prefix='key')
+        path = self._create_state_dict_name(steps, replacement=True, prefix='key')
         self.dump_state_dict(state_dict, path, meta_info=meta_info)
         return path
 
@@ -157,11 +157,11 @@ class Saver:
             Saved checpoint path, or None if something is wrong.
 
         """
-        path = self._create_state_dict_name(step, replacement=True, prefix='checkpoints')
+        path = self._create_state_dict_name(step, replacement=False, prefix='checkpoints')
         res = self.dump_state_dict(state_dict, path, meta_info=meta_info)
         history = self.list_checkpoints()
         if len(history) > max_keep:
-            [os.remove(i) for i in history[:-max_keep]]
+            [os.remove(os.path.join(self.save_dir, i)) for i in history[:-max_keep]]
 
         if res:
             if is_best:
@@ -170,6 +170,11 @@ class Saver:
                                                          prefix='best.checkpoint',
                                                          ignore_number=True)
                 shutil.copy2(path, best_path)
+                src_json_fn = f"{path}.json"
+                if os.path.exists(src_json_fn):
+                    tgt_json_fn = f"{best_path}.json"
+                    shutil.copy2(src_json_fn, tgt_json_fn)
+
             return path
         else:
             return None
@@ -198,11 +203,15 @@ class Saver:
                                                          prefix='best.model',
                                                          ignore_number=True)
                 shutil.copy2(path, best_path)
+                src_json_fn = f"{path}.json"
+                if os.path.exists(src_json_fn):
+                    tgt_json_fn = f"{best_path}.json"
+                    shutil.copy2(src_json_fn, tgt_json_fn)
             return path
         else:
             return None
 
-    def load_checkpoint(self, index=-1, best_if_exist=True, fn=None, with_meta=False, map_location='cpu'):
+    def load_checkpoint(self, index=-1, best_if_exist=False, fn=None, with_meta=False, map_location='cpu'):
         if fn is None and best_if_exist:
             fn = self.best_checkpoint()
         if fn is None:
@@ -222,7 +231,7 @@ class Saver:
         if fn is not None:
             return self.load_state_dict(fn, with_meta, map_location)
 
-    def load_model(self, index=-1, best_if_exist=True, fn=None, with_meta=False, map_location='cpu'):
+    def load_model(self, index=-1, best_if_exist=False, fn=None, with_meta=False, map_location='cpu'):
         if fn is None and best_if_exist:
             fn = self.best_model()
         if fn is None:
@@ -251,17 +260,17 @@ class Saver:
     def list_checkpoints(self) -> List[str]:
         return sorted(list(filter(lambda x: self._is_pkl(x, 'checkpoints', 'pt'),
                                   os.listdir(self.save_dir))),
-                      key=lambda x: os.stat(os.path.join(self.save_dir, x)).st_atime)
+                      key=lambda x: os.stat(os.path.join(self.save_dir, x)).st_ctime)
 
     def list_keypoints(self) -> List[str]:
         return sorted(list(filter(lambda x: self._is_pkl(x, 'key', 'pt'),
                                   os.listdir(self.save_dir))),
-                      key=lambda x: os.stat(os.path.join(self.save_dir, x)).st_atime)
+                      key=lambda x: os.stat(os.path.join(self.save_dir, x)).st_ctime)
 
     def list_models(self) -> List[str]:
         return sorted(list(filter(lambda x: self._is_pkl(x, 'model', 'pt'),
                                   os.listdir(self.save_dir))),
-                      key=lambda x: os.stat(os.path.join(self.save_dir, x)).st_atime)
+                      key=lambda x: os.stat(os.path.join(self.save_dir, x)).st_ctime)
 
     def list(self):
         return sorted(os.listdir(self.save_dir))

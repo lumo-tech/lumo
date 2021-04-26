@@ -11,6 +11,9 @@ from lumo.utils.paths import local_config_path, global_config_path
 
 
 class Globals:
+    RUNTIME = CFG.FIELD.RUNTIME
+    REPO = CFG.FIELD.REPO
+    GLOBAL = CFG.FIELD.GLOBAL
 
     def __init__(self):
         self._configs = OrderedDict()

@@ -33,8 +33,6 @@ class ENV:
     HAS_GIT = True  # TODO check state
 
 
-
-
 def join(*args):
     args = [i for i in args if i is not None]
     return "_".join(args)
@@ -70,9 +68,9 @@ class CFG:
             DISABLE_GIT = not ENV.HAS_GIT
 
     class FIELD:
-        REPO = 'repository'
-        GLOBAL = 'global'
         RUNTIME = 'runtime'
+        REPO = 'local'
+        GLOBAL = 'global'
 
     REPO_NAME = 'name'
     BRANCH_NAME = 'experiment'

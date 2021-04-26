@@ -10,9 +10,6 @@ from lumo import Experiment,globs
 
 exp = Experiment("expname")
 
-# glob.add_value("key",'value','user')
-# glob.add_value("key",'value','exp')
-# glob.add_value("key",'value','repository')
 globs['a'] = 4
 
 from pprint import pprint
