@@ -383,15 +383,6 @@ class LoggerCallback(TrainCallback, InitialCallback, SaveLoadCallback):
         meter = self.meter
         trainer.logger.inline("{}/{}".format(params.idx + 1, len(trainer.val_dataloader)), meter, fix=1)
 
-    def on_save_keypoint_begin(self, trainer: Trainer, func, params: Params, *args, **kwargs):
-        trainer.logger.info(f'Saved keypoint in {args[0]}')
-
-    def on_save_model_begin(self, trainer: Trainer, func, params: Params, *args, **kwargs):
-        trainer.logger.info(f'Saved model in {args[0]}')
-
-    def on_save_checkpoint_begin(self, trainer: Trainer, func, params: Params, *args, **kwargs):
-        trainer.logger.info(inspect.getcallargs(func, *args, **kwargs))
-
     def on_save_checkpoint_end(self, trainer: Trainer, func, params: Params, result: str, *args, **kwargs):
         trainer.logger.info(f'Saved checkpoint in {result}')
 
