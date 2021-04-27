@@ -107,11 +107,16 @@ def save_cache(items: Union[List, Tuple], func, *args, **kwargs):
     return path
 
 
+def load_from_cache_path(path):
+    fs = [os.path.join(path, f) for f in sorted(os.listdir(path)) if f.startswith('cache')]
+    items = [_load_cache(f) for f in fs]
+    return items
+
+
 def load_if_exists(func, *args, **kwargs):
     hash = _cache_hash(func, *args, **kwargs)
     path = os.path.join(cache_dir(), hash)
     if os.path.isdir(path):
-        fs = [os.path.join(path, f) for f in sorted(os.listdir(path)) if f.startswith('cache')]
-        items = [_load_cache(f) for f in fs]
+        items = load_from_cache_path(path)
         return items, path
     return None, None
