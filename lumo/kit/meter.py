@@ -176,7 +176,7 @@ class Meter:
                 val = func(val)
         return val
 
-    def serialize(self):
+    def serialize(self) -> OrderedDict:
         """format all value to be strings to make sure it can be printed without Exception"""
         log_dict = OrderedDict()
         for k, v in self._meter_dict.items():

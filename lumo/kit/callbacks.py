@@ -410,7 +410,7 @@ class LoggerCallback(TrainCallback, InitialCallback, SaveLoadCallback):
     def on_prepare_dataloader_end(self, trainer: Trainer, func, params: Params, meter: Meter, *args, **kwargs):
         res = self.getfuncargs(func, *args, **kwargs)
         stage = res['stage'].name
-        trainer.logger.info(f'{stage.capitalize()} dataloader prepared: .')
+        trainer.logger.info(f'{stage.capitalize()} dataloader prepared, size: {len(trainer.train_dataloader)}.')
 
 
 class MeterCheckpoint(TrainCallback):
@@ -461,7 +461,7 @@ class MeterCheckpoint(TrainCallback):
         return self._repr_by_val("monitor", "mode", "lower", "start_epoch")
 
 
-class TimingCheckpoint(TrainCallback):
+class EpochCheckpoint(TrainCallback):
     """
     在 Trainer 训练过程中定时保存模型
     """
@@ -472,10 +472,22 @@ class TimingCheckpoint(TrainCallback):
 
     def on_train_epoch_end(self, trainer: Trainer, func, params: Params, meter: Meter, *args, **kwargs):
         if params.eidx % self.per_epoch == 0 and params.eidx > 0:
-            trainer.save_keypoint(meter.serialize(), replacement=True)
+            trainer.save_keypoint(meta_info=trainer._wrap_result(meter))
 
     def __repr__(self) -> str:
         return self._repr_by_val("per_epoch")
+
+
+class GlobalStepCheckpoint(TrainCallback):
+    only_main_process = True
+
+    def __init__(self, per_step=2500):
+        self.per = per_step
+
+    def on_train_step_end(self, trainer: Trainer, func, params: Params, meter: Meter, *args, **kwargs):
+        super().on_train_step_end(trainer, func, params, meter, *args, **kwargs)
+        if params.global_step % self.per == 0 and params.global_step > 0:
+            trainer.save_checkpoint(meta_info=trainer._wrap_result(meter))
 
 
 class KeyErrorSave(TrainCallback):

@@ -179,8 +179,8 @@ class Logger:
         os.makedirs(dir, exist_ok=True)
 
         i = 0
-        cur_date = strftime(fmt="%y%m%d%H%M%S")
-        fni = os.path.join(dir, f"l.{0}.{cur_date}.log")
+        cur_date = strftime(fmt="%y%m%d%H%M")
+        fni = os.path.join(dir, f"l.{i}.{cur_date}.log")
         while os.path.exists(fni):
             i += 1
             fni = os.path.join(dir, "l.{}.{}.log".format(cur_date, i))

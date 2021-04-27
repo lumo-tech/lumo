@@ -599,29 +599,31 @@ class _BaseTrainer(ModelMix, CallbackMix, metaclass=Merge):
                 self._state_dicts[k] = v
         return meta_info
 
-    def _build_trainer_meta_info(self, meta_info: Union[str, dict] = None):
-        info = {}
+    def _build_trainer_meta_info(self, meta_info: Union[str, dict, Meter] = None):
+        info = Meter()
         info['eidx'] = self.eidx
         if meta_info is not None:
             if isinstance(meta_info, str):
                 info['msg'] = meta_info
+            if isinstance(meta_info, Meter):
+                meta_info = meta_info.serialize()
             if isinstance(meta_info, dict):
                 info.update(meta_info)
-        return info
+        return info.serialize()
 
-    def save_checkpoint(self, max_keep=10, is_best=False, meta_info: Union[str, dict] = None):
+    def save_checkpoint(self, max_keep=10, is_best=False, meta_info: Union[str, dict, Meter] = None):
         info = self._build_trainer_meta_info(meta_info)
         return self.saver.save_checkpoint(self.eidx, self.state_dict(),
                                           meta_info=info,
                                           max_keep=max_keep,
                                           is_best=is_best)
 
-    def save_keypoint(self, meta_info: Union[str, dict] = None):
+    def save_keypoint(self, meta_info: Union[str, dict, Meter] = None):
         info = self._build_trainer_meta_info(meta_info)
         return self.saver.save_keypoint(self.eidx, self.state_dict(),
                                         meta_info=info)
 
-    def save_model(self, is_best=False, meta_info: Union[str, dict] = None):
+    def save_model(self, is_best=False, meta_info: Union[str, dict, Meter] = None):
         info = self._build_trainer_meta_info(meta_info)
         return self.saver.save_model(self.eidx, self.model_state_dict(),
                                      meta_info=info,
