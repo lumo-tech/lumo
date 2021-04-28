@@ -204,6 +204,11 @@ class _BaseTrainer(ModelMix, CallbackMix, metaclass=Merge):
     def __setattr__(self, name: str, value: Any) -> None:
         super().__setattr__(name, value)
         from torch.optim.optimizer import Optimizer
+
+        if name.startswith('_'):
+            # when callback is trainer itself, _hooked will be passed, and caused recursion
+            return
+
         if isinstance(value, torch.device):
             self._state_dicts[TRAINER.DKEY.devices][name] = value
         elif isinstance(value, torch.nn.Module):
@@ -215,6 +220,7 @@ class _BaseTrainer(ModelMix, CallbackMix, metaclass=Merge):
         elif isinstance(value, (np.ndarray)):
             self._state_dicts[TRAINER.DKEY.tensor]['np'][name] = value
         elif callable(getattr(value, "state_dict", None)) and callable(getattr(value, "load_state_dict", None)):
+
             self._state_dicts[TRAINER.DKEY.others][name] = value
 
     def __setitem__(self, key: str, value: Any):

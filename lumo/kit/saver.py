@@ -159,6 +159,7 @@ class Saver:
         """
         path = self._create_state_dict_name(step, replacement=False, prefix='checkpoints')
         res = self.dump_state_dict(state_dict, path, meta_info=meta_info)
+        del state_dict
         history = self.list_checkpoints()
         if len(history) > max_keep:
             [os.remove(os.path.join(self.save_dir, i)) for i in history[:-max_keep]]
@@ -196,6 +197,7 @@ class Saver:
         """
         path = self._create_state_dict_name(step, replacement=True, prefix='model')
         res = self.dump_state_dict(state_dict, path, meta_info=meta_info)
+        del state_dict
         if res:
             if is_best:
                 best_path = self._create_state_dict_name(step,
