@@ -410,7 +410,7 @@ class LoggerCallback(TrainCallback, InitialCallback, SaveLoadCallback):
     def on_prepare_dataloader_end(self, trainer: Trainer, func, params: Params, meter: Meter, *args, **kwargs):
         res = self.getfuncargs(func, *args, **kwargs)
         stage = res['stage'].name
-        trainer.logger.info(f'{stage.capitalize()} dataloader prepared, size: {len(trainer.train_dataloader)}.')
+        trainer.logger.info(f'{stage.capitalize()} dataloader prepared, size: {len(trainer.datamodule[stage])}.')
 
 
 class MeterCheckpoint(TrainCallback):
