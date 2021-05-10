@@ -22,3 +22,12 @@ class Compose:
             format_string += '    {0}'.format(t)
         format_string += '\n)'
         return format_string
+
+
+class WrapDict():
+    def __init__(self, key, func):
+        self.key = key
+        self.func = func
+
+    def __call__(self, *args, **kwargs):
+        return {self.key: self.func(*args, **kwargs)}

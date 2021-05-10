@@ -4,6 +4,7 @@ import shutil
 
 import numpy as np
 import torch
+from torch.utils.data import Dataset
 
 
 class Data:
@@ -15,7 +16,7 @@ class Data:
 class DelegateDataTypeError(RuntimeError): pass
 
 
-class DataDelegate():
+class DataDelegate(Dataset):
     """
     """
 

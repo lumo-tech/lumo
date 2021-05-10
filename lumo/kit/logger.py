@@ -183,7 +183,7 @@ class Logger:
         fni = os.path.join(dir, f"l.{i}.{cur_date}.log")
         while os.path.exists(fni):
             i += 1
-            fni = os.path.join(dir, "l.{}.{}.log".format(cur_date, i))
+            fni = os.path.join(dir, "l.{}.{}.log".format(i, cur_date))
 
         self.print("add output channel on {}".format(fni))
         self.out_channel.append(fni)

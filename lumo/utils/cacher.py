@@ -75,9 +75,7 @@ def _drop_pandas(item: pd.DataFrame):
 
 
 def _dump_cache(item, fn):
-    if isinstance(item, (list, tuple, dict, torch.Tensor, np.ndarray)):
-        io.dump_state_dict(item, fn)
-    elif isinstance(item, pd.DataFrame):
+    if isinstance(item, pd.DataFrame):
         item = _drop_pandas(item)
         item = item.reset_index()
         item = _drop_pandas(item)
@@ -85,6 +83,8 @@ def _dump_cache(item, fn):
             item.to_feather(fn)
         except:
             item.to_pickle(fn)
+    else:
+        io.dump_state_dict(item, fn)
 
 
 def _load_cache(fn: str):

@@ -420,3 +420,7 @@ class TrainerExperiment(Experiment):
         self.dump_info(EXP.TRAINER, {
             'epoch': epoch
         }, append=True)
+
+
+class TmpExp(Experiment):
+    pass

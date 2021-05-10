@@ -13,8 +13,13 @@ bin_file = ['*.pth', '*.npy', '*.ckpt',
             '*.ft',  # for feather
             '*.pkl'
             ]
+
 lib_gitignores = ['.lumo/',
                   '*.lumo.*',
+                  '.data',
+                  '.datas',
+                  '.dataset',
+                  '.datasets',
                   ] + bin_file
 
 py_gitignore = "\n".join(['# Byte-compiled / optimized / DLL files',

@@ -10,11 +10,9 @@ from torch import nn
 
 class PlusOneTrainer(Trainer):
 
-    def ioptims(self, params: ParamsType):
-        self.optim = params.optim.build(self.model.parameters())
-
     def imodels(self, params: ParamsType):
         self.model = nn.Linear(1, 1)
+        self.optim = params.optim.build(self.model.parameters())
         self.to_device()
 
     def icallbacks(self, params: ParamsType):
@@ -28,7 +26,6 @@ class PlusOneTrainer(Trainer):
         loss.backward()
         self.optim.step()
         return loss
-
 
 
 params = Params()
@@ -56,6 +53,6 @@ builder = (
     ).random_sampler().chain()
 )  # another simpler way
 
-trainer.train(builder.DataLoader(batch_size=params.batch_size,num_workers=4))
+trainer.train(builder.DataLoader(batch_size=params.batch_size, num_workers=4))
 
 print(list(trainer.model.parameters()))
