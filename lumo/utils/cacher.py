@@ -59,12 +59,14 @@ def _cache_hash(func, *args, **kwargs) -> str:  # TODO hash any thing
 
 
 def _cache_suffix(item):
-    if isinstance(item, (list, tuple, dict, torch.Tensor)):
-        return 'pkl'
-    elif isinstance(item, np.ndarray):
+    if isinstance(item, np.ndarray):
         return 'npy'
+    elif isinstance(item, torch.Tensor):
+        return 'pth'
     elif isinstance(item, pd.DataFrame):
         return 'ft'
+    else:
+        return 'pkl'
 
 
 def _drop_pandas(item: pd.DataFrame):
@@ -83,6 +85,10 @@ def _dump_cache(item, fn):
             item.to_feather(fn)
         except:
             item.to_pickle(fn)
+    elif isinstance(item, np.ndarray):
+        np.save(fn, item)
+    elif isinstance(item, torch.Tensor):
+        torch.save(item, fn)
     else:
         io.dump_state_dict(item, fn)
 
@@ -93,6 +99,10 @@ def _load_cache(fn: str):
             return pd.read_feather(fn)
         except:
             return pd.read_pickle(fn)
+    elif fn.endswith('npy'):
+        return np.load(fn)
+    elif fn.endswith('pth'):
+        return torch.load(fn, map_location='cpu')
     else:
         return io.load_state_dict(fn)
 
