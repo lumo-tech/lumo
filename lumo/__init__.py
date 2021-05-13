@@ -1,7 +1,7 @@
 """
 
 """
-__version__ = "0.1.4.27"
+__version__ = "0.1.5.0"
 
 from .utils.paths import global_config_path as _
 from .utils.keys import K
