@@ -41,6 +41,7 @@ class _PopQueue():
             nids.append(id)
             nrecs.append(record)
 
+        self.i = 0
         self.ids = nids
         self.records = nrecs
         if len(nids) > 0:
@@ -74,7 +75,7 @@ class Queue:
 
         if root is None:
             root = os.path.join(cache_dir(), '.mpqueue')
-
+            os.makedirs(root, exist_ok=True)
         self.file = os.path.join(root, f"{session_id}.sqlite")
         self.root = root
         self.session_id = session_id
@@ -87,6 +88,10 @@ class Queue:
         if self._connect is None:
             self._connect = sqlite3.connect(self.file)
         return self._connect
+
+    def reconnect(self):
+        self._connect.close()
+        self._connect = sqlite3.connect(self.file)
 
     @property
     def cursor(self):
