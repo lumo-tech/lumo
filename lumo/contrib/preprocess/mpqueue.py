@@ -57,7 +57,7 @@ class MPStruct:
     TABLE_NAME = None
     TABLE_SQL = None
 
-    def __init__(self, session_id=None, root=None):
+    def __init__(self, session_id=None, root=None, retry=50):
         if session_id is None:
             session_id = string_hash(sys.argv[0])
 
@@ -66,6 +66,7 @@ class MPStruct:
             os.makedirs(root, exist_ok=True)
         self.file = os.path.join(root, f"{self.__class__.__name__}_{session_id}.sqlite")
         self.root = root
+        self._retry = retry
         self.session_id = session_id
         self._connect = None
         self._initialized = False
@@ -110,10 +111,20 @@ class MPStruct:
         return attr.from_dict(res).value
 
     def execute(self, sql, mode='r'):
-        res = self.cursor.execute(sql)
-        if mode == 'w':
-            self.connect.commit()
-        return res
+        if mode == 'r':
+            res = self.cursor.execute(sql)
+            return res
+        else:
+            for i in range(self._retry):
+                try:
+                    res = self.cursor.execute(sql)
+                    self.connect.commit()
+                    return res
+                except sqlite3.OperationalError as e:
+                    from lumo.kit.logger import get_global_logger
+                    get_global_logger().debug(f'[mpqueue] retry {i:02d}/{self._retry}...')
+                    continue
+        return None
 
 
 class Queue(MPStruct):
@@ -135,15 +146,15 @@ class Queue(MPStruct):
         conn.commit()
 
     def _del_rec(self, id, table):
-        return self.execute(f"delete from {table} where id={id};", 'w').rowcount > 0
+        res = self.execute(f"delete from {table} where id={id};", 'w')
+        return res is not None and res.rowcount > 0
 
     def push(self, value):
         if self.value_in_queue(value) is not None:
             return False
         value = self.encode_value(value)
 
-        self.execute(f"insert into queue (value) values ('{value}');", 'w')
-        return True
+        return self.execute(f"insert into queue (value) values ('{value}');", 'w') is not None
 
     @property
     def pop_queue(self):
@@ -177,6 +188,10 @@ class Queue(MPStruct):
 
     def top(self):
         return self.pop_queue.top()
+
+    @property
+    def count(self):
+        return self.execute('select count(id) from queue').fetchone()[0]
 
 
 class Marker(MPStruct):
