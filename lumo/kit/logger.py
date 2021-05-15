@@ -11,6 +11,10 @@ from typing import Any, Callable
 from ..utils.dates import strftime
 from ..utils.screen import ScreenStr
 
+import logging
+
+logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.INFO)
+
 loginfo = namedtuple('loginfo', ['string', 'prefix_len'])
 
 logger = None
@@ -30,12 +34,12 @@ def set_global_logger(logger_):
 
 
 class Logger:
-    VERBOSE = 0
-    V_DEBUG = -1
-    V_INFO = 0
-    V_WARN = 1
-    V_ERROR = 2
-    V_FATAL = 3
+    VERBOSE = 20
+    V_DEBUG = 10
+    V_INFO = 20
+    V_WARN = 30
+    V_ERROR = 40
+    V_FATAL = 50
     _instance = None
 
     def __new__(cls, *args, **kwargs) -> Any:
@@ -194,7 +198,7 @@ class Logger:
         """add a log event handler"""
         self.listener.append(func)
 
-    @staticmethod
-    def set_verbose(verbose=0):
-        """set log verbose"""
+    def set_verbose(self, verbose=20):
+        """set log verbose, default level is `INFO`"""
         Logger.VERBOSE = verbose
+        logging.basicConfig(format='%(levelname)s:%(message)s', level=verbose)
