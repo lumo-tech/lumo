@@ -127,14 +127,14 @@ class Logger:
     def inline(self, *values, fix=0, append=False):
         """Log a message with severity 'INFO' inline"""
         logstr, fix = self._format(*values, inline=True, fix=fix, append=append)
-        self._handle(logstr, fix=fix)
+        self._handle(logstr, level=Logger.V_INFO, fix=fix)
 
     def info(self, *values):
         """Log a message with severity 'INFO'"""
         logstr, fix = self._format(*values, inline=False)
         self._handle(logstr, level=Logger.V_INFO, fix=fix)
 
-    def raw(self, *values, inline=False, fix=0, level=0, append=False):
+    def raw(self, *values, inline=False, fix=0, level=20, append=False):
         """Log a message with severity 'INFO' withou datetime prefix"""
         logstr, fix = self._format(*values, inline=inline, fix=fix, raw=True, append=append)
         self._handle(logstr, level=level)
