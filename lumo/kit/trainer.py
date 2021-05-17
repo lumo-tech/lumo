@@ -632,7 +632,7 @@ class _BaseTrainer(ModelMix, CallbackMix, metaclass=Merge):
 
     def save_model(self, is_best=False, meta_info: Union[str, dict, Meter] = None):
         info = self._build_trainer_meta_info(meta_info)
-        return self.saver.save_model(self.eidx, self.model_state_dict(),
+        return self.saver.save_model(self.eidx, {'models': self.model_state_dict()},
                                      meta_info=info,
                                      is_best=is_best)
 
