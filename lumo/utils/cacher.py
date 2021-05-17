@@ -7,7 +7,7 @@ from numbers import Number
 import hashlib
 import os
 import inspect
-from typing import List, Tuple, Union
+from typing import List, Tuple, Union, Mapping, Sequence, Set
 
 from .paths import cache_dir
 from . import safe_io as io
@@ -29,7 +29,7 @@ def _to_string(item, encode=True):
     if inspect.isclass(res) or inspect.isfunction(res):
         res = f"{res.__name__}"
 
-    if not isinstance(res, str):
+    if not isinstance(res, (str, Number, Mapping, Sequence, Set)):
         res = f"{res.__class__.__name__}"
     else:
         res = f"{res}{res.__class__.__name__}"
