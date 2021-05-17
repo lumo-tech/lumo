@@ -201,7 +201,10 @@ class Experiment:
 
     @property
     def project_hash(self):
-        hash_fn = os.path.join(paths.local_dir(), FN.PHASH)
+        local_ = paths.local_dir()
+        if local_ is None:
+            return ''
+        hash_fn = os.path.join(local_, FN.PHASH)
         return io.load_string(hash_fn)
 
     @property

@@ -49,7 +49,10 @@ class LogTestGlobally(ExpHook):
 class LogTestLocally(ExpHook):
     def on_start(self, exp: Experiment):
         from lumo.utils.paths import local_dir
-        fn = os.path.join(local_dir(), FN.TESTLOG)
+        local_ = local_dir()
+        if local_ is None:
+            return
+        fn = os.path.join(local_, FN.TESTLOG)
         with open(fn, 'a', encoding='utf-8') as w:
             w.write(f'{exp.test_root}\n')
 
