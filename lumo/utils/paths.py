@@ -86,3 +86,9 @@ def cache_dir():
     path = os.path.expanduser("~/.cache/lumo/")
     os.makedirs(path, exist_ok=True)
     return path
+
+
+# def default_project_dir():
+#     path = os.path.expanduser("~/.cache/lumo/default_proj/")
+#     os.makedirs(path, exist_ok=True)
+#     return path

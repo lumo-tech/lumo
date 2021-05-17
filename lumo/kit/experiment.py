@@ -274,11 +274,16 @@ class Experiment:
     @property
     def project_root(self) -> str:
         """git repository root(working dir)"""
-        return paths.repo_dir()
+        res = paths.repo_dir()
+        if res is None:
+            res = os.getcwd()
+        return res
 
     @property
     def project_cache_root(self) -> str:
         """<project_root>/.cache"""
+        if self.project_root is None:
+            return paths.cache_dir()
         return paths.checkpath(self.project_root, PATH_DEFAULT.LOCAL_CACHE)
 
     @property
