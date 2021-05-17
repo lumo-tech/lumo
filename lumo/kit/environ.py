@@ -43,7 +43,7 @@ class Globals:
 
     def load_local_config(self, repo_root):
         fn = local_config_path(repo_root)
-        if os.path.exists(fn):
+        if fn is not None and os.path.exists(fn):
             res = io.load_json(fn)
         else:
             res = {}

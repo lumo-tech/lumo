@@ -58,7 +58,10 @@ def global_config_path():
 
 
 def local_config_path(repo_=None):
-    return os.path.join(local_dir(repo_), 'config.json')
+    local_ = local_dir(repo_)
+    if local_ is None:
+        return None
+    return os.path.join(local_, 'config.json')
 
 
 def checkpath(*path):
