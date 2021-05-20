@@ -205,8 +205,9 @@ class _BaseTrainer(ModelMix, CallbackMix, metaclass=Merge):
         super().__setattr__(name, value)
         from torch.optim.optimizer import Optimizer
 
-        if name.startswith('_'):
+        if name.startswith('_') or name.endswith('_'):
             # when callback is trainer itself, _hooked will be passed, and caused recursion
+            # if some pretrained models need to be ignored in save/load stage, it can be named like 'some_' or '_some'
             return
 
         if isinstance(value, torch.device):
@@ -220,7 +221,6 @@ class _BaseTrainer(ModelMix, CallbackMix, metaclass=Merge):
         elif isinstance(value, (np.ndarray)):
             self._state_dicts[TRAINER.DKEY.tensor]['np'][name] = value
         elif callable(getattr(value, "state_dict", None)) and callable(getattr(value, "load_state_dict", None)):
-
             self._state_dicts[TRAINER.DKEY.others][name] = value
 
     def __setitem__(self, key: str, value: Any):
@@ -587,6 +587,9 @@ class _BaseTrainer(ModelMix, CallbackMix, metaclass=Merge):
         for k, v in tgt.items():
             if k in src:
                 v.load_state_dict(src[k])
+
+    def ignore_object_state_dict(self, item):
+        pass
 
     def load_state_dict(self, object: Union[str, dict]):
         if isinstance(object, str):
