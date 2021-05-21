@@ -29,9 +29,12 @@ class DataModuleMix():
         raise NotImplementedError()
 
 
-class CallbackMix():
+class BaseCallbackMix():
     def icallbacks(self, params: ParamsType):
         raise NotImplementedError()
+
+
+class CallbackMix(BaseCallbackMix):
 
     def add_callback(self, callback):
         raise NotImplementedError()
