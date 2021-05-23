@@ -17,8 +17,11 @@ def _to_string(item):
     res = item
     try:
         res = inspect.getsource(res)
-    except TypeError:
         return res
+    except TypeError:
+        if inspect.isclass(res):
+            res = res.__name__
+
 
     if isinstance(res, torch.Tensor):
         res = res.detach().cpu().numpy()
