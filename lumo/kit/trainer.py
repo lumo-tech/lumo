@@ -309,7 +309,7 @@ class _BaseTrainer(ModelMix, CallbackMix, metaclass=Merge):
             set_global_logger(self._logger)
             if self.params.get('debug', False):
                 self._logger.set_verbose(Logger.V_DEBUG)
-                self._logger.debug('Enable debug log.')
+                self._logger.dddebug('Enable debug log.')
             fn = self._logger.add_log_dir(self.exp.log_dir)
             self.exp.writeline('logger', fn)
         return self._logger

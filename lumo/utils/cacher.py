@@ -15,6 +15,11 @@ from . import safe_io as io
 
 def _to_string(item, encode=True):
     res = item
+    try:
+        res = inspect.getsource(res)
+    except TypeError:
+        return res
+
     if isinstance(res, torch.Tensor):
         res = res.detach().cpu().numpy()
 
@@ -41,10 +46,8 @@ def _to_string(item, encode=True):
     return res
 
 
-def _cache_hash(func, *args, **kwargs) -> str:  # TODO hash any thing
+def _cache_hash(*args, **kwargs) -> str:  # TODO hash any thing
     md5 = hashlib.md5()
-    md5.update(func.__name__.encode())
-    md5.update(func.__class__.__name__.encode())
 
     for arg in args:
         md5.update(_to_string(arg))
@@ -123,8 +126,8 @@ def load_from_cache_path(path):
     return items
 
 
-def load_if_exists(func, *args, **kwargs):
-    hash = _cache_hash(func, *args, **kwargs)
+def load_if_exists(*args, **kwargs):
+    hash = _cache_hash(*args, **kwargs)
     path = os.path.join(cache_dir(), hash)
     if os.path.isdir(path):
         items = load_from_cache_path(path)

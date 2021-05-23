@@ -19,6 +19,14 @@ loginfo = namedtuple('loginfo', ['string', 'prefix_len'])
 
 logger = None
 
+VVV_DEBUG = -10
+VV_DEBUG = 0
+V_DEBUG = 10
+V_INFO = 20
+V_WARN = 30
+V_ERROR = 40
+V_FATAL = 50
+
 
 def get_global_logger():
     global logger
@@ -35,11 +43,7 @@ def set_global_logger(logger_):
 
 class Logger:
     VERBOSE = 20
-    V_DEBUG = 10
-    V_INFO = 20
-    V_WARN = 30
-    V_ERROR = 40
-    V_FATAL = 50
+
     _instance = None
 
     def __new__(cls, *args, **kwargs) -> Any:
@@ -61,8 +65,11 @@ class Logger:
         self.use_stdout = use_stdout
         Logger._instance = self
 
-    def _format(self, *values, inline=False, fix=0, raw=False, append=False):
+    def _format(self, *values, inline=False, fix=0, raw=False, append=False, level=V_INFO):
         """"""
+        if level < Logger.VERBOSE:
+            return None, None
+
         if self.adddate and not raw:
             cur_date = datetime.now().strftime(self.datefmt)
         else:
@@ -96,7 +103,7 @@ class Logger:
         else:
             return loginfo("{}\n".format(space), 0)
 
-    def _handle(self, logstr, end="", level=0, **kwargs):
+    def _handle(self, logstr, end="", level=10, **kwargs):
         """handle log stinrg"""
         for listener in self.listener:
             listener(logstr, end, level)
@@ -127,41 +134,69 @@ class Logger:
     def inline(self, *values, fix=0, append=False):
         """Log a message with severity 'INFO' inline"""
         logstr, fix = self._format(*values, inline=True, fix=fix, append=append)
-        self._handle(logstr, level=Logger.V_INFO, fix=fix)
+        if fix is None:
+            return
+        self._handle(logstr, level=V_INFO, fix=fix)
 
     def info(self, *values):
         """Log a message with severity 'INFO'"""
         logstr, fix = self._format(*values, inline=False)
-        self._handle(logstr, level=Logger.V_INFO, fix=fix)
+        if fix is None:
+            return
+        self._handle(logstr, level=V_INFO, fix=fix)
 
     def raw(self, *values, inline=False, fix=0, level=20, append=False):
         """Log a message with severity 'INFO' withou datetime prefix"""
         logstr, fix = self._format(*values, inline=inline, fix=fix, raw=True, append=append)
+        if fix is None:
+            return
         self._handle(logstr, level=level)
 
     def debug(self, *values):
         """Log a message with severity 'DEBUG'"""
         logstr, fix = self._format("DEBUG", *values, inline=False)
-        self._handle(logstr, level=Logger.V_DEBUG, fix=fix)
+        if fix is None:
+            return
+        self._handle(logstr, level=V_DEBUG, fix=fix)
+
+    def ddebug(self, *values):
+        """Log a message with severity 'DEBUG'"""
+        logstr, fix = self._format("DDEBUG", *values, inline=False)
+        if fix is None:
+            return
+        self._handle(logstr, level=VV_DEBUG, fix=fix)
+
+    def dddebug(self, *values):
+        """Log a message with severity 'DEBUG'"""
+        logstr, fix = self._format("DDDEBUG", *values, inline=False)
+        if fix is None:
+            return
+        self._handle(logstr, level=VVV_DEBUG, fix=fix)
 
     def warn(self, *values):
         """Log a message with severity 'WARN'"""
         logstr, fix = self._format("WARN", *values, inline=False)
-        self._handle(logstr, level=Logger.V_WARN, fix=fix)
+        if fix is None:
+            return
+        self._handle(logstr, level=V_WARN, fix=fix)
 
     def error(self, *values):
         """Log a message with severity 'ERROR'"""
         logstr, fix = self._format("ERROR", *values, inline=False)
-        self._handle(logstr, level=Logger.V_ERROR, fix=fix)
+        if fix is None:
+            return
+        self._handle(logstr, level=V_ERROR, fix=fix)
 
     def fatal(self, *values):
         """Log a message with severity 'FATAL'"""
         logstr, fix = self._format("FATAL", *values, inline=False)
-        self._handle(logstr, level=Logger.V_FATAL, fix=fix)
+        if fix is None:
+            return
+        self._handle(logstr, level=V_FATAL, fix=fix)
 
     def newline(self):
         """break line"""
-        self._handle("")
+        self._handle("", level=V_INFO)
 
     def print(self, *args, end='\n', file=sys.stdout):
         """built-in print function"""
