@@ -201,3 +201,7 @@ def label_eq_matric(labels: torch.Tensor):
     mask = torch.eq(labels, labels.T)
 
     return mask
+
+
+def resize(arr, newsize, mode='bilinear'):
+    pass  # TODO
