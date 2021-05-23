@@ -13,7 +13,7 @@ from .paths import cache_dir
 from . import safe_io as io
 
 
-def _to_string(item, encode=True):
+def _to_string(item):
     res = item
     try:
         res = inspect.getsource(res)
@@ -40,8 +40,6 @@ def _to_string(item, encode=True):
         res = f"{res}{res.__class__.__name__}"
 
     res = str(res)
-    if encode:
-        res = res.encode()
 
     return res
 
@@ -50,13 +48,13 @@ def _cache_hash(*args, **kwargs) -> str:  # TODO hash any thing
     md5 = hashlib.md5()
 
     for arg in args:
-        md5.update(_to_string(arg))
+        md5.update(_to_string(arg).encode(encoding='utf-8'))
 
     keys = sorted(list(kwargs.keys()))
     for k in keys:
         v = kwargs[k]
         md5.update(k.encode())
-        md5.update(_to_string(v))
+        md5.update(_to_string(v).encode(encoding='utf-8'))
 
     return md5.hexdigest()
 
