@@ -43,7 +43,13 @@ def set_global_logger(logger_):
 
 class Logger:
     VERBOSE = 20
-
+    VVV_DEBUG = VVV_DEBUG
+    VV_DEBUG = VV_DEBUG
+    V_DEBUG = V_DEBUG
+    V_INFO = V_INFO
+    V_WARN = V_WARN
+    V_ERROR = V_ERROR
+    V_FATAL = V_FATAL
     _instance = None
 
     def __new__(cls, *args, **kwargs) -> Any:
