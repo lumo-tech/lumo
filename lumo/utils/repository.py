@@ -1,6 +1,7 @@
 """
 Methods about git.
 """
+import git
 import os
 from functools import lru_cache
 from typing import Tuple
@@ -232,20 +233,23 @@ def commit(repo: Repo = None, key=None, branch_name=CFG.BRANCH_NAME, info: str =
     Returns:
         git.Commit object, see gitpython for details.
     """
-    if repo is None:
-        repo = load_repo()
+    try:
+        if repo is None:
+            repo = load_repo()
 
-    if key is not None and key in _commits_map:
-        return _commits_map[key]
+        if key is not None and key in _commits_map:
+            return _commits_map[key]
 
-    with branch(repo, branch_name):
-        repo.git.add(all=True)
-        commit_info = '[[EMPTY]]'
-        if info is not None:
-            commit_info = info
-        commit_ = repo.index.commit(commit_info)
-    if key is not None:
-        _commits_map[key] = commit_
+        with branch(repo, branch_name):
+            repo.git.add(all=True)
+            commit_info = '[[EMPTY]]'
+            if info is not None:
+                commit_info = info
+            commit_ = repo.index.commit(commit_info)
+        if key is not None:
+            _commits_map[key] = commit_
+    except git.GitCommandError:
+        commit_ = None
     return commit_
 
 

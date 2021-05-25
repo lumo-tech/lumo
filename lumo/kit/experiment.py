@@ -325,11 +325,12 @@ class Experiment:
                                     default=CFG.STATE.DEFAULT.DISABLE_GIT)
         if not no_commit and local_rank() <= 0:
             commit_ = git_commit(key=LIBRARY_NAME, info=self.test_root).hexsha[:8]
-            self.writeline('commit', commit_)
-            self.dump_info(EXP.GIT, {
-                'commit': commit_,
-                CFG.PATH.REPO: self.project_root,
-            })
+            if commit_ is not None:
+                self.writeline('commit', commit_)
+                self.dump_info(EXP.GIT, {
+                    'commit': commit_,
+                    CFG.PATH.REPO: self.project_root,
+                })
         self.writeline('uuid', uuid1().hex)
 
         from lumo import __version__
