@@ -18,7 +18,8 @@ from ..calculate.schedule import Schedule, ScheduleList
 from ..utils.timing import format_second
 
 func_map = {
-    'evaluate': 'eval'
+    'evaluate': 'eval',
+    'evaluate_step': 'eval_step'
 }
 
 
