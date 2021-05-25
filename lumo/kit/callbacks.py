@@ -17,6 +17,14 @@ from ..base_classes.trickitems import NoneItem, AvgItem
 from ..calculate.schedule import Schedule, ScheduleList
 from ..utils.timing import format_second
 
+func_map = {
+    'evaluate': 'eval'
+}
+
+
+def map_func_name(name):
+    return func_map.get(name, name)
+
 
 class BaseCallback():
     """
@@ -87,12 +95,12 @@ class BaseCallback():
 
     def on_begin(self, source: Trainer, func, params: Params, *args, **kwargs):
         """called before trainer.func is called"""
-        cb_func = getattr(self, f"on_{func.__name__}_begin", None)
+        cb_func = getattr(self, f"on_{map_func_name(func.__name__)}_begin", None)
         if cb_func is not None:
             cb_func(source, func, params, *args, **kwargs)
 
     def on_end(self, source: Trainer, func, params: Params, result, *args, **kwargs):
-        cb_func = getattr(self, f"on_{func.__name__}_end", None)
+        cb_func = getattr(self, f"on_{map_func_name(func.__name__)}_end", None)
         if cb_func is not None:
             cb_func(source, func, params, result, *args, **kwargs)
 
