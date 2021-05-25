@@ -730,26 +730,30 @@ class Trainer(DLLoopMix, _BaseTrainer):
         else:
             return to_device(item, device_args_kwargs)
 
-    def prepare_dataloader(self, stage: TrainerStage, dataloader=None):
+    def prepare_dataloader(self, stage: TrainerStage, dataloader=None) -> DataLoader:
         params = self.params
         initialized = getattr(self.initial, f"{stage.name}_dataloader")
 
+        dataloader_ = None
         """use loader from passed params first, then use itself, finally"""
         if isinstance(dataloader, DataModuleMix):
             dataloader.idataloader(params, stage, initialized)
             self.regist_dataloader(datamodule=dataloader)
-            dataloader = getattr(dataloader, f'{stage.name}_dataloader')
+            dataloader_ = getattr(dataloader, f'{stage.name}_dataloader', None)
         elif isinstance(self, DataModuleMix):
             self.idataloader(params, stage, initialized)
-            dataloader = getattr(self, f'{stage.name}_dataloader')
+            dataloader_ = getattr(self, f'{stage.name}_dataloader', None)
 
-        if dataloader is None:
-            dataloader = getattr(dataloader, f'{stage.name}_dataloader')
-        dataloader = self.accelerator.prepare(dataloader)
+        if dataloader is None and self.datamodule is not None:
+            self.datamodule.idataloader(params, stage, initialized)
+            dataloader_ = getattr(self.datamodule, f'{stage.name}_dataloader', None)
 
-        kwargs = {stage.name: dataloader}
+        if isinstance(dataloader_, DataLoader):
+            dataloader_ = self.accelerator.prepare(dataloader_)
+
+        kwargs = {stage.name: dataloader_}
         self.regist_dataloader(**kwargs)
-        return dataloader
+        return dataloader_
 
     def train(self, dataloader: Union[DataLoader, DataModuleMix] = None):
         # params, initialized = self.params, self.initial.train_dataloader
