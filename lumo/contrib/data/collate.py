@@ -28,9 +28,13 @@ class CollateBase():
         self.collate = wrap(self.collate)
         return self
 
-    def __init__(self, collate_fn=default_collate) -> None:
+    def __init__(self, collate_fn=default_collate, *args, **kwargs) -> None:
         super().__init__()
         self._collate_fn = collate_fn
+        self.initial(*args, **kwargs)
+
+    def initial(self, *args, **kwargs):
+        pass
 
     def __call__(self, *args, **kwargs):
         return self.collate(*args, **kwargs)
