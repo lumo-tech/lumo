@@ -87,20 +87,20 @@ class ScreenStr():
     a = 1
 
     def __len__(self) -> int:
-        txt = self.content.encode("gbk")
+        txt = self.content.encode("utf-8")
         return len(txt)
 
     def _decode_sub(self, txt, left, right):
         try:
-            txt = txt[left:right].decode("gbk")
+            txt = txt[left:right].decode("utf-8")
         except:
             try:
-                txt = txt[left:right - 1].decode("gbk")
+                txt = txt[left:right - 1].decode("utf-8")
             except:
                 try:
-                    txt = txt[left + 1:right].decode("gbk")
+                    txt = txt[left + 1:right].decode("utf-8")
                 except:
-                    txt = txt[left + 1:right - 1].decode("gbk")
+                    txt = txt[left + 1:right - 1].decode("utf-8")
 
         return txt
 
@@ -122,7 +122,7 @@ class ScreenStr():
     def _screen_str(self, margin="..."):
         width = self.consolo_width()
 
-        txt = self.content.encode("gbk").strip()
+        txt = self.content.encode("utf-8").strip()
         textlen = len(txt)
 
         if textlen <= width:
@@ -136,7 +136,7 @@ class ScreenStr():
 
         offright = width - len(left) + offset - len(margin)
 
-        left = left.decode("gbk")
+        left = left.decode("utf-8")
         right = self._decode_sub(right, offset, offright)
 
         head = "\r" if self.content.startswith("\r") else ""
