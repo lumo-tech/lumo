@@ -575,7 +575,7 @@ class LRSchedule(TrainCallback):
         super().on_hooked(source, params)
         if self.schedule is None:
             if 'lr_sche' not in params:
-                source.logger.warn('lr_sche not exists in params and be assigned, {} will be unhooked after.')
+                source.logger.warn(f'lr_sche not exists in params and be assigned, {self} will be unhooked after.')
                 self.unhook()
             else:
                 self.schedule = params.lr_sche
