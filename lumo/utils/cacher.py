@@ -22,7 +22,6 @@ def _to_string(item):
         if inspect.isclass(res):
             res = res.__name__
 
-
     if isinstance(res, torch.Tensor):
         res = res.detach().cpu().numpy()
 
@@ -111,8 +110,8 @@ def _load_cache(fn: str):
         return io.load_state_dict(fn)
 
 
-def save_cache(items: Union[List, Tuple], func, *args, **kwargs):
-    hash = _cache_hash(func, *args, **kwargs)
+def save_cache(items: Union[List, Tuple], *args, **kwargs):
+    hash = _cache_hash(*args, **kwargs)
     path = os.path.join(cache_dir(), hash)
     os.makedirs(path, exist_ok=True)
     for i, item in enumerate(items):

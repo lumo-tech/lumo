@@ -1,3 +1,4 @@
 from accelerate.kwargs_handlers import DistributedDataParallelKwargs
+from accelerate import Accelerator
 
 DistributedDataParallelKwargs(find_unused_parameters=True)
