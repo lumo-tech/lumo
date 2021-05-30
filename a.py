@@ -1,4 +1,6 @@
-from accelerate.kwargs_handlers import DistributedDataParallelKwargs
-from accelerate import Accelerator
+from lumo import Params
 
-DistributedDataParallelKwargs(find_unused_parameters=True)
+
+s = Params()
+
+s.SCHE.Linear(0.1,0.)

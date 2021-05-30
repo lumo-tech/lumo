@@ -56,6 +56,7 @@ class _PopQueue():
 class MPStruct:
     TABLE_NAME = None
     TABLE_SQL = None
+    INDEX_SQL = None
 
     def __init__(self, session_id=None, root=None, retry=50):
         if session_id is None:
@@ -133,8 +134,11 @@ class Queue(MPStruct):
         CREATE TABLE IF NOT EXISTS QUEUE
            (ID      INTEGER PRIMARY KEY autoincrement,
            VALUE    TEXT    NOT NULL);
-        CREATE UNIQUE INDEX QVALUE_INDEX on QUEUE (VALUE);
         """
+
+    INDEX_SQL = """
+           CREATE UNIQUE INDEX QVALUE_INDEX on QUEUE (VALUE)
+    """
 
     def init_table(self):
         if self.has_table(self.TABLE_NAME):
@@ -143,6 +147,11 @@ class Queue(MPStruct):
         conn = self.connect
         c = conn.cursor()
         c.executescript('\n'.join([self.TABLE_SQL]))
+
+        try:
+            c.execute(self.INDEX_SQL)
+        except:
+            pass
         conn.commit()
 
     def _del_rec(self, id, table):
