@@ -113,20 +113,17 @@ class MPStruct:
         return attr.from_dict(res).value
 
     def execute(self, sql, mode='r'):
-        if mode == 'r':
-            res = self.cursor.execute(sql)
-            return res
-        else:
-            for i in range(self._retry):
-                try:
-                    res = self.cursor.execute(sql)
+        for i in range(self._retry):
+            try:
+                res = self.cursor.execute(sql)
+                if mode != 'r':
                     self.connect.commit()
-                    return res
-                except sqlite3.OperationalError as e:
-                    from lumo.kit.logger import get_global_logger
-                    get_global_logger().debug(f'[mpqueue] retry {i:02d}/{self._retry}...')
-                    time.sleep(0.5)
-                    continue
+                return res
+            except sqlite3.OperationalError as e:
+                from lumo.kit.logger import get_global_logger
+                get_global_logger().debug(f'[mpqueue] retry {i:02d}/{self._retry}...')
+                time.sleep(0.5)
+                continue
         return None
 
 
