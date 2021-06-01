@@ -60,7 +60,7 @@ class MPStruct:
     TABLE_SQL = None
     INDEX_SQL = None
 
-    def __init__(self, session_id=None, root=None, retry=50):
+    def __init__(self, session_id=None, root=None, retry=10):
         if session_id is None:
             session_id = string_hash(sys.argv[0])
 
@@ -124,7 +124,7 @@ class MPStruct:
                 from lumo.kit.logger import get_global_logger
                 get_global_logger().debug(f'[mpqueue] retry {i:02d}/{self._retry}...', e)
                 self.reconnect()
-                time.sleep(random.random() * 2 + 0.5)
+                time.sleep(random.random() * i ** 2 + 0.5)
                 continue
         return None
 
