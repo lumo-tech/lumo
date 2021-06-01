@@ -2,6 +2,7 @@ import sqlite3
 import time
 import json
 import sys
+import random
 import os
 from collections import namedtuple
 from lumo.utils.paths import cache_dir
@@ -121,9 +122,9 @@ class MPStruct:
                 return res
             except sqlite3.OperationalError as e:
                 from lumo.kit.logger import get_global_logger
-                get_global_logger().warn(f'[mpqueue] retry {i:02d}/{self._retry}...', e)
+                get_global_logger().debug(f'[mpqueue] retry {i:02d}/{self._retry}...', e)
                 self.reconnect()
-                time.sleep(0.5)
+                time.sleep(random.random() * 2 + 0.5)
                 continue
         return None
 
