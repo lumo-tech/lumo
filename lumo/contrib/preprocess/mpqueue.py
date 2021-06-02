@@ -123,7 +123,7 @@ class MPStruct:
             except sqlite3.OperationalError as e:
                 from lumo.kit.logger import get_global_logger
                 get_global_logger().debug(f'[mpqueue] retry {i:02d}/{self._retry}...', e)
-                self.reconnect()
+                # self.reconnect()
                 time.sleep(random.random() * i + 0.5)
                 continue
         return None
