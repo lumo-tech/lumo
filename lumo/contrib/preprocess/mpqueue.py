@@ -127,7 +127,7 @@ class MPStruct:
                 return res
             except sqlite3.OperationalError as e:
                 from lumo.kit.logger import get_global_logger
-                get_global_logger().debug(f'[mpqueue] retry {i:02d}/{self._retry}...', e)
+                get_global_logger().warn(f'[mpqueue] retry {i:02d}/{self._retry}...', sql, e)
                 # self.reconnect()
                 time.sleep(random.random() * i + 0.5)
                 continue
@@ -164,6 +164,11 @@ class Queue(MPStruct):
         res = self.execute(f"delete from {table} where id={id};", 'w')
         return not isinstance(res, _NoneResult) and res.rowcount > 0
 
+    def _del_recs(self, *ids, table):
+        ids = ','.join([str(i) for i in ids])
+        res = self.execute(f"delete from {table} where id in ({ids});", 'w')
+        return not isinstance(res, _NoneResult) and res.rowcount > 0
+
     def push(self, value):
         if self.value_in_queue(value) is not None:
             return False
@@ -182,6 +187,17 @@ class Queue(MPStruct):
             else:
                 self._pop_queue.update(ids, records)
         return self._pop_queue
+
+    def popk(self, k=1):
+        rec = self.execute(f"select id,value from queue limit {k};").fetchall()
+        if len(rec) > 0:
+            ids = [i[0] for i in rec]
+            values = [self.decode_value(i[1]) for i in rec]
+
+            if not self._del_recs(*ids, table=self.TABLE_NAME):
+                return self.pop()
+            return [row(id, val) for id, val in zip(ids, values)]
+        return []
 
     def pop(self):
         rec = self.execute(f"select id,value from queue limit 1;").fetchone()

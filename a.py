@@ -1,6 +1,10 @@
-from lumo import Params
+from lumo.contrib.preprocess.mpqueue import Queue
 
+q = Queue('1')
 
-s = Params()
+for i in range(100):
+    q.push(i)
+    print(i)
 
-s.SCHE.Linear(0.1,0.)
+while q.count > 0:
+    print(q.popk(5))
