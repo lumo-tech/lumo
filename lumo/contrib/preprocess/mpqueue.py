@@ -12,6 +12,11 @@ from lumo.base_classes import attr
 row = namedtuple('row', ['id', 'value'])
 
 
+class _NoneResult():
+    def fetchone(self):
+        return None
+
+
 class _PopQueue():
     def __init__(self, ids, records):
         self.ids = ids
@@ -126,7 +131,7 @@ class MPStruct:
                 # self.reconnect()
                 time.sleep(random.random() * i + 0.5)
                 continue
-        return None
+        return _NoneResult()
 
 
 class Queue(MPStruct):
