@@ -162,7 +162,7 @@ class Queue(MPStruct):
 
     def _del_rec(self, id, table):
         res = self.execute(f"delete from {table} where id={id};", 'w')
-        return res is not None and res.rowcount > 0
+        return not isinstance(res, _NoneResult) and res.rowcount > 0
 
     def push(self, value):
         if self.value_in_queue(value) is not None:
