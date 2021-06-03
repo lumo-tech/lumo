@@ -195,6 +195,9 @@ class Queue(MPStruct):
     def pushk(self, *values):
         values = [self.encode_value(i) for i in values if self.value_in_queue(i) is None]
 
+        if len(values) == 0:
+            return 0
+
         inner = ','.join([f"('{value}')" for value in values])
 
         res = self.execute(f"insert into queue (value) values {inner};", 'w')
