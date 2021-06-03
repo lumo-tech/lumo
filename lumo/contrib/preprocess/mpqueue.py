@@ -190,6 +190,7 @@ class Queue(MPStruct):
 
     def popk(self, k=1):
         rec = self.execute(f"select id,value from queue limit {k};").fetchall()
+
         if len(rec) > 0:
             ids = [i[0] for i in rec]
             values = [self.decode_value(i[1]) for i in rec]
@@ -223,6 +224,14 @@ class Queue(MPStruct):
     @property
     def count(self):
         return self.execute('select count(id) from queue').fetchone()[0]
+
+
+class Bucket(Queue):
+    def bucket(self, ind, total):
+        rec = self.execute(f"select id,value from queue where id % {total}={ind}").fetchall()
+        ids = [i[0] for i in rec]
+        values = [self.decode_value(i[1]) for i in rec]
+        return [row(id, val) for id, val in zip(ids, values)]
 
 
 class Marker(MPStruct):

@@ -1,10 +1,10 @@
-from lumo.contrib.preprocess.mpqueue import Queue
+from lumo.contrib.preprocess.mpqueue import Bucket
 
-q = Queue('1')
+q = Bucket('2')
 
 for i in range(100):
     q.push(i)
     print(i)
 
-while q.count > 0:
-    print(q.popk(5))
+print(q.bucket(5, 20))
+print(q.bucket(1, 20))
