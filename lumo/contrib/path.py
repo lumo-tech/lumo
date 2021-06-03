@@ -1,8 +1,8 @@
 import os
-from typing import Tuple, Generator, List
+from typing import Tuple, Iterable, List
 
 
-def walk(top: str, depth: int = -1) -> Generator[Tuple[str, List[str], List[str]]]:
+def walk(top: str, depth: int = -1) -> Iterable[Tuple[str, List[str], List[str]]]:
     """same as os.path.walk but added depth argument"""
     fs = os.listdir(top)
 
