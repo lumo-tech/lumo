@@ -198,7 +198,10 @@ class Queue(MPStruct):
         inner = ','.join([f"('{value}')" for value in values])
 
         res = self.execute(f"insert into queue (value) values {inner};", 'w')
-        return not isinstance(res, _NoneResult)
+        if isinstance(res, _NoneResult):
+            return -1
+        else:
+            return len(values)
 
     @property
     def pop_queue(self):
