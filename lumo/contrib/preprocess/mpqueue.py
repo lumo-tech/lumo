@@ -195,7 +195,7 @@ class Queue(MPStruct):
             values = [self.decode_value(i[1]) for i in rec]
 
             if not self._del_recs(*ids, table=self.TABLE_NAME):
-                return self.pop()
+                return self.popk(k)
             return [row(id, val) for id, val in zip(ids, values)]
         return []
 
