@@ -133,6 +133,21 @@ class MPStruct:
                 continue
         return _NoneResult()
 
+    def executescript(self, sql, mode='r'):
+        for i in range(self._retry):
+            try:
+                res = self.cursor.executescript(sql)
+                if mode != 'r':
+                    self.connect.commit()
+                return res
+            except sqlite3.OperationalError as e:
+                from lumo.kit.logger import get_global_logger
+                get_global_logger().warn(f'[mpqueue] retry {i:02d}/{self._retry}...', sql, e)
+                # self.reconnect()
+                time.sleep(random.random() * i + 0.5)
+                continue
+        return _NoneResult()
+
 
 class Queue(MPStruct):
     TABLE_NAME = 'QUEUE'
@@ -174,7 +189,16 @@ class Queue(MPStruct):
             return False
         value = self.encode_value(value)
 
-        return self.execute(f"insert into queue (value) values ('{value}');", 'w') is not None
+        res = self.execute(f"insert into queue (value) values ('{value}');", 'w')
+        return not isinstance(res, _NoneResult)
+
+    def pushk(self, *values):
+        values = [self.encode_value(i) for i in values if self.value_in_queue(i) is None]
+
+        inner = ','.join([f"('{value}')" for value in values])
+
+        res = self.execute(f"insert into queue (value) values {inner};", 'w')
+        return not isinstance(res, _NoneResult)
 
     @property
     def pop_queue(self):
