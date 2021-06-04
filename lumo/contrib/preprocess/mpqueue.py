@@ -129,7 +129,7 @@ class MPStruct:
                 from lumo.kit.logger import get_global_logger
                 get_global_logger().warn(f'[mpqueue] retry {i:02d}/{self._retry}...', sql, e)
                 # self.reconnect()
-                time.sleep(random.random() * i + 0.5)
+                time.sleep(i + random.random() * i)
                 continue
         return _NoneResult()
 
