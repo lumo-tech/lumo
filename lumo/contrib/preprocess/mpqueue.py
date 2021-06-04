@@ -65,7 +65,7 @@ class MPStruct:
     TABLE_SQL = None
     INDEX_SQL = None
 
-    def __init__(self, session_id=None, root=None, retry=10):
+    def __init__(self, session_id=None, root=None, retry=7):
         if session_id is None:
             session_id = string_hash(sys.argv[0])
 
@@ -129,7 +129,7 @@ class MPStruct:
                 from lumo.kit.logger import get_global_logger
                 get_global_logger().warn(f'[mpqueue] retry {i:02d}/{self._retry}...', sql, e)
                 # self.reconnect()
-                time.sleep(i + random.random() * i)
+                time.sleep(((i + 1) ** 2) * random.random())
                 continue
         return _NoneResult()
 
@@ -262,6 +262,11 @@ class Bucket(Queue):
         ids = [i[0] for i in rec]
         values = [self.decode_value(i[1]) for i in rec]
         return [row(id, val) for id, val in zip(ids, values)]
+
+    def iter_bucket(self, ind, total):
+        for rec in self.execute(f"select id,value from queue where id % {total}={ind}"):
+            print(rec)
+            yield row(rec[0], self.decode_value(rec[1]))
 
 
 class Marker(MPStruct):
