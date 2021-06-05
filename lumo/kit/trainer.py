@@ -18,7 +18,7 @@ from torch import distributed as dist
 from torch import nn
 from torch.optim import Optimizer
 from torch.utils.data import DataLoader
-
+from functools import lru_cache
 from .environ import globs
 from .experiment import TrainerExperiment
 from .logger import Logger
@@ -187,6 +187,7 @@ class _BaseTrainer(ModelMix, CallbackMix, metaclass=Merge):
 
         self._logger = None
         self._rnd = None
+        self._accelerate = None
         self._saver = None
         self._datamodule = None
 
@@ -320,17 +321,20 @@ class _BaseTrainer(ModelMix, CallbackMix, metaclass=Merge):
 
     @property
     def accelerator(self) -> Accelerator:
-        acce = {'device_placement': True,
-                'split_batches': False,
-                'fp16': None,
-                'cpu': False,
-                'rng_types': None,
-                'kwargs_handlers': None,
-                'device': self.params.get('device', None)}
-        for k in acce:
-            if k in self.params:
-                acce[k] = self.params[k]
-        return Accelerator(**acce)
+        if self._accelerate is None:
+            acce = {'device_placement': True,
+                    'split_batches': False,
+                    'fp16': None,
+                    'cpu': False,
+                    'rng_types': None,
+                    'kwargs_handlers': None,
+                    'device': self.params.get('device', None)}
+            for k in acce:
+                if k in self.params:
+                    acce[k] = self.params[k]
+
+            self._accelerate = Accelerator(**acce)
+        return self._accelerate
 
     @property
     def rnd(self) -> RndManager:

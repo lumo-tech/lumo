@@ -257,6 +257,11 @@ class Queue(MPStruct):
 
 
 class Bucket(Queue):
+
+    def __init__(self, session_id=None, root=None, retry=7):
+        super().__init__(session_id, root, retry)
+        self.file = os.path.join(root, f"{Queue.__name__}_{session_id}.sqlite")
+
     def bucket(self, ind, total):
         rec = self.execute(f"select id,value from queue where id % {total}={ind}").fetchall()
         ids = [i[0] for i in rec]
@@ -265,7 +270,6 @@ class Bucket(Queue):
 
     def iter_bucket(self, ind, total):
         for rec in self.execute(f"select id,value from queue where id % {total}={ind}"):
-            print(rec)
             yield row(rec[0], self.decode_value(rec[1]))
 
 

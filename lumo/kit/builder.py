@@ -7,7 +7,7 @@ from operator import add
 from typing import Sized, Sequence, Union, Callable, Dict, Any, List, overload, TypeVar, ClassVar
 from functools import wraps
 from torch.utils.data import Dataset, sampler as sp, DataLoader
-
+import numpy as np
 from lumo.contrib.data.collate import CollateBase
 from .delegate import DataDelegate, Data, DelegateDataTypeError
 
@@ -98,6 +98,7 @@ class BaseBuilder(Dataset):
         return builder
 
     def subset(self, indices: Sequence[int], copy=False):
+        indices = np.array(indices)
         if copy:
             builder = self.copy()
             builder.subset(indices, copy=False)
@@ -107,7 +108,7 @@ class BaseBuilder(Dataset):
         return self
 
     def reindices(self, indices: Sequence[int]):
-        self._reindices = indices
+        self._reindices = np.array(indices)
         return self
 
     def zip(self):
@@ -127,10 +128,10 @@ class BaseBuilder(Dataset):
         """
         if not flag:
             return self
-        import random
-        ids = list(range(self.raw_len))
-        random.shuffle(ids)
-        self._reindices = ids
+        if self._sub_indices is not None:
+            np.random.shuffle(self._sub_indices)
+        else:
+            np.random.shuffle(self._reindices)
         return self
 
     def random_sampler(self, replacement: bool = False, generator=None):
