@@ -260,7 +260,7 @@ class Bucket(Queue):
 
     def __init__(self, session_id=None, root=None, retry=7):
         super().__init__(session_id, root, retry)
-        self.file = os.path.join(root, f"{Queue.__name__}_{self.session_id}.sqlite")
+        self.file = os.path.join(self.root, f"{Queue.__name__}_{session_id}.sqlite")
 
     def bucket(self, ind, total):
         rec = self.execute(f"select id,value from queue where id % {total}={ind}").fetchall()
