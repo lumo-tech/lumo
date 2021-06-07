@@ -109,4 +109,4 @@ class PrintExpId(ExpHook):
 class LogCMDAndTest(ExpHook):
     def on_end(self, exp: Experiment):
         from lumo.kit.logger import get_global_logger
-        get_global_logger().raw(f"{exp.test_root} | {sys.argv}")
+        get_global_logger().raw(f"{exp.test_root} | {' '.join(sys.argv)}")
