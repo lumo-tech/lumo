@@ -104,3 +104,9 @@ class PrintExpId(ExpHook):
 
     def on_exit(self, *args, **kwargs):
         print(f"END TEST {self.exp.short_uuid}")
+
+
+class LogCMDAndTest(ExpHook):
+    def on_end(self, exp: Experiment):
+        from lumo.kit.logger import get_global_logger
+        get_global_logger().raw(f"{exp.test_root} | {sys.argv}")

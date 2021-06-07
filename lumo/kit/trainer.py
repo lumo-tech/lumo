@@ -814,7 +814,7 @@ class Trainer(DLLoopMix, _BaseTrainer):
         return TrainerResult(TrainerStage.val, 0)
 
     def evaluate_step(self, idx, batch, params: ParamsType, *args, **kwargs):
-        return self.test_step(idx, batch, params, *args, **kwargs)
+        pass
 
     def test(self, dataloader: Union[DataLoader, DataModule] = None):
         dataloader = self.prepare_dataloader(TrainerStage.test, dataloader)

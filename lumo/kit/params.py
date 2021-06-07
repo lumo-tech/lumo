@@ -487,11 +487,7 @@ class Params(BaseParams):
         self.idx = 0
         self.global_step = 0
         self.device = "cuda:0" if torch.cuda.is_available() else "cpu"
-        self.dataset = None
-        self.arch = None
         self.stage = self.choice('init', 'train', 'test', 'val')
-        self.optim = None  # type:OptimBuilder
-        # self.tmp_dir = None  # type:str # set TMPDIR environment
 
     def iparams(self):
         pass

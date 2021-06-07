@@ -372,9 +372,10 @@ class TrainerExperiment(Experiment):
 
     def __init__(self, exp_name, test_name=None):
         super().__init__(exp_name, test_name)
-        from .exphook import LastCmd, LogCmd
+        from .exphook import LastCmd, LogCmd, LogCMDAndTest
         self.add_hook(LastCmd())
         self.add_hook(LogCmd())
+        self.add_hook(LogCMDAndTest())
 
     class VAR_KEY:
         WRITER = 'board'

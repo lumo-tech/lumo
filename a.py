@@ -1,12 +1,9 @@
-from lumo.contrib.preprocess.mpqueue import Bucket
+from lumo.nest.params import DataLoaderPM,BaseParams
+from lumo import Params
 
-q = Bucket('3')
+class My(Params,DataLoaderPM):
+    pass
 
-from lumo.contrib.itertools import window
+a = My()
 
-for i in window(range(100), 10, 10):
-    res = q.pushk(*i)
-    print(i, res)
-
-print(list(q.bucket(5, 20)))
-print(list(q.bucket(1, 20)))
+print(a)

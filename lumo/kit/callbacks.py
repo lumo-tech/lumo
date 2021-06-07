@@ -626,3 +626,18 @@ class AutoLoadModel(InitialCallback):
             path = params.get('pretrain_path', None)
             if path is not None:
                 trainer.load_state_dict(path)
+
+
+class EvalFirst(AutoLoadModel):
+
+    def __init__(self, datamodule=None):
+        super().__init__()
+        self.datamodule = datamodule
+
+    def on_imodels_end(self, trainer: Trainer, func, params: Params, meter: Meter, *args, **kwargs):
+        super().on_imodels_end(trainer, func, params, meter, *args, **kwargs)
+        if params.get('eval_first', True):
+            if self.datamodule is not None:
+                trainer.evaluate(self.datamodule)
+            else:
+                trainer.evaluate()
