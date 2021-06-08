@@ -92,7 +92,9 @@ class Logger:
         if fix >= 0:
             left, right = self.sep.join(space[:fix + 1]), self.sep.join(space[fix + 1:])
             fix = len(left) + len(self.sep)
-            logstr = self.sep.join((left, right))
+            logstr = left
+            if len(right) > 0:
+                logstr = self.sep.join((logstr, right))
 
             if inline:
                 if append:

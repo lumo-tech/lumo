@@ -538,6 +538,17 @@ class DatasetBuilder(BaseBuilder):
         return self._batch_sampler
 
 
+class RemoteDataset(BaseBuilder):
+    def as_client(self, ds_name, address='127.0.0.1', port=9638):
+        pass
+
+    def as_server(self, ds_name, address='127.0.0.1', port=9638):
+        import fastapi
+        api = fastapi.FastAPI()
+
+        return api
+
+
 class SimpleDataset(DatasetBuilder):
     def __init__(self,
                  xs=None, ys=None,
