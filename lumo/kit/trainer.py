@@ -805,6 +805,8 @@ class Trainer(DLLoopMix, _BaseTrainer):
         if dataloader is None:
             return TrainerResult(TrainerStage.val, 1, 'no eval_dataloader')
         self._check_models_init()
+
+        _stage = self.params.stage
         self.to_stage(TrainerStage.val)
 
         with torch.no_grad():
@@ -813,6 +815,7 @@ class Trainer(DLLoopMix, _BaseTrainer):
                 self.params.idx = idx
                 meter = self.evaluate_step(idx, batch, self.params)
                 avg.update(self._wrap_result(meter))
+        self.to_stage(_stage)
         return TrainerResult(TrainerStage.val, 0)
 
     def evaluate_step(self, idx, batch, params: ParamsType, *args, **kwargs):
@@ -823,6 +826,7 @@ class Trainer(DLLoopMix, _BaseTrainer):
         if dataloader is None:
             return TrainerResult(TrainerStage.test, 1, 'no test_dataloader')
         self._check_models_init()
+        _stage = self.params.stage
         self.to_stage(TrainerStage.test)
 
         with torch.no_grad():
@@ -831,6 +835,7 @@ class Trainer(DLLoopMix, _BaseTrainer):
                 self.params.idx = idx
                 meter = self.test_step(idx, batch, self.params)
                 avg.update(self._wrap_result(meter))
+        self.to_stage(_stage)
         return TrainerResult(TrainerStage.test, 0)
 
     def test_step(self, idx, batch, params: ParamsType, *args, **kwargs):
