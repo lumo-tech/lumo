@@ -324,7 +324,10 @@ class Experiment:
         no_commit = globs.get_first(CFG.STATE.DISABLE_GIT,
                                     default=CFG.STATE.DEFAULT.DISABLE_GIT)
         if not no_commit and local_rank() <= 0:
-            commit_ = git_commit(key=LIBRARY_NAME, info=self.test_root).hexsha[:8]
+            commit_ = git_commit(key=LIBRARY_NAME, info=self.test_root)
+            if commit_ is not None:
+                commit_ = commit_.hexsha[:8]
+
             if commit_ is not None:
                 self.writeline('commit', commit_)
                 self.dump_info(EXP.GIT, {
