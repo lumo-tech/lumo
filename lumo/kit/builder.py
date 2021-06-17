@@ -131,6 +131,8 @@ class BaseBuilder(Dataset):
         if self._sub_indices is not None:
             np.random.shuffle(self._sub_indices)
         else:
+            if self._reindices is None:
+                self.reindices(range(len(self)))
             np.random.shuffle(self._reindices)
         return self
 
