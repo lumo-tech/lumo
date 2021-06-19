@@ -17,49 +17,6 @@ class _NoneResult():
         return None
 
 
-class _PopQueue():
-    def __init__(self, ids, records):
-        self.ids = ids
-        self.records = records
-        self.i = 0
-        self.idset = set()
-
-    def update(self, ids, records):
-        nids = []
-        nrecs = []
-        for id, record in zip(ids, records):
-            if id in self.idset:
-                continue
-            nids.append(id)
-            nrecs.append(record)
-
-        self.i = 0
-        self.ids = nids
-        self.records = nrecs
-        if len(nids) > 0:
-            return True
-        else:
-            return False
-
-    def has_next(self):
-        return self.i < len(self.records)
-
-    def top(self):
-        return row(self.ids[self.i], self.records[self.i])
-
-    def pop(self):
-        if not self.has_next():
-            return None
-
-        res = self.top()
-        self.idset.add(res[0])
-        self.i += 1
-        return res
-
-    def __len__(self):
-        return len(self.ids)
-
-
 class MPStruct:
     TABLE_NAME = None
     TABLE_SQL = None
@@ -206,18 +163,6 @@ class Queue(MPStruct):
         else:
             return len(values)
 
-    @property
-    def pop_queue(self):
-        if self._pop_queue is None or not self._pop_queue.has_next():
-            recs = self.cursor.execute("select id,value from queue;").fetchall()
-            ids = [i[0] for i in recs]
-            records = [self.decode_value(i[1]) for i in recs]
-            if self._pop_queue is None:
-                self._pop_queue = _PopQueue(ids, records)
-            else:
-                self._pop_queue.update(ids, records)
-        return self._pop_queue
-
     def popk(self, k=1):
         rec = self.execute(f"select id,value from queue limit {k};").fetchall()
 
@@ -249,7 +194,12 @@ class Queue(MPStruct):
             return None
 
     def top(self):
-        return self.pop_queue.top()
+        rec = self.execute(f"select id,value from queue limit 1;").fetchone()
+        if rec is not None:
+            id, value = rec
+            value = self.decode_value(value)
+            return row(id, value)
+        return None
 
     @property
     def count(self):

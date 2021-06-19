@@ -221,10 +221,11 @@ class Experiment:
 
         def _create_test_name():
             from lumo.utils.dates import strftime
+            from lumo.utils.hash import hash
             fs = os.listdir(self.exp_root)
             date_str = strftime('%y%m%d')
             fs = [i for i in fs if i.startswith(date_str)]
-            _test_name = f"{date_str}.{len(fs):03d}t"
+            _test_name = f"{date_str}.{len(fs):03d}.{hash(time.time_ns())[-6:-4]}t"
             return _test_name
 
         if self._test_name is None:

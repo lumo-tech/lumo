@@ -153,3 +153,25 @@ class KLLoss(Loss):
             meter[name] = loss
 
         return loss
+
+
+class ContranstiveLoss(Loss):
+    def loss_contrastive_(self, queries: torch.Tensor, keys: torch.Tensor, temperature=0.1,
+                          meter: Meter = None, name: str = 'Lcs'):
+        """
+        loss_contrastive_(torch.rand(4, 128), torch.rand(4, 128))
+
+        :param queries:
+        :param keys:
+        :param temperature:
+        :return:
+        """
+        b, device = queries.shape[0], queries.device
+        logits = queries @ keys.t()
+        logits = logits - logits.max(dim=-1, keepdim=True).values
+        logits /= temperature
+        loss = F.cross_entropy(logits, torch.arange(b, device=device))
+        if meter is not None:
+            meter[name] = loss
+
+        return loss
