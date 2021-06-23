@@ -356,6 +356,7 @@ class LoggerCallback(TrainCallback, InitialCallback, SaveLoadCallback):
         meter = self.meter
         if self._need_breakline(params.idx):
             trainer.logger.newline()
+            self.reset_meter()
         if self._need_log(params.idx):
             trainer.logger.inline("{}/{}".format(params.idx + 1, len(trainer.train_dataloader)), meter, fix=1)
 

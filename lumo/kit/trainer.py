@@ -774,6 +774,7 @@ class Trainer(DLLoopMix, _BaseTrainer):
 
         while self.params.eidx < self.params.epoch:
             self.params.eidx += 1
+            self.to_stage(TrainerStage.train)
             self.train_epoch(dataloader)
             if self.train_toggle:
                 self.train_toggle = False
@@ -784,7 +785,6 @@ class Trainer(DLLoopMix, _BaseTrainer):
         return TrainerResult(TrainerStage.train, 0)
 
     def train_epoch(self, dataloader: DataLoader):
-        self.to_stage(TrainerStage.train)
         avg = AvgMeter()
         for idx, batch in enumerate(dataloader):
             self.params.global_step += 1
