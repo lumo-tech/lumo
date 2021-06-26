@@ -274,6 +274,7 @@ class BaseParams():
         def func(**kwargs):
             if '_help' in kwargs:
                 print(self)
+                exit()
                 return
 
             if '_json' in kwargs:

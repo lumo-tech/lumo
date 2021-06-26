@@ -4,6 +4,7 @@
 
 from lumo import Params
 params = Params()
+params.from_args()
 print(params)
 
 params.epoch = 400
