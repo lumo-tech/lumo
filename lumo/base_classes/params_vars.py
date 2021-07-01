@@ -7,19 +7,27 @@ from .attr import attr
 
 
 class OptimBuilder(attr):
-    def __init__(self, name: str = None, **kwargs):
-        super().__init__()
-        self.args = attr.from_dict(kwargs)  # type:attr
-        self.name = name
+    # @overload
+    # def __init__(self,values:):
+
+    # def __init__(self, name: str = None, **kwargs):
+    #     super().__init__()
+    #     self.args = attr.from_dict(kwargs)  # type:attr
+    #     self.name = name
+    @property
+    def args(self):
+        return self
 
     def build(self, parameters, optim_cls=None) -> Optimizer:
-        lname = self.name.lower()
+        assert 'name' not in self
+        lname = self['name'].lower()
+        args = dict(self)
+        args.pop('name')
         if optim_cls is None:
-            assert self.name is not None
             optim_lib = importlib.import_module("torch.optim.{}".format(lname))
             optim_cls = getattr(optim_lib, self.name, None)
 
-        return optim_cls(parameters, **self.args)
+        return optim_cls(parameters, **args)
 
 
 class ScheduleParams(attr):
@@ -40,7 +48,7 @@ class ParamsFactory:
     @staticmethod
     def create_optim(name, **kwargs):
         kwargs = ParamsFactory._filter_none(**kwargs)
-        return OptimBuilder(name, **kwargs)
+        return OptimBuilder(name=name, **kwargs)
 
     @staticmethod
     def create_scheule(name, **kwargs):
@@ -52,7 +60,8 @@ class ParamsFactory:
 
 class OptimMixin():
     @overload
-    def create_optim(self, name='SGD', lr=None, momentum=0, dampening=0, weight_decay=0, nesterov=False) -> OptimBuilder:
+    def create_optim(self, name='SGD', lr=None, momentum=0, dampening=0, weight_decay=0,
+                     nesterov=False) -> OptimBuilder:
         pass
 
     @overload

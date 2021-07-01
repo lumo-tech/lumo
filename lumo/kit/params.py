@@ -139,9 +139,9 @@ class BaseParams():
 
         if len(dynamic_propertys) > 0:
             property_str = safe_param_repr(dynamic_propertys)
-            return "{}".format(
+            return "{}.Space".format(
                 self.__class__.__name__) + '(\n' + args_str + '\n    # @property\n' + property_str + '\n)'
-        return "{}".format(self.__class__.__name__) + '(\n' + args_str + '\n)'
+        return "{}.Space".format(self.__class__.__name__) + '(\n' + args_str + '\n)'
 
     __str__ = __repr__
 
@@ -165,6 +165,10 @@ class BaseParams():
             raise BoundCheckError(f"value of param '{name}' should in range [{bound.left}, {bound.right}].")
         elif isinstance(bound, choice_param) and value not in bound.choices:
             raise BoundCheckError(f"value of param '{name}' should in values {bound.choices}.")
+
+    @classmethod
+    def Space(cls, **kwargs):
+        return cls().from_dict(kwargs)
 
     def copy(self):
         res = self.__class__()
@@ -364,6 +368,7 @@ class BaseParams():
         """alias of update()"""
         for k, v in dic.items():
             self[k] = v
+        return self
 
     def to_json(self, fn: str):
         """
