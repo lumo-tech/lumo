@@ -136,9 +136,12 @@ class BaseParams():
         args = [(k, v, _arg_to_str(k, v)) for k, v in args]
 
         args_str = safe_param_repr(args)
-        property_str = safe_param_repr(dynamic_propertys)
 
-        return "{}".format(self.__class__.__name__) + '(\n' + args_str + '\n    # @property\n' + property_str + '\n)'
+        if len(dynamic_propertys) > 0:
+            property_str = safe_param_repr(dynamic_propertys)
+            return "{}".format(
+                self.__class__.__name__) + '(\n' + args_str + '\n    # @property\n' + property_str + '\n)'
+        return "{}".format(self.__class__.__name__) + '(\n' + args_str + '\n)'
 
     __str__ = __repr__
 
