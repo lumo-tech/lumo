@@ -78,6 +78,7 @@ class Experiment:
             f"--pid={os.getpid()}",
             f"--test_name={self.test_name}",
             f"--exp_name={self.exp_name}",
+            # f"--params={sys.argv}" # TODO add sys.argv
         ]
         subprocess.Popen(' '.join(cmd),
                          stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True,

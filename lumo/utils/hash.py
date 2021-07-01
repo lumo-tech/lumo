@@ -37,7 +37,11 @@ def filter_filename(title: str, substr='-'):
     return title
 
 
-def hash(value) -> str:
+def inthash(value) -> int:
+    return int(hash(value), 16)
+
+
+def hash(value, hexint=False) -> str:
     """try to calculate hash of any given object"""
     import hashlib
     from collections.abc import Iterable
@@ -66,7 +70,10 @@ def hash(value) -> str:
     elif isinstance(value, Iterable):
         for v in value:
             hl.update(hash(v).encode(encoding='utf-8'))
-    return hl.hexdigest()
+
+    res = hl.hexdigest()
+    if hexint:
+        return str(int(res, 16))
 
 
 def hash_model(model: nn.Module):

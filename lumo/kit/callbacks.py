@@ -581,8 +581,7 @@ class LRSchedule(TrainCallback):
             else:
                 self.schedule = params.lr_sche
 
-    def on_train_epoch_end(self, trainer: Trainer, func, params: Params, meter: Meter, *args, **kwargs):
-        super().on_train_epoch_end(trainer, func, params, meter, *args, **kwargs)
+    def on_train_epoch_begin(self, trainer: Trainer, func, params: Params, *args, **kwargs):
         for k, v in trainer.optim_dict.items():
             if self.use_eidx:
                 step = params.eidx

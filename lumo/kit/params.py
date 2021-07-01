@@ -14,6 +14,7 @@ from itertools import chain
 from typing import Any, overload, TypeVar, Optional, List, Union
 from accelerate.kwargs_handlers import KwargsHandler
 from accelerate.utils import RNGType
+from lumo.utils.string import safe_param_repr
 import fire
 import torch
 
@@ -113,15 +114,31 @@ class BaseParams():
         self._param_dict = d['_param_dict']
         self._repeat = d['_repeat']
         self._lock = d['_lock']
-        self._bind = d['_bound']
+        self._constrain = d['_bound']
         self._namespace = d['_namespace']
 
     def __repr__(self):
+        import textwrap
+
         dynamic_propertys = [(k, io.safe_getattr(self, k, None)) for k in self.__dir__() if
                              isinstance(getattr(self.__class__, k, None), property)]
 
-        return "{}".format(self.__class__.__name__) + pp.pformat(
-            [(k, v) for k, v in chain(self._param_dict.items())] + [{'propertys': dynamic_propertys}])
+        dynamic_propertys = [(k, v, f'{type(v).__name__}') for k, v in dynamic_propertys]
+
+        def _arg_to_str(k, v):
+            res = self._constrain.get(k, None)
+            if res is not None:
+                return f'{res}, {type(v).__name__}'
+            return f'{type(v).__name__}'
+
+        args = [(k, v) for k, v in
+                chain(self._param_dict.items())]
+        args = [(k, v, _arg_to_str(k, v)) for k, v in args]
+
+        args_str = safe_param_repr(args)
+        property_str = safe_param_repr(dynamic_propertys)
+
+        return "{}".format(self.__class__.__name__) + '(\n' + args_str + '\n    # @property\n' + property_str + '\n)'
 
     __str__ = __repr__
 
