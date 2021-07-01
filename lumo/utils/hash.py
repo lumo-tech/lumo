@@ -73,7 +73,8 @@ def hash(value, hexint=False) -> str:
 
     res = hl.hexdigest()
     if hexint:
-        return str(int(res, 16))
+        res = str(int(res, 16))
+    return res
 
 
 def hash_model(model: nn.Module):
