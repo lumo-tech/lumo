@@ -19,7 +19,7 @@ class OptimBuilder(attr):
         return self
 
     def build(self, parameters, optim_cls=None) -> Optimizer:
-        assert 'name' not in self
+        assert 'name' in self
         lname = self['name'].lower()
         args = dict(self)
         args.pop('name')
