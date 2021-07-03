@@ -316,6 +316,7 @@ class BaseParams():
                 self[k] = v
 
         fire.Fire(func)
+        self.iparams()
         return self
 
     def from_yaml(self, fn):
@@ -341,6 +342,7 @@ class BaseParams():
                 print(e, file=sys.stderr)
         else:
             print(f'{fn} not exists, ignored load params from yaml file, please verify the path.', file=sys.stderr)
+        self.iparams()
         return self
 
     def from_json(self, fn):
@@ -362,12 +364,16 @@ class BaseParams():
                 print(e, file=sys.stderr)
         else:
             print(f'{fn} not exists, ignored load params from json file, please verify the path', file=sys.stderr)
+
+        self.iparams()
         return self
 
     def from_dict(self, dic: dict):
         """alias of update()"""
         for k, v in dic.items():
             self[k] = v
+
+        self.iparams()
         return self
 
     def to_json(self, fn: str):
@@ -451,6 +457,9 @@ class BaseParams():
         for param in params:
             self._param_dict.update(param._param_dict)
 
+    def iparams(self):
+        pass
+
 
 class DistributionParams(BaseParams):
     def __init__(self):
@@ -514,9 +523,6 @@ class Params(BaseParams):
         self.global_step = 0
         self.device = "cuda:0" if torch.cuda.is_available() else "cpu"
         self.stage = self.choice('init', 'train', 'test', 'val')
-
-    def iparams(self):
-        pass
 
 
 ParamsType = TypeVar('ParamsType', bound=Params)

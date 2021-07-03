@@ -180,8 +180,6 @@ class _BaseTrainer(ModelMix, CallbackMix, metaclass=Merge):
             'params': params,
             'exp': TrainerExperiment(self._gene_class_exp_name()),
         })
-        params.iparams()
-
         self._initialize_globs()
         self._initial_exp()
 
