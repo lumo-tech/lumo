@@ -6,7 +6,7 @@ import time
 import warnings
 from collections import OrderedDict
 
-from lumo.utils.dates import strftime
+from lumo.proc.date import strftime
 
 
 def format_second(sec: int) -> str:

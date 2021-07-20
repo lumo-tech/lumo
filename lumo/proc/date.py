@@ -3,6 +3,7 @@ Methods about file/date/format.
 """
 import os
 from datetime import datetime
+import hashlib
 
 
 def strftime(fmt='%y-%m-%d-%H%M%S', dateobj: datetime = None):
@@ -39,3 +40,11 @@ def file_ctime2date(file, fmt='%y%m%d-%H%M%S') -> str:
     ctime : time of last status change
     """
     return strftime(fmt, datetime.fromtimestamp(os.path.getctime(file)))
+
+
+def timehash():
+    import time
+    time_ns = str(time.time_ns())
+    hl = hashlib.md5()
+    hl.update(time_ns.encode(encoding='utf-8'))
+    return hl.hexdigest()

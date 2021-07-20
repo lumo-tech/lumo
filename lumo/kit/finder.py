@@ -12,10 +12,10 @@ from typing import Dict, List
 from git import Commit, Repo
 from lumo.base_classes import attr
 from lumo.utils import safe_io as io
-from lumo.utils.dates import date_from_str
-from lumo.utils.keys import FN, EXP
-from lumo.utils.paths import home_dir, compare_path
-from lumo.utils.repository import load_repo, repo_dir
+from lumo.proc.date import date_from_str
+from lumo.proc.const import FN, EXP
+from lumo.utils.paths import compare_path
+from lumo.proc.path import git_dir, libhome
 
 
 class TestProp():
@@ -141,8 +141,9 @@ class Test(TestProp):
 
     @property
     def grepo(self) -> Repo:
-        repo = load_repo(self.repo_root)
-        return repo
+        raise NotImplementedError()
+        # repo = load_repo(self.repo_root)
+        # return repo
 
     @property
     def gcommit(self) -> Commit:
@@ -306,7 +307,7 @@ class Query:
         elif path is not None:
             self.conditions.add(LambdaCondition(lambda x: compare_path(path, x.repo_root)))  # type:Test
         else:
-            path = repo_dir()
+            path = git_dir(path)
             if path is not None:
                 return self.in_repo(path=path)
             else:
@@ -320,7 +321,7 @@ class Query:
 
 class Finder:
     def __init__(self):
-        fn = os.path.join(home_dir(), FN.REPOSJS)
+        fn = os.path.join(libhome(), FN.REPOSJS)
         if os.path.exists(fn):
             res = io.load_json(fn)
         else:
@@ -331,7 +332,7 @@ class Finder:
         self.refresh()
 
     def refresh(self):
-        fn = os.path.join(home_dir(), FN.TESTLOG)
+        fn = os.path.join(libhome(), FN.TESTLOG)
         if not os.path.exists(fn):
             return
         res = io.load_string(fn)

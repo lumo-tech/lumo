@@ -1,9 +1,10 @@
 import os
 import stat
 import sys
-from lumo.utils.keys import FN
 from lumo.utils.exithook import wrap_before, wrap_after
+from lumo.proc.path import libhome, local_dir
 from .experiment import Experiment
+from ..proc.const import EXP_CONST, FN
 
 
 class ExpHook():
@@ -27,7 +28,7 @@ class LogCmd(ExpHook):
     """a './cache/cmds.log' file will be generated, """
 
     def on_start(self, exp: Experiment):
-        from lumo.utils.dates import strftime
+        from lumo.proc.date import strftime
         fn = exp.project_cache_fn(f'{strftime("%y-%m-%d")}.log', 'cmds')
         res = exp.exec_argv
 
@@ -40,15 +41,13 @@ class LogCmd(ExpHook):
 
 class LogTestGlobally(ExpHook):
     def on_start(self, exp: Experiment):
-        from lumo.utils.paths import home_dir
-        fn = os.path.join(home_dir(), FN.TESTLOG)
+        fn = os.path.join(libhome(), FN.TESTLOG)
         with open(fn, 'a', encoding='utf-8') as w:
             w.write(f'{exp.test_root}\n')
 
 
 class LogTestLocally(ExpHook):
     def on_start(self, exp: Experiment):
-        from lumo.utils.paths import local_dir
         local_ = local_dir()
         if local_ is None:
             return
@@ -59,10 +58,10 @@ class LogTestLocally(ExpHook):
 
 class RegistRepo(ExpHook):
     def on_start(self, exp: Experiment):
-        from lumo.utils.paths import home_dir
-        from lumo.utils.keys import CFG, FN
+        from ..proc.const import FN
+        from ..proc.const import CFG
         from lumo.utils import safe_io as io
-        fn = os.path.join(home_dir(), FN.REPOSJS)
+        fn = os.path.join(libhome(), FN.REPOSJS)
         res = None
         if os.path.exists(fn):
             res = io.load_json(fn)
@@ -70,11 +69,11 @@ class RegistRepo(ExpHook):
             res = {}
 
         inner = res.setdefault(exp.project_hash, {})
-        inner[CFG.REPO_NAME] = exp.project_name
-        repos = inner.setdefault(CFG.PATH.REPO, [])
+        inner['name'] = exp.project_name
+        repos = inner.setdefault('repo', [])
         if exp.project_root not in repos:
             repos.append(exp.project_root)
-        storages = inner.setdefault(CFG.PATH.EXP_ROOT, [])
+        storages = inner.setdefault('exp_root', [])
         if exp.exp_root not in storages:
             storages.append(exp.exp_root)
 
@@ -107,6 +106,10 @@ class PrintExpId(ExpHook):
 
 
 class LogCMDAndTest(ExpHook):
+    def on_start(self, exp: Experiment):
+        from lumo.kit.logger import get_global_logger
+        # get_global_logger().raw(f"{exp.test_root} | {' '.join(sys.argv)}")
+
     def on_end(self, exp: Experiment):
         from lumo.kit.logger import get_global_logger
         get_global_logger().raw(f"{exp.test_root} | {' '.join(sys.argv)}")

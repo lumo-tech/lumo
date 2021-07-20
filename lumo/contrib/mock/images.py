@@ -3,7 +3,7 @@ import torch
 import numpy as np
 import random
 import os
-from lumo.utils.paths import cache_dir
+from lumo.proc.path import cache_dir
 from lumo.utils import cacher
 from lumo.kit.logger import get_global_logger
 

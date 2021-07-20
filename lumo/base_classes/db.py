@@ -7,8 +7,7 @@ import os
 
 from lumo.base_classes import attr
 from lumo.utils.hash import string_hash
-from lumo.utils.paths import cache_dir
-
+from lumo.proc.path import cache_dir
 
 class _NoneResult():
     def fetchone(self):

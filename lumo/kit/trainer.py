@@ -31,7 +31,7 @@ from .mixin import ModelMix, CallbackMix, DataModuleMix
 from .params import ParamsType
 from lumo.base_classes import attr, TrainerStage
 from lumo.base_classes.metaclasses import Merge
-from lumo.utils.keys import TRAINER
+from ..proc.const import TRAINER
 from lumo.utils import dist
 from lumo.utils.device import construct_device_args_kwargs, to_device_enumrate
 from lumo.contrib.accelerate import Accelerator

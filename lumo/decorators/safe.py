@@ -9,6 +9,7 @@ def safe_load(default=None, print_exc_stack=True, print_method_args=True):
             try:
                 return func(*args, **kwargs)
             except BaseException as e:
+                traceback.print_exc()
                 print('=' * 80, file=sys.stderr)
                 size = 80
                 print('| ignored exception from safe_load()', file=sys.stderr)

@@ -7,12 +7,6 @@ from functools import lru_cache
 from typing import Dict, List
 
 from git import Commit, Repo
-from lumo.base_classes import attr
-from lumo.utils import safe_io as io
-from lumo.utils.dates import date_from_str
-from lumo.utils.keys import FN, EXP
-from lumo.utils.paths import home_dir, compare_path
-from lumo.utils.repository import load_repo, repo_dir
 
 
 class TestProp():

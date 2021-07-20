@@ -41,14 +41,14 @@ from lumo import globs
 func_map = {}
 
 
-@regist_func_to(func_map)
+# @regist_func_to(func_map)
 def init(src_dir=None, template=None):
     import shutil
     import os
 
     if src_dir is None:
         src_dir = os.getcwd()
-    from lumo.utils.repository import init_repo
+    from .api.git import init_repo
 
     # dir_name = os.path.basename(src_dir)
     _, init = init_repo(src_dir)
@@ -181,15 +181,11 @@ def config(field=None, k=None, v=None):
     """
 
     Args:
-        field: local/global/list
         k: key of the value
         v: value for key
     """
     if field is None or k is None:
         print(config.__doc__)
-
-    if field not in {globs.REPO, globs.GLOBAL, 'list'}:
-        raise KeyError(field)
 
     if field == 'list':
         print(globs)

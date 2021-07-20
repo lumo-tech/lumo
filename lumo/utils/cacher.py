@@ -9,7 +9,7 @@ import os
 import inspect
 from typing import List, Tuple, Union, Mapping, Sequence, Set
 
-from .paths import cache_dir
+from lumo.proc.path import cache_dir
 from . import safe_io as io
 
 

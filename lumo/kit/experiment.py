@@ -1,3 +1,9 @@
+"""
+Experiment
+ - 记录各个参数
+ - 生成各个路径
+ - 实时记录
+"""
 import os
 import time
 import random
@@ -8,14 +14,17 @@ from typing import Union, TYPE_CHECKING
 from uuid import uuid1
 from lumo.base_classes import attr
 from lumo.kit.environ import globs
-from lumo.utils import paths
-from lumo.utils import safe_io as io
-from lumo.utils.dates import strftime
-from lumo.utils.keys import CFG, EXP, FN, LIBRARY_NAME
-from lumo.utils.repository import commit as git_commit
-from lumo.utils.dist import local_rank, is_dist
 
-PATH_DEFAULT = CFG.PATH.DEFAULT
+from lumo.utils.paths import checkpath
+from lumo.utils import safe_io as io
+from lumo.proc.date import strftime
+from lumo.proc.dist import local_rank, is_dist
+from lumo.proc.const import CFG, FN, EXP_CONST
+from lumo.proc.path import local_dir
+from lumo.proc.explore import git_enable
+
+# from lumo.utils.repository import commit as git_commit
+# from lumo.utils.repository import _commits_map
 
 if TYPE_CHECKING:
     from .exphook import ExpHook
@@ -60,12 +69,12 @@ class Experiment:
         )
 
     def _create_dir(self, root, dirname):
-        res = paths.checkpath(root, dirname)
+        res = checkpath(root, dirname)
         return res
 
     def _create_fn(self, basename, dirname, root):
         if dirname is not None:
-            res = paths.checkpath(root, dirname)
+            res = checkpath(root, dirname)
         else:
             res = root
         return os.path.join(res, basename)
@@ -115,14 +124,14 @@ class Experiment:
         return self._create_fn(basename, dirname, self.test_root)
 
     def load_info(self, key):
-        fn = self.test_fn(self._create_info_basename(key), FN.D_JSON)
+        fn = self.test_fn(self._create_info_basename(key), EXP_CONST.IO_DIR.SINFO_DIR)
         if not os.path.exists(fn):
             return None
         return attr.from_dict(io.load_json(fn))
 
     def dump_info(self, key, info: dict, append=False):
         info = attr(info).jsonify()
-        fn = self.test_fn(self._create_info_basename(key), FN.D_JSON)
+        fn = self.test_fn(self._create_info_basename(key), EXP_CONST.IO_DIR.SINFO_DIR)
         if append and os.path.exists(fn):
             old_info = self.load_info(key)
             for k, v in info.items():
@@ -132,32 +141,32 @@ class Experiment:
         return fn
 
     def load_pkl(self, key):
-        fn = self.test_fn(self._create_bin_basename(key), FN.D_PKL)
+        fn = self.test_fn(self._create_bin_basename(key), EXP_CONST.IO_DIR.PKL_DIR)
         if not os.path.exists(fn):
             return None
         with open(fn, 'r') as r:
             return pickle.load(r)
 
     def dump_pkl(self, key, info):
-        fn = self.test_fn(self._create_bin_basename(key), FN.D_PKL)
+        fn = self.test_fn(self._create_bin_basename(key), EXP_CONST.IO_DIR.PKL_DIR)
         with open(fn, 'wb') as w:
             pickle.dump(info, w)
         return fn
 
     def writeline(self, key, value: str):
-        fn = self.test_fn(f"{key}.txt", FN.D_LINE)
+        fn = self.test_fn(f"{key}.txt", EXP_CONST.IO_DIR.INFO_DIR)
         with open(fn, 'w', encoding='utf-8') as w:
             w.write(value)
 
     def readline(self, key):
-        fn = self.test_fn(f"{key}.txt", FN.D_LINE)
+        fn = self.test_fn(f"{key}.txt", EXP_CONST.IO_DIR.INFO_DIR)
         if not os.path.exists(fn):
             return ''
         with open(fn, 'r', encoding='utf-8') as r:
             return ''.join(r.readlines())
 
     def readlines(self, raw=False) -> Union[dict, str]:
-        line_root = os.path.join(self.test_root, FN.D_LINE)
+        line_root = os.path.join(self.test_root, EXP_CONST.IO_DIR.INFO_DIR)
         fs_ = os.listdir(line_root)
         fs_ = [f for f in fs_ if f.endswith('.txt')]
         res = {}
@@ -192,7 +201,7 @@ class Experiment:
             extra['exc_type'] = exc_type
             extra['end_info'] = str(exc_type)
             extra['end_code'] = 1
-            self.writeline(EXP.EXCEPTION,
+            self.writeline('exception',
                            "".join(traceback.format_exception(exc_type, exc_val, exc_tb)))
         self.end(**extra)
 
@@ -202,11 +211,14 @@ class Experiment:
 
     @property
     def project_hash(self):
-        local_ = paths.local_dir()
-        if local_ is None:
-            return ''
-        hash_fn = os.path.join(local_, FN.PHASH)
-        return io.load_string(hash_fn)
+        hash_fn = os.path.join(self.project_root, FN.PHASH)
+        if os.path.exists(hash_fn):
+            return io.load_string(hash_fn)
+        else:
+            with open(hash_fn, 'w') as w:
+                hash = uuid1().hex[-8:-4]
+                w.write(hash)
+            return hash
 
     @property
     def project_name(self):
@@ -218,15 +230,14 @@ class Experiment:
 
     @property
     def test_name(self):
-        """Identity for current test"""
+        """Create unique name for the current test"""
 
         def _create_test_name():
-            from lumo.utils.dates import strftime
-            from lumo.utils.hash import hash
+            from lumo.proc.date import strftime, timehash
             fs = os.listdir(self.exp_root)
             date_str = strftime('%y%m%d')
             fs = [i for i in fs if i.startswith(date_str)]
-            _test_name = f"{date_str}.{len(fs):03d}.{hash(time.time_ns())[-6:-4]}t"
+            _test_name = f"{date_str}.{len(fs):03d}.{timehash()[-6:-4]}t"
             return _test_name
 
         if self._test_name is None:
@@ -251,50 +262,35 @@ class Experiment:
     @property
     def storage_root(self):
         """experiments root dir, default is `~/.lumo/experiments`"""
-        path = globs.get_first(CFG.PATH.LOCAL_EXP, CFG.PATH.GLOBAL_EXP,
-                               default=PATH_DEFAULT.GLOBAL_EXP)
+        path = globs[CFG.PATH.GLOBAL_EXP]
 
-        return paths.checkpath(path)
+        return checkpath(path)
 
     @property
     def cache_root(self) -> str:
         """cache root for lumo, default"""
-        res = globs.get_first(CFG.PATH.CACHE,
-                              default=PATH_DEFAULT.CACHE)
-        return paths.checkpath(res)
+        res = globs[CFG.PATH.CACHE]
+        return checkpath(res)
 
     @property
     def exp_root(self) -> str:
         """root dir for current experiment"""
-        return paths.checkpath(self.storage_root, self.exp_name)
+        return checkpath(self.storage_root, self.exp_name)
 
     @property
     def test_root(self) -> str:
         """Root dir for current test"""
-        return paths.checkpath(self.exp_root, self.test_name)
+        return checkpath(self.exp_root, self.test_name)
 
     @property
     def project_root(self) -> str:
         """git repository root(working dir)"""
-        res = paths.repo_dir()
-        if res is None:
-            res = os.getcwd()
-        return res
+        return local_dir()
 
     @property
     def project_cache_root(self) -> str:
-        """<project_root>/.cache"""
-        if self.project_root is None:
-            return paths.cache_dir()
-        return paths.checkpath(self.project_root, PATH_DEFAULT.LOCAL_CACHE)
-
-    @property
-    def commit_hash(self) -> str:
-        from lumo.utils.repository import _commits_map
-        res = _commits_map.get(LIBRARY_NAME, None)
-        if res is not None:
-            return res.hexsha[:8]
-        return ''
+        """<project_root>/.cache or .cache/lumo"""
+        return checkpath(self.project_root, '.cache')
 
     @property
     def uuid(self):
@@ -304,42 +300,48 @@ class Experiment:
     def short_uuid(self):
         return self.uuid[:6]
 
+    @property
+    def commit_hash(self) -> str:
+        from lumo.utils.repository import _commits_map
+        res = _commits_map.get('lumo', None)
+        if res is not None:
+            return res.hexsha[:8]
+        return ''
+
     def dump_experiment_info(self):
-        self.dump_info(EXP.STATE, {
+        self.dump_info(EXP_CONST.INFO_KEY.STATE, {
             'start': strftime(),
             'end': strftime()
         })
 
-        self.dump_info(EXP.EXECUTE, {
-            CFG.PATH.REPO: self.project_root,
-            CFG.PATH.CACHE: os.getcwd(),
+        self.dump_info(EXP_CONST.INFO_KEY.EXECUTE, {
+            'repo': self.project_root,
+            'cwd': os.getcwd(),
             'exec_file': sys.argv[0],
             'exec_bin': sys.executable,
             'exec_argv': sys.argv
         })
 
-        self.dump_info(EXP.PROJECT, {
+        self.dump_info(EXP_CONST.INFO_KEY.PROJECT, {
             'hash': self.project_hash,
             'root': self.project_root,
         })
 
-        no_commit = globs.get_first(CFG.STATE.DISABLE_GIT,
-                                    default=CFG.STATE.DEFAULT.DISABLE_GIT)
-        if not no_commit and local_rank() <= 0:
-            commit_ = git_commit(key=LIBRARY_NAME, info=self.test_root)
+        if git_enable() and local_rank() <= 0:
+            from lumo.utils.repository import commit
+            commit_ = commit(key='lumo', info=self.test_root)
+            commit_hex = commit_.hexsha[:8]
             if commit_ is not None:
-                commit_ = commit_.hexsha[:8]
-
-            if commit_ is not None:
-                self.writeline('commit', commit_)
-                self.dump_info(EXP.GIT, {
-                    'commit': commit_,
-                    CFG.PATH.REPO: self.project_root,
+                self.writeline('commit', commit_hex)
+                self.dump_info(EXP_CONST.INFO_KEY.GIT, {
+                    'commit': commit_hex,
+                    'repo': self.project_root,
                 })
+
         self.writeline('uuid', uuid1().hex)
 
         from lumo import __version__
-        self.dump_info(EXP.VERSION, {
+        self.dump_info(EXP_CONST.INFO_KEY.VERSION, {
             'lumo': __version__,
         })
 
@@ -351,7 +353,7 @@ class Experiment:
         return self
 
     def end(self, enc_code=0, **extra):
-        self.dump_info(EXP.STATE, {
+        self.dump_info(EXP_CONST.INFO_KEY.STATE, {
             'end_code': enc_code,
             **extra,
         }, append=True)
@@ -424,7 +426,7 @@ class TrainerExperiment(Experiment):
                 cuda_version = torch.cuda_version
             else:
                 cuda_version = '0'
-            self.dump_info(EXP.VERSION, {
+            self.dump_info(EXP_CONST.INFO_KEY.VERSION, {
                 'torch': torch.__version__,
                 'cuda': cuda_version
             }, append=True)
@@ -432,10 +434,6 @@ class TrainerExperiment(Experiment):
             pass
 
     def dump_train_info(self, epoch):
-        self.dump_info(EXP.TRAINER, {
+        self.dump_info(EXP_CONST.INFO_KEY.TRAINER, {
             'epoch': epoch
         }, append=True)
-
-
-class TmpExp(Experiment):
-    pass

@@ -10,10 +10,12 @@ import numpy as np
 import torch
 
 from lumo.base_classes.metaclasses import meta_attr
-from lumo.utils.keys import RESERVE
 
+# from lumo.utils.keys import
 _attr_clss = {}
 from lumo.utils.hash import hash
+
+ATTR_TYPE = '_type'
 
 
 class attr(OrderedDict, metaclass=meta_attr):
@@ -116,7 +118,7 @@ class attr(OrderedDict, metaclass=meta_attr):
 
     def items(self, toggle=False):
         if toggle:
-            yield RESERVE.ATTR_TYPE, self.__class__.__name__
+            yield ATTR_TYPE, self.__class__.__name__
         for k, v in super().items():
             yield k, v
 
@@ -213,7 +215,7 @@ class attr(OrderedDict, metaclass=meta_attr):
     @classmethod
     def from_dict(cls, dic: dict):
         # res = cls()
-        cls_name = dic.get(RESERVE.ATTR_TYPE, cls.__name__)
+        cls_name = dic.get(ATTR_TYPE, cls.__name__)
         if cls_name not in _attr_clss:
             res = attr()
             from .errors import AttrTypeNotFoundWarning
@@ -222,8 +224,8 @@ class attr(OrderedDict, metaclass=meta_attr):
         else:
             res = _attr_clss[cls_name].__new__(_attr_clss[cls_name])
 
-        if RESERVE.ATTR_TYPE in dic:
-            dic.pop(RESERVE.ATTR_TYPE)
+        if ATTR_TYPE in dic:
+            dic.pop(ATTR_TYPE)
 
         if isinstance(res, _none):
             return None

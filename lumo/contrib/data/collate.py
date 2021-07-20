@@ -2,12 +2,12 @@
 
 """
 from functools import wraps
-from typing import Any, Mapping
+from typing import Any, Mapping, Sequence
 
 import numpy as np
 import torch
 
-from torch.utils.data._utils.collate import default_collate, int_classes, string_classes, container_abcs
+from torch.utils.data._utils.collate import default_collate
 
 
 class CollateBase():
@@ -80,15 +80,15 @@ def numpy_collate(batch):
             return np.array(batch)
     elif isinstance(elem, float):
         return np.array(batch, dtype=np.float)
-    elif isinstance(elem, int_classes):
+    elif isinstance(elem, int):
         return np.array(batch)
-    elif isinstance(elem, string_classes):
+    elif isinstance(elem, (str, bytes)):
         return batch
-    elif isinstance(elem, container_abcs.Mapping):
+    elif isinstance(elem, Mapping):
         return {key: numpy_collate([d[key] for d in batch]) for key in elem}
     elif isinstance(elem, tuple) and hasattr(elem, '_fields'):  # namedtuple
         return elem_type(*(numpy_collate(samples) for samples in zip(*batch)))
-    elif isinstance(elem, container_abcs.Sequence):
+    elif isinstance(elem, Sequence):
         # check to make sure that the elements in batch have consistent size
         it = iter(batch)
         elem_size = len(next(it))

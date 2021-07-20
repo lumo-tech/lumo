@@ -3,7 +3,6 @@
 """
 __version__ = "0.1.7.9"
 
-from .utils.paths import global_config_path as _
 from .utils.keys import K
 
 from .kit import (
@@ -24,4 +23,3 @@ from .contrib.data import collate
 
 from . import calculate  # initialize schedule attr classes
 
-_()  # check and initialize global config

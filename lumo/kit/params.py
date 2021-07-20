@@ -1,6 +1,10 @@
 """
 
 """
+import textwrap
+from pprint import pformat
+from typing import List, Union, Any
+
 import copy
 import json
 import os
@@ -14,7 +18,6 @@ from itertools import chain
 from typing import Any, overload, TypeVar, Optional, List, Union
 from accelerate.kwargs_handlers import KwargsHandler
 from accelerate.utils import RNGType
-from lumo.utils.string import safe_param_repr
 import fire
 import torch
 
@@ -135,10 +138,10 @@ class BaseParams():
                 chain(self._param_dict.items())]
         args = [(k, v, _arg_to_str(k, v)) for k, v in args]
 
-        args_str = safe_param_repr(args)
+        args_str = BaseParams.safe_param_repr(args)
 
         if len(dynamic_propertys) > 0:
-            property_str = safe_param_repr(dynamic_propertys)
+            property_str = BaseParams.safe_param_repr(dynamic_propertys)
             return "{}.Space".format(
                 self.__class__.__name__) + '(\n' + args_str + '\n    # @property\n' + property_str + '\n)'
         return "{}.Space".format(self.__class__.__name__) + '(\n' + args_str + '\n)'
@@ -165,6 +168,51 @@ class BaseParams():
             raise BoundCheckError(f"value of param '{name}' should in range [{bound.left}, {bound.right}].")
         elif isinstance(bound, choice_param) and value not in bound.choices:
             raise BoundCheckError(f"value of param '{name}' should in values {bound.choices}.")
+
+    @staticmethod
+    def _safe_repr(values: Any) -> str:
+        return pformat(values)
+
+    @staticmethod
+    def _padding_mod(st: str, offset=7, mod=4):
+        """
+        123 \\
+        1   \\
+        12312341    \\
+        1231
+        Args:
+            strs:
+            mod:
+
+        Returns:
+
+        """
+        size = len(st)
+        if size < offset:
+            return st.ljust(offset, ' ')
+
+        mnum = mod - len(st) % mod
+        # if mnum == 0:
+        #     mnum = mod
+        return st.ljust(size + mnum, ' ')
+
+    @staticmethod
+    def safe_param_repr(values: List[tuple], level=1) -> str:
+        """
+
+        Args:
+            values:
+            level:
+
+        Returns:
+
+        """
+        res = [(f"{k}={BaseParams._safe_repr(v)},", anno) for k, v, anno in values]
+
+        # res = textwrap.fill('\n'.join(res))
+        res = '\n'.join([BaseParams._padding_mod(i, offset=16, mod=4) + f'  # {anno}' for i, anno in res])
+
+        return textwrap.indent(res, '    ')
 
     @classmethod
     def Space(cls, **kwargs):
@@ -471,7 +519,7 @@ class DistributionParams(BaseParams):
 
     @property
     def init_method(self):
-        from lumo.utils.connect import find_free_network_port
+        from lumo.proc.network import find_free_network_port
         port = find_free_network_port()
         return f'tcp://localhost:{port}'
 

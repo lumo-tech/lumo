@@ -6,13 +6,19 @@ from pprint import pformat
 from typing import Any
 
 from lumo.utils import safe_io as io
-from lumo.utils.keys import CFG
-from lumo.utils.paths import local_config_path, global_config_path
+from lumo.proc.const import CFG
+from lumo.proc.path import global_config_path
+
+
+def default_dict():
+    return {CFG.PATH.GLOBAL_EXP: os.path.expanduser("~/.lumo/experiments"),
+            CFG.PATH.DATASET: os.path.expanduser("~/.lumo/datasets"),
+            CFG.PATH.PRETRAINS: os.path.expanduser("~/.lumo/pretrains"),
+            CFG.PATH.CACHE: os.path.expanduser("~/.cache/lumo")}
 
 
 class Globals:
     RUNTIME = CFG.FIELD.RUNTIME
-    REPO = CFG.FIELD.REPO
     GLOBAL = CFG.FIELD.GLOBAL
 
     def __init__(self):
@@ -41,23 +47,9 @@ class Globals:
     def __repr__(self):
         return "Environ({})".format(pformat(self.items()))
 
-    def load_local_config(self, repo_root):
-        fn = local_config_path(repo_root)
-        if fn is not None and os.path.exists(fn):
-            res = io.load_json(fn)
-        else:
-            res = {}
-        self._configs[repo_root] = res
-        self._configs.move_to_end(repo_root, False)
-        return res
-
     @property
     def runtime_config(self):
         return self._configs[CFG.FIELD.RUNTIME]
-
-    @property
-    def repository_config(self):
-        return self._configs[CFG.FIELD.REPO]
 
     @property
     def globals_config(self):
@@ -81,11 +73,10 @@ class Globals:
         """return all config, like dict.items()"""
         return {
             CFG.FIELD.GLOBAL: self._configs[CFG.FIELD.GLOBAL].items(),
-            CFG.FIELD.REPO: self._configs[CFG.FIELD.REPO].items(),
             CFG.FIELD.RUNTIME: self._configs[CFG.FIELD.RUNTIME].items(),
         }
 
-    def require(self, key, level=CFG.FIELD.REPO):
+    def require(self, key, level=CFG.FIELD.GLOBAL):
         """
         Return value if exists, or require user to input value for the specified`key`.
 
@@ -109,7 +100,7 @@ class Config:
     """
     Single Level Config
     """
-    config_levels = [CFG.FIELD.RUNTIME, CFG.FIELD.REPO, CFG.FIELD.GLOBAL, ]
+    config_levels = [CFG.FIELD.DEFAULT, CFG.FIELD.RUNTIME, CFG.FIELD.GLOBAL]
 
     def __init__(self, config_level):
         assert config_level in Config.config_levels, 'config level must in {}'.format(Config.config_levels)
@@ -130,19 +121,18 @@ class Config:
         return self.config_level == CFG.FIELD.GLOBAL
 
     @property
-    def repo_level(self):
-        return self.config_level == CFG.FIELD.REPO
+    def default_level(self):
+        return self.config_level == CFG.FIELD.DEFAULT
 
     @property
     def config_fn(self):
-        if self.config_level == CFG.FIELD.REPO:
-            self._config_fn = local_config_path()
-            self._config_dict = io.load_json(self._config_fn)
-        elif self.config_level == CFG.FIELD.GLOBAL:
+        if self.globals_level:
             self._config_fn = global_config_path()
             self._config_dict = io.load_json(self._config_fn)
-        else:
+        elif self.running_level:
             self._initial_os_env()
+        elif self.default_level:
+            self._config_dict = default_dict()
         return self._config_fn
 
     @property
@@ -150,13 +140,13 @@ class Config:
         if self._config_dict is not None:
             return self._config_dict
 
-        if self.config_level == CFG.FIELD.REPO:
+        if self.globals_level:
             self._config_dict = io.load_json(self.config_fn)
-        elif self.config_level == CFG.FIELD.GLOBAL:
-            self._config_dict = io.load_json(self.config_fn)
-        else:
+        elif self.running_level:
             self._config_dict = {}
             self._initial_os_env()
+        elif self.default_level:
+            self._config_dict = default_dict()
 
         if self._config_dict is None:
             self._config_dict = {}

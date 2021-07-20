@@ -1,5 +1,5 @@
 import os
-from typing import Tuple, Iterable, List
+from typing import Tuple, Iterable, List, Union
 
 
 def walk(top: str, depth: int = -1) -> Iterable[Tuple[str, List[str], List[str]]]:
@@ -14,3 +14,9 @@ def walk(top: str, depth: int = -1) -> Iterable[Tuple[str, List[str], List[str]]
     if depth > 0:
         for dir in dirs:
             yield from walk(os.path.join(top, dir), depth - 1)
+
+
+def walk_file(root, suffix_lis: Union[List[str], set]):
+    suffix_lis = {f".{i.lstrip('.')}" for i in suffix_lis}
+    for root, dirs, fs in os.walk(root):
+        yield from [os.path.join(root, f) for f in fs if os.path.splitext(f)[1] in suffix_lis]
