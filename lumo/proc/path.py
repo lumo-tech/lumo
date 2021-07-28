@@ -8,6 +8,13 @@ def cache_dir():
     return res
 
 
+def dataset_cache_dir(name=None):
+    if name is None:
+        return os.path.join(cache_dir(), 'datasets')
+    else:
+        return os.path.join(cache_dir(), 'datasets', name)
+
+
 def libhome():
     return os.path.expanduser("~/.lumo")
 

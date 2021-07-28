@@ -2,7 +2,6 @@
 Methods about files/paths/hash
 """
 import os
-from contextlib import contextmanager
 
 
 def checkpath(*path):
@@ -23,13 +22,10 @@ def compare_path(a, b):
     return os.path.normpath(a) == os.path.normpath(b)
 
 
-@contextmanager
-def cacheed(fn):
-    import shutil
-    cache_fn = f'{fn}.lumo_cache'
-    try:
-        yield cache_fn
-    except:
-        os.remove(cache_fn)
-    finally:
-        shutil.move(cache_fn, fn)
+def walk_files(root, suf='.ft'):
+    if suf != '':
+        suf = f'{suf.lstrip(".")}'  # check suffix
+    for root, dirs, fs in os.walk(root):
+        for f in sorted(fs):
+            if f.endswith(suf):
+                yield os.path.join(root, f)

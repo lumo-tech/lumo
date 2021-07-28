@@ -24,12 +24,17 @@
 
 ## lumo.base_classes
 
-1. [Another `easy_dict`, attr]
+1. [Easier `easy_dict`, attr]
 2. [More convenient list, llist]
+3. [Tree-like dict]
+4. 
+
+## lumo.proc
+
+1. [commen used path, `path`]
+2. []
 
 ## lumo command line
 
 ```shell
-lumo init
-lumo 
 ```
