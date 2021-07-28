@@ -1,4 +1,5 @@
-from itertools import zip_longest, chain
+from itertools import zip_longest, chain, accumulate, repeat
+from operator import add
 from typing import Sized, Iterable
 from typing import Sequence
 
@@ -73,3 +74,32 @@ class safe_cycle():
     def __iter__(self):
         while True:
             yield next(self)
+
+
+def accumulate_slice(iterable):
+    """
+    ```
+    for sl in list(accumulate_slice(range(10))):
+        print(list(range(45)[sl]))
+
+    []
+    [0]
+    [1, 2]
+    [3, 4, 5]
+    [6, 7, 8, 9]
+    [10, 11, 12, 13, 14]
+    [15, 16, 17, 18, 19, 20]
+    [21, 22, 23, 24, 25, 26, 27]
+    [28, 29, 30, 31, 32, 33, 34, 35]
+    [36, 37, 38, 39, 40, 41, 42, 43, 44]
+
+    ```
+    Args:
+        iterable:
+
+    Returns:
+
+    """
+    offset, acc = repeat(iterable, 2)
+    for a, b in zip(offset, accumulate(acc, add)):
+        yield slice(b - a, b)
