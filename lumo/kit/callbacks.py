@@ -7,8 +7,6 @@ import sys
 from functools import wraps
 import inspect
 
-from .trainer import Trainer
-
 from .mixin import CallbackMix
 from .meter import AvgMeter
 from .meter import Meter
@@ -16,11 +14,17 @@ from .params import Params
 from ..base_classes.trickitems import NoneItem, AvgItem
 from ..calculate.schedule import Schedule, ScheduleList
 from ..utils.timing import format_second
+from typing import TYPE_CHECKING
 
 func_map = {
     'evaluate': 'eval',
     'evaluate_step': 'eval_step'
 }
+
+from .trainer import Trainer, TrainerResult
+
+
+# if TYPE_CHECKING:
 
 
 def map_func_name(name):
@@ -151,16 +155,16 @@ class TrainCallback(BaseCallback):
     def on_test_step_begin(self, trainer: Trainer, func, params: Params, *args, **kwargs):
         pass
 
-    def on_train_end(self, trainer: Trainer, func, params: Params, meter: Meter, *args, **kwargs):
+    def on_train_end(self, trainer: Trainer, func, params: Params, result: TrainerResult, *args, **kwargs):
         pass
 
-    def on_train_epoch_end(self, trainer: Trainer, func, params: Params, meter: Meter, *args, **kwargs):
+    def on_train_epoch_end(self, trainer: Trainer, func, params: Params, result: TrainerResult, *args, **kwargs):
         pass
 
-    def on_test_end(self, trainer: Trainer, func, params: Params, meter: Meter, *args, **kwargs):
+    def on_test_end(self, trainer: Trainer, func, params: Params, result: TrainerResult, *args, **kwargs):
         pass
 
-    def on_eval_end(self, trainer: Trainer, func, params: Params, meter: Meter, *args, **kwargs):
+    def on_eval_end(self, trainer: Trainer, func, params: Params, result: TrainerResult, *args, **kwargs):
         pass
 
     def on_train_step_end(self, trainer: Trainer, func, params: Params, meter: Meter, *args, **kwargs):
@@ -169,7 +173,7 @@ class TrainCallback(BaseCallback):
     def on_eval_step_end(self, trainer: Trainer, func, params: Params, meter: Meter, *args, **kwargs):
         pass
 
-    def on_test_step_end(self, trainer: Trainer, func, params: Params, meter: Meter, *args, **kwargs):
+    def on_test_step_end(self, trainer: Trainer, func, params: Params, result: TrainerResult, *args, **kwargs):
         pass
 
     def on_predict_begin(self, trainer: Trainer, func, params: Params, *args, **kwargs):
@@ -254,10 +258,10 @@ class EvalCallback(TrainCallback):
                 self._last_test = params.eidx
                 trainer.test()
 
-    def on_train_epoch_end(self, trainer: Trainer, func, params: Params, meter: Meter, *args, **kwargs):
+    def on_train_epoch_end(self, trainer: Trainer, func, params: Params, result: TrainerResult, *args, **kwargs):
         self._test_or_eval(params, trainer)
 
-    def on_train_end(self, trainer: Trainer, func, params: Params, meter: Meter, *args, **kwargs):
+    def on_train_end(self, trainer: Trainer, func, params: Params, result: TrainerResult, *args, **kwargs):
         if self._last_eval != params.eidx:
             trainer.evaluate()
         if self._last_test != params.eidx:
@@ -301,11 +305,12 @@ class LoggerCallback(TrainCallback, InitialCallback, SaveLoadCallback):
         trainer.logger.info('[[Train]]')
         super().on_train_begin(trainer, func, params, *args, **kwargs)
 
-    def on_train_end(self, trainer: Trainer, func, params: Params, meter: Meter, *args, **kwargs):
+    def on_train_end(self, trainer: Trainer, func, params: Params, result: TrainerResult, *args, **kwargs):
         self.traintime.end()
+        meter = result.meter
         if meter is None:
             meter = ""
-        trainer.logger.info(f"[[Train End in {format_second(self.traintime['use'])}", meter)
+        trainer.logger.info(f"[[Train End in {format_second(self.traintime['use'])}]]", meter)
 
     @property
     def meter(self):
@@ -320,7 +325,7 @@ class LoggerCallback(TrainCallback, InitialCallback, SaveLoadCallback):
         self.epochtime.start()
         trainer.logger.info("{}/{}".format(params.eidx, params.epoch))
 
-    def on_train_epoch_end(self, trainer: Trainer, func, params: Params, meter: Meter, *args, **kwargs):
+    def on_train_epoch_end(self, trainer: Trainer, func, params: Params, result: TrainerResult, *args, **kwargs):
         self.traintime.mark("epoch")
         self.epochtime.end()
         if self.cur is None:
@@ -367,7 +372,8 @@ class LoggerCallback(TrainCallback, InitialCallback, SaveLoadCallback):
         self.reset_meter()
         trainer.logger.info("[[Test]]")
 
-    def on_test_end(self, trainer: Trainer, func, params: Params, meter: Meter, *args, **kwargs):
+    def on_test_end(self, trainer: Trainer, func, params: Params, result: TrainerResult, *args, **kwargs):
+        meter = result.meter
         if meter is None:
             meter = ""
         trainer.logger.info("[[Test End]]", meter)
@@ -382,7 +388,8 @@ class LoggerCallback(TrainCallback, InitialCallback, SaveLoadCallback):
         self.reset_meter()
         trainer.logger.info("[[Eval]]")
 
-    def on_eval_end(self, trainer: Trainer, func, params: Params, meter: Meter, *args, **kwargs):
+    def on_eval_end(self, trainer: Trainer, func, params: Params, result: TrainerResult, *args, **kwargs):
+        meter = result.meter
         if meter is None:
             meter = ""
         trainer.logger.info("[[Eval End]]", meter)
@@ -420,7 +427,11 @@ class LoggerCallback(TrainCallback, InitialCallback, SaveLoadCallback):
     def on_prepare_dataloader_end(self, trainer: Trainer, func, params: Params, meter: Meter, *args, **kwargs):
         res = self.getfuncargs(func, *args, **kwargs)
         stage = res['stage'].name
-        trainer.logger.info(f'{stage.capitalize()} dataloader prepared, size: {len(trainer.datamodule[stage])}.')
+        loader_ = trainer.datamodule[stage]
+        if loader_ is None:
+            trainer.logger.info(f'{stage.capitalize()} dataloader prepared but no dataloader created.')
+        else:
+            trainer.logger.info(f'{stage.capitalize()} dataloader prepared, size: {len(loader_)}.')
 
 
 class MeterCheckpoint(TrainCallback):
@@ -437,7 +448,8 @@ class MeterCheckpoint(TrainCallback):
         self.last_val = NoneItem()
         self.start_epoch = start_epoch
 
-    def on_train_epoch_end(self, trainer: Trainer, func, params: Params, meter: Meter, *args, **kwargs):
+    def on_train_epoch_end(self, trainer: Trainer, func, params: Params, result: TrainerResult, *args, **kwargs):
+        meter = result.meter
         self.update("train", trainer, params, meter)
 
     def update(self, cur_mode, trainer, param, meter):
@@ -461,10 +473,12 @@ class MeterCheckpoint(TrainCallback):
                     trainer.save_checkpoint(meter.serialize())
                     self.last_val = item
 
-    def on_test_end(self, trainer: Trainer, func, params: Params, meter: Meter, *args, **kwargs):
+    def on_test_end(self, trainer: Trainer, func, params: Params, result: TrainerResult, *args, **kwargs):
+        meter = result.meter
         self.update("test", trainer, params, meter)
 
-    def on_eval_end(self, trainer: Trainer, func, params: Params, meter: Meter, *args, **kwargs):
+    def on_eval_end(self, trainer: Trainer, func, params: Params, result: TrainerResult, *args, **kwargs):
+        meter = result.meter
         self.update("eval", trainer, params, meter)
 
     def __repr__(self) -> str:
@@ -480,7 +494,8 @@ class EpochCheckpoint(TrainCallback):
     def __init__(self, per_epoch=50):
         self.per_epoch = per_epoch
 
-    def on_train_epoch_end(self, trainer: Trainer, func, params: Params, meter: Meter, *args, **kwargs):
+    def on_train_epoch_end(self, trainer: Trainer, func, params: Params, result: TrainerResult, *args, **kwargs):
+        meter = result.meter
         if params.eidx % self.per_epoch == 0 and params.eidx > 0:
             trainer.save_keypoint(meta_info=trainer._wrap_result(meter))
 
@@ -537,7 +552,8 @@ class BoardRecord(TrainCallback):
     def _key_name(self, mode, key):
         return "{}_{}_".format(key, mode)
 
-    def on_test_end(self, trainer: Trainer, func, params: Params, meter: Meter, *args, **kwargs):
+    def on_test_end(self, trainer: Trainer, func, params: Params, result: TrainerResult, *args, **kwargs):
+        meter = result.meter
         if isinstance(meter, Meter):
             for k, v in meter.numeral_items():
                 trainer.writer.add_scalar(self._key_name("test", k), v, params.eidx)
@@ -545,7 +561,8 @@ class BoardRecord(TrainCallback):
     def on_train_begin(self, trainer: Trainer, func, params: Params, *args, **kwargs):
         self.start = params.eidx
 
-    def on_eval_end(self, trainer: Trainer, func, params: Params, meter: Meter, *args, **kwargs):
+    def on_eval_end(self, trainer: Trainer, func, params: Params, result: TrainerResult, *args, **kwargs):
+        meter = result.meter
         if isinstance(meter, Meter):
             for k, v in meter.numeral_items():
                 trainer.writer.add_scalar(self._key_name("eval", k), v, params.eidx)
@@ -610,8 +627,9 @@ class ReportSche(TrainCallback):
             if isinstance(v, (Schedule, ScheduleList)) and 'sche' in k.lower():
                 self.sche_lis.append((k, v))
 
-    def on_train_epoch_end(self, trainer: Trainer, func, params: Params, meter: Meter, *args, **kwargs):
-        super().on_train_epoch_end(trainer, func, params, meter, *args, **kwargs)
+    def on_train_epoch_end(self, trainer: Trainer, func, params: Params, result: TrainerResult, *args, **kwargs):
+        super().on_train_epoch_end(trainer, func, params, result, *args, **kwargs)
+        meter = result.meter
         m = Meter()
         for k, v in self.sche_lis:
             m[k] = v(params.eidx)

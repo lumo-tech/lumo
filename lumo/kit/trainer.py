@@ -48,10 +48,14 @@ class initial_tuple():
 
 
 class TrainerResult(attr):
-    def __init__(self, state: TrainerStage, result: int, msg=''):
+    MSG_OK = 'success'
+    MSG_OK_MID = 'success stop in midway'
+    MSG_NO_DATALOADER = 'dataloader not loaded'
+
+    def __init__(self, state: TrainerStage, meter: AvgMeter, msg=''):
         super().__init__()
         self.state = state
-        self.result = result
+        self.meter = meter
         self.msg = msg
 
 
@@ -690,7 +694,7 @@ class Trainer(DLLoopMix, _BaseTrainer):
         'prepare_dataloader',
     }
 
-    def _wrap_result(self, meter: Union[Mapping, Meter, Sequence, torch.Tensor, np.ndarray]):
+    def _wrap_result(self, meter: Union[Mapping, Meter, Sequence, torch.Tensor, np.ndarray]) -> dict:
         if meter is None:
             return {}
         if isinstance(meter, (Mapping, Meter)):
@@ -742,6 +746,9 @@ class Trainer(DLLoopMix, _BaseTrainer):
             dataloader.idataloader(params, stage, initialized)
             self.regist_dataloader(datamodule=dataloader)
             dataloader_ = getattr(dataloader, f'{stage.name}_dataloader', None)
+        elif isinstance(dataloader, DataLoader):
+            self.regist_dataloader(**{stage.name: dataloader})
+            dataloader_ = dataloader
         elif isinstance(self, DataModuleMix):
             self.idataloader(params, stage, initialized)
             dataloader_ = getattr(self, f'{stage.name}_dataloader', None)
@@ -759,7 +766,7 @@ class Trainer(DLLoopMix, _BaseTrainer):
         self.regist_dataloader(**kwargs)
         return dataloader_
 
-    def train(self, dataloader: Union[DataLoader, DataModuleMix] = None):
+    def train(self, dataloader: Union[DataLoader, DataModuleMix] = None) -> TrainerResult:
         # params, initialized = self.params, self.initial.train_dataloader
         dataloader = self.prepare_dataloader(TrainerStage.train, dataloader)
         if dataloader is None:
@@ -770,21 +777,24 @@ class Trainer(DLLoopMix, _BaseTrainer):
 
         self.initial.train_dataloader = True
 
+        result = TrainerResult(TrainerStage.train, None, TrainerResult.MSG_OK)
         while self.params.eidx < self.params.epoch:
             self.params.eidx += 1
             self.to_stage(TrainerStage.train)
-            self.train_epoch(dataloader)
+            result = self.train_epoch(dataloader)
             if self.train_toggle:
                 self.train_toggle = False
-                return TrainerResult(TrainerStage.train, 1, 'stoped midway')
+                return TrainerResult(TrainerStage.train, result.meter, TrainerResult.MSG_OK_MID)
 
             self.exp.dump_train_info(self.params.eidx)
 
-        return TrainerResult(TrainerStage.train, 0)
+        return TrainerResult(TrainerStage.train, result.meter, TrainerResult.MSG_OK)
 
-    def train_epoch(self, dataloader: DataLoader):
-        avg = AvgMeter()
+    def train_epoch(self, dataloader: DataLoader) -> TrainerResult:
+        avg = None
         for idx, batch in enumerate(dataloader):
+            if avg is None:
+                avg = AvgMeter()
             self.params.global_step += 1
             self.params.idx = idx
             meter = self.train_step(idx, batch, self.params)
@@ -792,15 +802,15 @@ class Trainer(DLLoopMix, _BaseTrainer):
             if self.train_epoch_toggle:
                 self.train_epoch_toggle = False
                 break
-        return avg
+        return TrainerResult(TrainerStage.train_epoch, avg, TrainerResult.MSG_OK)
 
     def train_step(self, idx, batch, params: ParamsType, *args, **kwargs):
         pass
 
-    def evaluate(self, dataloader: Union[DataLoader, DataModule] = None):
+    def evaluate(self, dataloader: Union[DataLoader, DataModule] = None) -> TrainerResult:
         dataloader = self.prepare_dataloader(TrainerStage.val, dataloader)
         if dataloader is None:
-            return TrainerResult(TrainerStage.val, 1, 'no eval_dataloader')
+            return TrainerResult(TrainerStage.val, None, TrainerResult.MSG_NO_DATALOADER)
         self._check_models_init()
         self.to_stage(TrainerStage.val)
 
@@ -811,15 +821,15 @@ class Trainer(DLLoopMix, _BaseTrainer):
                 meter = self.evaluate_step(idx, batch, self.params)
                 avg.update(self._wrap_result(meter))
 
-        return TrainerResult(TrainerStage.val, 0)
+        return TrainerResult(TrainerStage.val, avg, TrainerResult.MSG_OK)
 
-    def evaluate_step(self, idx, batch, params: ParamsType, *args, **kwargs):
+    def evaluate_step(self, idx, batch, params: ParamsType, *args, **kwargs) -> Meter:
         pass
 
-    def test(self, dataloader: Union[DataLoader, DataModule] = None):
+    def test(self, dataloader: Union[DataLoader, DataModule] = None) -> TrainerResult:
         dataloader = self.prepare_dataloader(TrainerStage.test, dataloader)
         if dataloader is None:
-            return TrainerResult(TrainerStage.test, 1, 'no test_dataloader')
+            return TrainerResult(TrainerStage.test, None, TrainerResult.MSG_NO_DATALOADER)
         self._check_models_init()
         self.to_stage(TrainerStage.test)
 
@@ -829,7 +839,7 @@ class Trainer(DLLoopMix, _BaseTrainer):
                 self.params.idx = idx
                 meter = self.test_step(idx, batch, self.params)
                 avg.update(self._wrap_result(meter))
-        return TrainerResult(TrainerStage.test, 0)
+        return TrainerResult(TrainerStage.test, avg, TrainerResult.MSG_OK)
 
     def test_step(self, idx, batch, params: ParamsType, *args, **kwargs):
         pass

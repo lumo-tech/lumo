@@ -23,7 +23,7 @@ setup(
     license='Apache License 2.0',
     include_package_data=True,
     install_requires=[
-        'fire', 'psutil'
+        'fire', 'psutil', 'joblib'
     ],
     classifiers=[
         'Development Status :: 3 - Alpha',

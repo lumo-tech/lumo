@@ -7,6 +7,8 @@ from lumo.kit.params import ParamsType
 import torch
 from torch import nn
 
+from lumo import Meter
+
 
 class PlusOneTrainer(Trainer):
 
@@ -19,13 +21,15 @@ class PlusOneTrainer(Trainer):
         callbacks.LoggerCallback().hook(self)
 
     def train_step(self, idx, batch, params: ParamsType, *args, **kwargs):
+        meter = Meter()
         xs, ys = batch
         logits = self.model(xs.float())
         loss = torch.mean((ys - logits) ** 2)
         self.optim.zero_grad()
         loss.backward()
         self.optim.step()
-        return loss
+        meter.Lce = loss
+        return meter
 
 
 params = Params()
