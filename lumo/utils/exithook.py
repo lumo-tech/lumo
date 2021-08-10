@@ -1,3 +1,6 @@
+"""
+Do something you like before the programe exit.
+"""
 import sys
 from functools import wraps
 

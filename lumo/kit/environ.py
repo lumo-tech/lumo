@@ -7,13 +7,13 @@ from typing import Any
 
 from lumo.utils import safe_io as io
 from lumo.proc.const import CFG
-from lumo.proc.path import global_config_path
+from lumo.proc.path import global_config_path, libhome
 
 
 def default_dict():
-    return {CFG.PATH.GLOBAL_EXP: os.path.expanduser("~/.lumo/experiments"),
-            CFG.PATH.DATASET: os.path.expanduser("~/.lumo/datasets"),
-            CFG.PATH.PRETRAINS: os.path.expanduser("~/.lumo/pretrains"),
+    return {CFG.PATH.GLOBAL_EXP: os.path.join(libhome(), "experiments"),
+            CFG.PATH.DATASET: os.path.join(libhome(), "datasets"),
+            CFG.PATH.PRETRAINS: os.path.join(libhome(), "pretrains"),
             CFG.PATH.CACHE: os.path.expanduser("~/.cache/lumo")}
 
 

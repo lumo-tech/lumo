@@ -6,8 +6,8 @@ import sys
 import os
 
 from lumo.base_classes import attr
-from lumo.utils.hash import string_hash
 from lumo.proc.path import cache_dir
+from joblib import hash
 
 class _NoneResult():
     def fetchone(self):
@@ -21,7 +21,7 @@ class MPStruct:
 
     def __init__(self, session_id=None, root=None, retry=7):
         if session_id is None:
-            session_id = string_hash(sys.argv[0])
+            session_id = hash(sys.argv)
 
         if root is None:
             root = os.path.join(cache_dir(), '.mpqueue')

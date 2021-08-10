@@ -9,6 +9,16 @@ from torch.utils.data import DataLoader
 
 def _to_device(item: Union[Sequence, Mapping, torch.Tensor, nn.Module],
                device_args_kargs: Tuple[Sequence, Mapping]):
+    """
+    Recursively sends the elements in the item contains tensor/module to a given device.
+
+    Args:
+        item: any data structur contains tensor or module.
+        device_args_kargs: device argrument
+
+    Returns:
+
+    """
     if isinstance(item, nn.Module):
         return item.to(*device_args_kargs[0], **device_args_kargs[1])
 

@@ -8,12 +8,12 @@ from typing import Any, Iterable
 
 import numpy as np
 import torch
+from joblib import hash
 
 from lumo.base_classes.metaclasses import meta_attr
 
 # from lumo.utils.keys import
 _attr_clss = {}
-from lumo.utils.hash import hash
 
 ATTR_TYPE = '_type'
 

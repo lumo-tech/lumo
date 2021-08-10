@@ -1,4 +1,8 @@
+"""
+Methods about random
+"""
 import hashlib
+from joblib import hash
 import random
 from typing import Union
 
@@ -33,7 +37,7 @@ def fix_seed(seed=10):
     torch.random.manual_seed(seed)
     if torch.cuda.is_available():
         torch.cuda.manual_seed_all(seed)
-    fix_cuda()
+    # fix_cuda()
     return get_state()
 
 
@@ -54,6 +58,15 @@ def get_state():
 
 
 def set_state(state_dict):
+    """
+    Set random state of built-in random, numpy, torch, torch.cuda
+
+    Args:
+        state_dict: a dict got from `lumo.utils.random.get_state()`
+
+    Returns:
+
+    """
     random.setstate(state_dict["random"])
     np.random.set_state(state_dict["numpy"])
     torch.random.set_rng_state(state_dict["torch"])
@@ -63,4 +76,3 @@ def set_state(state_dict):
         else:
             import warnings
             warnings.warn("Don't have torch.cuda random state")
-    fix_cuda()

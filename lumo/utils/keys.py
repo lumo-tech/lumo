@@ -1,3 +1,6 @@
+"""
+A class used to define constant value.
+"""
 from typing import Mapping, TypeVar, Type
 
 T = TypeVar('T')

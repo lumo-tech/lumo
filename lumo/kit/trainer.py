@@ -281,6 +281,10 @@ class _BaseTrainer(ModelMix, CallbackMix, metaclass=Merge):
             self._state_dicts[key] = value
 
     @property
+    def is_debug(self):
+        return self.params.get('debug', False)
+
+    @property
     def global_step(self):
         return self.params.global_step
 

@@ -1,3 +1,6 @@
+"""
+A hack function to monitor GPU memory usage, then occupy its access.
+"""
 import functools
 import time
 import torch
@@ -267,7 +270,3 @@ class memory(object):
         for i, mem in enumerate(mems):
             if mem > 0:
                 memory(mem, device=i, hold=(i == count - 1)).start()
-
-
-if __name__ == '__main__':
-    memory(11000, 3).immediately(False)
