@@ -1,7 +1,7 @@
 """
 
 """
-__version__ = "0.1.9.1"
+__version__ = "0.1.10.1"
 
 from .utils.keys import K
 
@@ -10,7 +10,7 @@ from .kit import (
     BaseParams, Params,
     Meter, AvgMeter,
 
-    DatasetBuilder, DataDelegate, DataModule,
+    DatasetBuilder, DataDelegate, DataModule, DataBundler,
     Saver, Random,
 
     Logger,
@@ -22,4 +22,3 @@ from .kit import (
 from .contrib.data import collate
 
 from . import calculate  # initialize schedule attr classes
-

@@ -26,6 +26,7 @@ from .saver import Saver
 from .meter import Meter, AvgMeter
 from .rnd import RndManager
 from .datamodule import DataModule
+from .bundler import DataBundler
 from .mixin import ModelMix, CallbackMix, DataModuleMix
 
 from .params import ParamsType
@@ -750,7 +751,7 @@ class Trainer(DLLoopMix, _BaseTrainer):
             dataloader.idataloader(params, stage, initialized)
             self.regist_dataloader(datamodule=dataloader)
             dataloader_ = getattr(dataloader, f'{stage.name}_dataloader', None)
-        elif isinstance(dataloader, DataLoader):
+        elif isinstance(dataloader, (DataLoader, DataBundler)):
             self.regist_dataloader(**{stage.name: dataloader})
             dataloader_ = dataloader
         elif isinstance(self, DataModuleMix):
@@ -765,6 +766,9 @@ class Trainer(DLLoopMix, _BaseTrainer):
 
         if isinstance(dataloader_, DataLoader):
             dataloader_ = self.accelerator.prepare(dataloader_)
+        elif isinstance(dataloader_, DataBundler):
+            for k, (loader, func) in list(dataloader_.dataloaders.items()):
+                dataloader_.dataloaders[k] = [self.accelerator.prepare(loader), func]
 
         kwargs = {stage.name: dataloader_}
         self.regist_dataloader(**kwargs)

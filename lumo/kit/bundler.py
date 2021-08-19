@@ -5,7 +5,11 @@ from collections import OrderedDict
 from itertools import cycle, chain
 from typing import Optional, overload, Union
 import torch
-from lumo.contrib.itertools import safe_cycle
+from lumo.contrib.itertools import safe_cycle, poll
+
+
+def identity(x):
+    return x
 
 
 class DataBundler:
@@ -31,6 +35,8 @@ class DataBundler:
             )
         elif self.iter_mode == "chain":
             return sum(self.len_list())
+        elif self.iter_mode == 'poll':
+            return sum(self.len_list())
 
     def __getitem__(self, item):
         return self.dataloaders[item][0]
@@ -39,16 +45,21 @@ class DataBundler:
         loaders = self._func_loader()
         if len(loaders) == 1:
             iter = loaders[0]
-
         elif self.iter_mode == "zip":
             iter = zip(*loaders)
         elif self.iter_mode == "chain":
             iter = chain(*loaders)
+        elif self.iter_mode == "poll":
+            iter = poll(*loaders)
         else:
             assert False
 
         for batch_data in iter:
             yield batch_data
+
+    def __repr__(self):
+        from pprint import pformat
+        return pformat(self.len_dict())
 
     def _append(self, loader, func, name):
         from torch.utils.data import DataLoader
@@ -113,7 +124,7 @@ class DataBundler:
         return self
 
     def add(self, loader, name=None):
-        self._append(loader, lambda x: x, name)
+        self._append(loader, identity, name)
         return self
 
     @overload
@@ -159,6 +170,10 @@ class DataBundler:
         self.iter_mode = "chain"
         return self
 
+    def poll_mode(self):
+        self.iter_mode = 'poll'
+        return self
+
     @staticmethod
     def create_zip_bundler(**kwargs):
         bundler = DataBundler()
@@ -175,7 +190,3 @@ class DataBundler:
         for loader in args:
             bundler.add(loader)
         return bundler
-
-    def __repr__(self):
-        from pprint import pformat
-        return pformat(self.len_dict())

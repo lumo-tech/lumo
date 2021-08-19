@@ -3,6 +3,7 @@ from . import exphook
 
 from .builder import DatasetBuilder
 from .delegate import DataDelegate
+from .bundler import DataBundler
 
 from .environ import globs
 from .experiment import Experiment, TrainerExperiment

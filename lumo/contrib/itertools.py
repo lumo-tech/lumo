@@ -48,6 +48,13 @@ def lchain(*iterable):
     return list(chain(*iterable))
 
 
+def poll(*iterables):
+    iterables = [safe_cycle(i) for i in iterables]
+    while True:
+        for iterable in iterables:
+            yield next(iterable)
+
+
 class safe_cycle():
     class _cycle_none():
         pass
