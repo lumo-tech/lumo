@@ -34,8 +34,8 @@ class LCS:
         size = 1
         ress = []
         for x, i, y, j in res[1:]:
-            offset = (i - li) + (j - lj)
-            if offset == 2:
+            offset = (i - li) * (j - lj)
+            if offset == 1:
                 li, lj = i, j
                 size += 1
             else:
