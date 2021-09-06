@@ -8,7 +8,7 @@ from difflib import Match, SequenceMatcher
 
 class LCS:
     """
-    A diiflib.SequenceMatch like class
+    A diiflib.SequenceMatch like class.
 
     Examples:
         a, b = 'GTCGTTCGGAATGCCGTTGCTCTGTAAA', 'ACCGGTCGAGTGCGCGGAAGCCGGCCGAA'
@@ -22,7 +22,10 @@ class LCS:
         self.xstr = xstr
         self.ystr = ystr
 
-    def get_matching_block(self):
+    def get_matching_blocks(self):
+        """
+        Return list of triples describing matching subsequences.
+        """
         res = self.lcs2()
         if len(res) == 0:
             return []
@@ -65,7 +68,7 @@ def lcs_lens(xs, ys):
 
 def lcs(xs, ys):
     """
-    return Longest common subsequence list
+    Return longest common subsequence list.
     """
     nx, ny = len(xs), len(ys)
     if nx == 0:
@@ -85,7 +88,7 @@ def lcs(xs, ys):
 
 def lcs2(xs, ys, ii=0, kk=0):
     """
-    return Longest common subsequence list with each character's index
+    Return longest common subsequence list with each character's index.
     """
     nx, ny = len(xs), len(ys)
     if nx == 0:
