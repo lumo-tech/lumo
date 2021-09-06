@@ -14,7 +14,7 @@ class LCS:
         a, b = 'GTCGTTCGGAATGCCGTTGCTCTGTAAA', 'ACCGGTCGAGTGCGCGGAAGCCGGCCGAA'
         l = LCS(a, b)
         print(l)
-        for m in l.get_matching_block():
+        for m in l.get_matching_blocks():
             print(m, a[m.a:m.a + m.size], b[m.b:m.b + m.size])
     """
 
@@ -34,8 +34,8 @@ class LCS:
         size = 1
         ress = []
         for x, i, y, j in res[1:]:
-            offset = (i - li) - (j - lj)
-            if offset == 0:
+            offset = (i - li) + (j - lj)
+            if offset == 2:
                 li, lj = i, j
                 size += 1
             else:
