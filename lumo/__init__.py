@@ -1,7 +1,7 @@
 """
 
 """
-__version__ = "0.1.10.1"
+__version__ = "0.1.10.2"
 
 from .utils.keys import K
 

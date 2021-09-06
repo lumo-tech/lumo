@@ -48,8 +48,12 @@ def lchain(*iterable):
     return list(chain(*iterable))
 
 
-def poll(*iterables):
+def poll(*iterables, c=None):
     iterables = [safe_cycle(i) for i in iterables]
+    # TODO
+    if c is not None:
+        pass
+
     while True:
         for iterable in iterables:
             yield next(iterable)
@@ -110,3 +114,39 @@ def accumulate_slice(iterable):
     offset, acc = repeat(iterable, 2)
     for a, b in zip(offset, accumulate(acc, add)):
         yield slice(b - a, b)
+
+
+def groupby(iterable, key=None):
+    """
+
+    >>> labels = [1,1,2,2,3,3,4,4]
+    >>> for cur,vals in list(groupby(labels)):
+    >>>     print(cur,vals)
+
+        1 [0, 1]
+        2 [2, 3]
+        3 [4, 5]
+        4 [6, 7]
+
+    Args:
+        iterable:
+        key:
+
+    Returns:
+
+    """
+    if key is None:
+        key = lambda a, b: a == b
+
+    res = []
+    cur = None
+    for i, val in enumerate(iterable):
+        if i == 0:
+            cur = val
+        else:
+            if not key(cur, val):
+                yield cur, res
+                res = []
+        cur = val
+        res.append(i)
+    yield res

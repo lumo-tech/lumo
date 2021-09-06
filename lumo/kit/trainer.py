@@ -19,6 +19,7 @@ from torch import nn
 from torch.optim import Optimizer
 from torch.utils.data import DataLoader
 from functools import lru_cache
+from lumo.contrib.itertools import safe_cycle
 from .environ import globs
 from .experiment import TrainerExperiment
 from .logger import Logger
@@ -797,6 +798,31 @@ class Trainer(DLLoopMix, _BaseTrainer):
             self.exp.dump_train_info(self.params.eidx)
 
         return TrainerResult(TrainerStage.train, result.meter, TrainerResult.MSG_OK)
+
+    def train_global_steps(self, steps=1, dataloader: Union[DataLoader, DataModuleMix] = None) -> TrainerResult:
+        dataloader = self.prepare_dataloader(TrainerStage.train, dataloader)
+        if dataloader is None:
+            return TrainerResult(TrainerStage.train, 1, 'no train_dataloader')
+
+        self._check_models_init()
+        self._check_optim_init()
+
+        self.initial.train_dataloader = True
+
+        idx = 0
+        loader = safe_cycle(self.train_dataloader)
+        avg = AvgMeter()
+        while idx < steps:
+            self.params.global_step += 1
+            self.params.idx = idx
+            batch = next(loader)
+            meter = self.train_step(idx, batch, self.params)
+            avg.update(self._wrap_result(meter))
+            idx += 1
+            if self.train_epoch_toggle:
+                self.train_epoch_toggle = False
+                break
+        return TrainerResult(TrainerStage.train_epoch, avg, TrainerResult.MSG_OK)
 
     def train_epoch(self, dataloader: DataLoader) -> TrainerResult:
         avg = None

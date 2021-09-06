@@ -268,7 +268,7 @@ class EvalCallback(TrainCallback):
             trainer.test()
 
     def __repr__(self):
-        return self._repr_by_val("eval_in_per_epoch", "test_per_epoch")
+        return self._repr_by_val("eval_in_per_epoch", "test_in_per_epoch")
 
 
 class LoggerCallback(TrainCallback, InitialCallback, SaveLoadCallback):
