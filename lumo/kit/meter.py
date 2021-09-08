@@ -277,6 +277,32 @@ class Meter:
         return self
 
 
+class Meter2():
+
+    def __init__(self):
+        self._fmt = {}
+
+    @property
+    def sum(self):
+        pass
+
+    @property
+    def mean(self):
+        pass
+
+    @property
+    def last(self):
+        pass
+
+    @property
+    def max(self):
+        pass
+
+    @property
+    def min(self):
+        pass
+
+
 class AvgMeter(Meter):
     """
 
