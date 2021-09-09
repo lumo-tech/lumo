@@ -1,4 +1,4 @@
-from lumo.kit.meter import Meter2, AvgMeter
+from lumo.kit.meter import AvgMeter, Meter
 from lumo import Logger
 import numpy as np
 import torch
@@ -9,7 +9,7 @@ start = time.time()
 avg = AvgMeter()
 
 for i in range(10):
-    m = Meter2()
+    m = Meter()
     m.a = i
     m.min.d = i
     m.b = torch.rand([1])

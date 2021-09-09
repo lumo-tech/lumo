@@ -56,7 +56,7 @@ class Meter:
         return ' | '.join([f'{k}: {v}' for k, v in self._rec.items()])
 
     def __iter__(self):
-        return self.keys()
+        yield from self.keys()
 
     @property
     def sum(self):
