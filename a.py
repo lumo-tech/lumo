@@ -7,17 +7,24 @@ import time
 log = Logger()
 start = time.time()
 avg = AvgMeter()
-
+a = np.linspace(0, 101, 100)
+b = np.linspace(0, 101, 1000)
+c = np.linspace(0, 10, 10000)
+d = np.linspace(0, 1, 100000)
+e = np.linspace(0, 0.1, 1000000)
 for i in range(10):
     m = Meter()
-    m.a = i
-    m.min.d = i
-    m.b = torch.rand([1])
-    m.c = np.random.rand(5)
-    m.f = '123'
-    m.e = ['123', 3, 5.]
+    m.a = a[i]
+    m.b = b[i]
+    m.c = c[i]
+    m.d = d[i]
+    m.e = e[i]
 
     avg.update(m)
-    # log.inline(avg)
+    log.info(avg)
 
 print(list(avg.items()))
+
+# import numpy as np
+# print(np.ceil(np.log10((1 / 2))))
+# max(8, int(1 / (1e-4 + 1e-10)))

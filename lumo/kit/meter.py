@@ -1,6 +1,7 @@
 """
 Used for recording data
 """
+import numpy as np
 from collections.abc import ItemsView
 from collections import OrderedDict
 from numbers import Number
@@ -121,14 +122,25 @@ class AvgItem:
             if self.isint:
                 return f"{res}"
             elif self.isnumber:  #
-                if self.offset > 1:
-                    return f'{res:.2f}'
-                elif self.offset < 1e-2:
-                    return f'{res:.4f}'
-                elif self.offset < 1e-4:
-                    return f'{res:.6f}'
+                # if self.offset > 0:
+                #     prec = max(min(8, int(np.ceil(np.log10((1 / (self.offset + 1e-10)))))), 1)
+                #     prec
+                # else:
+                #     prec = 4
+                # fmt_str = f'{{:.{prec}f}}'
+                # print(prec, fmt_str)
+                # return fmt_str.format(res)
+                #
+                # if self.offset > 1:
+                #     return f'{res:.2f}'
+                if self.offset < 1e-8:
+                    return f'{res:.10f}'
                 elif self.offset < 1e-6:
                     return f'{res:.8f}'
+                elif self.offset < 1e-4:
+                    return f'{res:.6f}'
+                # elif self.offset < 1e-2:
+                #     return f'{res:.4f}'
                 return f'{res:.4f}'
             else:
                 return f'{res}'
