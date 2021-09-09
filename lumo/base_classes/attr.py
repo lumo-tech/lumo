@@ -25,7 +25,6 @@ class attr(OrderedDict, metaclass=meta_attr):
 
     def __new__(cls, *args: Any, **kwargs: Any):
         self = super().__new__(cls, *args, **kwargs)
-        # self._class_name = cls.__name__
         return self
 
     @staticmethod

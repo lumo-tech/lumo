@@ -231,3 +231,6 @@ class AvgMeter:
                     self._rec[k] = AvgItem(v, self._avg[k])
             else:
                 self._rec[k] = AvgItem(v, self._avg[k])
+
+    def clear(self):
+        self._rec.clear()
