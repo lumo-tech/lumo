@@ -1,11 +1,23 @@
-from concurrent import futures
+from lumo.kit.meter import Meter2, AvgMeter
+from lumo import Logger
+import numpy as np
+import torch
 
-executor = futures.ProcessPoolExecutor(3)
+log =Logger()
+# print(m)
+# print(avg)
 
+import time
+start = time.time()
+avg = AvgMeter()
 
-def p(*args, **kwargs):
-    return args, kwargs
+for i in range(100000):
+    m = Meter2()
+    m.a = i
+    m.min.d = i
+    m.b = torch.rand([1])
+    m.c = np.random.rand(5)
 
-
-for k in executor.map(p, enumerate([5, 1, 4, 2, 5, 6])):
-    print(k)
+    avg.update(m)
+    log.inline(avg)
+end = time.time()

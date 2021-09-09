@@ -115,3 +115,12 @@ class EXP_CONST:
         INFO_DIR = '.line'
 
     # class HOOK_FN
+
+
+class METER:
+    MEAN = 'mean'
+    SUM = 'sum'
+    MAX = 'max'
+    MIN = 'min'
+    LAST = 'last'
+    EXP = 'exp'

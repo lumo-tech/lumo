@@ -32,7 +32,7 @@ choice_param = namedtuple('choice_param', ['default', 'choices'], defaults=[None
 default_param = namedtuple('default_param', ['default', 'warn'], defaults=[True])
 
 
-class BaseParams():
+class BaseParams:
     """
     Params make it easy to get/set/load/dump your config, if you use easy_dict before, you can see Params as a easy_dict ppplus.
 
@@ -121,8 +121,6 @@ class BaseParams():
         self._namespace = d['_namespace']
 
     def __repr__(self):
-        import textwrap
-
         dynamic_propertys = [(k, io.safe_getattr(self, k, None)) for k in self.__dir__() if
                              isinstance(getattr(self.__class__, k, None), property)]
 
@@ -296,39 +294,6 @@ class BaseParams():
         """
         return default_param(value, warn)
 
-    def grid_search(self, key, iterable: Iterable):
-        """
-        Return a iterator where each element is the original Params instance
-        but changes the value of variable `key` to the value in `iterable` one by one.
-
-        Args:
-            key:
-            iterable:
-
-        Returns:
-            Iterator of Params instance with the same class and different value in `key`
-        """
-        for v in iterable:
-            res = self.copy()
-            res[key] = v
-            yield res
-
-    def grid_range(self, count):
-        """
-        Repeat this Params instance `count` times, and return its iterator.
-        You can identify these instances by `params._repeat`(start from zero)
-
-        Args:
-            count:
-
-        Returns:
-            Iterator of the repeated Params instance
-        """
-        for i in range(count):
-            res = self.copy()
-            res._repeat = i
-            yield res
-
     def from_args(self):
         """
         Load key-value from command line arguments (based on facebook-Fire).
@@ -441,14 +406,11 @@ class BaseParams():
 
     def keys(self):
         """like dict.keys()"""
-        for k in self._param_dict:
-            yield k
+        return self._param_dict.keys()
 
     def update(self, dic: dict):
         """like dict.update()"""
-        for k, v in dic.items():
-            self._param_dict[k] = v
-
+        self._param_dict.update(dic)
         return self
 
     def hash(self) -> str:
@@ -456,30 +418,6 @@ class BaseParams():
         Return a hash string of all key and values. See attr.hash() for details.
         """
         return self._param_dict.hash()
-
-    def lock(self):
-        """
-        Cause the params behavior is not exactly equal to dict, that is, Params instance will return an empty `attr` instance
-        when some value not exists.
-
-        To align this behavior, you can call `lock()`, then nonexist key will raise an AttributeError, which is equal to dict.
-
-        Examples:
-            params = Params()
-            print(params.a) # will give an empty `attr` object
-            params.lock()
-            print(params.b) # will raise an AttributeError.
-
-        Notes:
-            Params default state is `unlock`, so ignore this method if you don't need this feature.
-        """
-        self._lock = True
-        return self
-
-    def unlock(self):
-        """see lock for details."""
-        self._lock = False
-        return self
 
     def inner_dict(self) -> attr:
         """Return the inner attr, which is a dict-like object that saves all params."""

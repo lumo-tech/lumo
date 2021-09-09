@@ -536,41 +536,41 @@ class KeyErrorSave(TrainCallback):
                 return True
 
 
-class BoardRecord(TrainCallback):
-    """
-    自动记录训练过程中的所有变量到 tensorboard 中（epoch 级）
-    """
-    only_main_process = True
-    priority = 100
-
-    def __init__(self) -> None:
-        super().__init__()
-
-    def on_hooked(self, source: Trainer, params: Params):
-        self.start = 0
-
-    def _key_name(self, mode, key):
-        return "{}_{}_".format(key, mode)
-
-    def on_test_end(self, trainer: Trainer, func, params: Params, result: TrainerResult, *args, **kwargs):
-        meter = result.meter
-        if isinstance(meter, Meter):
-            for k, v in meter.numeral_items():
-                trainer.writer.add_scalar(self._key_name("test", k), v, params.eidx)
-
-    def on_train_begin(self, trainer: Trainer, func, params: Params, *args, **kwargs):
-        self.start = params.eidx
-
-    def on_eval_end(self, trainer: Trainer, func, params: Params, result: TrainerResult, *args, **kwargs):
-        meter = result.meter
-        if isinstance(meter, Meter):
-            for k, v in meter.numeral_items():
-                trainer.writer.add_scalar(self._key_name("eval", k), v, params.eidx)
-
-    def on_train_epoch_end(self, trainer: Trainer, func, params: Params, meter: AvgMeter, *args, **kwargs):
-        if isinstance(meter, Meter):
-            for k, v in meter.numeral_items():
-                trainer.writer.add_scalar(self._key_name("train", k), v, params.eidx)
+# class BoardRecord(TrainCallback):
+#     """
+#     自动记录训练过程中的所有变量到 tensorboard 中（epoch 级）
+#     """
+#     only_main_process = True
+#     priority = 100
+#
+#     def __init__(self) -> None:
+#         super().__init__()
+#
+#     def on_hooked(self, source: Trainer, params: Params):
+#         self.start = 0
+#
+#     def _key_name(self, mode, key):
+#         return "{}_{}_".format(key, mode)
+#
+#     def on_test_end(self, trainer: Trainer, func, params: Params, result: TrainerResult, *args, **kwargs):
+#         meter = result.meter
+#         if isinstance(meter, Meter):
+#             for k, v in meter.numeral_items():
+#                 trainer.writer.add_scalar(self._key_name("test", k), v, params.eidx)
+#
+#     def on_train_begin(self, trainer: Trainer, func, params: Params, *args, **kwargs):
+#         self.start = params.eidx
+#
+#     def on_eval_end(self, trainer: Trainer, func, params: Params, result: TrainerResult, *args, **kwargs):
+#         meter = result.meter
+#         if isinstance(meter, Meter):
+#             for k, v in meter.numeral_items():
+#                 trainer.writer.add_scalar(self._key_name("eval", k), v, params.eidx)
+#
+#     def on_train_epoch_end(self, trainer: Trainer, func, params: Params, meter: AvgMeter, *args, **kwargs):
+#         if isinstance(meter, Meter):
+#             for k, v in meter.numeral_items():
+#                 trainer.writer.add_scalar(self._key_name("train", k), v, params.eidx)
 
 
 class EMAUpdate(TrainCallback):
@@ -583,57 +583,57 @@ class EMAUpdate(TrainCallback):
                 v.step()
 
 
-class LRSchedule(TrainCallback):
-    def __init__(self, schedule: Schedule = None, apply=True, use_eidx=True):
-        self.schedule = schedule
-        self.apply = apply
-        self.use_eidx = use_eidx
+# class LRSchedule(TrainCallback):
+#     def __init__(self, schedule: Schedule = None, apply=True, use_eidx=True):
+#         self.schedule = schedule
+#         self.apply = apply
+#         self.use_eidx = use_eidx
+#
+#     def on_hooked(self, source: Trainer, params: Params):
+#         super().on_hooked(source, params)
+#         if self.schedule is None:
+#             if 'lr_sche' not in params:
+#                 source.logger.warn(f'lr_sche not exists in params and be assigned, {self} will be unhooked after.')
+#                 self.unhook()
+#             else:
+#                 self.schedule = params.lr_sche
+#
+#     def on_train_epoch_begin(self, trainer: Trainer, func, params: Params, *args, **kwargs):
+#         for k, v in trainer.optim_dict.items():
+#             if self.use_eidx:
+#                 step = params.eidx
+#             else:
+#                 step = params.global_step
+#
+#             if self.apply:
+#                 new_lr = self.schedule.apply(v, step)
+#                 trainer.logger.info('{}.lr = {}'.format(k, new_lr))
+#             else:
+#                 ratio = self.schedule.scale(v, step)
+#                 trainer.logger.info('lr scale ratio = {}'.format(k, ratio))
 
-    def on_hooked(self, source: Trainer, params: Params):
-        super().on_hooked(source, params)
-        if self.schedule is None:
-            if 'lr_sche' not in params:
-                source.logger.warn(f'lr_sche not exists in params and be assigned, {self} will be unhooked after.')
-                self.unhook()
-            else:
-                self.schedule = params.lr_sche
 
-    def on_train_epoch_begin(self, trainer: Trainer, func, params: Params, *args, **kwargs):
-        for k, v in trainer.optim_dict.items():
-            if self.use_eidx:
-                step = params.eidx
-            else:
-                step = params.global_step
-
-            if self.apply:
-                new_lr = self.schedule.apply(v, step)
-                trainer.logger.info('{}.lr = {}'.format(k, new_lr))
-            else:
-                ratio = self.schedule.scale(v, step)
-                trainer.logger.info('lr scale ratio = {}'.format(k, ratio))
-
-
-class ReportSche(TrainCallback):
-    """
-    log `schedule` in every epoch end
-    `schedule` means `Schedule` in Params and have `sche` in the name, which will have different value in every epoch
-    """
-    only_main_process = True
-    priority = 100
-
-    def on_hooked(self, source: Trainer, params: Params):
-        self.sche_lis = []
-        for k, v in params.items():  # type:str, Any
-            if isinstance(v, (Schedule, ScheduleList)) and 'sche' in k.lower():
-                self.sche_lis.append((k, v))
-
-    def on_train_epoch_end(self, trainer: Trainer, func, params: Params, result: TrainerResult, *args, **kwargs):
-        super().on_train_epoch_end(trainer, func, params, result, *args, **kwargs)
-        meter = result.meter
-        m = Meter()
-        for k, v in self.sche_lis:
-            m[k] = v(params.eidx)
-        trainer.logger.info(m)
+# class ReportSche(TrainCallback):
+#     """
+#     log `schedule` in every epoch end
+#     `schedule` means `Schedule` in Params and have `sche` in the name, which will have different value in every epoch
+#     """
+#     only_main_process = True
+#     priority = 100
+#
+#     def on_hooked(self, source: Trainer, params: Params):
+#         self.sche_lis = []
+#         for k, v in params.items():  # type:str, Any
+#             if isinstance(v, (Schedule, ScheduleList)) and 'sche' in k.lower():
+#                 self.sche_lis.append((k, v))
+#
+#     def on_train_epoch_end(self, trainer: Trainer, func, params: Params, result: TrainerResult, *args, **kwargs):
+#         super().on_train_epoch_end(trainer, func, params, result, *args, **kwargs)
+#         meter = result.meter
+#         m = Meter()
+#         for k, v in self.sche_lis:
+#             m[k] = v(params.eidx)
+#         trainer.logger.info(m)
 
 
 class AutoLoadModel(InitialCallback):

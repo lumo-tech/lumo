@@ -7,7 +7,7 @@ from difflib import Match, SequenceMatcher
 from collections import namedtuple
 from lumo.contrib.itertools import window
 
-Chunk = namedtuple('Chunk', 'w start size')
+Chunk = namedtuple('Chunk', 'w a size')
 
 
 class LCS:
@@ -100,8 +100,6 @@ class LCS:
 
         chunk_x = _merge(chunk_x, self.xstr)
         chunk_y = _merge(chunk_y, self.ystr)
-
-        # ress = [i for i in ress if len(i) == 0]
         return chunk_x, chunk_y
 
     def lcs(self):

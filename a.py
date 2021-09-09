@@ -1,12 +1,23 @@
-from lumo.contrib.itertools import safe_cycle
-from lumo import DatasetBuilder, DataModule, DataBundler
+from lumo.kit.meter import Meter2, AvgMeter
+from lumo import Logger
+import numpy as np
+import torch
+import time
 
-x = DatasetBuilder().add_input('x', range(100)).add_output('x', 'x').DataLoader()
-y = DatasetBuilder().add_input('x', range(200, 300)).add_output('x', 'x').DataLoader()
+log = Logger()
+start = time.time()
+avg = AvgMeter()
 
-bundler = DataBundler().add(x).add(y).poll_mode()
-for i in safe_cycle(bundler):
-    print(i)
+for i in range(10):
+    m = Meter2()
+    m.a = i
+    m.min.d = i
+    m.b = torch.rand([1])
+    m.c = np.random.rand(5)
+    m.f = '123'
+    m.e = ['123', 3, 5.]
 
+    avg.update(m)
+    # log.inline(avg)
 
-print(len(bundler))
+print(list(avg.items()))
