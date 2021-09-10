@@ -9,7 +9,7 @@ from typing import Union, Iterator, Tuple
 
 from ..base_classes import attr
 from ..base_classes.trickitems import NoneItem
-from lumo.utils.fmt import to_ndarray
+from lumo.utils.fmt import to_ndarray, detach
 
 
 class Meter:
@@ -104,11 +104,12 @@ class Meter:
 
 class AvgItem:
     def __init__(self, item, avg):
+        item = detach(item)
         self.avg = avg
         self.acc = item
+        self.c = 1
         self.cur = item
         self.last = item
-        self.c = 1
         self.offset = -1
         self.nd = to_ndarray(item)
         self.isint = 'int' in self.nd.dtype.name
@@ -146,7 +147,8 @@ class AvgItem:
     __str__ = __repr__
 
     def update(self, item):
-        self.c += 1
+        item = detach(item)
+
         avg = self.avg
         self.cur = item
 
@@ -154,6 +156,7 @@ class AvgItem:
             self.offset = abs(self.cur - self.last)
 
         if avg in {'mean', 'sum'}:
+            self.c += 1
             self.acc += item
         elif avg == 'max':
             self.last = max(self.cur, self.last)

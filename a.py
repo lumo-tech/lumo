@@ -4,6 +4,8 @@ import numpy as np
 import torch
 import time
 
+from lumo.calculate.schedule import CosSchedule
+
 log = Logger()
 start = time.time()
 avg = AvgMeter()
@@ -12,6 +14,7 @@ b = np.linspace(0, 101, 1000)
 c = np.linspace(0, 10, 10000)
 d = np.linspace(0, 1, 100000)
 e = np.linspace(0, 0.1, 1000000)
+sche = CosSchedule(1e-6, 1e-6, 0, 50)
 for i in range(10):
     m = Meter()
     m.a = a[i]
@@ -19,6 +22,7 @@ for i in range(10):
     m.c = c[i]
     m.d = d[i]
     m.e = e[i]
+    m.lr = sche(i)
 
     avg.update(m)
     log.info(avg)
