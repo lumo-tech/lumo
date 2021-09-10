@@ -116,39 +116,34 @@ class AvgItem:
         self.isscaler = self.nd.size == 1
 
     def __repr__(self):
+        """
+        simpler but more time-comsuming method could be some math function, not in if-else branch, like
+            prec =  max(min(8, int(np.ceil(np.log10((1 / (self.offset + 1e-10)))))), 1)
+            fmt_str = f'{{:.{prec}f}}'
+            return fmt_str.format(res)
+        """
         res = self.res
         if self.isscaler:
             res = to_ndarray(res).item()
             if self.isint:
                 return f"{res}"
-            elif self.isnumber:  #
-                # if self.offset > 0:
-                #     prec = max(min(8, int(np.ceil(np.log10((1 / (self.offset + 1e-10)))))), 1)
-                #     prec
-                # else:
-                #     prec = 4
-                # fmt_str = f'{{:.{prec}f}}'
-                # print(prec, fmt_str)
-                # return fmt_str.format(res)
-                #
-                # if self.offset > 1:
-                #     return f'{res:.2f}'
+            elif self.isnumber:
+                if self.c < 4:
+                    return f'{res:.4f}'
+
                 if self.offset < 1e-8:
                     return f'{res:.10f}'
                 elif self.offset < 1e-6:
                     return f'{res:.8f}'
                 elif self.offset < 1e-4:
                     return f'{res:.6f}'
-                # elif self.offset < 1e-2:
-                #     return f'{res:.4f}'
                 return f'{res:.4f}'
             else:
                 return f'{res}'
         else:
             return f'{res}'
 
-    def __str__(self):
-        return self.__repr__()
+    __str__ = __repr__
 
     def update(self, item):
         self.c += 1
@@ -207,8 +202,7 @@ class AvgMeter:
             return self._rec[item].cur
         raise KeyError(item)
 
-    def __str__(self):
-        return self.__repr__()
+    __str__ = __repr__
 
     def __iter__(self):
         yield from self.keys()
