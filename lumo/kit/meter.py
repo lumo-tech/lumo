@@ -106,7 +106,7 @@ class AvgItem:
     def __init__(self, item, avg):
         item = detach(item)
         self.avg = avg
-        self.acc = item
+        self.acc = [item]
         self.c = 1
         self.cur = item
         self.last = item
@@ -157,7 +157,9 @@ class AvgItem:
 
         if avg in {'mean', 'sum'}:
             self.c += 1
-            self.acc += item
+            self.acc.append([item])
+            if len(self.acc) > 25:
+                self.acc.pop(0)
         elif avg == 'max':
             self.last = max(self.cur, self.last)
         elif avg == 'min':
@@ -169,9 +171,9 @@ class AvgItem:
     def res(self):
         avg = self.avg
         if avg == 'mean':
-            return self.acc / self.c
+            return np.mean(self.acc)
         elif avg == 'sum':
-            return self.acc
+            return np.sum(self.acc)
         elif avg in {'max', 'min', 'last'}:
             return self.last
         return self.cur

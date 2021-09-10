@@ -22,6 +22,7 @@ for i in range(10):
     m.c = c[i]
     m.d = d[i]
     m.e = e[i]
+
     m.lr = sche(i)
 
     avg.update(m)
