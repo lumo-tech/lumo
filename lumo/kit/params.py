@@ -487,19 +487,19 @@ class Params(BaseParams):
 
     # DataLoaderParams = DataLoaderParams
     class SCHE:
-        Cos = schedule.CosSchedule
-        Linear = schedule.LinearSchedule
-        Log = schedule.LogSchedule
-        Exp = schedule.ExpSchedule
-        Power = schedule.PowerDecaySchedule
-        Const = schedule.ConstantSchedule
+        Cos = schedule.CosScheduler
+        Linear = schedule.LinearScheduler
+        Log = schedule.LogScheduler
+        Exp = schedule.ExpScheduler
+        Power = schedule.PowerDecayScheduler
+        Const = schedule.ConstantScheduler
 
-        PeriodCos = schedule.PeriodCosSchedule
-        PeriodHalfCos = schedule.PeriodHalfCosSchedule
+        PeriodCos = schedule.PeriodCosScheduler
+        PeriodHalfCos = schedule.PeriodHalfCosScheduler
         PeriodLinear = schedule.PeriodLinear
-        PeriodTriangle = schedule.PeriodTriangleSchedule
+        PeriodTriangle = schedule.PeriodTriangleScheduler
 
-        List = schedule.ScheduleList
+        List = schedule.SchedulerList
 
     def __init__(self):
         super().__init__()

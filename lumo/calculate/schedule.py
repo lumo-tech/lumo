@@ -25,7 +25,7 @@ from functools import lru_cache
 from typing import List
 
 
-class Schedule(attr):
+class Scheduler(attr):
     """
     ratio 变化为从 1 - 0
     """
@@ -112,15 +112,15 @@ class Schedule(attr):
         return new_lr
 
 
-class ContinuousSche(Schedule):
+class ContinuousSche(Scheduler):
     def __init__(self, start=0., end=1., left=0, right=1, *args, **kwargs):
         super().__init__()
         self.left = left
         self.right = right
         self.start = start
         self.end = end
-        self.constant = False
-        assert left != right
+        self.constant = (left == right)
+        # assert left != right
 
     def ratio(self, cur):
         if self.constant:
@@ -139,10 +139,13 @@ class ContinuousSche(Schedule):
         if right is None:
             right = self.right
 
+        if self.constant:
+            right = left + 50
+
         return super().plot(num, left, right, show)
 
 
-class PeriodSchedule(Schedule):
+class PeriodScheduler(Scheduler):
     """
     period
     """
@@ -153,7 +156,7 @@ class PeriodSchedule(Schedule):
         self.period = period
         self.start = start
         self.end = end
-        self.constant = False
+        self.constant = (period == 0)
 
     def ratio(self, cur):
         if self.constant:
@@ -175,11 +178,13 @@ class PeriodSchedule(Schedule):
             left = self.left
 
         right = self.period * n_period
+        if self.constant:
+            right = left + 50
 
         return super().plot(num, left, right, show)
 
 
-class CosSchedule(ContinuousSche):
+class CosScheduler(ContinuousSche):
     """one cycle cosine functoin"""
 
     def __call__(self, cur):
@@ -196,14 +201,7 @@ class CosSchedule(ContinuousSche):
         return self.start * cos_ratio + self.end * (1 - cos_ratio)
 
 
-class ConstantSchedule(ContinuousSche):
-    def __init__(self, value=0.5, *args, **kwargs):
-        super().__init__(start=value, end=value, *args, **kwargs)
-
-        self.constant = True
-
-
-class LinearSchedule(ContinuousSche):
+class LinearScheduler(ContinuousSche):
     """linear schedule"""
 
     def __call__(self, cur):
@@ -219,7 +217,7 @@ class LinearSchedule(ContinuousSche):
         return self.start * (1 - linear_ratio) + self.end * linear_ratio
 
 
-class ExpSchedule(ContinuousSche):
+class ExpScheduler(ContinuousSche):
     """slow to quick"""
 
     def __call__(self, cur):
@@ -238,7 +236,7 @@ class ExpSchedule(ContinuousSche):
         return self.start * (1 - exp_ratio) + self.end * exp_ratio
 
 
-class LogSchedule(ContinuousSche):
+class LogScheduler(ContinuousSche):
     """quick to slow"""
 
     def __call__(self, cur):
@@ -258,7 +256,13 @@ class LogSchedule(ContinuousSche):
         return self.start * (1 - log_ratio) + self.end * log_ratio
 
 
-class PeriodCosSchedule(PeriodSchedule):
+class ConstantScheduler(CosScheduler):
+    def __init__(self, value=0.5, *args, **kwargs):
+        super().__init__(start=value, end=value, left=0, right=0, *args, **kwargs)
+        self.constant = True
+
+
+class PeriodCosScheduler(PeriodScheduler):
     """
     periodic cosine schedule
     """
@@ -269,7 +273,7 @@ class PeriodCosSchedule(PeriodSchedule):
         return self.start * cos_ratio + self.end * (1 - cos_ratio)
 
 
-class PeriodHalfCosSchedule(PeriodSchedule):
+class PeriodHalfCosScheduler(PeriodScheduler):
     """
     half periodic cosine schedule, period is (right-left)
     """
@@ -281,7 +285,7 @@ class PeriodHalfCosSchedule(PeriodSchedule):
         return self.start * cos_ratio + self.end * (1 - cos_ratio)
 
 
-class PeriodTriangleSchedule(PeriodSchedule):
+class PeriodTriangleScheduler(PeriodScheduler):
     def __init__(self, start=0, end=1, left=0, left_period=1, right_period=1, *args, **kwargs):
         super().__init__(start=0, end=1, left=0,
                          period=(left_period + right_period),
@@ -303,7 +307,7 @@ class PeriodTriangleSchedule(PeriodSchedule):
             return self.end * (1 - ratio) + self.start * ratio
 
 
-class PeriodLinear(PeriodSchedule):
+class PeriodLinear(PeriodScheduler):
     """
     sawtooth wave, like a period line schedule
     """
@@ -313,7 +317,7 @@ class PeriodLinear(PeriodSchedule):
         return self.start * (1 - ratio) + self.end * ratio
 
 
-class PowerDecaySchedule(Schedule):
+class PowerDecayScheduler(Scheduler):
     """equal to tf.train.exponential_decay, decay every <decay_steps> with a base of <decay_rate> """
 
     def __init__(self, start, decay_steps, decay_rate, end=None):
@@ -332,8 +336,8 @@ class PowerDecaySchedule(Schedule):
         return res
 
 
-class ScheduleList(Schedule):
-    def __init__(self, schedules: List[Schedule], bound='left'):
+class SchedulerList(Scheduler):
+    def __init__(self, schedules: List[Scheduler], bound='left'):
         super().__init__()
         if len(schedules) > 0:
             self.bound = bound

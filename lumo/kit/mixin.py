@@ -28,6 +28,11 @@ class DataModuleMix():
     def idataloader(self, params: ParamsType, stage: TrainerStage, repeat: bool = False):
         raise NotImplementedError()
 
+    def iidataloader(self, params: ParamsType, stage: TrainerStage, repeat: bool = False):
+        if not repeat:
+            self.idataloader(params=params, stage=stage, repeat=repeat)
+
+
 
 class BaseCallbackMix():
     def icallbacks(self, params: ParamsType):

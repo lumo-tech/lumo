@@ -1,13 +1,27 @@
 """
 一个训练 f(x) = x+1 的线性函数的例子
 """
-from lumo import Trainer, DatasetBuilder, Params, callbacks
+from lumo import Trainer, DatasetBuilder, Params, callbacks, DataModule
+from lumo.base_classes import TrainerStage
 from lumo.kit.params import ParamsType
 
 import torch
 from torch import nn
 
 from lumo import Meter
+
+
+class DM(DataModule):
+
+    def idataloader(self, params: ParamsType, stage: TrainerStage, repeat: bool = False):
+        super().idataloader(params, stage, repeat)
+        print('repeat', repeat)
+        loader = builder.DataLoader(batch_size=params.batch_size, num_workers=4)
+        self.regist_dataloader_with_stage(stage, loader)
+
+    def iidataloader(self, params: ParamsType, stage: TrainerStage, repeat: bool = False):
+        super().iidataloader(params, stage, repeat)
+        print(repeat)
 
 
 class PlusOneTrainer(Trainer):
@@ -57,6 +71,10 @@ builder = (
     ).random_sampler().chain()
 )  # another simpler way
 
-trainer.train(builder.DataLoader(batch_size=params.batch_size, num_workers=4))
+params.epoch = 10
+trainer.train()
+trainer.train(DM())
 
+params.eidx = 0
+trainer.train()
 print(list(trainer.model.parameters()))

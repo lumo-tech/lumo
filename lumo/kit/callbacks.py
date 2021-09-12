@@ -12,7 +12,7 @@ from .meter import AvgMeter
 from .meter import Meter
 from .params import Params
 from ..base_classes.trickitems import NoneItem, AvgItem
-from ..calculate.schedule import Schedule, ScheduleList
+from ..calculate.schedule import Scheduler, SchedulerList
 from ..utils.timing import format_second
 from typing import TYPE_CHECKING
 

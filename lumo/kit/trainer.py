@@ -481,7 +481,7 @@ class _BaseTrainer(ModelMix, CallbackMix, metaclass=Merge):
             torch.cuda.set_device(device)
 
     def regist_dataloader(self, train: DataLoader = None, val: DataLoader = None, test: DataLoader = None,
-                          datamodule: DataModule = None):
+                          datamodule: DataModuleMix = None):
         if datamodule is not None:
             self._datamodule = datamodule
         else:
@@ -743,27 +743,36 @@ class Trainer(DLLoopMix, _BaseTrainer):
             return to_device(item, device_args_kwargs)
 
     def prepare_dataloader(self, stage: TrainerStage, dataloader=None) -> DataLoader:
+        """
+        prepare DataLoader instance for next trainer stage(train/test/evaluate)
+        Args:
+            stage:
+            dataloader:
+
+        Returns:
+
+        """
         params = self.params
         initialized = getattr(self.initial, f"{stage.name}_dataloader")
 
-        dataloader_ = None
-        """use loader from passed params first, then use itself, finally"""
-        if isinstance(dataloader, DataModuleMix):
-            dataloader.idataloader(params, stage, initialized)
-            self.regist_dataloader(datamodule=dataloader)
-            dataloader_ = getattr(dataloader, f'{stage.name}_dataloader', None)
-        elif isinstance(dataloader, (DataLoader, DataBundler)):
-            self.regist_dataloader(**{stage.name: dataloader})
-            dataloader_ = dataloader
+        if dataloader is not None:
+            dataloader_ = None
+            """use loader from passed params first, then use itself, finally"""
+            if isinstance(dataloader, DataModuleMix):
+                dataloader.iidataloader(params, stage, initialized)
+                self.regist_dataloader(datamodule=dataloader)
+                dataloader_ = getattr(dataloader, f'{stage.name}_dataloader', None)
+            elif isinstance(dataloader, (DataLoader, DataBundler)):
+                self.regist_dataloader(**{stage.name: dataloader})
+                dataloader_ = dataloader
         elif isinstance(self, DataModuleMix):
-            self.idataloader(params, stage, initialized)
+            self.iidataloader(params, stage, initialized)
             dataloader_ = getattr(self, f'{stage.name}_dataloader', None)
 
-        if dataloader is None and self.datamodule is not None:
+        if dataloader is None:
+            if initialized:
+                self.datamodule.iidataloader(params, stage, initialized)
             dataloader_ = getattr(self.datamodule, f'{stage.name}_dataloader', None)
-            if dataloader_ is None:
-                self.datamodule.idataloader(params, stage, initialized)
-                dataloader_ = getattr(self.datamodule, f'{stage.name}_dataloader', None)
 
         if isinstance(dataloader_, DataLoader):
             dataloader_ = self.accelerator.prepare(dataloader_)
@@ -861,6 +870,7 @@ class Trainer(DLLoopMix, _BaseTrainer):
         pass
 
     def test(self, dataloader: Union[DataLoader, DataModule] = None) -> TrainerResult:
+
         dataloader = self.prepare_dataloader(TrainerStage.test, dataloader)
         if dataloader is None:
             return TrainerResult(TrainerStage.test, None, TrainerResult.MSG_NO_DATALOADER)

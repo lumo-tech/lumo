@@ -103,9 +103,9 @@ class Meter:
 
 
 class AvgItem:
-    def __init__(self, item, avg):
+    def __init__(self, item, gb_method):
         item = detach(item)
-        self.avg = avg
+        self.gb_method = gb_method  # groupby method
         self.acc = [item]
         self.c = 1
         self.cur = item
@@ -129,9 +129,7 @@ class AvgItem:
             if self.isint:
                 return f"{res}"
             elif self.isnumber:
-                if self.c < 4:
-                    return f'{res:.4f}'
-
+                # return f'{res:.4f}'
                 if self.offset < 1e-8:
                     return f'{res:.10f}'
                 elif self.offset < 1e-6:
@@ -149,17 +147,16 @@ class AvgItem:
     def update(self, item):
         item = detach(item)
 
-        avg = self.avg
+        avg = self.gb_method
         self.cur = item
-
         if self.isnumber:
             self.offset = abs(self.cur - self.last)
 
         if avg in {'mean', 'sum'}:
-            self.c += 1
-            self.acc.append([item])
+            self.acc.append(item)
             if len(self.acc) > 25:
                 self.acc.pop(0)
+            self.last = self.cur
         elif avg == 'max':
             self.last = max(self.cur, self.last)
         elif avg == 'min':
@@ -169,7 +166,7 @@ class AvgItem:
 
     @property
     def res(self):
-        avg = self.avg
+        avg = self.gb_method
         if avg == 'mean':
             return np.mean(self.acc)
         elif avg == 'sum':
