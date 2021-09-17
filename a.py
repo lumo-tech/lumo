@@ -34,7 +34,13 @@
 # # print(np.ceil(np.log10((1 / 2))))
 # # max(8, int(1 / (1e-4 + 1e-10)))
 
-from lumo.proc.date import strftime
-print(strftime('%m%d'))
-import shutil
-shutil.copy()
+# from lumo.proc.date import strftime
+# print(strftime('%m%d'))
+# import shutil
+# shutil.copy()
+from lumo import Params
+
+pm = Params()
+
+print(pm.a)
+print(pm)
