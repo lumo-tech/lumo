@@ -1,8 +1,3 @@
-"""
-
-
-    提供一些提供了奇葩 feature 的类
-"""
 from typing import Any
 
 
@@ -61,6 +56,9 @@ class NoneItem:
         return 0
 
 
+null = NoneItem()
+
+
 class AvgItem:
     """
     用于保存累积均值的类
@@ -114,5 +112,3 @@ class AvgItem:
 
     def __getitem__(self, item):
         return self._item[item]
-
-
