@@ -3,25 +3,24 @@
 """
 import textwrap
 from pprint import pformat
-from typing import List, Union, Any
 
 import copy
 import json
 import os
-import pprint as pp
 import sys
 import warnings
 from collections import namedtuple
-from collections.abc import Iterable
 from datetime import timedelta
 from itertools import chain
 from typing import Any, overload, TypeVar, Optional, List, Union
 from accelerate.kwargs_handlers import KwargsHandler
 from accelerate.utils import RNGType
 import fire
+
 import torch
 
 from lumo.base_classes.attr import attr
+from lumo.base_classes.trickitems import null, NoneItem
 from lumo.base_classes.errors import BoundCheckError, NewParamWarning
 from lumo.base_classes.params_vars import OptimBuilder, OptimMixin
 from lumo.calculate import schedule
@@ -29,7 +28,9 @@ from lumo.utils import safe_io as io
 
 arange_param = namedtuple('arange_param', ['default', 'left', 'right'], defaults=[None, float('-inf'), float('inf')])
 choice_param = namedtuple('choice_param', ['default', 'choices'], defaults=[None, []])
+multiple_choice_param = namedtuple('multiple_choice_param', ['default', 'choices'], defaults=[None, []])
 default_param = namedtuple('default_param', ['default', 'warn'], defaults=[True])
+interact_param = namedtuple('interact', ['default'], defaults=[True])
 
 
 class BaseParams:
@@ -65,30 +66,48 @@ class BaseParams:
         if name.startswith("_"):
             super().__setattr__(name, value)
         else:
-            if isinstance(value, (arange_param, choice_param)):
+            if isinstance(value, interact_param):
+                dft_val = value.default
+
+                choice_hint = ''
+                if isinstance(dft_val, (arange_param, choice_param)):
+                    self._constrain[name] = dft_val
+                    if isinstance(dft_val, arange_param):
+                        choice_hint = f' (number in range [{dft_val.left}, {dft_val.right}])'
+                    elif isinstance(dft_val, choice_param):
+                        choice_hint = f' (value in choices {list(dft_val.choices)})'
+                    dft_val = dft_val.default
+
+                if isinstance(dft_val, NoneItem):
+                    ipt_val = input(f'Type value of param "{name}"{choice_hint}:')
+                    if ipt_val.strip() == '':
+                        resp = input('use "" as value?(Y/n)')
+                        if resp.lower().strip() not in 'yY':
+                            self.__setattr__(name, value)
+                            return
+                else:
+                    ipt_val = input(f'Type value of param "{name}"{choice_hint} (default {dft_val}):')
+                    if ipt_val.strip() == '':
+                        self.__setattr__(name, dft_val)
+                        return
+
+                ipt_val = fire.core.parser.DefaultParseValue(ipt_val)
+                self._check(name, ipt_val)
+                value = ipt_val
+            elif isinstance(value, (arange_param, choice_param)):
                 self._constrain[name] = value
                 value = value.default
             else:
                 self._check(name, value)
 
-            if isinstance(value, default_param):  # 设置默认值
-                # only set default param when name not exists
-                if name not in self._param_dict:
-                    if value.warn:
-                        warnings.warn(
-                            "'{}' is a new param,please check your spelling. It's more recommended to define in advance.".format(
-                                name))
-                    value = value.default
-                    self._param_dict[name] = value
-            else:
-                self._param_dict[name] = value
+            self._param_dict[name] = value
 
             res = self._namespace.setdefault(self.__class__, [])
             res.append(name)
 
     def __getattr__(self, item):
-        if item not in self._param_dict and self._lock:
-            raise AttributeError(item)
+        if item not in self._param_dict:
+            return null
         return self._param_dict.__getattr__(item)
 
     def __delattr__(self, name: str) -> None:
@@ -157,15 +176,14 @@ class BaseParams:
         return False
 
     def _check(self, name, value):
-        if isinstance(value, default_param):
-            value = value.default
         if name not in self._constrain:
             return True
         bound = self._constrain[name]
         if isinstance(bound, arange_param) and not (bound.left <= value and value <= bound.right):
-            raise BoundCheckError(f"value of param '{name}' should in range [{bound.left}, {bound.right}].")
+            raise BoundCheckError(
+                f"value of param '{name}' should in range [{bound.left}, {bound.right}], but got {value}")
         elif isinstance(bound, choice_param) and value not in bound.choices:
-            raise BoundCheckError(f"value of param '{name}' should in values {bound.choices}.")
+            raise BoundCheckError(f"value of param '{name}' should in values {bound.choices}, but got {value}")
 
     @staticmethod
     def _safe_repr(values: Any) -> str:
@@ -248,6 +266,12 @@ class BaseParams:
             return arange_param(default, left, right)
         else:
             raise BoundCheckError(f"value {default}' should in range [{left}, {right}].")
+
+    def interact(self, default=null):
+        return interact_param(default=default)
+
+    def multi_choice(self, *choices) -> choice_param:
+        raise NotImplementedError()
 
     def choice(self, *choices) -> choice_param:
         """
