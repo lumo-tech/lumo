@@ -25,6 +25,9 @@ params.optim = params.OPTIM.create_optim('Adam', lr=0.0001, weight_decay=4e-5)
 params.dataset = params.choice('cifar10', 'cifar100')
 
 params.from_args()
+params.to_json('./config.json')
+
+
 ```
 
 ### 训练

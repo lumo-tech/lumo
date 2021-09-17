@@ -9,14 +9,14 @@ class IDTrans:
 
         self._conn = None
         self._db = None
-        self.df_file = db_file
+        self.db_file = db_file
         self.table_name = table_name
         self.columns = columns
 
     @property
     def conn(self):
         if self._conn is None:
-            self._conn = sqlite3.connect(self.df_file)
+            self._conn = sqlite3.connect(self.db_file)
         return self._conn
 
     @property
@@ -29,7 +29,11 @@ class IDTrans:
         self._conn = None
         self._db = None
 
-    def __call__(self, id: int):
+    def __call__(self, id: int, db_file=None):
+        if db_file is not None:
+            self.db_file = db_file
+            self.reconn()
+
         col = ', '.join(self.columns)
         sql = f'select {col} from {self.table_name} where id = {id})'
 
@@ -47,7 +51,11 @@ class IDTrans:
 
 
 class BatchIDSTrans(IDTrans):
-    def __call__(self, ids):
+    def __call__(self, ids, db_file=None):
+        if db_file is not None:
+            self.db_file = db_file
+            self.reconn()
+
         if isinstance(ids, int):
             ids = [ids]
         ids_ = ','.join([str(int(i)) for i in ids])
@@ -65,4 +73,5 @@ class BatchIDSTrans(IDTrans):
         ress = res.fetchall()
 
         mem = {k: list(v) for k, v in zip(col, zip(*ress))}
+
         return mem

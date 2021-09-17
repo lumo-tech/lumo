@@ -785,7 +785,7 @@ class Trainer(DLLoopMix, _BaseTrainer):
         return dataloader_
 
     def train(self, dataloader: Union[DataLoader, DataModuleMix] = None) -> TrainerResult:
-        # params, initialized = self.params, self.initial.train_dataloader
+
         dataloader = self.prepare_dataloader(TrainerStage.train, dataloader)
         if dataloader is None:
             return TrainerResult(TrainerStage.train, 1, 'no train_dataloader')

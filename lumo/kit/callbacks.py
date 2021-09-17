@@ -286,11 +286,30 @@ class LoggerCallback(TrainCallback, InitialCallback, SaveLoadCallback):
         self.step_frequence = step_frequence
         self.breakline = breakline_in
 
+    @property
+    def meter(self):
+        if self._meter is None:
+            self.reset_meter()
+        return self._meter
+
+    def reset_meter(self):
+        if self.avg:
+            meter = AvgMeter()
+        else:
+            meter = Meter()
+        self._meter = meter
+
+    def _need_log(self, step):
+        return self.step_frequence > 0 and step % self.step_frequence == 0
+
+    def _need_breakline(self, step):
+        return self.breakline > 0 and step % self.breakline == 0
+
     def on_hooked(self, source: Trainer, params: Params):
         source.logger.raw(' '.join(sys.argv))
         source.logger.info("Exp BaseDir", os.path.abspath(source.exp.exp_root))
         source.logger.info("Exp Trainer", source.__class__.__name__)
-        source.logger.info("Exp Params")
+        source.logger.info("Exp TestDir", source.exp.test_root)
         source.logger.raw(params)
         self.start = 0
         self.cur = None
@@ -302,7 +321,7 @@ class LoggerCallback(TrainCallback, InitialCallback, SaveLoadCallback):
         self.start = params.eidx
         self.traintime = TimeIt()
         self.traintime.start()
-        trainer.logger.info('[[Train]]')
+        trainer.logger.info('[[Train Begin]]')
         super().on_train_begin(trainer, func, params, *args, **kwargs)
 
     def on_train_end(self, trainer: Trainer, func, params: Params, result: TrainerResult, *args, **kwargs):
@@ -311,12 +330,6 @@ class LoggerCallback(TrainCallback, InitialCallback, SaveLoadCallback):
         if meter is None:
             meter = ""
         trainer.logger.info(f"[[Train End in {format_second(self.traintime['use'])}]]", meter)
-
-    @property
-    def meter(self):
-        if self._meter is None:
-            self.reset_meter()
-        return self._meter
 
     def on_train_epoch_begin(self, trainer: Trainer, func, params: Params, *args, **kwargs):
         from ..utils.timing import TimeIt
@@ -342,19 +355,6 @@ class LoggerCallback(TrainCallback, InitialCallback, SaveLoadCallback):
         tm.last = format_second(last)
         trainer.logger.info(tm)
 
-    def reset_meter(self):
-        if self.avg:
-            meter = AvgMeter()
-        else:
-            meter = Meter()
-        self._meter = meter
-
-    def _need_log(self, step):
-        return self.step_frequence > 0 and step % self.step_frequence == 0
-
-    def _need_breakline(self, step):
-        return self.breakline > 0 and step % self.breakline == 0
-
     def on_train_step_end(self, trainer: Trainer, func, params: Params, meter: Meter, *args, **kwargs):
         meter = trainer._wrap_result(meter)
         self.meter.update(meter)
@@ -370,7 +370,7 @@ class LoggerCallback(TrainCallback, InitialCallback, SaveLoadCallback):
 
     def on_test_begin(self, trainer: Trainer, func, params: Params, *args, **kwargs):
         self.reset_meter()
-        trainer.logger.info("[[Test]]")
+        trainer.logger.info("[[Test Begin]]")
 
     def on_test_end(self, trainer: Trainer, func, params: Params, result: TrainerResult, *args, **kwargs):
         meter = result.meter
@@ -386,7 +386,7 @@ class LoggerCallback(TrainCallback, InitialCallback, SaveLoadCallback):
 
     def on_eval_begin(self, trainer: Trainer, func, params: Params, *args, **kwargs):
         self.reset_meter()
-        trainer.logger.info("[[Eval]]")
+        trainer.logger.info("[[Eval Begin]]")
 
     def on_eval_end(self, trainer: Trainer, func, params: Params, result: TrainerResult, *args, **kwargs):
         meter = result.meter
@@ -422,7 +422,7 @@ class LoggerCallback(TrainCallback, InitialCallback, SaveLoadCallback):
             trainer.logger.info(f'Loaded.')
 
     def on_imodels_end(self, trainer: Trainer, func, params: Params, meter: Meter, *args, **kwargs):
-        trainer.logger.info('Model initialized.')
+        trainer.logger.info('[[Model initialized]]')
 
     def on_prepare_dataloader_end(self, trainer: Trainer, func, params: Params, meter: Meter, *args, **kwargs):
         res = self.getfuncargs(func, *args, **kwargs)

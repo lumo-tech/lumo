@@ -28,6 +28,15 @@ V_ERROR = 40
 V_FATAL = 50
 
 
+def _get_print_func():
+    try:
+        from rich import pretty
+        pretty.install()
+    except ImportError:
+        pass
+    return print
+
+
 def get_global_logger():
     global logger
     if logger is None:
@@ -69,6 +78,7 @@ class Logger:
         self.return_str = ""
         self.listener = []
         self.use_stdout = use_stdout
+        self._print_func = _get_print_func()
         Logger._instance = self
 
     def _format(self, *values, inline=False, fix=0, raw=False, append=False, level=V_INFO):
@@ -209,7 +219,7 @@ class Logger:
     def print(self, *args, end='\n', file=sys.stdout):
         """built-in print function"""
         if self.use_stdout:
-            print(*args, end=end, flush=True, file=file)
+            self._print_func(*args, end=end, flush=True, file=file)
 
     def toggle_stdout(self, val: bool = None):
         """False will stop write on stdout"""

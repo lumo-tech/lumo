@@ -382,7 +382,7 @@ class BaseParams:
         return self
 
     def from_dict(self, dic: dict):
-        """alias of update()"""
+        """Alias of update()"""
         for k, v in dic.items():
             self[k] = v
 
@@ -391,25 +391,27 @@ class BaseParams:
 
     def to_json(self, fn: str):
         """
-        write params to the specified file path in json format.
+        Save the params object to a disk file.
+
         Args:
-            fn: file path to write
+            fn: a string object contraining a file name.
 
         Notes:
-            Only hashable key and values will be saved, see `lumo.base_classes.attr.jsonify()` for details.
+            - It's better to use '.json' extension.
+            - Some key-value pair that cannot be serialized may be ignored
         """
         io.dump_json(self.inner_dict().jsonify(), fn)
 
     def items(self):
-        """like dict.items()"""
+        """Like dict.items()"""
         return self._param_dict.items()
 
     def keys(self):
-        """like dict.keys()"""
+        """Like dict.keys()"""
         return self._param_dict.keys()
 
     def update(self, dic: dict):
-        """like dict.update()"""
+        """Like dict.update()"""
         self._param_dict.update(dic)
         return self
 
@@ -424,18 +426,18 @@ class BaseParams:
         return self._param_dict
 
     def get(self, k, default=None):
-        """like dict.get()"""
+        """Like dict.get()"""
         if k in self:
             return self[k]
         else:
             return default
 
     def replace(self, **kwargs):
-        """alias of update()"""
+        """Alias of update()"""
         return self.update(kwargs)
 
     def contains(self, key: str):
-        """like dict.contains()"""
+        """Like dict.contains()"""
         return key in self
 
     def merge(self, *params: 'BaseParams'):

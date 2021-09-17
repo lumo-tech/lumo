@@ -113,7 +113,7 @@ class Scheduler(attr):
 
 
 class ContinuousSche(Scheduler):
-    def __init__(self, start=0., end=1., left=0, right=1, *args, **kwargs):
+    def __init__(self, start=1e-3, end=1e-6, left=0, right=80, *args, **kwargs):
         super().__init__()
         self.left = left
         self.right = right
@@ -128,7 +128,7 @@ class ContinuousSche(Scheduler):
         return (cur - self.left) / (self.right - self.left)
 
     @classmethod
-    def get_val(cls, cur, start=0, end=1, left=0, right=1, *args, **kwargs):
+    def get_val(cls, cur, start=1e-3, end=1e-6, left=0, right=80, *args, **kwargs):
         """get the current schedule value without create `schedule` instance. """
         return cls(start=0, end=1, left=0, right=1, *args, **kwargs)(cur)
 

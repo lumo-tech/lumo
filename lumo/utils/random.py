@@ -76,3 +76,6 @@ def set_state(state_dict):
         else:
             import warnings
             warnings.warn("Don't have torch.cuda random state")
+
+
+

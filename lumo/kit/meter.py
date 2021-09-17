@@ -7,6 +7,8 @@ from collections import OrderedDict
 from numbers import Number
 from typing import Union, Iterator, Tuple
 
+import torch
+
 from ..base_classes import attr
 from ..base_classes.trickitems import NoneItem
 from lumo.utils.fmt import to_ndarray, detach
@@ -37,19 +39,19 @@ class Meter:
         if key not in self._avg or self._stage != 'default':
             value = to_ndarray(value)
             dtype = value.dtype.name
-            isscaler = value.size == 1
+            isscalar = value.size == 1
             if self._stage == 'default':
                 _avg = 'last'
                 if 'float' in dtype:
-                    _avg = 'mean'
+                    _avg = 'smean'
             else:
-                if self._stage in {'min', 'max'} and not isscaler:
+                if self._stage in {'min', 'max'} and not isscalar:
                     raise TypeError('Only support min/max operator on scaler values.')
-                elif self._stage in {'min', 'max', 'sum', 'mean'} and 'str' in dtype:
+                elif self._stage in {'min', 'max', 'sum', 'mean', 'smean'} and 'str' in dtype:
                     raise TypeError('Only support min/max/sum/mean operator on numbers.')
                 _avg = self._stage
 
-            self.add_avg_method(key, _avg)
+            self.set_avg_method(key, _avg)
 
         self._stage = 'default'
 
@@ -84,16 +86,18 @@ class Meter:
         self._stage = 'min'
         return self
 
+    @property
+    def smean(self):
+        self._stage = 'smean'
+        return self
+
     def update(self, dic: dict):
         for k, v in dic.items():
             self[str(k)] = v
         return self
 
-    def add_avg_method(self, key, typ):
+    def set_avg_method(self, key, typ):
         self._avg[key] = typ
-
-    def add_fmt_method(self, key, fmt):
-        self._fmt[key] = fmt
 
     def items(self):
         return ItemsView(self)
@@ -103,18 +107,24 @@ class Meter:
 
 
 class AvgItem:
+    SLIDE_WINDOW_SIZE = 100
+    EXP_WEIGHT = 0.75
+
     def __init__(self, item, gb_method):
-        item = detach(item)
+        item_ = detach(item)
         self.gb_method = gb_method  # groupby method
-        self.acc = [item]
+        self.acc = [item_]
         self.c = 1
         self.cur = item
-        self.last = item
-        self.offset = -1
+        self.last = item_
+        self.offset = item_
         self.nd = to_ndarray(item)
         self.isint = 'int' in self.nd.dtype.name
-        self.isnumber = self.isint or 'float' in self.nd.dtype.name
-        self.isscaler = self.nd.size == 1
+        self.isnumber = (self.isint or 'float' in self.nd.dtype.name) and isinstance(item, (np.ndarray,
+                                                                                            torch.Tensor))
+        self.isscalar = self.nd.size == 1
+        if not self.isscalar and gb_method in {'min', 'max'}:
+            raise AssertionError(f'{gb_method} method only support scaler')
 
     def __repr__(self):
         """
@@ -124,7 +134,7 @@ class AvgItem:
             return fmt_str.format(res)
         """
         res = self.res
-        if self.isscaler:
+        if self.isscalar:
             res = to_ndarray(res).item()
             if self.isint:
                 return f"{res}"
@@ -145,18 +155,21 @@ class AvgItem:
     __str__ = __repr__
 
     def update(self, item):
+        self.cur = item
         item = detach(item)
 
         avg = self.gb_method
-        self.cur = item
         if self.isnumber:
-            self.offset = abs(self.cur - self.last)
+            self.offset = self.offset * AvgItem.EXP_WEIGHT + abs(item - self.last) * (1 - AvgItem.EXP_WEIGHT)
 
-        if avg in {'mean', 'sum'}:
+        if avg == 'slide':
             self.acc.append(item)
-            if len(self.acc) > 25:
+            if len(self.acc) > AvgItem.SLIDE_WINDOW_SIZE:
                 self.acc.pop(0)
             self.last = self.cur
+        elif avg in {'mean', 'sum'}:
+            self.acc[0] = self.acc[0] + item
+            self.c += 1
         elif avg == 'max':
             self.last = max(self.cur, self.last)
         elif avg == 'min':
@@ -167,10 +180,12 @@ class AvgItem:
     @property
     def res(self):
         avg = self.gb_method
-        if avg == 'mean':
+        if avg == 'slide':
             return np.mean(self.acc)
+        if avg == 'mean':
+            return self.acc[0] / self.c
         elif avg == 'sum':
-            return np.sum(self.acc)
+            return self.acc[0]
         elif avg in {'max', 'min', 'last'}:
             return self.last
         return self.cur
@@ -215,9 +230,9 @@ class AvgMeter:
             res[k] = f'{v}'
         return res
 
-    def scaler_items(self) -> Iterator[Tuple[str, Number]]:
+    def scalar_items(self) -> Iterator[Tuple[str, Number]]:
         for k, v in self.items():
-            if v.isnumber and v.isscaler:
+            if v.isnumber and v.isscalar:
                 yield k, to_ndarray(v.res).item()
 
     def keys(self):
@@ -235,10 +250,16 @@ class AvgMeter:
             if k in self._rec:
                 try:
                     self._rec[k].update(v)
-                except:
+                except TypeError:
                     self._rec[k] = AvgItem(v, self._avg[k])
             else:
                 self._rec[k] = AvgItem(v, self._avg[k])
 
     def clear(self):
         self._rec.clear()
+
+    def record(self, key, value, gb_method=None):
+        # meter = Meter()
+        # meter[key] = value
+        # if gb_method is not None:
+        raise NotImplementedError()

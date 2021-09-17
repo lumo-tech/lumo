@@ -44,11 +44,11 @@ def summary_db(sqlite_file, columns=True,
 
     try:
         conn = sqlite3.connect(sqlite_file)
+        tables = conn.execute("select name from sqlite_master where type='table';").fetchall()
+        info['is_database'] = True
     except sqlite3.DatabaseError:
         info['is_database'] = False
         return info
-
-    tables = conn.execute("select name from sqlite_master where type='table';").fetchall()
     tables = [i[0] for i in tables if not i[0].startswith('sqlite')]
     info['db_count'] = len(tables)
     info['db_names'] = tables
@@ -82,7 +82,7 @@ def check_db_table_ok(db: str, table: str = None, cols: Union[List[str], str] = 
         return False, f'File {db} is not a database.'
 
     if table is not None:
-        if table not in info['db_names']:
+        if table.lower() not in {i.lower() for i in info['db_names']}:
             return False, f'Table {table} not in database({db})'
 
         if cols is not None:
@@ -91,7 +91,7 @@ def check_db_table_ok(db: str, table: str = None, cols: Union[List[str], str] = 
 
             real_cols = {i.lower() for i in info[table]['columns'].keys()}
             for col in cols:
-                if col not in real_cols:
+                if col.lower() not in real_cols:
                     return False, f'Column {col} not in table {table}({real_cols}).'
     return True, 'success'
 
