@@ -30,8 +30,7 @@ V_FATAL = 50
 
 def _get_print_func():
     try:
-        from rich import pretty
-        pretty.install()
+        pass
     except ImportError:
         pass
     return print
