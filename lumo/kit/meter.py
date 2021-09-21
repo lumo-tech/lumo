@@ -10,7 +10,7 @@ from typing import Union, Iterator, Tuple
 import torch
 
 from ..base_classes import attr
-from ..base_classes.trickitems import NoneItem
+from ..base_classes.trickitems import NoneItem, null
 from lumo.utils.fmt import to_ndarray, detach
 
 
@@ -32,7 +32,7 @@ class Meter:
     def __getitem__(self, item):
         if item in self._rec:
             return self._rec[item]
-        return NoneItem()
+        return null
 
     def __setitem__(self, key, value):
         self._rec[key] = value
@@ -91,15 +91,21 @@ class Meter:
         self._stage = 'smean'
         return self
 
-    def update(self, dic: dict):
+    def update(self, dic: dict) -> 'Meter':
         for k, v in dic.items():
             self[str(k)] = v
         return self
 
+    def serialize(self) -> OrderedDict:
+        res = OrderedDict()
+        for k, v in self.items():
+            res[k] = f'{v}'
+        return res
+
     def set_avg_method(self, key, typ):
         self._avg[key] = typ
 
-    def items(self):
+    def items(self) -> ItemsView:
         return ItemsView(self)
 
     def keys(self):

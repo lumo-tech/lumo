@@ -160,16 +160,16 @@ class PlusOneTrainer(Trainer):
 # print(outputs)
 from typing import Any, Optional, Union
 from typing import List
-
-from rich.console import Console, JustifyMethod, OverflowMethod, NewLine
-from rich.segment import Segment
-from rich.style import Style
-
-from rich.progress import track
-import time
-
-from rich.progress import (Progress, TimeRemainingColumn, TextColumn, TimeElapsedColumn, Column, StyleType,
-                           SpinnerColumn)
+#
+# from rich.console import Console, JustifyMethod, OverflowMethod, NewLine
+# from rich.segment import Segment
+# from rich.style import Style
+#
+# from rich.progress import track
+# import time
+#
+# from rich.progress import (Progress, TimeRemainingColumn, TextColumn, TimeElapsedColumn, Column, StyleType,
+#                            SpinnerColumn)
 
 # with Progress() as progress:
 #
@@ -182,37 +182,37 @@ from rich.progress import (Progress, TimeRemainingColumn, TextColumn, TimeElapse
 #     progress.update(task2, advance=0.3)
 #     progress.update(task3, advance=0.9)
 #     time.sleep(0.02)
-from lumo.proc.date import strftime
-
-columns = []
-
-columns.extend(
-    (
-        TextColumn("{task.fields[time]}"),
-        TimeElapsedColumn(),
-        "|",
-        TextColumn("[progress.percentage]{task.percentage:>3.0f}%"),
-        "|",
-        TextColumn("{task.fields[meter]}"),
-        "|",
-        TimeRemainingColumn(),
-    )
-)
-progress = Progress(
-    *columns,
-)
-
-from lumo import AvgMeter
-
-avg = AvgMeter()
-epoch_task = progress.add_task('idx', meter=avg, time=strftime)
-
-with progress:
-    while not progress.finished:
-        avg.lr = random.random()
-        avg.a = random.random()
-        progress.update(epoch_task, advance=1)
-        time.sleep(0.2)
+# from lumo.proc.date import strftime
+#
+# columns = []
+#
+# columns.extend(
+#     (
+#         TextColumn("{task.fields[time]}"),
+#         TimeElapsedColumn(),
+#         "|",
+#         TextColumn("[progress.percentage]{task.percentage:>3.0f}%"),
+#         "|",
+#         TextColumn("{task.fields[meter]}"),
+#         "|",
+#         TimeRemainingColumn(),
+#     )
+# )
+# progress = Progress(
+#     *columns,
+# )
+#
+# from lumo import AvgMeter
+#
+# avg = AvgMeter()
+# epoch_task = progress.add_task('idx', meter=avg, time=strftime)
+#
+# with progress:
+#     while not progress.finished:
+#         avg.lr = random.random()
+#         avg.a = random.random()
+#         progress.update(epoch_task, advance=1)
+#         time.sleep(0.2)
     # yield from progress.track(
     #     sequence, total=total, description=description, update_period=update_period
     # )
