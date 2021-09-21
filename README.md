@@ -4,13 +4,26 @@
 
 `lumo` 是一个轻量级的 Pytorch 深度学习实验框架。
 
+## 设计理念
+
+ - 高内聚，低耦合。所有模块尽可能解耦，除 [Trainer]() 外，其余模块均可以单独使用。
+   - 这使得 lumo 不要求完全依赖。你可以只在你的项目中使用数据加载、训练逻辑、参数配置、日志输出中的一个或几个模块。
+ - 约定大于配置。在没有规定配置的地方，均采用默认配置，当存在特殊需求时候，自定义配置即可。
+   - 灵活大于封装。尽可能的
+   
+
+
 ## Install
 
 ```bash
 pip install lumo
 ```
 
-。
+或手动安装最新版本
+
+```bash
+pip install git+https://github.com/sailist/lumo
+```
 
 ## Quick start
 
@@ -26,9 +39,9 @@ params.dataset = params.choice('cifar10', 'cifar100')
 
 params.from_args()
 params.to_json('./config.json')
-
-
 ```
+
+
 
 ### 训练
 
