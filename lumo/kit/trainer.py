@@ -770,8 +770,7 @@ class Trainer(DLLoopMix, _BaseTrainer):
             dataloader_ = getattr(self, f'{stage.name}_dataloader', None)
 
         if dataloader is None:
-            if initialized:
-                self.datamodule.iidataloader(params, stage, initialized)
+            self.datamodule.iidataloader(params, stage, initialized)
             dataloader_ = getattr(self.datamodule, f'{stage.name}_dataloader', None)
 
         if isinstance(dataloader_, DataLoader):

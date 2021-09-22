@@ -53,34 +53,35 @@ class PlusOneTrainer(Trainer):
 
 
 #
-# params = Params()
-# params.epoch = 30
-# params.batch_size = 10
-# params.optim = params.OPTIM.create_optim('SGD', lr=0.000001, weight_decay=4e-3)
-#
-# trainer = PlusOneTrainer(params)
-#
-# builder = (
-#     DatasetBuilder().add_input('xs', range(-500, 500)).add_input('ys', range(-500, 500))
-#         .add_output('xs', 'xs').add_output('ys', 'ys')
-#         .add_output_transform('xs', lambda x: torch.tensor([x]))
-#         .add_output_transform('ys', lambda x: torch.tensor([x + 1]))
-#         .random_sampler().chain()
-# )
-#
-# builder = (
-#     DatasetBuilder(
-#         xs=range(-500, 500),
-#         ys=range(-500, 500),
-#         auto_output=True,
-#         xs_opt_transform=lambda x: torch.tensor([x]),
-#         ys_opt_transform=lambda x: torch.tensor([x + 1])
-#     ).random_sampler().chain()
-# )  # another simpler way
-#
-# params.epoch = 10
-# trainer.train()
-# trainer.train(DM())
+params = Params()
+params.epoch = 30
+params.batch_size = 10
+params.optim = params.OPTIM.create_optim('SGD', lr=0.000001, weight_decay=4e-3)
+
+trainer = PlusOneTrainer(params)
+
+builder = (
+    DatasetBuilder().add_input('xs', range(-500, 500)).add_input('ys', range(-500, 500))
+        .add_output('xs', 'xs').add_output('ys', 'ys')
+        .add_output_transform('xs', lambda x: torch.tensor([x]))
+        .add_output_transform('ys', lambda x: torch.tensor([x + 1]))
+        .random_sampler().chain()
+)
+
+builder = (
+    DatasetBuilder(
+        xs=range(-500, 500),
+        ys=range(-500, 500),
+        auto_output=True,
+        xs_opt_transform=lambda x: torch.tensor([x]),
+        ys_opt_transform=lambda x: torch.tensor([x + 1])
+    ).random_sampler().chain()
+)  # another simpler way
+
+params.epoch = 3
+trainer.train()
+trainer.train(DM())
+trainer.test()
 #
 # params.eidx = 0
 # trainer.train()
@@ -213,9 +214,9 @@ from typing import List
 #         avg.a = random.random()
 #         progress.update(epoch_task, advance=1)
 #         time.sleep(0.2)
-    # yield from progress.track(
-    #     sequence, total=total, description=description, update_period=update_period
-    # )
+# yield from progress.track(
+#     sequence, total=total, description=description, update_period=update_period
+# )
 
 # for i in console.render('4600/4635 | Lall: 0.4351 | lr: 0.0004525906'):
 #     print(i)

@@ -59,10 +59,11 @@ class CELoss(Loss):
 
     def loss_ce_with_masked_(self,
                              logits: torch.Tensor, labels: torch.Tensor, mask: torch.Tensor,
-                             meter: Meter, name: str):
-        meter[name] = (F.cross_entropy(logits, labels, reduction='none') * mask).mean()
-        return meter[name]
-
+                             meter: Meter = None, name: str = 'Lcem'):
+        loss = (F.cross_entropy(logits, labels, reduction='none') * mask).mean()
+        if meter is not None:
+            meter[name] = loss
+        return loss
 
 class MinENTLoss(Loss):
     def loss_minent_(self, logits, w_ent=1,
