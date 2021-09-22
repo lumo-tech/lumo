@@ -32,7 +32,7 @@ setup(
         'Programming Language :: Python :: 3.7',
     ],
     keywords='lumo',
-    packages=['lumo'],
+    packages=find_packages(),
     entry_points={
         'console_scripts': [
             'lumo = lumo.cli.cli:main'
