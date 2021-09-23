@@ -707,7 +707,7 @@ class Trainer(DLLoopMix, _BaseTrainer):
             return meter
         elif isinstance(meter, Sequence):
             return {f'm{i}': v for i, v in enumerate(meter)}
-        elif isinstance(meter, (torch.Tensor, np.ndarray)):
+        elif isinstance(meter, (torch.Tensor, np.ndarray, float, int)):
             return {'metric': meter}
 
     @property
@@ -784,20 +784,15 @@ class Trainer(DLLoopMix, _BaseTrainer):
         return dataloader_
 
     def train(self, dataloader: Union[DataLoader, DataModuleMix] = None) -> TrainerResult:
-
         dataloader = self.prepare_dataloader(TrainerStage.train, dataloader)
         if dataloader is None:
             return TrainerResult(TrainerStage.train, 1, 'no train_dataloader')
 
-        self._check_models_init()
-        self._check_optim_init()
-
         self.initial.train_dataloader = True
-
         result = TrainerResult(TrainerStage.train, None, TrainerResult.MSG_OK)
+
         while self.params.eidx < self.params.epoch:
             self.params.eidx += 1
-            self.to_stage(TrainerStage.train)
             result = self.train_epoch(dataloader)
             if self.train_toggle:
                 self.train_toggle = False
@@ -814,6 +809,7 @@ class Trainer(DLLoopMix, _BaseTrainer):
 
         self._check_models_init()
         self._check_optim_init()
+        self.change_mode(False)
 
         self.initial.train_dataloader = True
 
@@ -833,6 +829,10 @@ class Trainer(DLLoopMix, _BaseTrainer):
         return TrainerResult(TrainerStage.train_epoch, avg, TrainerResult.MSG_OK)
 
     def train_epoch(self, dataloader: DataLoader) -> TrainerResult:
+        self._check_models_init()
+        self._check_optim_init()
+        self.change_mode(True)
+
         avg = None
         for idx, batch in enumerate(dataloader):
             if avg is None:
@@ -853,8 +853,10 @@ class Trainer(DLLoopMix, _BaseTrainer):
         dataloader = self.prepare_dataloader(TrainerStage.val, dataloader)
         if dataloader is None:
             return TrainerResult(TrainerStage.val, None, TrainerResult.MSG_NO_DATALOADER)
+        self.initial.val_dataloader = True
+
         self._check_models_init()
-        self.to_stage(TrainerStage.val)
+        self.change_mode(False)
 
         with torch.no_grad():
             avg = AvgMeter()
@@ -869,12 +871,14 @@ class Trainer(DLLoopMix, _BaseTrainer):
         pass
 
     def test(self, dataloader: Union[DataLoader, DataModule] = None) -> TrainerResult:
-
         dataloader = self.prepare_dataloader(TrainerStage.test, dataloader)
         if dataloader is None:
             return TrainerResult(TrainerStage.test, None, TrainerResult.MSG_NO_DATALOADER)
+
+        self.initial.test_dataloader = True
+
         self._check_models_init()
-        self.to_stage(TrainerStage.test)
+        self.change_mode(False)
 
         with torch.no_grad():
             avg = AvgMeter()

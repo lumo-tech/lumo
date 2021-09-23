@@ -82,6 +82,7 @@ params.epoch = 3
 trainer.train()
 trainer.train(DM())
 trainer.test()
+trainer.test()
 #
 # params.eidx = 0
 # trainer.train()
