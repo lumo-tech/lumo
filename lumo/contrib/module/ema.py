@@ -1,33 +1,52 @@
+""""""
+import warnings
+
 from torch import nn
 import torch
 from copy import deepcopy
-from torch import LongTensor
-
-if torch.cuda.is_available():
-    from torch.cuda import LongTensor as CLongTensor
-else:
-    CLongTensor = LongTensor
-
 from typing import TypeVar
 
 Module = TypeVar('Module', bound=nn.Module)
 
 
-def EMA(model: Module, alpha=0.999) -> Module:
+def empty_train(*args, **kwargs):
+    return args[0]
+
+
+import numpy as np
+
+np.random.rand()
+
+
+def EMA(model: Module, alpha=0.999, force_eval=False) -> Module:
     """
-    Exponential Moving Average(EMA) for nn.Module
-    Args:
-        model: nn.Module, An EMA wrapper of original model
-        alpha: float, default 0.999, decay ratio of EMA
+    EMA(model: Module, alpha=0.999, force_eval=False)
 
-    Returns:
-        A new cloned model that has a new method 'step'
+        An Exponential Moving Average(EMA) wrapper for nn.Module
 
-    Notes:
-        ema model will not generate gradient in its forward process
+        Examples:
+        --------
+        >>> model = ...
+        >>> ema_model = EMA(model,alpha=0.999)
+
+            ...
+
+            ema_model.step()
+            # or ema_model.step(0.99)
+
+        Args:
+            model:
+            alpha:
+            force_eval:
+
+        Returns:
+
     """
     ema_model = deepcopy(model)
-    [i.detach_() for i in ema_model.parameters()]
+
+    [i.requires_grad_(False) for i in ema_model.parameters()]
+    param_keys = set([k for k, _ in ema_model.named_parameters()])
+    buffer_keys = set([k for k, _ in ema_model.named_buffers()])  # for Norm layers
 
     def step(alpha_=None):
 
@@ -35,12 +54,11 @@ def EMA(model: Module, alpha=0.999) -> Module:
             alpha_ = alpha
 
         with torch.no_grad():
-            for (_, ema_param), (_, param) in zip(ema_model.state_dict().items(), model.state_dict().items()):
-                ema_param.to(param.device)
-                if not isinstance(param, (LongTensor, CLongTensor)):
-                    ema_param.data.mul_(alpha_).add_(param.data, alpha=1 - alpha_)
-                else:
+            for (k, ema_param), (_, param) in zip(ema_model.state_dict().items(), model.state_dict().items()):
+                if k in param_keys:
                     ema_param.data.copy_(alpha_ * ema_param + (1 - alpha_) * param)
+                elif k in buffer_keys:
+                    ema_param.data.copy_(param)
 
     forward_ = ema_model.forward
 
@@ -49,5 +67,13 @@ def EMA(model: Module, alpha=0.999) -> Module:
             return forward_(*args, **kwargs)
 
     ema_model.forward = forward
+
+    if hasattr(ema_model, 'step'):
+        warnings.warn(f'EMA use `step` function to update module paramters, '
+                      f'the defined `step` function in class {model.__class__.__name__} will be replaced.')
+
     ema_model.step = step
+    ema_model.eval()
+    if force_eval:
+        ema_model.train = empty_train
     return ema_model

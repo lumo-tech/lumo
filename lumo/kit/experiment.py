@@ -3,6 +3,13 @@ Experiment
  - 记录各个参数
  - 生成各个路径
  - 实时记录
+
+
+分开大文件和小文件的存放位置
+~/.lumo/experiments/<experiment_name>/.cache/<test_name>
+~/.lumo/experiments/<experiment_name>/<test_name>/
+
+
 """
 import os
 import time
