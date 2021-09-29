@@ -22,8 +22,8 @@ import torch
 from lumo.base_classes.attr import attr
 from lumo.base_classes.trickitems import null, NoneItem
 from lumo.base_classes.errors import BoundCheckError, NewParamWarning
-from lumo.base_classes.params_vars import OptimBuilder, OptimMixin
-from lumo.calculate import schedule
+from lumo.base_classes.params_vars import OptimMixin
+from lumo.contrib.optim import lr_scheduler
 from lumo.utils import safe_io as io
 
 arange_param = namedtuple('arange_param', ['default', 'left', 'right'], defaults=[None, float('-inf'), float('inf')])
@@ -513,19 +513,19 @@ class Params(BaseParams):
 
     # DataLoaderParams = DataLoaderParams
     class SCHE:
-        Cos = schedule.CosScheduler
-        Linear = schedule.LinearScheduler
-        Log = schedule.LogScheduler
-        Exp = schedule.ExpScheduler
-        Power = schedule.PowerDecayScheduler
-        Const = schedule.ConstantScheduler
+        Cos = lr_scheduler.CosScheduler
+        Linear = lr_scheduler.LinearScheduler
+        Log = lr_scheduler.LogScheduler
+        Exp = lr_scheduler.ExpScheduler
+        Power = lr_scheduler.PowerDecayScheduler
+        Const = lr_scheduler.ConstantScheduler
 
-        PeriodCos = schedule.PeriodCosScheduler
-        PeriodHalfCos = schedule.PeriodHalfCosScheduler
-        PeriodLinear = schedule.PeriodLinear
-        PeriodTriangle = schedule.PeriodTriangleScheduler
+        PeriodCos = lr_scheduler.PeriodCosScheduler
+        PeriodHalfCos = lr_scheduler.PeriodHalfCosScheduler
+        PeriodLinear = lr_scheduler.PeriodLinear
+        PeriodTriangle = lr_scheduler.PeriodTriangleScheduler
 
-        List = schedule.SchedulerList
+        List = lr_scheduler.SchedulerList
 
     def __init__(self):
         super().__init__()
@@ -539,33 +539,3 @@ class Params(BaseParams):
 
 
 ParamsType = TypeVar('ParamsType', bound=Params)
-
-
-class AccelerateParams(BaseParams):
-
-    def __init__(self):
-        super().__init__()
-        self.device_placement: bool = True
-        self.split_batches: bool = False
-        self.fp16: bool = None
-        self.cpu: bool = False
-        self.rng_types: Optional[List[Union[str, RNGType]]] = None
-        self.kwargs_handlers: Optional[List[KwargsHandler]] = None
-
-
-def disable_commit():
-    params = BaseParams()
-    params.nocommit = True
-    return params
-
-
-def use_prerain(pretrain=True, pretrain_path=None):
-    params = BaseParams()
-    params.pretrain = pretrain
-    params.pretrain_path = pretrain_path
-    return params
-
-# class optims:
-#     @staticmethod
-#     def sgd():
-#         pass

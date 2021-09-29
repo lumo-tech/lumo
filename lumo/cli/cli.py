@@ -33,7 +33,7 @@ lumo port
 
 """
 import sys
-from lumo import __version__
+# from lumo import __version__
 
 from lumo.decorators import regist_func_to
 from lumo import globs
@@ -41,72 +41,13 @@ from lumo import globs
 func_map = {}
 
 
-# @regist_func_to(func_map)
-def init(src_dir=None, template=None):
-    import shutil
-    import os
-
-    if src_dir is None:
-        src_dir = os.getcwd()
-    from .api.git import init_repo
-
-    # dir_name = os.path.basename(src_dir)
-    _, init = init_repo(src_dir)
-    if init:
-        print(f'{src_dir} initialized')
-    else:
-        print(f'{src_dir} is already a git dir.')
-
-    # templete_dir = os.path.join(os.path.dirname(__file__), 'templete')
-    # shutil.copytree(templete_dir, os.path.join(src_dir, dir_name))
-    # # os.rename(os.path.join(src_dir, 'templete'), os.path.join(src_dir, dir_name))
-    # for root, dirs, files in os.walk(src_dir):
-    #     for file in files:
-    #         if file.endswith('.py-tpl'):
-    #             nfile = "{}.py".format(os.path.splitext(file)[0])
-    #             os.rename(os.path.join(root, file), os.path.join(root, nfile))
-
-
-#
-def _board_with_logdir(logdir, *args, **kwargs):
-    import os
-    import subprocess
-
-    tmpdir = os.path.join(os.path.dirname(logdir), 'board_tmp')
-    os.makedirs(tmpdir, exist_ok=True)
-    try:
-        subprocess.check_call(['tensorboard', '--logdir={}'.format(logdir),
-                               *['--{}={}'.format(k, v) for k, v in kwargs.items()]],
-                              env=dict(os.environ, TMPDIR=tmpdir))
-    except KeyboardInterrupt as k:
-        print('bye.')
-        exit(0)
-
-
-def _board_with_test_name(test_name, *args, **kwargs):
-    query = Q.tests(test_name)
-    if query.empty:
-        raise IndexError(test_name)
-    vw = query.to_viewer()
-    if not vw.has_board():
-        raise AttributeError('{} has no board or has been deleted'.format(test_name))
-    else:
-        _board_with_logdir(vw.board_logdir, **kwargs)
+def init(*args, **kwargs):
+    pass
 
 
 @regist_func_to(func_map)
 def board(*args, **kwargs):
-    if len(args) > 0:
-        kwargs.setdefault('test_name', args[0])
-
-    if 'logdir' in kwargs:
-        _board_with_logdir(**kwargs)
-    elif 'test' in kwargs:
-        _board_with_test_name(kwargs['test'])
-    elif 'test_name' in kwargs:
-        _board_with_test_name(**kwargs)
-    else:
-        _board_with_logdir('./board')
+    pass
 
 
 def _find_test_name(*args, **kwargs):
@@ -120,7 +61,7 @@ def _find_test_name(*args, **kwargs):
 
 
 @regist_func_to(func_map)
-def reset(*args, **kwargs):
+def checkout(*args, **kwargs):
     test_name = _find_test_name(*args, **kwargs)
     query = Q.tests(test_name)
     if query.empty:
@@ -143,23 +84,14 @@ def archive(*args, **kwargs):
     print('archive {} to {}'.format(test_name, exp.plugins['archive']['file']))
 
 
-@regist_func_to(func_map)
-def log(*args, **kwargs):
-    test_name = _find_test_name(*args, **kwargs)
-    query = Q.tests(test_name)
-    if query.empty:
-        print("can't find test {}".format(test_name))
-        exit(1)
-
-    vw = query.to_viewer()
-    if not vw.has_log():
-        print("can't find log file of [{}]".format(test_name))
-        exit(1)
-    print(vw.log_fn)
+def find(*args, **kwargs):
+    pass
 
 
-#
-#
+def report(*args, **kwargs):
+    pass
+
+
 @regist_func_to(func_map)
 def params(*args, **kwargs):
     test_name = _find_test_name(*args, **kwargs)
@@ -177,30 +109,6 @@ def params(*args, **kwargs):
         exit(1)
 
 
-def config(field=None, k=None, v=None):
-    """
-
-    Args:
-        k: key of the value
-        v: value for key
-    """
-    if field is None or k is None:
-        print(config.__doc__)
-
-    if field == 'list':
-        print(globs)
-        return
-
-    if v is None:
-        v = globs.get(k, level=field, default=None)
-        if v is None:
-            print(f"{k} not exist in field {field}.")
-        else:
-            print(f'{k} = {v}')
-        return
-    globs.set(k, v, level=field)
-
-
 def main(*args, **kwargs):
     # print(args, kwargs)
     print(f"lumo {__version__}")
@@ -215,6 +123,18 @@ def main(*args, **kwargs):
         print(doc)
 
 
+class Board:
+    pass
+
+
+class Main():
+    def init(self):
+        pass
+
+    def board(self, logdir=None, test_name=None):
+        pass
+
+
 # Fire 不能嵌套在 __main__ 判断里，否则 sys.argv 识别会出问题，目前原因未知
-fire.Fire(main)
-exit(0)
+fire.Fire(Main())
+# exit(0)

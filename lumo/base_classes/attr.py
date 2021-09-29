@@ -10,22 +10,65 @@ import numpy as np
 import torch
 from joblib import hash
 
-from lumo.base_classes.metaclasses import meta_attr
-
-# from lumo.utils.keys import
 _attr_clss = {}
 
 ATTR_TYPE = '_type'
+
+
+class meta_attr(type):
+    """记录所有attr子类的类名和类信息，用于序列化和反序列化"""
+
+    def __new__(mcs, *args: Any, **kwargs: Any):
+        mcs = type.__new__(mcs, *args, **kwargs)
+        _attr_clss[mcs.__name__] = mcs
+        return mcs
+
+
+def _get_item(dic, key: str, default=None):
+    if isinstance(key, str):
+        for sub in key.split('.'):
+            if isinstance(dic, dict) and OrderedDict.__contains__(dic, sub):
+                dic = OrderedDict.__getitem__(dic, sub)
+            else:
+                return default
+        return dic
+    else:
+        if OrderedDict.__contains__(dic, key):
+            return OrderedDict.__getitem__(dic, key)
+        else:
+            return default
+
+
+def _set_item(dic: dict, key: str, value, overwrite=True):
+    if isinstance(key, str):
+        subs = key.split('.', maxsplit=1)
+        if len(subs) == 1:
+            OrderedDict.__setitem__(dic, key, value)
+            # dic[key] = value
+            return True
+
+        sub, right = subs
+        if sub in dic:
+            nxt = dic[sub]
+            if not isinstance(nxt, dict):
+                if overwrite:
+                    dic[sub] = attr()
+                    nxt = dic[sub]
+                else:
+                    return False
+        else:
+            dic[sub] = attr()
+            nxt = dic[sub]
+        return _set_item(nxt, right, value, overwrite)
+    else:
+        OrderedDict.__setitem__(dic, key, value)
+        return True
 
 
 class attr(OrderedDict, metaclass=meta_attr):
     """
     An ordered defaultdict, the default class is attr itself.
     """
-
-    def __new__(cls, *args: Any, **kwargs: Any):
-        self = super().__new__(cls, *args, **kwargs)
-        return self
 
     @staticmethod
     def __parse_value(v):
@@ -36,8 +79,6 @@ class attr(OrderedDict, metaclass=meta_attr):
         return v
 
     def __getattr__(self, item):
-        if item not in self:
-            self[item] = attr()
         return self[item]
 
     def __setattr__(self, name: str, value: Any) -> None:
@@ -45,119 +86,25 @@ class attr(OrderedDict, metaclass=meta_attr):
         self[name] = value
 
     def __getitem__(self, k):
-        cwk = k
-        if isinstance(k, _contains):
-            k = k.value
-
-        k = str(k)
-        ks = k.split(".")
-        if len(ks) == 1:
-            if isinstance(cwk, _contains):
-                return super().__getitem__(ks[0])
-
-            try:
-                return super().__getitem__(ks[0])
-            except KeyError:
-                self[ks[0]] = attr()
-                return self[ks[0]]
-
-        cur = self
-        for tk in ks:
-            if isinstance(cwk, _contains):
-                cur = cur.__getitem__(_contains(tk))
-            else:
-                cur = cur.__getitem__(tk)
-        return cur
+        return _get_item(self, k, attr())
 
     def __setitem__(self, k, v):
         v = self.__parse_value(v)
+        _set_item(self, k, v, True)
 
-        k = str(k)
-        ks = k.split(".")
-        if len(ks) == 1:
-            super().__setitem__(ks[0], v)
-        else:
-            cur = self
-            for tk in ks[:-1]:
-                ncur = cur.__getattr__(tk)
-                if not isinstance(ncur, attr):
-                    cur[tk] = attr()
-                    ncur = cur[tk]
-                cur = ncur
-
-            cur[ks[-1]] = v
-
-    def __contains__(self, o: object) -> bool:
-        try:
-            _ = self[_contains(o)]
-            return True
-        except:
-            return False
+    def __contains__(self, o: str) -> bool:
+        return not isinstance(_get_item(self, o, _empty()), _empty)
 
     def __copy__(self):
-        # res = attr()
         return self.from_dict(self)
-
-    def __deepcopy__(self, memodict={}):
-        return self.copy()
-
-    def walk(self):
-        for k, v in self.items():
-            if isinstance(v, attr):
-                for ik, iv in v.walk():
-                    ok = "{}.{}".format(k, ik)
-                    yield ok, iv
-            else:
-                yield k, v
 
     def __eq__(self, o: object) -> bool:
         if isinstance(o, dict):
             return self.hash() == hash(o)
         return False
 
-    def items(self, toggle=False):
-        if toggle:
-            yield ATTR_TYPE, self.__class__.__name__
-        for k, v in super().items():
-            yield k, v
-
-    def raw_items(self):
-        return self.items(toggle=True)
-
-    def pickify(self) -> dict:
-        """
-        Return a serialized dict which can be dumped by pickle.
-        You can deserialize this dict by `from_dict()`
-        """
-        res = dict()
-        for k, v in self.raw_items():
-            if isinstance(v, attr):
-                v = v.pickify()
-                res[k] = v
-            elif isinstance(v, (Iterable)):
-                if not isinstance(v, (torch.Tensor, np.ndarray, str)):
-                    nv = []
-                    for vv in v:
-                        if isinstance(vv, dict):
-                            if isinstance(vv, attr):
-                                nv.append(vv.pickify())
-                            else:
-                                nv.append(attr.from_dict(vv).pickify())
-                        elif vv is None:
-                            nv.append(_none().pickify())
-                        else:  # set,list
-                            # _tmp = attr()
-                            # _tmp['tmp'] = vv
-                            nv.append(vv)
-                else:
-                    nv = v
-                res[k] = nv
-            elif v is None:
-                res[k] = _none().pickify()
-            else:
-                res[k] = v
-
-        return res
+    def items(self):
+        return super().items()
 
     def jsonify(self) -> dict:
         """
@@ -166,15 +113,18 @@ class attr(OrderedDict, metaclass=meta_attr):
         """
         import numbers
         res = dict()
-        for k, v in self.raw_items():
+        if type(self) != attr:
+            res[ATTR_TYPE] = self.__class__.__name__
+
+        for k, v in self.items():
             if isinstance(v, (numbers.Number, str)):
                 res[k] = v
             elif isinstance(v, attr):
                 v = v.jsonify()
                 res[k] = v
-            elif isinstance(v, (Iterable)):
+            elif isinstance(v, Iterable):
                 if isinstance(v, (torch.Tensor, np.ndarray)):
-                    nv = _tpttr(v).jsonify()
+                    nv = _arr(v).jsonify()
                 else:
                     nv = []
                     for vv in v:
@@ -199,17 +149,11 @@ class attr(OrderedDict, metaclass=meta_attr):
 
     def hash(self) -> str:
         """return a hash string, both order/key/value changes will change the hash value."""
-        return hash(self)
+        return hash(self.jsonify())
 
     def copy(self):
         """deep copy"""
         return self.__copy__()
-
-    def replace(self, **kwargs):
-        """An alias of update()"""
-        for k, v in kwargs.items():
-            self[k] = v
-        return self
 
     @classmethod
     def from_dict(cls, dic: dict):
@@ -217,7 +161,7 @@ class attr(OrderedDict, metaclass=meta_attr):
         cls_name = dic.get(ATTR_TYPE, cls.__name__)
         if cls_name not in _attr_clss:
             res = attr()
-            from .errors import AttrTypeNotFoundWarning
+            from lumo.base_classes.errors import AttrTypeNotFoundWarning
             warnings.warn('{} not found, will use class attr to receive values.'.format(cls_name),
                           AttrTypeNotFoundWarning)
         else:
@@ -228,7 +172,7 @@ class attr(OrderedDict, metaclass=meta_attr):
 
         if isinstance(res, _none):
             return None
-        elif isinstance(res, _tpttr):
+        elif isinstance(res, _arr):
             if dic['torch']:
                 return torch.tensor(dic['arr'])
             else:
@@ -266,7 +210,10 @@ class _none(attr):
     """
 
 
-class _tpttr(attr):
+class _empty(): pass
+
+
+class _arr(attr):
     """
     A tricky item used in attr to parse pytorch and numpy array.
     """
@@ -275,12 +222,3 @@ class _tpttr(attr):
         super().__init__()
         self.arr = arr.tolist()
         self.torch = isinstance(arr, torch.Tensor)
-
-
-class _contains():
-    """
-    A tricky item that used in attr to discriminate the difference between `get()` and `contains()`
-    """
-
-    def __init__(self, value):
-        self.value = value

@@ -1,17 +1,17 @@
 """
 Used for recording data
 """
-import numpy as np
-from collections.abc import ItemsView
 from collections import OrderedDict
+from collections.abc import ItemsView
 from numbers import Number
-from typing import Union, Iterator, Tuple
+from typing import Union, Iterator, Tuple, Mapping, Sequence
 
+import numpy as np
 import torch
 
+from lumo.utils.fmt import to_ndarray, detach, is_scalar
 from ..base_classes import attr
-from ..base_classes.trickitems import NoneItem, null
-from lumo.utils.fmt import to_ndarray, detach
+from ..base_classes.trickitems import null
 
 
 class Meter:
@@ -110,6 +110,30 @@ class Meter:
 
     def keys(self):
         return self._rec.keys()
+
+    @staticmethod
+    def wrap_result(
+            meter: Union[Mapping, 'Meter', 'AvgMeter', Sequence, torch.Tensor, np.ndarray]
+    ) -> Union['AvgMeter', 'Meter']:
+        if isinstance(meter, (Meter, AvgMeter)):
+            return meter
+        elif isinstance(meter, Mapping):
+            return Meter.from_dict(meter)
+        elif isinstance(meter, Sequence):
+            return Meter.from_dict({f'm{i}': v for i, v in enumerate(meter)})
+        elif isinstance(meter, (torch.Tensor, np.ndarray, float, int)):
+            return Meter.from_dict({'metric': meter})
+        return Meter()
+
+    @staticmethod
+    def from_dict(dic: dict):
+        return Meter().update(dic)
+
+    def scalar_items(self) -> Iterator[Tuple[str, Number]]:
+        for k, v in self.items():
+            nd = to_ndarray(v)
+            if is_scalar(nd):
+                yield k, nd.item()
 
 
 class AvgItem:
@@ -237,7 +261,7 @@ class AvgMeter:
         return res
 
     def scalar_items(self) -> Iterator[Tuple[str, Number]]:
-        for k, v in self.items():
+        for k, v in self._rec.items():
             if v.isnumber and v.isscalar:
                 yield k, to_ndarray(v.res).item()
 
@@ -249,10 +273,12 @@ class AvgMeter:
 
     def update(self, meter: Union[Meter, dict]):
         if isinstance(meter, dict):
-            meter = Meter().update(meter)
+            meter = Meter.from_dict(meter)
 
         self._avg.update(meter._avg)
         for k, v in meter.items():
+            if isinstance(v, AvgItem):
+                v = v.last
             if k in self._rec:
                 try:
                     self._rec[k].update(v)

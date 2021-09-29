@@ -165,7 +165,7 @@ class Test(TestProp):
         res = attr()
         for f in fs_:
             k = os.path.splitext(f)[0]
-            v = io.load_string(os.path.join(dir_, f))
+            v = io.load_text(os.path.join(dir_, f))
             if v is None:
                 os.remove(os.path.join(dir_, f))
                 continue
@@ -335,7 +335,7 @@ class Finder:
         fn = os.path.join(libhome(), FN.TESTLOG)
         if not os.path.exists(fn):
             return
-        res = io.load_string(fn)
+        res = io.load_text(fn)
         if res is None:
             res = ''
         res = res.split('\n')

@@ -24,7 +24,7 @@ setup(
     license='Apache License 2.0',
     include_package_data=True,
     install_requires=[
-        'fire', 'psutil', 'joblib'
+        'fire', 'psutil', 'joblib', 'accelerator'
     ],
     classifiers=[
         'Development Status :: 3 - Alpha',

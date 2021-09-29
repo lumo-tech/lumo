@@ -30,7 +30,7 @@ V_FATAL = 50
 
 def _get_print_func():
     try:
-        pass
+        from rich import print
     except ImportError:
         pass
     return print
@@ -65,7 +65,9 @@ class Logger:
             return Logger._instance
         return super().__new__(cls)
 
-    def __init__(self, adddate=True, datefmt: str = '%y-%m-%d %H:%M:%S', sep: str = " | ", use_stdout: bool = True):
+    def __init__(self, adddate=True, datefmt: str = '%y-%m-%d %H:%M:%S', sep: str = " | ",
+                 use_stdout: bool = True,
+                 try_rich=False):
         if Logger._instance is not None:
             return
 
@@ -77,7 +79,8 @@ class Logger:
         self.return_str = ""
         self.listener = []
         self.use_stdout = use_stdout
-        self._print_func = _get_print_func()
+        self._print_func = print
+        self._try_rich = try_rich
         Logger._instance = self
 
     def _format(self, *values, inline=False, fix=0, raw=False, append=False, level=V_INFO):
@@ -136,9 +139,9 @@ class Logger:
             self.return_str = logstr
             self.print(ScreenStr(logstr, leftoffset=fix), end=end, file=file)
         else:
-            if len(self.return_str) != 0:
-                self.print(self.return_str, end="\n", file=file)
-            self.print(logstr, end="", file=file)
+            if len(self.return_str) != 0 and not self._try_rich:
+                self.print_rich(self.return_str, end="\n", file=file)
+            self.print_rich(logstr, end="", file=file)
 
             for i in self.out_channel:
                 with open(i, "a", encoding="utf-8") as w:
@@ -220,14 +223,25 @@ class Logger:
         if self.use_stdout:
             self._print_func(*args, end=end, flush=True, file=file)
 
+    def print_rich(self, *args, end='\n', file=sys.stdout):
+        if self.use_stdout:
+            if self._try_rich:
+                print = _get_print_func()
+                print(*args, end=end, flush=True, file=file)
+            else:
+                self._print_func(*args, end=end, flush=True, file=file)
+
     def toggle_stdout(self, val: bool = None):
         """False will stop write on stdout"""
         if val is None:
             val = not self.use_stdout
         self.use_stdout = val
 
-    def add_log_dir(self, dir):
+    def add_log_dir(self, dir, fn=None):
         """add a file output pipeline"""
+        if fn is None:
+            fn = ''
+
         if dir in self.pipe_key:
             self.info("Add pipe {}, but already exists".format(dir))
             return None
@@ -236,10 +250,10 @@ class Logger:
 
         i = 0
         cur_date = strftime(fmt="%y%m%d%H%M")
-        fni = os.path.join(dir, f"l.{i}.{cur_date}.log")
+        fni = os.path.join(dir, f"l.{fn}{i}.{cur_date}.log")
         while os.path.exists(fni):
             i += 1
-            fni = os.path.join(dir, "l.{}.{}.log".format(i, cur_date))
+            fni = os.path.join(dir, f"l.{fn}.{i}{cur_date}.log")
 
         self.print("add output channel on {}".format(fni))
         self.out_channel.append(fni)

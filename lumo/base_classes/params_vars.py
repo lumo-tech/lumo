@@ -30,16 +30,6 @@ class OptimBuilder(attr):
         return optim_cls(parameters, **args)
 
 
-class ScheduleParams(attr):
-    def __init__(self, name: str, **kwargs):
-        super().__init__()
-        self.name = name
-        self.args = attr.from_dict(kwargs)
-
-    def build(self):
-        pass
-
-
 class ParamsFactory:
     @staticmethod
     def _filter_none(**kwargs):

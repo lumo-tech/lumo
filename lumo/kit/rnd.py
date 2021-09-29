@@ -2,6 +2,7 @@ import os
 import pickle
 import time
 
+from ..proc.path import cache_dir
 from ..utils import random
 
 
@@ -10,8 +11,8 @@ class RndManager:
     用于管理随机种子
     """
 
-    def __init__(self, save_dir="./rnd"):
-        self.save_dir = save_dir
+    def __init__(self):
+        self.save_dir = os.path.join(cache_dir(), 'rnd')
 
     def mark(self, name):
         """
@@ -32,10 +33,9 @@ class RndManager:
             return False
 
     def int_time(self):
-        """用于获取一个理论上不会重复随机种子"""
         return int(str(time.time()).split(".")[-1])
 
-    def shuffle(self, name='shuffle', seed=None):
+    def shuffle(self, seed=None):
         """
         打乱，一般用于复现试验的时候随机一个种子
         Args:

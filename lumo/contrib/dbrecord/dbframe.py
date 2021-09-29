@@ -7,7 +7,7 @@
 #   print(element)
 
 from . import summary
-from . import idtrans
+from . import BatchIDSTrans
 import sqlite3
 
 
@@ -29,4 +29,16 @@ class SqliteDataFrame:
         pass
 
     def writerows(self):
+        pass
+
+    def sample(self, n):
+        pass
+
+    def head(self, n):
+        pass
+
+    def tail(self, n):
+        pass
+
+    def append(self, row):
         pass

@@ -28,8 +28,7 @@ def get_res():
 def test_jsonify():
     res = get_res()
     jsn = res.jsonify()
-    rres = attr().from_dict(jsn)
-
+    rres = attr.from_dict(jsn)
     assert rres.hash() == res.hash()
 
 
@@ -64,6 +63,6 @@ def test_deepcopy():
 
 def test_replace():
     res = get_res()
-    res.replace(a=6).replace(b=7)
+    res.update(a=6, b=7)
     assert res.a == 6
     assert res.b == 7

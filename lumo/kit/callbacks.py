@@ -2,36 +2,32 @@
 
 """
 
+import inspect
 import os
 import sys
 from functools import wraps
-import inspect
 
-from .mixin import CallbackMix
+from torch.utils.tensorboard import SummaryWriter
+
 from .meter import AvgMeter
 from .meter import Meter
+from .mixin import CallbackMix
 from .params import Params
+from .trainer import Trainer, TrainerResult
 from ..base_classes.trickitems import NoneItem, AvgItem
-from ..calculate.schedule import Scheduler, SchedulerList
 from ..utils.timing import format_second
-from typing import TYPE_CHECKING
 
 func_map = {
     'evaluate': 'eval',
     'evaluate_step': 'eval_step'
 }
 
-from .trainer import Trainer, TrainerResult
-
-
-# if TYPE_CHECKING:
-
 
 def map_func_name(name):
     return func_map.get(name, name)
 
 
-class BaseCallback():
+class BaseCallback:
     """
     base callback class
 
@@ -285,6 +281,7 @@ class LoggerCallback(TrainCallback, InitialCallback, SaveLoadCallback):
         self.avg = avg
         self.step_frequence = step_frequence
         self.breakline = breakline_in
+        self.history_loader = set()
 
     @property
     def meter(self):
@@ -353,10 +350,11 @@ class LoggerCallback(TrainCallback, InitialCallback, SaveLoadCallback):
         tm.epoch = format_second(self.epochtime["use"])
         tm.avg = format_second(avg)
         tm.last = format_second(last)
+        # trainer.logger.newline()
         trainer.logger.info(tm)
 
     def on_train_step_end(self, trainer: Trainer, func, params: Params, meter: Meter, *args, **kwargs):
-        meter = trainer._wrap_result(meter)
+        meter = Meter.wrap_result(meter)
         self.meter.update(meter)
         meter = self.meter
         if self._need_breakline(params.idx):
@@ -370,35 +368,34 @@ class LoggerCallback(TrainCallback, InitialCallback, SaveLoadCallback):
 
     def on_test_begin(self, trainer: Trainer, func, params: Params, *args, **kwargs):
         self.reset_meter()
-        trainer.logger.info("[[Test Begin]]")
 
     def on_test_end(self, trainer: Trainer, func, params: Params, result: TrainerResult, *args, **kwargs):
         meter = result.meter
         if meter is None:
             meter = ""
-        trainer.logger.info("[[Test End]]", meter)
+        trainer.logger.info("[[Test]]", meter)
+        # trainer.logger.newline()
 
     def on_test_step_end(self, trainer: Trainer, func, params: Params, meter: Meter, *args, **kwargs):
-        meter = trainer._wrap_result(meter)
+        meter = Meter.wrap_result(meter)
         self.meter.update(meter)
         meter = self.meter
-        trainer.logger.inline("{}/{}".format(params.idx + 1, len(trainer.test_dataloader)), meter, fix=1)
+        trainer.logger.inline("[[Test]]", "{}/{}".format(params.idx + 1, len(trainer.test_dataloader)), meter, fix=1)
 
     def on_eval_begin(self, trainer: Trainer, func, params: Params, *args, **kwargs):
         self.reset_meter()
-        trainer.logger.info("[[Eval Begin]]")
 
     def on_eval_end(self, trainer: Trainer, func, params: Params, result: TrainerResult, *args, **kwargs):
         meter = result.meter
         if meter is None:
             meter = ""
-        trainer.logger.info("[[Eval End]]", meter)
+        trainer.logger.info("[[Eval]]", meter)
 
     def on_eval_step_end(self, trainer: Trainer, func, params: Params, meter: Meter, *args, **kwargs):
-        meter = trainer._wrap_result(meter)
+        meter = Meter.wrap_result(meter)
         self.meter.update(meter)
         meter = self.meter
-        trainer.logger.inline("{}/{}".format(params.idx + 1, len(trainer.val_dataloader)), meter, fix=1)
+        trainer.logger.inline("[[Eval]]", "{}/{}".format(params.idx + 1, len(trainer.val_dataloader)), meter, fix=1)
 
     def on_save_checkpoint_end(self, trainer: Trainer, func, params: Params, result: str, *args, **kwargs):
         trainer.logger.info(f'Saved checkpoint in {result}')
@@ -425,6 +422,12 @@ class LoggerCallback(TrainCallback, InitialCallback, SaveLoadCallback):
         trainer.logger.info('[[Model initialized]]')
 
     def on_prepare_dataloader_end(self, trainer: Trainer, func, params: Params, meter: Meter, *args, **kwargs):
+        # print(meter)
+        loader_id = id(meter)
+        if loader_id in self.history_loader:
+            return
+
+        self.history_loader.add(loader_id)
         res = self.getfuncargs(func, *args, **kwargs)
         stage = res['stage'].name
         loader_ = trainer.datamodule[stage]
@@ -497,7 +500,7 @@ class EpochCheckpoint(TrainCallback):
     def on_train_epoch_end(self, trainer: Trainer, func, params: Params, result: TrainerResult, *args, **kwargs):
         meter = result.meter
         if params.eidx % self.per_epoch == 0 and params.eidx > 0:
-            trainer.save_keypoint(meta_info=trainer._wrap_result(meter))
+            trainer.save_keypoint(meta_info=Meter.wrap_result(meter))
 
     def __repr__(self) -> str:
         return self._repr_by_val("per_epoch")
@@ -512,7 +515,7 @@ class GlobalStepCheckpoint(TrainCallback):
     def on_train_step_end(self, trainer: Trainer, func, params: Params, meter: Meter, *args, **kwargs):
         super().on_train_step_end(trainer, func, params, meter, *args, **kwargs)
         if params.global_step % self.per == 0 and params.global_step > 0:
-            trainer.save_checkpoint(meta_info=trainer._wrap_result(meter))
+            trainer.save_checkpoint(meta_info=Meter.wrap_result(meter))
 
 
 class KeyErrorSave(TrainCallback):
@@ -536,41 +539,45 @@ class KeyErrorSave(TrainCallback):
                 return True
 
 
-# class BoardRecord(TrainCallback):
-#     """
-#     自动记录训练过程中的所有变量到 tensorboard 中（epoch 级）
-#     """
-#     only_main_process = True
-#     priority = 100
-#
-#     def __init__(self) -> None:
-#         super().__init__()
-#
-#     def on_hooked(self, source: Trainer, params: Params):
-#         self.start = 0
-#
-#     def _key_name(self, mode, key):
-#         return "{}_{}_".format(key, mode)
-#
-#     def on_test_end(self, trainer: Trainer, func, params: Params, result: TrainerResult, *args, **kwargs):
-#         meter = result.meter
-#         if isinstance(meter, Meter):
-#             for k, v in meter.numeral_items():
-#                 trainer.writer.add_scalar(self._key_name("test", k), v, params.eidx)
-#
-#     def on_train_begin(self, trainer: Trainer, func, params: Params, *args, **kwargs):
-#         self.start = params.eidx
-#
-#     def on_eval_end(self, trainer: Trainer, func, params: Params, result: TrainerResult, *args, **kwargs):
-#         meter = result.meter
-#         if isinstance(meter, Meter):
-#             for k, v in meter.numeral_items():
-#                 trainer.writer.add_scalar(self._key_name("eval", k), v, params.eidx)
-#
-#     def on_train_epoch_end(self, trainer: Trainer, func, params: Params, meter: AvgMeter, *args, **kwargs):
-#         if isinstance(meter, Meter):
-#             for k, v in meter.numeral_items():
-#                 trainer.writer.add_scalar(self._key_name("train", k), v, params.eidx)
+class ScalarRecorder(TrainCallback):
+    """
+    自动记录训练过程中的所有变量到 tensorboard 中（epoch 级）
+    """
+    only_main_process = True
+    priority = 100
+
+    def __init__(self, writer: SummaryWriter = None) -> None:
+        super().__init__()
+        self.writer = writer
+
+    def _key_name(self, mode, key):
+        return "{}_{}_".format(key, mode)
+
+    def write_scalar(self, meter, stage: str, global_step, writer):
+        if isinstance(meter, (Meter, AvgMeter)):
+            for k, v in meter.scalar_items():
+                writer.add_scalar(self._key_name(stage, k), v, global_step)
+
+    def on_test_end(self, trainer: Trainer, func, params: Params, result: TrainerResult, *args, **kwargs):
+        meter = result.meter
+        writer = self.writer
+        if writer is None:
+            writer = trainer.writer
+        self.write_scalar(meter, 'test', trainer.global_step, writer)
+
+    def on_eval_end(self, trainer: Trainer, func, params: Params, result: TrainerResult, *args, **kwargs):
+        meter = result.meter
+        writer = self.writer
+        if writer is None:
+            writer = trainer.writer
+        self.write_scalar(meter, 'eval', trainer.global_step, writer)
+
+    def on_train_epoch_end(self, trainer: Trainer, func, params: Params, result: TrainerResult, *args, **kwargs):
+        meter = result.meter
+        writer = self.writer
+        if writer is None:
+            writer = trainer.writer
+        self.write_scalar(meter, 'train', trainer.global_step, writer)
 
 
 class EMAUpdate(TrainCallback):

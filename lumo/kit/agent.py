@@ -16,16 +16,16 @@ def wait_pid_stop():
     params.pid = None
     params.test_name = None
     params.exp_name = None
+    params.state_key = None
     params.from_args()
 
     exp = Experiment(params.exp_name, params.test_name)
-    c = 0
     while psutil.pid_exists(params.pid):
         info = exp.load_info(EXP_CONST.INFO_KEY.STATE)
         if 'end_code' in info:
             break
 
-        exp.dump_info(EXP_CONST.INFO_KEY.STATE, {
+        exp.dump_info(params.state_key, {
             'end': strftime(),
         }, append=True)
         time.sleep(1)

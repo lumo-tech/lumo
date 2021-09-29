@@ -1,16 +1,14 @@
 """
 
 """
-import subprocess
-import time
-import sys
 import bisect
 import inspect
 import os
+import sys
 from dataclasses import dataclass
-from functools import wraps, lru_cache
+from functools import lru_cache
+from functools import wraps
 from typing import Any, Dict, Union, Optional, Tuple, Sequence, Mapping
-import random
 
 import numpy as np
 import torch
@@ -18,25 +16,24 @@ from torch import distributed as dist
 from torch import nn
 from torch.optim import Optimizer
 from torch.utils.data import DataLoader
-from functools import lru_cache
+
+from lumo.base_classes import attr, TrainerStage
+from lumo.base_classes.metaclasses import Merge
+from lumo.contrib.hug_accelerate import Accelerator
 from lumo.contrib.itertools import safe_cycle
+from lumo.utils import dist
+from lumo.utils.device import construct_device_args_kwargs, to_device_enumrate
+from .bundler import DataBundler
+from .datamodule import DataModule
 from .environ import globs
 from .experiment import TrainerExperiment
 from .logger import Logger
-from .saver import Saver
 from .meter import Meter, AvgMeter
-from .rnd import RndManager
-from .datamodule import DataModule
-from .bundler import DataBundler
 from .mixin import ModelMix, CallbackMix, DataModuleMix
-
 from .params import ParamsType
-from lumo.base_classes import attr, TrainerStage
-from lumo.base_classes.metaclasses import Merge
+from .rnd import RndManager
+from .saver import Saver
 from ..proc.const import TRAINER
-from lumo.utils import dist
-from lumo.utils.device import construct_device_args_kwargs, to_device_enumrate
-from lumo.contrib.accelerate import Accelerator
 
 
 @dataclass()
@@ -54,7 +51,7 @@ class TrainerResult(attr):
     MSG_OK_MID = 'success stop in midway'
     MSG_NO_DATALOADER = 'dataloader not loaded'
 
-    def __init__(self, state: TrainerStage, meter: AvgMeter, msg=''):
+    def __init__(self, state: TrainerStage, meter: Optional[Union[Meter, AvgMeter]] = None, msg: str = ''):
         super().__init__()
         self.state = state
         self.meter = meter
@@ -164,14 +161,14 @@ class _BaseTrainer(ModelMix, CallbackMix, metaclass=Merge):
         return self
 
     @classmethod
-    def _gene_class_exp_name(trainer_instance) -> str:
+    def _gene_class_exp_name(cls) -> str:
         try:
-            file = inspect.getfile(trainer_instance)
+            file = inspect.getfile(cls)
             pre = os.path.splitext(os.path.basename(file))[0]
         except:
             pre = 'builtin'
 
-        return "{}.{}".format(pre.lower(), trainer_instance.__exp_name__.lower())
+        return "{}.{}".format(pre.lower(), cls.__exp_name__.lower())
 
     def __init__(self, params: ParamsType):
         self._state_dicts = attr({
@@ -184,8 +181,8 @@ class _BaseTrainer(ModelMix, CallbackMix, metaclass=Merge):
             "others": {},
             'device': torch.device('cpu'),
             'params': params,
-            'exp': TrainerExperiment(self._gene_class_exp_name()),
         })
+        self._exp = TrainerExperiment(self._gene_class_exp_name())
         self._initialize_globs()
         self._initial_exp()
 
@@ -308,7 +305,7 @@ class _BaseTrainer(ModelMix, CallbackMix, metaclass=Merge):
 
     @property
     def exp(self) -> TrainerExperiment:
-        return self._state_dicts[TRAINER.DKEY.exp]
+        return self._exp
 
     @property
     def logger(self):
@@ -318,9 +315,8 @@ class _BaseTrainer(ModelMix, CallbackMix, metaclass=Merge):
             set_global_logger(self._logger)
             if self.params.get('debug', False):
                 self._logger.set_verbose(Logger.V_DEBUG)
-                self._logger.dddebug('Enable debug log.')
-            fn = self._logger.add_log_dir(self.exp.log_dir)
-            self.exp.writeline('logger', fn)
+                self._logger.debug('Enable debug log.')
+            self._logger.add_log_dir(self.exp.log_dir)
         return self._logger
 
     @property
@@ -347,7 +343,7 @@ class _BaseTrainer(ModelMix, CallbackMix, metaclass=Merge):
     @property
     def rnd(self) -> RndManager:
         if self._rnd is None:
-            self._rnd = RndManager(self.exp.rnd_dir)
+            self._rnd = RndManager()
         return self._rnd
 
     @property
@@ -490,7 +486,6 @@ class _BaseTrainer(ModelMix, CallbackMix, metaclass=Merge):
     def add_callback(self, callback):
         """
         添加一个回调函数，注意，不能添加重复的 callback，这不推荐，也没有必要。
-        :type callable,str
         :param callback:
         :return:
         """
@@ -652,46 +647,7 @@ class _BaseTrainer(ModelMix, CallbackMix, metaclass=Merge):
                                      is_best=is_best)
 
 
-class DLLoopMix():
-    def stop_train(self):
-        raise NotImplementedError()
-
-    def stop_train_epoch(self):
-        raise NotImplementedError()
-
-    def to_stage(self, stage: TrainerStage):
-        raise NotImplementedError()
-
-    def train(self, dataloader: Union[DataLoader, DataModule]):
-        raise NotImplementedError()
-
-    def train_epoch(self, dataloader: DataLoader):
-        raise NotImplementedError()
-
-    def train_step(self, idx, batch, *args, **kwargs):
-        raise NotImplementedError()
-
-    def evaluate(self, dataloader: Union[DataLoader, DataModule]):
-        raise NotImplementedError()
-
-    def evaluate_step(self, idx, batch, *args, **kwargs):
-        raise NotImplementedError()
-
-    def test(self, dataloader: Union[DataLoader, DataModule]):
-        raise NotImplementedError()
-
-    def test_step(self, idx, batch, *args, **kwargs):
-        raise NotImplementedError()
-
-    def inference(self, batch):
-        raise NotImplementedError()
-
-    def predict(self, batch):
-        """alias of inference"""
-        raise NotImplementedError()
-
-
-class Trainer(DLLoopMix, _BaseTrainer):
+class Trainer(_BaseTrainer):
     _call_backs = {
         "train", "train_epoch", "train_step",
         "test", "test_step",
@@ -700,18 +656,8 @@ class Trainer(DLLoopMix, _BaseTrainer):
         'prepare_dataloader',
     }
 
-    def _wrap_result(self, meter: Union[Mapping, Meter, Sequence, torch.Tensor, np.ndarray]) -> dict:
-        if meter is None:
-            return {}
-        if isinstance(meter, (Mapping, Meter)):
-            return meter
-        elif isinstance(meter, Sequence):
-            return {f'm{i}': v for i, v in enumerate(meter)}
-        elif isinstance(meter, (torch.Tensor, np.ndarray, float, int)):
-            return {'metric': meter}
-
     @property
-    def training(self):
+    def training(self) -> bool:
         return self.params.stage == TrainerStage.train.name
 
     def stop_train(self):
@@ -755,8 +701,8 @@ class Trainer(DLLoopMix, _BaseTrainer):
         params = self.params
         initialized = getattr(self.initial, f"{stage.name}_dataloader")
 
+        dataloader_ = None
         if dataloader is not None:
-            dataloader_ = None
             """use loader from passed params first, then use itself, finally"""
             if isinstance(dataloader, DataModuleMix):
                 dataloader.iidataloader(params, stage, initialized)
@@ -768,8 +714,7 @@ class Trainer(DLLoopMix, _BaseTrainer):
         elif isinstance(self, DataModuleMix):
             self.iidataloader(params, stage, initialized)
             dataloader_ = getattr(self, f'{stage.name}_dataloader', None)
-
-        if dataloader is None:
+        else:
             self.datamodule.iidataloader(params, stage, initialized)
             dataloader_ = getattr(self.datamodule, f'{stage.name}_dataloader', None)
 
@@ -786,7 +731,7 @@ class Trainer(DLLoopMix, _BaseTrainer):
     def train(self, dataloader: Union[DataLoader, DataModuleMix] = None) -> TrainerResult:
         dataloader = self.prepare_dataloader(TrainerStage.train, dataloader)
         if dataloader is None:
-            return TrainerResult(TrainerStage.train, 1, 'no train_dataloader')
+            return TrainerResult(TrainerStage.train, None, 'no train_dataloader')
 
         self.initial.train_dataloader = True
         result = TrainerResult(TrainerStage.train, None, TrainerResult.MSG_OK)
@@ -821,7 +766,7 @@ class Trainer(DLLoopMix, _BaseTrainer):
             self.params.idx = idx
             batch = next(loader)
             meter = self.train_step(idx, batch, self.params)
-            avg.update(self._wrap_result(meter))
+            avg.update(Meter.wrap_result(meter))
             idx += 1
             if self.train_epoch_toggle:
                 self.train_epoch_toggle = False
@@ -840,13 +785,13 @@ class Trainer(DLLoopMix, _BaseTrainer):
             self.params.global_step += 1
             self.params.idx = idx
             meter = self.train_step(idx, batch, self.params)
-            avg.update(self._wrap_result(meter))
+            avg.update(Meter.wrap_result(meter))
             if self.train_epoch_toggle:
                 self.train_epoch_toggle = False
                 break
         return TrainerResult(TrainerStage.train_epoch, avg, TrainerResult.MSG_OK)
 
-    def train_step(self, idx, batch, params: ParamsType, *args, **kwargs):
+    def train_step(self, idx, batch, params: ParamsType, *args, **kwargs) -> Meter:
         pass
 
     def evaluate(self, dataloader: Union[DataLoader, DataModule] = None) -> TrainerResult:
@@ -863,7 +808,7 @@ class Trainer(DLLoopMix, _BaseTrainer):
             for idx, batch in to_device_enumrate(dataloader, self.device_arg_kwargs):
                 self.params.idx = idx
                 meter = self.evaluate_step(idx, batch, self.params)
-                avg.update(self._wrap_result(meter))
+                avg.update(Meter.wrap_result(meter))
 
         return TrainerResult(TrainerStage.val, avg, TrainerResult.MSG_OK)
 
@@ -885,10 +830,10 @@ class Trainer(DLLoopMix, _BaseTrainer):
             for idx, batch in to_device_enumrate(dataloader, self.device_arg_kwargs):
                 self.params.idx = idx
                 meter = self.test_step(idx, batch, self.params)
-                avg.update(self._wrap_result(meter))
+                avg.update(Meter.wrap_result(meter))
         return TrainerResult(TrainerStage.test, avg, TrainerResult.MSG_OK)
 
-    def test_step(self, idx, batch, params: ParamsType, *args, **kwargs):
+    def test_step(self, idx, batch, params: ParamsType, *args, **kwargs) -> Meter:
         pass
 
     def inference(self, batch):

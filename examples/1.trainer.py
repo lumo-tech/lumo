@@ -1,9 +1,8 @@
 """
 一个训练 f(x) = x+1 的线性函数的例子
 """
-import random
-import sys
 import os
+import sys
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
 
@@ -21,13 +20,11 @@ class DM(DataModule):
 
     def idataloader(self, params: ParamsType, stage: TrainerStage, repeat: bool = False):
         super().idataloader(params, stage, repeat)
-        print('repeat', repeat)
         loader = builder.DataLoader(batch_size=params.batch_size, num_workers=4)
         self.regist_dataloader_with_stage(stage, loader)
 
     def iidataloader(self, params: ParamsType, stage: TrainerStage, repeat: bool = False):
         super().iidataloader(params, stage, repeat)
-        print(repeat)
 
 
 class PlusOneTrainer(Trainer):
@@ -39,6 +36,7 @@ class PlusOneTrainer(Trainer):
 
     def icallbacks(self, params: ParamsType):
         callbacks.LoggerCallback().hook(self)
+        callbacks.ScalarRecorder().hook(self)
 
     def train_step(self, idx, batch, params: ParamsType, *args, **kwargs):
         meter = Meter()
@@ -81,8 +79,10 @@ builder = (
 params.epoch = 3
 trainer.train()
 trainer.train(DM())
+
 trainer.test()
 trainer.test()
+trainer.save_keypoint()
 #
 # params.eidx = 0
 # trainer.train()
@@ -160,8 +160,6 @@ trainer.test()
 # print(outputs.encoder_hidden_states[-3])
 # print((outputs.encoder_last_hidden_state == outputs.encoder_hidden_states[-1]).all())
 # print(outputs)
-from typing import Any, Optional, Union
-from typing import List
 #
 # from rich.console import Console, JustifyMethod, OverflowMethod, NewLine
 # from rich.segment import Segment

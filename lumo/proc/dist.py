@@ -21,3 +21,7 @@ def world_size():
 
 def is_dist():
     return local_rank() >= 0
+
+
+def is_main():
+    return local_rank() <= 0

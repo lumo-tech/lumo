@@ -3,18 +3,19 @@
 """
 import os
 import time
-
+from lumo.proc.path import cache_dir
 from lumo.utils import safe_io as io
 from lumo.utils import random
 from random import randint
+
 
 class Random:
     """
     用于管理随机种子
     """
 
-    def __init__(self, save_dir="./rnd"):
-        self.save_dir = save_dir
+    def __init__(self):
+        self.save_dir = os.path.join(cache_dir(), 'rndstate')
 
     def _int_time(self):
         """用于获取一个理论上不会重复的随机种子"""
@@ -29,7 +30,7 @@ class Random:
         seed = random.hashseed(name)
         stt = random.fix_seed(seed)
 
-        io.dump_state_dict(stt,self._build_state_name(name))
+        io.dump_state_dict(stt, self._build_state_name(name))
 
     def _have_rnd_state(self, name) -> bool:
         """判断是否存在某个种子"""
