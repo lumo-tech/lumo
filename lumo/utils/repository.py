@@ -1,12 +1,12 @@
 """
 Methods about git.
 """
-import git
 import os
 from functools import lru_cache
 from lumo.base_classes import attr
 
 try:
+    import git
     from git import Repo, Commit
 except ImportError:
     def Repo(*_, **__):
@@ -188,7 +188,6 @@ class GitEnabledWrap(GitWrap):
         os.chdir(commit.tree.abspath)
         # exp = Experiment('Reset')
 
-        from thexp.utils.repository import branch
         with branch(commit.repo, GitKey.LUMO_BRANCH) as new_branch:
             repo.git.checkout(commit.hexsha)
             repo.git.checkout('-b', 'reset')
@@ -196,13 +195,7 @@ class GitEnabledWrap(GitWrap):
             repo.git.add('.')
             ncommit = repo.index.commit("Reset from {}".format(commit.hexsha))
             repo.git.branch('-d', 'reset')
-        # exp.add_plugin('reset', {
-        #     'test_name': self.name,  # 从哪个状态恢复
-        #     'from': exp.commit.hexsha,  # reset 运行时的快照
-        #     'where': commit.hexsha,  # 恢复到哪一次 commit，是恢复前的保存的状态
-        #     'to': ncommit.hexsha,  # 对恢复后的状态再次进行提交，此时 from 和 to 两次提交状态应该完全相同
-        # })
-        # exp.end()
+
 
         os.chdir(old_path)
         return None

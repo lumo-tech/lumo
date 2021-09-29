@@ -6,7 +6,7 @@ __version__ = "0.1.11.13"
 from .utils.keys import K
 
 from .kit import (
-    F, Q,
+    # F, Q,
     BaseParams, Params,
     Meter, AvgMeter,
 

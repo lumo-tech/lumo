@@ -1,3 +1,7 @@
 joblib
 fire
 psutil
+decorator
+torch
+numpy
+accelerate
