@@ -10,6 +10,7 @@ python3 setup.py sdist bdist_wheel;
 python3 setup.py sdist bdist_wheel; sudo pip install dist/$(python3 install.py);
 python3 setup.py sdist bdist_wheel; pip install dist/$(python3 install.py) --user
 python3 setup.py sdist bdist_wheel; pip install dist/$(python3 install.py) 
+python3 setup.py sdist bdist_wheel; pip3 install dist/$(python3 install.py) 
 sudo pip install dist/$(python3 install.py);
 pip install dist/$(python3 install.py) --user
 """
@@ -32,7 +33,7 @@ setup(
         'Programming Language :: Python :: 3.7',
     ],
     keywords='lumo',
-    packages=find_packages(),
+    packages=find_packages('.', exclude=('tests', 'lumo_record')),
     entry_points={
         'console_scripts': [
             'lumo = lumo.cli.cli:main'

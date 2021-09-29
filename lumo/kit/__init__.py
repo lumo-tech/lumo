@@ -8,7 +8,7 @@ from .bundler import DataBundler
 from .environ import globs
 from .experiment import Experiment, TrainerExperiment
 from .exphook import ExpHook
-from .finder import F, Q
+# from .finder import F, Q
 
 from .logger import Logger
 from .meter import Meter, AvgMeter
