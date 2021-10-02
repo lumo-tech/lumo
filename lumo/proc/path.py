@@ -3,8 +3,12 @@ import sys
 
 
 def cache_dir():
-    res = os.path.expanduser("~/.cache/lumo")
-    os.makedirs(res, exist_ok=True)
+    try:
+        res = os.path.expanduser("~/.cache/lumo")
+        os.makedirs(res, exist_ok=True)
+    except PermissionError:
+        res = os.path.expanduser("~/.lumo/.cache")
+        os.makedirs(res, exist_ok=True)
     return res
 
 

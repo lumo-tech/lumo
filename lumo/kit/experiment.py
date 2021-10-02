@@ -1,12 +1,7 @@
 """
 Experiment
- - 生成各个路径
- - 实时记录实验的开始时间，结束时间，过程中的创建的文件
-
-
-分开大文件和小文件的存放位置
-~/.lumo/experiments/<experiment_name>/.cache/<test_name>
-~/.lumo/experiments/<experiment_name>/<test_name>/
+    - 负责记录实验中产生的所有信息
+    - 管理实验路径
 
 
 """
@@ -86,8 +81,7 @@ class Experiment:
             extra['exc_type'] = exc_type
             extra['end_info'] = str(exc_type)
             extra['end_code'] = 1
-            self.dump_string('exception',
-                             "".join(traceback.format_exception(exc_type, exc_val, exc_tb)))
+            extra['exc_stack'] = "".join(traceback.format_exception(exc_type, exc_val, exc_tb))
         self.end(**extra)
 
     def _create_test_name(self):
@@ -153,14 +147,9 @@ class Experiment:
             hook.on_start(self)
         return self
 
-    def end(self, enc_code=0, *args, **extra):
-        self.dump_info('state', {
-            'end_code': enc_code,
-            **extra,
-        }, append=True)
-
+    def end(self, end_code=0, *args, **extra):
         for hook in self._hooks.values():  # type: ExpHook
-            hook.on_end(self, *args, **extra)
+            hook.on_end(self, end_code=end_code, *args, **extra)
         return self
 
     def update(self, step, *args, **kwargs):

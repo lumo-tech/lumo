@@ -18,7 +18,7 @@ class ExpHook:
 
     def on_start(self, exp: Experiment, *args, **kwargs): pass
 
-    def on_end(self, exp: Experiment, *args, **kwargs): pass
+    def on_end(self, exp: Experiment, end_code=0, *args, **kwargs): pass
 
     def on_progress(self, exp: Experiment, step, *args, **kwargs): pass
 
