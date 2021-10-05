@@ -20,7 +20,7 @@ class DM(DataModule):
 
     def idataloader(self, params: ParamsType, stage: TrainerStage, repeat: bool = False):
         super().idataloader(params, stage, repeat)
-        loader = builder.DataLoader(batch_size=params.batch_size, num_workers=4)
+        loader = builder.DataLoader(batch_size=params.batch_size, num_workers=0)
         self.regist_dataloader_with_stage(stage, loader)
 
     def iidataloader(self, params: ParamsType, stage: TrainerStage, repeat: bool = False):

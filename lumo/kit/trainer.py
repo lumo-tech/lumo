@@ -851,3 +851,72 @@ class Trainer(_BaseTrainer):
 
     def imodels(self, params: ParamsType):
         pass
+
+
+class FitTrainer(Trainer):
+    def __init__(self, params: ParamsType, model, loss_fn, optim, callbacks=None):
+        super().__init__(params)
+        from lumo.nest.trainer.model import FitModel
+
+        self.model: FitModel = model
+        self.loss_fn = loss_fn
+        self.optim = optim
+        self.to_device()
+        if callbacks is not None:
+            from .callbacks import BaseCallback
+            if isinstance(callbacks, BaseCallback):
+                callbacks = [callbacks]
+            for cb in callbacks:
+                cb.hook(self)
+
+    def train_step(self, idx, batch, params: ParamsType, *args, **kwargs) -> Meter:
+        meter = Meter()
+
+        losses, meters = self.model.feed(batch, loss_fn=self.loss_fn)
+        losses = list(losses.values())
+        loss = sum(losses)
+
+        for k, v in losses.items():
+            meter.mean[k] = v
+
+        for k, v in meters.items():
+            meter.mean[k] = v
+
+        self.optim.zero_grad()
+        self.accelerator.backward(loss)
+        self.optim.step()
+        meter.mean.Lall = loss
+        return meter
+
+    def evaluate_step(self, idx, batch, params: ParamsType, *args, **kwargs) -> Meter:
+        meter = Meter()
+
+        losses, meters = self.model.feed(batch, loss_fn=self.loss_fn)
+        losses = list(losses.values())
+
+        for k, v in losses.items():
+            meter.mean[k] = v
+
+        for k, v in meters.items():
+            meter.mean[k] = v
+        if len(losses) > 0:
+            loss = sum(losses)
+            meter.mean.Lall = loss
+        return meter
+
+    def test_step(self, idx, batch, params: ParamsType, *args, **kwargs) -> Meter:
+        meter = Meter()
+
+        losses, meters = self.model.feed(batch, loss_fn=self.loss_fn)
+        losses = list(losses.values())
+
+        for k, v in losses.items():
+            meter.mean[k] = v
+
+        for k, v in meters.items():
+            meter.mean[k] = v
+
+        if len(losses) > 0:
+            loss = sum(losses)
+            meter.mean.Lall = loss
+        return meter

@@ -2,6 +2,7 @@ import os
 import stat
 import sys
 from collections import OrderedDict
+from pprint import pformat
 
 from lumo.proc.date import strftime
 from lumo.proc.explore import git_enable
@@ -202,3 +203,12 @@ class LockFile(ExpHook):
     def on_start(self, exp: Experiment, *args, **kwargs):
         from lumo.proc.dependency import get_lock
         exp.dump_info('lock', get_lock('torch', 'numpy'))
+
+
+class FinalReport(ExpHook):
+    def on_end(self, exp: Experiment, end_code=0, *args, **kwargs):
+        # if end_code == 0:
+        print('Successful Experiment.')
+        # print('')
+        print('Use paths')
+        print(pformat(exp.paths))

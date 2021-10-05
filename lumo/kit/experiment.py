@@ -70,6 +70,10 @@ class Experiment:
                     v.on_newpath(self)
 
         self._tree = FileBranch(root, listener=foo)
+        self.add_exit_hook(self._auto_end)
+
+    def _auto_end(self, *args):
+        self.end(end_code=0)
 
     def __enter__(self):
         return self.start()
@@ -261,6 +265,7 @@ class SimpleExperiment(Experiment):
         self.set_hook(exphook.GitCommit())
         self.set_hook(exphook.RecordAbort())
         self.set_hook(exphook.Diary())
+        # self.set_hook(exphook.FinalReport())
 
 
 class TrainerExperiment(SimpleExperiment):

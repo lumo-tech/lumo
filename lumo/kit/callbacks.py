@@ -366,6 +366,7 @@ class LoggerCallback(TrainCallback, InitialCallback, SaveLoadCallback):
 
     def on_test_begin(self, trainer: Trainer, func, params: Params, *args, **kwargs):
         self.reset_meter()
+        trainer.logger.newline()
 
     def on_test_end(self, trainer: Trainer, func, params: Params, result: TrainerResult, *args, **kwargs):
         meter = result.meter
