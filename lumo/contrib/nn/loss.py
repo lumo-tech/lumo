@@ -64,7 +64,7 @@ def contrastive_loss(query: torch.Tensor, key: torch.Tensor,
     # make same sample mask
     smask = None
     if inbatch_neg:
-        smask = (1 - torch.eye(len(logits)))
+        smask = (1 - torch.eye(len(logits), dtype=torch.float, device=query.device))
         graph_mask = (graph_mask * smask)
 
     loss = -torch.sum(masked_log_softmax(logits, smask, dim=-1) * graph_mask, dim=1)
