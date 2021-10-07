@@ -38,17 +38,19 @@ def contrastive_loss(query: torch.Tensor, key: torch.Tensor,
     Returns:
 
     """
-    if norm:
-        query = normalize(query, dim=-1)
-        key = normalize(key, dim=-1)
+    # if norm:
+    #     query = normalize(query, dim=-1)
+    #     key = normalize(key, dim=-1)
 
     qbs = len(query)
 
     if inbatch_neg:
         query = torch.cat([query, key])
         key = query
-
-    logits = torch.mm(query, key.t())  # query @ key.t()
+    if norm:
+        logits = torch.cosine_similarity(query.unsqueeze(1), key.unsqueeze(0), dim=2)
+    else:
+        logits = torch.mm(query, key.t())  # query @ key.t()
 
     # apply temperature
     logits /= temperature

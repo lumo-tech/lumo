@@ -15,7 +15,7 @@ def masked_log_softmax(logits, mask=None, dim=-1):
     Returns:
 
     """
-    logits = logits - logits.max(dim=0, keepdim=True).values
+    logits = logits - logits.max(dim=dim, keepdim=True).values  # avoid nan and inf when logits value is too large
     exp_logits = torch.exp(logits)
     if mask is not None:
         exp_logits = exp_logits * mask.float()
