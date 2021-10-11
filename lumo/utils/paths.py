@@ -61,3 +61,7 @@ def filter_filename(title: str, substr='-'):
     """Create a valid path by replacing invalid character into the given `substr`."""
     title = re.sub('[\/:*?"<>|]', substr, title)
     return title
+
+
+def safe_filename(fn, sep='_'):
+    return re.sub('[\/:*?"<>|]', sep, fn)

@@ -241,6 +241,8 @@ class Logger:
         """add a file output pipeline"""
         if fn is None:
             fn = ''
+        else:
+            fn = f'{fn}.'
 
         if dir in self.pipe_key:
             self.info("Add pipe {}, but already exists".format(dir))
@@ -250,10 +252,16 @@ class Logger:
 
         i = 0
         cur_date = strftime(fmt="%y%m%d%H%M")
-        fni = os.path.join(dir, f"l.{fn}{i}.{cur_date}.log")
+
+        fmt_str = "l.{fn}{i}.{cur_date}.log"
+
+        def _get_fn():
+            return fmt_str.format(fn=fn, i=i, cur_date=cur_date)
+
+        fni = os.path.join(dir, _get_fn())
         while os.path.exists(fni):
             i += 1
-            fni = os.path.join(dir, f"l.{fn}.{i}{cur_date}.log")
+            fni = os.path.join(dir, _get_fn())
 
         self.print("add output channel on {}".format(fni))
         self.out_channel.append(fni)
