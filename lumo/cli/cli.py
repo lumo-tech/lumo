@@ -134,6 +134,18 @@ class Main():
     def board(self, logdir=None, test_name=None):
         pass
 
+    def new(self, file):
+        """
+        lumo new <field>/<trainer_file_name>.py
+        lumo new proj/project <project>
+        Args:
+            file:
+
+        Returns:
+
+        """
+        pass
+
 
 # Fire 不能嵌套在 __main__ 判断里，否则 sys.argv 识别会出问题，目前原因未知
 fire.Fire(Main())
