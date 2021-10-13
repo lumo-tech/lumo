@@ -141,6 +141,11 @@ class LogCMDAndTest(ExpHook):
         get_global_logger().raw(f"{exp.test_root} | {' '.join(sys.argv)}")
 
 
+class BlobPath(ExpHook):
+    def on_start(self, exp: Experiment, *args, **kwargs):
+        exp.dump_string('blob', exp.blob_branch.root)
+
+
 class TimeMonitor(ExpHook):
     def _create_agent(self, exp: Experiment):
         import subprocess, sys

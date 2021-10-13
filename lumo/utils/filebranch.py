@@ -1,6 +1,7 @@
 import glob
 import os
 from lumo.utils import re
+from lumo.utils.safe_io import IO, auto_load
 
 
 def foo(*_, **__): pass
@@ -30,15 +31,26 @@ class FileBranch:
         return f'{self.__class__.__name__}({self.root})'
 
     @property
-    def root(self):
+    def root(self) -> str:
         return os.path.abspath(self._root)
 
     exists = os.path.exists
 
+    @property
+    def isfile(self):
+        return os.path.isfile(self.root)
+
+    @property
+    def isdir(self):
+        return os.path.isdir(self.root)
+
+    def content(self) -> dict:
+        return auto_load(self.root)
+
     def send(self, *path):
         self._listener(os.path.join(*path))
 
-    def file(self, fn, *dirs):
+    def file(self, fn, *dirs) -> str:
         fdir = self.makedir(*dirs)
         fn = os.path.join(fdir, fn)
         self.send(fn)
@@ -46,7 +58,8 @@ class FileBranch:
 
     def makedir(self, *dirs):
         fdir = os.path.join(self.root, *dirs)
-        os.makedirs(fdir, exist_ok=True)
+        if not os.path.exists(fdir):
+            os.makedirs(fdir, exist_ok=True)
         self.send(fdir)
         return fdir
 
@@ -55,10 +68,12 @@ class FileBranch:
         self.send(res.root)
         return res
 
-    @property
-    def parent(self):
-        res = FileBranch(os.path.dirname(self.root), listener=self._listener)
-        self.send(res.root)
+    def parent(self, level=1):
+        res = self
+        if level > 0:
+            res = FileBranch(os.path.dirname(res.root), listener=res._listener)
+            res.send(res.root)
+            return res.parent(level - 1)
         return res
 
     def listdir(self):
@@ -67,11 +82,11 @@ class FileBranch:
     def walk(self):
         yield from os.walk(self.root)
 
-    def finddir(self, regex, depth=-1):
-        match = re.compile(regex)
-        for f in self.listdir():
-            if os.path.isdir(f):
-                self.branch(f)
+    # def finddir(self, regex, depth=-1):
+    #     match = re.compile(regex)
+    #     for f in self.listdir():
+    #         if os.path.isdir(f):
+    #             self.branch(f)
 
     def find_dir_in_depth(self, regex, depth=0):
         if isinstance(regex, str):

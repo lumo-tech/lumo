@@ -194,7 +194,7 @@ class Experiment:
 
     @property
     def cache_branch(self):
-        return self.root_branch.parent.branch('cache')
+        return self.root_branch.parent().branch('cache')
 
     @property
     def test_branch(self):
@@ -265,6 +265,7 @@ class SimpleExperiment(Experiment):
         self.set_hook(exphook.GitCommit())
         self.set_hook(exphook.RecordAbort())
         self.set_hook(exphook.Diary())
+        self.set_hook(exphook.BlobPath())
         # self.set_hook(exphook.FinalReport())
 
 
