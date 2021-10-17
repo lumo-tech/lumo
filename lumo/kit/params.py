@@ -13,8 +13,6 @@ from collections import namedtuple
 from datetime import timedelta
 from itertools import chain
 from typing import Any, overload, TypeVar, Optional, List, Union
-from accelerate.kwargs_handlers import KwargsHandler
-from accelerate.utils import RNGType
 import fire
 
 import torch

@@ -15,9 +15,6 @@ Compare view：对比不同的结果，展示图表
 TestInfo view
  - 展示单个 Test 的信息，包括执行用时，git 提交，大文件存放（空间占用）
 
-
-
-
 """
 # from .experiment import Experiment
 import os

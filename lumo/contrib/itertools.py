@@ -150,3 +150,34 @@ def groupby(iterable, key=None):
         cur = val
         res.append(i)
     yield res
+
+
+def group_continuous(iterable, key=None):
+    """
+    Returns grouped items constrained by continuous integer in the iterable object.
+
+    >>> list(group_continuous([[i] for i in [1,2,3,4,5,7,8,9,12,13]], key=lambda x:x[0]))
+        [[[1], [2], [3], [4], [5]], [[7], [8], [9]], [[12], [13]]]
+
+
+    >>> list(group_continuous([1,2,3,4,5,7,8,9,12,13]))
+        [[1, 2, 3, 4, 5], [7, 8, 9], [12, 13]]
+    """
+    cur = -1
+    offset = 0
+    res = []
+    for item in iterable:
+        if key is None:
+            i = item
+        else:
+            i = key(item)
+        if cur == -1:
+            cur = i
+        else:
+            offset = i - cur
+            cur = i
+        if offset > 1:
+            yield res
+            res = []
+        res.append(item)
+    yield res

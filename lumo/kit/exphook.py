@@ -3,6 +3,7 @@ import stat
 import sys
 from collections import OrderedDict
 from pprint import pformat
+from joblib import hash
 
 from lumo.proc.date import strftime
 from lumo.proc.explore import git_enable
@@ -46,62 +47,6 @@ class LastCmd(ExpHook):
         os.chmod(fn, st.st_mode | stat.S_IEXEC)
 
 
-# class LogCmd(ExpHook):
-#     """a './cache/cmds.log' file will be generated, """
-#
-#     def on_start(self, exp: Experiment, *args, **kwargs):
-#         from lumo.proc.date import strftime
-#         fn = exp.project_cache_fn(f'{strftime("%y-%m-%d")}.log', 'cmds')
-#         res = exp.exec_argv
-#
-#         with open(fn, 'a', encoding='utf-8') as w:
-#             w.write(f'{strftime("%H:%M:%S")}, {exp.test_root}, {res[0]}, {exp.commit_hash}\n')
-#             res[0] = os.path.basename(res[0])
-#             w.write(f"> {' '.join(res)}")
-#             w.write('\n\n')
-
-
-# class LogTestGlobally(ExpHook):
-#     def on_start(self, exp: Experiment, *args, **kwargs):
-#         fn = os.path.join(libhome(), FN.TESTLOG)
-#         with open(fn, 'a', encoding='utf-8') as w:
-#             w.write(f'{exp.test_root}\n')
-#
-
-# class LogTestLocally(ExpHook):
-#     def on_start(self, exp: Experiment, *args, **kwargs):
-#         local_ = local_dir()
-#         if local_ is None:
-#             return
-#         fn = os.path.join(local_, FN.TESTLOG)
-#         with open(fn, 'a', encoding='utf-8') as w:
-#             w.write(f'{exp.test_root}\n')
-
-#
-# class RegistRepo(ExpHook):
-#     def on_start(self, exp: Experiment, *args, **kwargs):
-#         from ..proc.const import FN
-#         from ..proc.const import CFG
-#         from lumo.utils import safe_io as io
-#         fn = os.path.join(libhome(), FN.REPOSJS)
-#         res = None
-#         if os.path.exists(fn):
-#             res = io.load_json(fn)
-#         if res is None:
-#             res = {}
-#
-#         inner = res.setdefault(exp.project_hash, {})
-#         inner['name'] = exp.project_name
-#         repos = inner.setdefault('repo', [])
-#         if exp.project_root not in repos:
-#             repos.append(exp.project_root)
-#         storages = inner.setdefault('exp_root', [])
-#         if exp.exp_root not in storages:
-#             storages.append(exp.exp_root)
-#
-#         io.dump_json(res, fn)
-
-
 class PathRecord(ExpHook):
 
     def on_newpath(self, exp: Experiment, *args, **kwargs):
@@ -143,7 +88,7 @@ class LogCMDAndTest(ExpHook):
 
 class BlobPath(ExpHook):
     def on_start(self, exp: Experiment, *args, **kwargs):
-        exp.dump_string('blob', exp.blob_branch.root)
+        exp.dump_string('blob.path', exp.blob_branch.root)
 
 
 class TimeMonitor(ExpHook):
@@ -155,8 +100,7 @@ class TimeMonitor(ExpHook):
             f"--state_key=state",
             f"--pid={os.getpid()}",
             f"--test_name={exp.test_name}",
-            f"--exp_name={exp.exp_name}",
-            f"--argv={exp.exp_name}",
+            f"--test_root={exp.test_root}",
             # f"--params={sys.argv}" # TODO add sys.argv
         ]
         subprocess.Popen(' '.join(cmd),
