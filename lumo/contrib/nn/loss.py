@@ -72,6 +72,90 @@ def contrastive_loss(query: torch.Tensor, key: torch.Tensor,
     return loss
 
 
+import torch
+from lumo.contrib.nn.functional import normalize, masked_log_softmax
+from torch.nn import functional as F
+
+
+def contrastive_loss2(query: torch.Tensor, key: torch.Tensor,
+                      memory: torch.Tensor = None,
+                      norm=False,
+                      temperature=0.7,
+                      query_neg=False,
+                      key_neg=True,
+                      qk_graph=None,
+                      qm_graph=None,
+                      ):
+    """
+    Examples:
+        >>> assert contrastive_loss(a,b,inbatch_neg=False) == contrastive_loss2(a,b,query_neg=False,key_neg=True)
+
+    Args:
+        query: [bq, f_dim]
+        key: [bq, f_dim]
+        memory: [bm, f_dim]
+        norm: bool, normalize feature or not
+        temperature: float
+        query_neg: bool
+        key_neg: bool
+        qk_graph: [bq, bq], >= 0
+        qm_graph: [bq, bm], >= 0
+
+    Returns:
+        loss
+
+    """
+    if memory is None:
+        key_neg = True
+        qm_graph = None
+
+    if memory is not None:
+        key = torch.cat([key, memory])
+
+    if query_neg:
+        key = torch.cat([query, key])
+
+    q_size = query.shape[0]
+
+    if norm:
+        logits = torch.cosine_similarity(query.unsqueeze(1), key.unsqueeze(0), dim=2)
+    else:
+        logits = torch.mm(query, key.t())  # query @ key.t()
+
+    logits /= temperature
+
+    neg_index = torch.ones_like(logits, dtype=torch.bool, device=logits.device)
+
+    neg_offset = q_size if query_neg else 0
+    if query_neg:
+        neg_index.scatter_(1, torch.arange(q_size).unsqueeze(1), 0)
+
+    if key_neg:
+        neg_index.scatter_(1, torch.arange(q_size).unsqueeze(1) + neg_offset, 0)
+    else:
+        neg_index[:, neg_offset:neg_offset + q_size] = 0
+
+    pos_index = torch.zeros_like(logits, dtype=torch.float, device=logits.device)
+    pos_offset = q_size if query_neg else 0
+
+    # for supervised cs
+    if qk_graph is not None:
+        pos_index[:, :q_size] = qk_graph.float()
+        if query_neg:
+            pos_index[:, q_size:q_size * 2] = qk_graph.float()
+
+    # for supervised cs with moco memory bank
+    if qm_graph is not None:
+        pos_index[:, pos_offset + q_size:] = qm_graph.float()
+
+    pos_index.scatter_(1, torch.arange(q_size).unsqueeze(1) + pos_offset, 1)
+
+    logits_mask = (pos_index > 0) | neg_index
+    loss = -torch.sum(masked_log_softmax(logits, logits_mask, dim=-1) * pos_index, dim=1)
+    loss = (loss / pos_index.sum(1)).mean()
+    return loss
+
+
 def cluster_loss(query, key, label_graph_mask=None, temperature=0.7):
     """
     see https://github.com/Yunfan-Li/Contrastive-Clustering
