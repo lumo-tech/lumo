@@ -267,7 +267,6 @@ class SimpleExperiment(Experiment):
         self.set_hook(exphook.Diary())
         self.set_hook(exphook.BlobPath())
         self.set_hook(exphook.TimeMonitor())
-        self.set_hook(exphook.HeartBeat())
 
 
 class TrainerExperiment(SimpleExperiment):
