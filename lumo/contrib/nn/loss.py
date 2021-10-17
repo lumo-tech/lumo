@@ -1,5 +1,5 @@
 import torch
-from .functional import normalize, masked_log_softmax
+from lumo.contrib.nn.functional import normalize, masked_log_softmax
 from torch.nn import functional as F
 
 
@@ -72,11 +72,6 @@ def contrastive_loss(query: torch.Tensor, key: torch.Tensor,
     return loss
 
 
-import torch
-from lumo.contrib.nn.functional import normalize, masked_log_softmax
-from torch.nn import functional as F
-
-
 def contrastive_loss2(query: torch.Tensor, key: torch.Tensor,
                       memory: torch.Tensor = None,
                       norm=False,
@@ -126,12 +121,14 @@ def contrastive_loss2(query: torch.Tensor, key: torch.Tensor,
 
     neg_index = torch.ones_like(logits, dtype=torch.bool, device=logits.device)
 
+    _temp_eye_indice = torch.arange(q_size, device=logits.device).unsqueeze(1)
+
     neg_offset = q_size if query_neg else 0
     if query_neg:
-        neg_index.scatter_(1, torch.arange(q_size).unsqueeze(1), 0)
+        neg_index.scatter_(1, _temp_eye_indice, 0)
 
     if key_neg:
-        neg_index.scatter_(1, torch.arange(q_size).unsqueeze(1) + neg_offset, 0)
+        neg_index.scatter_(1, _temp_eye_indice + neg_offset, 0)
     else:
         neg_index[:, neg_offset:neg_offset + q_size] = 0
 
@@ -148,7 +145,7 @@ def contrastive_loss2(query: torch.Tensor, key: torch.Tensor,
     if qm_graph is not None:
         pos_index[:, pos_offset + q_size:] = qm_graph.float()
 
-    pos_index.scatter_(1, torch.arange(q_size).unsqueeze(1) + pos_offset, 1)
+    pos_index.scatter_(1, _temp_eye_indice + pos_offset, 1)
 
     logits_mask = (pos_index > 0) | neg_index
     loss = -torch.sum(masked_log_softmax(logits, logits_mask, dim=-1) * pos_index, dim=1)
