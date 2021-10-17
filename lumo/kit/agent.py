@@ -8,18 +8,19 @@ import psutil
 from lumo.kit.experiment import Experiment
 from lumo.kit.params import BaseParams
 from lumo.proc.date import strftime
+from joblib import hash
 
 
-def wait_pid_stop():
+def wait_pid_stop(exp_name=None, test_name=None, state_key='state1'):
     params = BaseParams()
     params.pid = None
-    params.test_name = None
-    params.exp_name = None
-    params.state_key = None
+    params.test_name = test_name
+    params.exp_name = exp_name
+    params.state_key = state_key
     params.from_args()
 
     exp = Experiment(params.exp_name, params.test_name)
-    while psutil.pid_exists(params.pid):
+    while params.pid is None or psutil.pid_exists(params.pid):
         exp.dump_info(params.state_key, {
             'end': strftime(),
         }, append=True)
@@ -31,4 +32,4 @@ def wait_pid_stop():
 
 
 if __name__ == '__main__':
-    wait_pid_stop()
+    wait_pid_stop(exp_name='1.trainer.plusoneexp', test_name='211017.003.95t')

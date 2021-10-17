@@ -137,7 +137,8 @@ class Experiment:
         fn = self.test_file(f'{key}.json', 'info')
         if append:
             old_info = self.load_info(key)
-            info.update(old_info)
+            old_info.update(info)
+            info = old_info
         IO.dump_json(info, fn)
         return fn
 

@@ -3,6 +3,7 @@
 """
 import os
 import sys
+import time
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
 
@@ -45,6 +46,7 @@ class PlusOneTrainer(Trainer):
         loss = torch.mean((ys - logits) ** 2)
         self.optim.zero_grad()
         loss.backward()
+        time.sleep(2)
         self.optim.step()
         meter.Lce = loss
         return meter
