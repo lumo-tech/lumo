@@ -3,7 +3,7 @@ from typing import overload
 
 from torch.optim import Optimizer
 
-from lumo import attr
+from lumo.base_classes import attr
 
 
 class OptimBuilder(attr):
