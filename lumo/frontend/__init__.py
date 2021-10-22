@@ -104,7 +104,7 @@ class LogView(FileView): pass
 class TestInfoView(DirectoryView): pass
 
 
-class JsonView(FileView): pass
+class JsonView(FileView):
 
 
 class AttrView(JsonView): pass
