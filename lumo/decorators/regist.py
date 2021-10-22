@@ -39,6 +39,7 @@ class Register():
             name = wrapped.__name__
         assert name is not None
         self.source[name] = wrapped
+        return wrapped
 
     def regist(self, name=None):
         return partial(self, name=name)
