@@ -147,6 +147,12 @@ class Experiment:
         IO.dump_text(str(info), fn)
         return fn
 
+    def add_tag(self, tag):
+        fn = self.test_file(tag, 'tag')
+        with open(fn, 'w'):
+            pass
+        return fn
+
     def start(self):
         for hook in self._hooks.values():  # type: ExpHook
             hook.on_start(self)
