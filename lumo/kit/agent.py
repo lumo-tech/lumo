@@ -7,7 +7,7 @@ import psutil
 
 from lumo.kit.experiment import Experiment
 from lumo.kit.params import BaseParams
-from lumo.proc.date import strftime
+from lumo.utils.fmt import strftime
 from joblib import hash
 
 

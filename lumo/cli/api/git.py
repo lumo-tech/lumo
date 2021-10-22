@@ -9,7 +9,7 @@ from git import Repo, Commit
 
 # from lumo.utils.keys import FN, CFG
 from lumo.utils.paths import compare_path
-from lumo.proc.path import git_dir
+from lumo.utils.repository import git_dir
 
 bin_file = ['*.pth', '*.npy', '*.ckpt',
             '*.ft',  # for feather

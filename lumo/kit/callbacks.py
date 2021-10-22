@@ -13,7 +13,7 @@ from .mixin import CallbackMix
 from .params import Params
 from .trainer import Trainer, TrainerResult
 from ..base_classes.trickitems import NoneItem, AvgItem
-from ..utils.timing import format_second
+from ..utils.timer import format_second
 
 func_map = {
     'evaluate': 'eval',
@@ -311,10 +311,10 @@ class LoggerCallback(TrainCallback, InitialCallback, SaveLoadCallback):
         self._meter = None
 
     def on_train_begin(self, trainer: Trainer, func, params: Params, *args, **kwargs):
-        from ..utils.timing import TimeIt
+        from ..utils.timer import Timer
 
         self.start = params.eidx
-        self.traintime = TimeIt()
+        self.traintime = Timer()
         self.traintime.start()
         trainer.logger.info('[[Train Begin]]')
         super().on_train_begin(trainer, func, params, *args, **kwargs)
@@ -327,9 +327,9 @@ class LoggerCallback(TrainCallback, InitialCallback, SaveLoadCallback):
         trainer.logger.info(f"[[Train End in {format_second(self.traintime['use'])}]]", meter)
 
     def on_train_epoch_begin(self, trainer: Trainer, func, params: Params, *args, **kwargs):
-        from ..utils.timing import TimeIt
+        from ..utils.timer import Timer
         self.reset_meter()
-        self.epochtime = TimeIt()
+        self.epochtime = Timer()
         self.epochtime.start()
         trainer.logger.info("{}/{}".format(params.eidx, params.epoch))
 

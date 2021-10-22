@@ -1,12 +1,9 @@
 import os
 import sys
 from sys import platform
-from typing import Mapping, TypeVar, Type
+from typing import TypeVar
 
 T = TypeVar('T')
-
-from lumo import __version__
-from lumo.contrib.itertools import lfilter
 
 LIBRARY_NAME = 'lumo'
 
@@ -28,9 +25,6 @@ class ENV:
 
     ENV = "jupyter" if "jupyter_core" in sys.modules else "python"
 
-    IS_GIT_ENABLED = (os.environ.get('LUMO_GIT', '1') == '1' and
-                      os.environ.get('LUMO_NOGIT', '0') == '0')
-
 
 class CFG:
     class PATH:  # key for path
@@ -45,36 +39,6 @@ class CFG:
         DEFAULT = 'default'
 
     BRANCH_NAME = 'experiment'
-
-
-class FN:
-    PHASH = '.hash'
-    # CONFIGJS = 'config.json'
-    REPOSJS = 'repos.json'
-    TESTLOG = 'tests.log'
-    VERSION = f'.lumo.{__version__}'
-
-    D_LINE = '.line'
-    D_JSON = '.json'
-    D_PKL = '.pkl'
-
-    class SUFFIX:
-        D_LINE = '.txt'
-        D_JSON = '.json'
-        D_PKL = '.pkl'
-
-
-class EXP:  # used in Experiment
-    STATE = 'state'  # dumped info key
-    EXCEPTION = 'exception'
-    PROJECT = 'project'
-    EXECUTE = 'execute'
-    GIT = 'git'
-
-    VERSION = 'version'
-    UUID = 'uuid'
-
-    TRAINER = 'trainer'
 
 
 class TRAINER:
@@ -98,29 +62,3 @@ class TRAINER:
         ini_callbacks = 'initial.callbacks'
         params = 'params'
         exp = 'exp'
-
-
-class EXP_CONST:
-    class INFO_KEY:
-        STATE = 'state'  # dumped info key
-        PROJECT = 'project'
-        EXECUTE = 'execute'
-        GIT = 'git'
-        VERSION = 'version'
-        TRAINER = 'trainer'
-
-    class IO_DIR:
-        SINFO_DIR = '.json'
-        PKL_DIR = '.pkl'
-        INFO_DIR = '.line'
-
-    # class HOOK_FN
-
-
-class METER:
-    MEAN = 'mean'
-    SUM = 'sum'
-    MAX = 'max'
-    MIN = 'min'
-    LAST = 'last'
-    EXP = 'exp'

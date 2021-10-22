@@ -1,5 +1,5 @@
 from typing import Union, NoReturn, Dict, overload
-from lumo.base_classes import TrainerStage
+from .beans.trainstage import TrainerStage
 from torch.utils.data import DataLoader, Dataset
 from .mixin import DataModuleMix
 from .builder import DatasetWrap

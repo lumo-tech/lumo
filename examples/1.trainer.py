@@ -8,7 +8,7 @@ import time
 sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
 
 from lumo import Trainer, DatasetBuilder, Params, callbacks, DataModule
-from lumo.base_classes import TrainerStage
+from lumo.kit.beans.trainstage import TrainerStage
 from lumo.kit.params import ParamsType
 
 import torch

@@ -6,7 +6,7 @@ import time
 import warnings
 from collections import OrderedDict
 
-from lumo.proc.date import strftime
+from lumo.utils.fmt import strftime
 
 
 def format_second(sec: int) -> str:
@@ -24,7 +24,7 @@ def format_second(sec: int) -> str:
     return fmt
 
 
-class TimeIt:
+class Timer:
     """
     A class for timing the time cost in each part.
 
@@ -109,4 +109,4 @@ class TimeIt:
         return self.times[item]
 
 
-timeit = TimeIt()
+timer = Timer()

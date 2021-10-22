@@ -2,7 +2,7 @@ from typing import Union, NoReturn, overload, Dict
 
 from torch.utils.data import DataLoader
 
-from lumo.base_classes import TrainerStage
+from lumo.kit.beans.trainstage import TrainerStage
 from lumo.kit.params import ParamsType
 
 

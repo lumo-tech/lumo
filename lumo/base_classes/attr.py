@@ -161,7 +161,6 @@ class attr(OrderedDict, metaclass=meta_attr):
         cls_name = dic.get(ATTR_TYPE, cls.__name__)
         if cls_name not in _attr_clss:
             res = attr()
-            from lumo.base_classes.errors import AttrTypeNotFoundWarning
             warnings.warn('{} not found, will use class attr to receive values.'.format(cls_name),
                           AttrTypeNotFoundWarning)
         else:
@@ -222,3 +221,8 @@ class _arr(attr):
         super().__init__()
         self.arr = arr.tolist()
         self.torch = isinstance(arr, torch.Tensor)
+
+
+class AttrTypeNotFoundWarning(Warning):    pass
+
+warnings.simplefilter('always', AttrTypeNotFoundWarning)

@@ -1,8 +1,9 @@
 """
 Methods about files/paths
 """
-from lumo.utils import re
 import os
+
+from . import re
 
 
 def checkpath(*path, is_file=False):
@@ -64,4 +65,4 @@ def filter_filename(title: str, substr='-'):
 
 
 def safe_filename(fn, sep='_'):
-    return re.sub('[\/:*?"<>|]', sep, fn)
+    return re.sub('[\/:*?"<>+\-|]', sep, fn)

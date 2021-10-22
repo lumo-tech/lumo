@@ -4,7 +4,7 @@
 """
 from lumo import Trainer, Logger, Params, DatasetBuilder, DataModule, K, callbacks
 from lumo.contrib.data.collate import CollateBase
-from lumo.base_classes import TrainerStage
+from lumo.kit.beans.trainstage import TrainerStage
 from lumo.kit import ParamsType
 
 

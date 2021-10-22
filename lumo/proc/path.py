@@ -1,6 +1,8 @@
 import os
 import sys
 
+from lumo.utils.repository import git_dir
+
 
 def cache_dir():
     try:
@@ -21,28 +23,6 @@ def dataset_cache_dir(name=None):
 
 def libhome():
     return os.path.expanduser("~/.lumo")
-
-
-def git_dir(root='./'):
-    """
-    git repository directory
-    Args:
-        root:
-
-    Returns:
-
-    """
-    from lumo.proc.explore import git_enable
-    if git_enable():
-        from git import Git
-        cur = os.getcwd()
-        os.chdir(root)
-        res = Git().execute(['git', 'rev-parse', '--git-dir'])
-        res = os.path.abspath(os.path.dirname(res))
-        os.chdir(cur)
-        return res
-    else:
-        return None
 
 
 def local_dir():

@@ -2,7 +2,8 @@
 
 """
 
-from lumo.base_classes.metaclasses import Merge
+from lumo.kit.trainer import Merge
+
 
 def test_merge():
     class A(metaclass=Merge):

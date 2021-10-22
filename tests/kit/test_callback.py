@@ -6,7 +6,7 @@ from torch import nn
 from torch.utils.data import DataLoader
 
 from lumo import Trainer, DataModule, callbacks, Params, Meter
-from lumo.base_classes import TrainerStage
+from lumo.kit.beans.trainstage import TrainerStage
 from lumo.kit import ParamsType, DataModuleMix
 
 

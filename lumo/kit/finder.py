@@ -2,20 +2,7 @@
 Help you find the experiments you have done.
 """
 
-import os
-import shutil
-from collections import OrderedDict
-from dataclasses import dataclass
-from functools import lru_cache
-from typing import Dict, List
-
 # from git import Commit, Repo
-from lumo.base_classes import attr
-from lumo.utils import safe_io as io
-from lumo.proc.date import date_from_str
-from lumo.proc.const import FN, EXP
-from lumo.utils.paths import compare_path
-from lumo.proc.path import git_dir, libhome
 #
 #
 # class TestProp():

@@ -4,13 +4,13 @@ Safe means Exceptions won't be raised. When
  - call `load_xxx` methods, None will be returned if something wrong happened.
 """
 import json
-from collections import namedtuple
-from joblib.numpy_pickle import dump as dump_nd, load as load_nd
-import torch
 import os
 import pickle as _pickle
-from io import FileIO
 from contextlib import contextmanager
+from io import FileIO
+
+import torch
+from joblib.numpy_pickle import dump as dump_nd, load as load_nd
 
 
 def dump_json(obj, fn):
@@ -106,12 +106,12 @@ def cached(fn):
         shutil.move(cache_fn, fn)
 
 
-def auto_load(file: str):
-    if os.path.isdir(file):
-        return {'msg': 'isdir', 'content': None, 'res': 1}
-    if file.endswith('.json'):
-        return {'msg': '', 'content': IO.load_json(file), 'res': 0}
-    return {'msg': '', 'content': IO.load_text(file), 'res': 0}
+# def auto_load(file: str):
+#     if os.path.isdir(file):
+#         return {'msg': 'isdir', 'content': None, 'res': 1}
+#     if file.endswith('.json'):
+#         return {'msg': '', 'content': IO.load_json(file), 'res': 0}
+#     return {'msg': '', 'content': IO.load_text(file), 'res': 0}
 
 
 class IO:

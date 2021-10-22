@@ -19,8 +19,7 @@ import torch
 
 from lumo.base_classes.attr import attr
 from lumo.base_classes.trickitems import null, NoneItem
-from lumo.base_classes.errors import BoundCheckError, NewParamWarning
-from lumo.base_classes.params_vars import OptimMixin
+from lumo.contrib.nn.optimizer_builder import OptimMixin
 from lumo.contrib.optim import lr_scheduler
 from lumo.utils import safe_io as io
 
@@ -537,3 +536,9 @@ class Params(BaseParams):
 
 
 ParamsType = TypeVar('ParamsType', bound=Params)
+
+
+class BoundCheckError(BaseException):    pass
+
+
+class NewParamWarning(Warning):    pass

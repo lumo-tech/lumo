@@ -5,8 +5,8 @@ from collections import OrderedDict
 from pprint import pformat
 from joblib import hash
 
-from lumo.proc.date import strftime
-from lumo.proc.explore import git_enable
+from ..utils.fmt import strftime
+from ..utils.repository import git_enable
 from lumo.utils.exithook import wrap_before
 from .experiment import Experiment
 from ..proc.dist import is_main

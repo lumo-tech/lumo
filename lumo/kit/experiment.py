@@ -6,17 +6,17 @@ Experiment
 
 """
 import os
-import time
 import random
 import sys
+import time
 import traceback
 from typing import TYPE_CHECKING
-from lumo.base_classes import attr
 
-from lumo.utils.filebranch import FileBranch
-from lumo.utils.safe_io import IO
+from lumo.base_classes import attr
 from lumo.proc.dist import is_dist, is_main
 from lumo.proc.path import local_dir, libhome
+from lumo.utils.filebranch import FileBranch
+from lumo.utils.safe_io import IO
 
 if TYPE_CHECKING:
     from .exphook import ExpHook
@@ -63,13 +63,13 @@ class Experiment:
 
         self._path_mem = set()
 
-        def foo(path):
+        def fb_listener(path):
             if path not in self._path_mem:
                 self._path_mem.add(path)
                 for v in self._hooks.values():  # type:ExpHook
                     v.on_newpath(self)
 
-        self._tree = FileBranch(root, listener=foo)
+        self._tree = FileBranch(root, listener=fb_listener)
         self.add_exit_hook(self._auto_end)
 
     def _auto_end(self, *args):
@@ -89,7 +89,8 @@ class Experiment:
         self.end(**extra)
 
     def _create_test_name(self):
-        from lumo.proc.date import strftime, timehash
+        from lumo.proc.date import timehash
+        from ..utils.fmt import strftime
         fs = os.listdir(self.exp_root)
         date_str = strftime('%y%m%d')
         fs = [i for i in fs if i.startswith(date_str)]
@@ -149,8 +150,7 @@ class Experiment:
 
     def add_tag(self, tag):
         fn = self.test_file(tag, 'tag')
-        with open(fn, 'w'):
-            pass
+        IO.dump_text(fn, tag)
         return fn
 
     def start(self):

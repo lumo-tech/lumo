@@ -24,6 +24,3 @@ def get_lock(*others):
         res[lib] = getattr(mod, '__version__', 'null')
 
     return res
-
-# if __name__ == '__main__':
-# print(get_lock('torch', 'pandas'))

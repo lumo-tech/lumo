@@ -8,7 +8,7 @@ from collections import namedtuple
 from datetime import datetime
 from typing import Any, Callable
 
-from lumo.proc.date import strftime
+from ..utils.fmt import strftime
 from ..utils.screen import ScreenStr
 
 import logging

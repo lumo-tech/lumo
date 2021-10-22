@@ -1,5 +1,5 @@
 from ..kit.params import BaseParams
-from ..base_classes.params_vars import OptimBuilder
+from ..contrib.nn.optimizer_builder import OptimBuilder
 
 
 class DataLoaderPM(BaseParams):

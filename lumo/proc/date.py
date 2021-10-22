@@ -5,12 +5,7 @@ import os
 from datetime import datetime
 import hashlib
 
-
-def strftime(fmt='%y-%m-%d-%H%M%S', dateobj: datetime = None):
-    """get current date with formatted"""
-    if dateobj is not None:
-        return dateobj.strftime(fmt)
-    return datetime.now().strftime(fmt)
+from lumo.utils.fmt import strftime
 
 
 def date_from_str(value, fmt='%y-%m-%d-%H%M%S') -> datetime:

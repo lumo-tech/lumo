@@ -1,19 +1,13 @@
 import importlib
 from typing import overload
 
-from torch.optim.optimizer import Optimizer
+from torch.optim import Optimizer
 
-from .attr import attr
+from lumo import attr
 
 
 class OptimBuilder(attr):
-    # @overload
-    # def __init__(self,values:):
 
-    # def __init__(self, name: str = None, **kwargs):
-    #     super().__init__()
-    #     self.args = attr.from_dict(kwargs)  # type:attr
-    #     self.name = name
     @property
     def args(self):
         return self

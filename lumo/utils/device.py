@@ -1,9 +1,9 @@
-from typing import List, Dict, Tuple, Union, overload, Optional, Sequence
+from collections.abc import Sequence, Mapping
+from typing import Dict, Tuple, Union, overload, Optional
+
+import torch
 from decorator import decorator
 from torch import nn
-import torch
-from collections.abc import Sequence, Mapping
-
 from torch.utils.data import DataLoader
 
 

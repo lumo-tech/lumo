@@ -2,11 +2,11 @@
 
 """
 
-from lumo.utils.timing import TimeIt
+from lumo.utils.timer import Timer
 import time
 
 if __name__ == '__main__':
-    t = TimeIt()
+    t = Timer()
     t.start()
     for i in range(10):
         time.sleep(0.1)

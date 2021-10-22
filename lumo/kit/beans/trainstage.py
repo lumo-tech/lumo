@@ -5,8 +5,9 @@ class TrainerStage(Enum):
     debug = -2
     init = -1
     train = 0
-    test = 1
-    val = 2
+    train_epoch = 1
+    test = 2
+    val = 3
 
     @property
     def is_train(self):

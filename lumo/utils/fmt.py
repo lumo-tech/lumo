@@ -1,3 +1,5 @@
+from datetime import datetime
+
 import numpy as np
 import torch
 
@@ -26,3 +28,10 @@ def is_scalar(ndarray):
     if ndarray.ndim != 0:
         return False
     return True
+
+
+def strftime(fmt='%y-%m-%d-%H%M%S', dateobj: datetime = None):
+    """get current date with formatted"""
+    if dateobj is not None:
+        return dateobj.strftime(fmt)
+    return datetime.now().strftime(fmt)

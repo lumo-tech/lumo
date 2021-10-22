@@ -3,6 +3,7 @@ Methods about git.
 """
 import os
 from functools import lru_cache
+
 from lumo.base_classes import attr
 
 try:
@@ -15,10 +16,6 @@ except ImportError:
 
     def Commit(*_, **__):
         return None
-
-from lumo.proc.explore import git_enable
-from lumo.proc.path import git_dir, cache_dir
-from lumo.utils.paths import checkpath
 
 
 class GitKey:
@@ -196,7 +193,6 @@ class GitEnabledWrap(GitWrap):
             ncommit = repo.index.commit("Reset from {}".format(commit.hexsha))
             repo.git.branch('-d', 'reset')
 
-
         os.chdir(old_path)
         return None
 
@@ -215,18 +211,36 @@ class GitEnabledWrap(GitWrap):
         os.chdir(commit.tree.abspath)
         # exp = Experiment('Archive')
 
-        revert_path = checkpath(cache_dir(), 'archives', commit)
-        revert_fn = os.path.join(revert_path, "code.zip")
+        # revert_path = checkpath(cache_dir(), 'archives', commit)
+        # revert_fn = os.path.join(revert_path, "code.zip")
 
         # TODO 在code.zip目录下添加相关说明
         # exp.add_plugin('archive', {'file': revert_fn,
         #                            'test_name': self.name})
-        with open(revert_fn, 'wb') as w:
-            repo.archive(w, commit)
+        # with open(revert_fn, 'wb') as w:
+        #     repo.archive(w, commit)
 
         # exp.end()
         os.chdir(old_path)
         return None
+
+
+@lru_cache(1)
+def git_enable():
+    git_enabled = (os.environ.get('LUMO_GIT', '1') == '1' and
+                   os.environ.get('LUMO_NOGIT', '0') == '0')
+    if not git_enabled:
+        return False
+
+    try:
+        import git
+    except ImportError:
+        return False
+    try:
+        git.Git().execute(['git', 'rev-parse', '--git-dir'])
+        return True
+    except git.GitCommandError:
+        return False
 
 
 if git_enable():
@@ -240,3 +254,24 @@ reset = wrap.reset
 archive = wrap.archive
 
 _commits_map = {}
+
+
+def git_dir(root='./'):
+    """
+    git repository directory
+    Args:
+        root:
+
+    Returns:
+
+    """
+    if git_enable():
+        from git import Git
+        cur = os.getcwd()
+        os.chdir(root)
+        res = Git().execute(['git', 'rev-parse', '--git-dir'])
+        res = os.path.abspath(os.path.dirname(res))
+        os.chdir(cur)
+        return res
+    else:
+        return None

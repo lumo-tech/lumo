@@ -2,7 +2,6 @@
 Methods about random
 """
 import hashlib
-from joblib import hash
 import random
 from typing import Union
 
@@ -76,6 +75,3 @@ def set_state(state_dict):
         else:
             import warnings
             warnings.warn("Don't have torch.cuda random state")
-
-
-

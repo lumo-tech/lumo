@@ -6,7 +6,6 @@ from typing import Any, Mapping, Sequence
 
 import numpy as np
 import torch
-
 from torch.utils.data._utils.collate import default_collate
 
 
@@ -41,6 +40,9 @@ class CollateBase():
 
     def before_collate(self, sample_list):
         return sample_list
+
+    def raw_collate(self, sample_list):
+        return self._collate_fn(sample_list)
 
     def collate(self, sample_list):
         return self._collate_fn(sample_list)
