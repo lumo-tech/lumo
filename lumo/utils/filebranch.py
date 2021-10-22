@@ -1,10 +1,6 @@
-import glob
 import os
-from lumo.utils import re
-from lumo.utils.safe_io import IO, auto_load
 
-
-def foo(*_, **__): pass
+from . import re
 
 
 class FileBranch:
@@ -22,8 +18,9 @@ class FileBranch:
         self._root = os.path.expanduser(root)
         self._cache = set()
         if listener is None:
-            listener = foo
-        self._listener = listener
+            self._listeners = []
+        else:
+            self._listeners = [listener]
         if touch:
             self.makedir(root)
 
@@ -44,11 +41,9 @@ class FileBranch:
     def isdir(self):
         return os.path.isdir(self.root)
 
-    def content(self) -> dict:
-        return auto_load(self.root)
-
     def send(self, *path):
-        self._listener(os.path.join(*path))
+        for l in self._listeners:
+            l(os.path.join(*path))
 
     def file(self, fn, *dirs) -> str:
         fdir = self.makedir(*dirs)
@@ -64,29 +59,26 @@ class FileBranch:
         return fdir
 
     def branch(self, *name):
-        res = FileBranch(os.path.join(self.root, *name), touch=True, listener=self._listener)
+        res = FileBranch(os.path.join(self.root, *name), touch=True, listener=self._listeners)
         self.send(res.root)
         return res
 
     def parent(self, level=1):
         res = self
         if level > 0:
-            res = FileBranch(os.path.dirname(res.root), listener=res._listener)
+            res = FileBranch(os.path.dirname(res.root), listener=res._listeners)
             res.send(res.root)
             return res.parent(level - 1)
         return res
 
-    def listdir(self):
-        return os.listdir(self.root)
+    def listdir(self, abs=False):
+        res = os.listdir(self.root)
+        if abs:
+            res = [os.path.join(self.root, f) for f in res]
+        return res
 
     def walk(self):
         yield from os.walk(self.root)
-
-    # def finddir(self, regex, depth=-1):
-    #     match = re.compile(regex)
-    #     for f in self.listdir():
-    #         if os.path.isdir(f):
-    #             self.branch(f)
 
     def find_dir_in_depth(self, regex, depth=0):
         if isinstance(regex, str):
@@ -113,3 +105,11 @@ class FileBranch:
                         yield os.path.join(self.root, f)
             else:
                 yield from self.branch(f).find_file_in_depth(match, depth - 1)
+
+
+def touch(file, content=None):
+    if content is None:
+        content = ''
+    f = open(file, 'w', encoding='utf8')
+    f.write(content)
+    f.close()

@@ -8,6 +8,7 @@ import psutil
 from lumo.kit.experiment import Experiment
 from lumo.kit.params import BaseParams
 from lumo.utils.fmt import strftime
+from lumo.utils.safe_io import IO
 from joblib import hash
 
 
@@ -20,13 +21,16 @@ def wait_pid_stop(exp_name=None, test_name=None, state_key='state1'):
     params.from_args()
 
     exp = Experiment(params.exp_name, params.test_name)
+
+    test_root = exp.test_root
     while params.pid is None or psutil.pid_exists(params.pid):
         exp.dump_info(params.state_key, {
             'end': strftime(),
         }, append=True)
 
-        with open(exp.root_branch.file(f'{hash(exp.test_root)}.hb', 'heartbeat'), 'w') as w:
-            w.write(exp.test_root)
+        IO.dump_text(exp.root_branch.file(f'{hash(test_root)}.hb', 'heartbeat'), test_root)
+        IO.dump_text(exp.exp_branch.file(f'{hash(test_root)}.hb', 'heartbeat'), test_root)
+        IO.dump_text(exp.test_branch.file(f'{hash(test_root)}.hb', 'heartbeat'), test_root)
 
         time.sleep(2)
 
