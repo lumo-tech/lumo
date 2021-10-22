@@ -19,8 +19,11 @@ class FileBranch:
         self._cache = set()
         if listener is None:
             self._listeners = []
-        else:
+        elif callable(listener):
             self._listeners = [listener]
+        else:
+            self._listeners = listener
+
         if touch:
             self.makedir(root)
 
