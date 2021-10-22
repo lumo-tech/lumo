@@ -32,4 +32,4 @@ def wait_pid_stop(exp_name=None, test_name=None, state_key='state1'):
 
 
 if __name__ == '__main__':
-    wait_pid_stop(exp_name='1.trainer.plusoneexp', test_name='211017.003.95t')
+    wait_pid_stop()
