@@ -150,7 +150,7 @@ class Experiment:
 
     def add_tag(self, tag):
         fn = self.test_file(tag, 'tag')
-        IO.dump_text(fn, tag)
+        IO.dump_text(tag, fn)
         return fn
 
     def start(self):
