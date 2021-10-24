@@ -80,6 +80,7 @@ def contrastive_loss2(query: torch.Tensor, key: torch.Tensor,
                       key_neg=True,
                       qk_graph=None,
                       qm_graph=None,
+                      eye_one_in_qk=False,
                       ):
     """
     Examples:
@@ -145,7 +146,8 @@ def contrastive_loss2(query: torch.Tensor, key: torch.Tensor,
     if qm_graph is not None:
         pos_index[:, pos_offset + q_size:] = qm_graph.float()
 
-    pos_index.scatter_(1, _temp_eye_indice + pos_offset, 1)
+    if qk_graph is None or eye_one_in_qk:
+        pos_index.scatter_(1, _temp_eye_indice + pos_offset, 1)
 
     logits_mask = (pos_index > 0) | neg_index
     loss = -torch.sum(masked_log_softmax(logits, logits_mask, dim=-1) * pos_index, dim=1)
