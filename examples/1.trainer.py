@@ -28,7 +28,7 @@ class DM(DataModule):
         super().iidataloader(params, stage, repeat)
 
 
-class PlusOneTrainer(Trainer):
+class PlusOne(Trainer):
 
     def imodels(self, params: ParamsType):
         self.model = nn.Linear(1, 1)
@@ -58,7 +58,7 @@ params.epoch = 30
 params.batch_size = 10
 params.optim = params.OPTIM.create_optim('SGD', lr=0.000001, weight_decay=4e-3)
 
-trainer = PlusOneTrainer(params)
+trainer = PlusOne(params)
 
 builder = (
     DatasetBuilder().add_input('xs', range(-500, 500)).add_input('ys', range(-500, 500))

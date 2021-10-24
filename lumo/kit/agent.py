@@ -28,9 +28,9 @@ def wait_pid_stop(exp_name=None, test_name=None, state_key='state1'):
             'end': strftime(),
         }, append=True)
 
-        IO.dump_text(exp.root_branch.file(f'{hash(test_root)}.hb', 'heartbeat'), test_root)
-        IO.dump_text(exp.exp_branch.file(f'{hash(test_root)}.hb', 'heartbeat'), test_root)
-        IO.dump_text(exp.test_branch.file(f'{hash(test_root)}.hb', 'heartbeat'), test_root)
+        IO.dump_text(test_root, exp.root_branch.file(f'{hash(test_root)}.hb', 'heartbeat'))
+        IO.dump_text(test_root, exp.exp_branch.file(f'{hash(test_root)}.hb', 'heartbeat'))
+        IO.dump_text(test_root, exp.test_branch.file(f'{hash(test_root)}.hb', 'heartbeat'))
 
         time.sleep(2)
 

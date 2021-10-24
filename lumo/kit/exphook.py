@@ -99,6 +99,7 @@ class TimeMonitor(ExpHook):
             sys.executable, '-m', agent.__spec__.name,
             f"--state_key=state",
             f"--pid={os.getpid()}",
+            f"--exp_name={exp.exp_name}",
             f"--test_name={exp.test_name}",
             f"--test_root={exp.test_root}",
             # f"--params={sys.argv}" # TODO add sys.argv
