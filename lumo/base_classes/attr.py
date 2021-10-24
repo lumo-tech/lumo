@@ -78,7 +78,9 @@ class attr(OrderedDict, metaclass=meta_attr):
             v = attr.from_dict(v)
         return v
 
-    def __getattr__(self, item):
+    def __getattr__(self, item: str):
+        if item.startswith('__'):
+            return None
         return self[item]
 
     def __setattr__(self, name: str, value: Any) -> None:
@@ -224,5 +226,6 @@ class _arr(attr):
 
 
 class AttrTypeNotFoundWarning(Warning):    pass
+
 
 warnings.simplefilter('always', AttrTypeNotFoundWarning)
