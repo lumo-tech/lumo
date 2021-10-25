@@ -280,6 +280,7 @@ class TrainerExperiment(SimpleExperiment):
 
     def __init__(self, exp_name, test_name=None):
         super().__init__(exp_name, test_name)
+        self.add_tag('__trainer__')
 
     class VAR_KEY:
         WRITER = 'board'
