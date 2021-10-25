@@ -148,7 +148,9 @@ class Experiment:
         IO.dump_text(str(info), fn)
         return fn
 
-    def add_tag(self, tag):
+    def add_tag(self, tag, flag=True):
+        if not flag:
+            return None
         fn = self.test_file(tag, 'tag')
         IO.dump_text(tag, fn)
         return fn
