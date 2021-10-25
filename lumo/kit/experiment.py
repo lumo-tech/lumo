@@ -149,11 +149,11 @@ class Experiment:
         return fn
 
     def add_tag(self, tag, flag=True):
-        if not flag:
-            return None
-        fn = self.test_file(tag, 'tag')
-        IO.dump_text(tag, fn)
-        return fn
+        if flag:
+            fn = self.test_file(tag, 'tag')
+            IO.dump_text(tag, fn)
+            return fn
+        return None
 
     def start(self):
         for hook in self._hooks.values():  # type: ExpHook
