@@ -365,23 +365,25 @@ class LoggerCallback(TrainCallback, InitialCallback, SaveLoadCallback):
         source.logger.error("{} raised".format(e.__class__.__name__))
 
     def on_test_begin(self, trainer: Trainer, func, params: Params, *args, **kwargs):
-        self.reset_meter()
         trainer.logger.newline()
+        self.reset_meter()
 
     def on_test_end(self, trainer: Trainer, func, params: Params, result: TrainerResult, *args, **kwargs):
         meter = result.meter
         if meter is None:
             meter = ""
         trainer.logger.info("[[Test]]", meter)
-        # trainer.logger.newline()
+        self.reset_meter()
 
     def on_test_step_end(self, trainer: Trainer, func, params: Params, meter: Meter, *args, **kwargs):
         meter = Meter.wrap_result(meter)
         self.meter.update(meter)
         meter = self.meter
         trainer.logger.inline("[[Test]]", "{}/{}".format(params.idx + 1, len(trainer.test_dataloader)), meter, fix=1)
+        self.reset_meter()
 
     def on_eval_begin(self, trainer: Trainer, func, params: Params, *args, **kwargs):
+        trainer.logger.newline()
         self.reset_meter()
 
     def on_eval_end(self, trainer: Trainer, func, params: Params, result: TrainerResult, *args, **kwargs):

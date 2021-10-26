@@ -10,13 +10,15 @@ import random
 import sys
 import time
 import traceback
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Union, Optional
 
 from lumo.base_classes import attr
 from lumo.proc.dist import is_dist, is_main
 from lumo.proc.path import local_dir, libhome
 from lumo.utils.filebranch import FileBranch
 from lumo.utils.safe_io import IO
+from ..base_classes.types import PathLike
+from ..utils.fmt import to_filename
 
 if TYPE_CHECKING:
     from .exphook import ExpHook
@@ -54,7 +56,7 @@ class Experiment:
 
     """
 
-    def __init__(self, exp_name, test_name=None, root=None):
+    def __init__(self, exp_name: str, test_name: str = None, root: PathLike = None):
         if root is None:
             root = libhome()
         self._hooks = {}
@@ -97,43 +99,43 @@ class Experiment:
         _test_name = f"{date_str}.{len(fs):03d}.{timehash()[-6:-4]}t"
         return _test_name
 
-    def test_file(self, name, *dirs):
+    def test_file(self, name: str, *dirs):
         return self.test_branch.file(name, *dirs)
 
     def test_dir(self, *dirs):
         return self.test_branch.makedir(*dirs)
 
-    def exp_file(self, name, *dirs):
+    def exp_file(self, name: str, *dirs):
         return self.exp_branch.file(name, *dirs)
 
     def exp_dir(self, *dirs):
         return self.exp_branch.makedir(*dirs)
 
-    def blob_file(self, name, *dirs):
+    def blob_file(self, name: str, *dirs):
         return self.blob_branch.file(name, *dirs)
 
     def blob_dir(self, *dirs):
         return self.blob_branch.makedir(*dirs)
 
-    def backup_file(self, name, *dirs):
+    def backup_file(self, name: str, *dirs):
         return self.backup_branch.file(name, *dirs)
 
     def backup_dir(self, *dirs):
         return self.backup_branch.makedir(*dirs)
 
-    def cache_file(self, name, *dirs):
+    def cache_file(self, name: str, *dirs):
         return self.cache_branch.file(name, *dirs)
 
     def cache_dir(self, *dirs):
         return self.cache_branch.makedir(*dirs)
 
-    def load_info(self, key):
+    def load_info(self, key: str):
         fn = self.test_file(f'{key}.json', 'info')
         if not os.path.exists(fn):
             return {}
         return attr.from_dict(IO.load_json(fn))
 
-    def dump_info(self, key, info: dict, append=False):
+    def dump_info(self, key: str, info: dict, append=False):
         info = attr(info).jsonify()
         fn = self.test_file(f'{key}.json', 'info')
         if append:
@@ -143,17 +145,18 @@ class Experiment:
         IO.dump_json(info, fn)
         return fn
 
-    def dump_string(self, fn, info):
+    def dump_string(self, fn: PathLike, info: str):
         fn = self.test_file(fn, 'info')
         IO.dump_text(str(info), fn)
         return fn
 
-    def add_tag(self, tag, flag=True):
-        if flag:
-            fn = self.test_file(tag, 'tag')
-            IO.dump_text(tag, fn)
-            return fn
-        return None
+    def add_tag(self, tag: str, tag_value: Optional[Union[str, int, float, bool]] = None):
+        fn = self.test_file(to_filename(tag), 'tag')
+        IO.dump_json({
+            'key': tag,
+            'value': tag_value
+        }, fn)
+        return fn
 
     def start(self):
         for hook in self._hooks.values():  # type: ExpHook
@@ -231,17 +234,17 @@ class Experiment:
         if self._test_name is None:
             if is_dist():  # 分布式非主线程等待以获取 test_name
                 flag_fn = f'.{os.getppid()}'
-                if is_main() > 0:
+                if is_main():
+                    self._test_name = self._create_test_name()
+                    fn = self.exp_file(flag_fn)
+                    with open(fn, 'w') as w:
+                        w.write(self._test_name)
+                else:
                     time.sleep(random.randint(2, 4))
                     fn = self.exp_file(flag_fn)
                     if os.path.exists(fn):
                         with open(fn, 'r') as r:
                             self._test_name = r.readline().strip()
-                else:
-                    self._test_name = self._create_test_name()
-                    fn = self.exp_file(flag_fn)
-                    with open(fn, 'w') as w:
-                        w.write(self._test_name)
             else:
                 self._test_name = self._create_test_name()
 
@@ -264,7 +267,7 @@ class Experiment:
 
 class SimpleExperiment(Experiment):
 
-    def __init__(self, exp_name, test_name=None, root=None):
+    def __init__(self, exp_name: str, test_name: str = None, root: PathLike = None):
         super().__init__(exp_name, test_name, root)
         from . import exphook
         self.set_hook(exphook.LastCmd())
@@ -280,9 +283,9 @@ class SimpleExperiment(Experiment):
 
 class TrainerExperiment(SimpleExperiment):
 
-    def __init__(self, exp_name, test_name=None):
-        super().__init__(exp_name, test_name)
-        self.add_tag('__trainer__')
+    def __init__(self, exp_name: str, test_name: str = None, root: PathLike = None):
+        super().__init__(exp_name, test_name, root)
+        self.add_tag('lumo.trainer')
 
     class VAR_KEY:
         WRITER = 'board'
@@ -309,7 +312,13 @@ class TrainerExperiment(SimpleExperiment):
         res = self.blob_dir('saver')
         return res
 
-    def dump_train_info(self, epoch):
+    def dump_train_info(self, epoch: int):
         self.dump_info('trainer', {
             'epoch': epoch
         }, append=True)
+
+
+class ReimplementExperiment(TrainerExperiment):
+    def __init__(self, exp_name: str, test_name: str = None, root: PathLike = None):
+        super().__init__(exp_name, test_name, root)
+        self.add_tag('lumo.reimplement')

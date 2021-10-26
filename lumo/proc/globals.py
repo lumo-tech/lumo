@@ -1,3 +1,3 @@
 """
-user runtime config
+user runtime config and global variables
 """

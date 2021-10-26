@@ -96,6 +96,7 @@ def contrastive_loss2(query: torch.Tensor, key: torch.Tensor,
         key_neg: bool
         qk_graph: [bq, bq], >= 0
         qm_graph: [bq, bm], >= 0
+        eye_one_in_qk: bool
 
     Returns:
         loss

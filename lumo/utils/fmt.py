@@ -1,5 +1,5 @@
 from datetime import datetime
-
+from . import re
 import numpy as np
 import torch
 
@@ -35,3 +35,11 @@ def strftime(fmt='%y-%m-%d-%H%M%S', dateobj: datetime = None):
     if dateobj is not None:
         return dateobj.strftime(fmt)
     return datetime.now().strftime(fmt)
+
+
+def to_filename(basename):
+    p = (
+        r"[+?@#$&%*()=;|,<>: +"
+        r"\^\-\/\t\b\[\]\"]+"
+    )
+    return re.sub(p, '_', basename)
