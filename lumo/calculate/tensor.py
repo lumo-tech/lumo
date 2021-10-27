@@ -64,7 +64,7 @@ def onehot(labels: torch.Tensor, label_num):
     Returns:
 
     """
-    return torch.zeros(labels.shape[0], label_num, device=labels.device).scatter_(1, labels.view(-1, 1), 1)
+    return torch.zeros(*labels.shape, label_num, device=labels.device).scatter_(-1, labels.unsqueeze(-1), 1)
 
 
 def cartesian_product(left: torch.Tensor, right: torch.Tensor = None) -> Tuple[torch.Tensor, torch.Tensor]:
