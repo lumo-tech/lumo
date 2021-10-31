@@ -84,6 +84,7 @@ def contrastive_loss2(query: torch.Tensor, key: torch.Tensor,
                       qk_graph: Optional[torch.Tensor] = None,
                       qm_graph: Optional[torch.Tensor] = None,
                       eye_one_in_qk: Optional[bool] = False,
+                      softmax_mask=None,
                       reduction: Optional[str] = 'mean'
                       ):
     """
@@ -158,6 +159,10 @@ def contrastive_loss2(query: torch.Tensor, key: torch.Tensor,
         pos_index.scatter_(1, _temp_eye_indice + pos_offset, 1)
 
     logits_mask = (pos_index > 0) | neg_index
+    if softmax_mask is not None:
+        if logits_mask.shape != softmax_mask.shape:
+            raise ValueError(f'softmax_mask.shape should be {logits_mask.shape}, but got {softmax_mask.shape}')
+        logits_mask = softmax_mask.bool() * logits_mask
     loss = -torch.sum(masked_log_softmax(logits, logits_mask, dim=-1) * pos_index, dim=1)
     loss = (loss / pos_index.sum(1))
     if reduction == 'mean':
