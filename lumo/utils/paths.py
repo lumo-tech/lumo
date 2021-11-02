@@ -6,25 +6,6 @@ import os
 from . import re
 
 
-def checkpath(*path, is_file=False):
-    """
-
-    Args:
-        *path:
-
-    Returns:
-
-    """
-    res = os.path.join(*path)
-    if is_file:
-        os.makedirs(os.path.dirname(res), exist_ok=True)
-    else:
-        os.makedirs(res, exist_ok=True)
-    if not os.path.exists(res):
-        return None
-    return res
-
-
 def compare_path(a, b):
     """
     Returns `True` if two path is equal, else `False`.
