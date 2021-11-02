@@ -1,7 +1,6 @@
 from lumo.proc.path import libhome
 import os
 from lumo.utils.safe_io import IO
-from lumo.base_classes import tree
 from lumo.utils.filebranch import FileBranch
 
 import time
@@ -42,4 +41,16 @@ def filter_tests_with_tag(test_roots: list, *tag):
         test_tags = get_test_tags(test)
         if all([i in test_tags for i in tag]):
             res.append(test)
+    return res
+
+
+def get_timeline(day=3):
+    diary_dir = FileBranch(libhome()).branch('diary')
+    res = []
+    for f in sorted(diary_dir.listdir(), reverse=True)[:day]:
+        dayinfo = [
+            [os.path.splitext(f)[0], *i.split(', ', maxsplit=1)]
+            for i in reversed(IO.load_text(diary_dir.file(f)).split('\n'))
+        ]
+        res.extend(dayinfo)
     return res

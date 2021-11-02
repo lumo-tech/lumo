@@ -1,6 +1,9 @@
+from typing import Optional
+
 import torch
-from lumo.contrib.nn.functional import normalize, masked_log_softmax
 from torch.nn import functional as F
+
+from lumo.contrib.nn.functional import masked_log_softmax
 
 
 def contrastive_loss(query: torch.Tensor, key: torch.Tensor,
@@ -73,14 +76,16 @@ def contrastive_loss(query: torch.Tensor, key: torch.Tensor,
 
 
 def contrastive_loss2(query: torch.Tensor, key: torch.Tensor,
-                      memory: torch.Tensor = None,
-                      norm=False,
-                      temperature=0.7,
-                      query_neg=False,
-                      key_neg=True,
-                      qk_graph=None,
-                      qm_graph=None,
-                      eye_one_in_qk=False,
+                      memory: Optional[torch.Tensor] = None,
+                      norm: Optional[bool] = False,
+                      temperature: float = 0.7,
+                      query_neg: Optional[bool] = False,
+                      key_neg: Optional[bool] = True,
+                      qk_graph: Optional[torch.Tensor] = None,
+                      qm_graph: Optional[torch.Tensor] = None,
+                      eye_one_in_qk: Optional[bool] = False,
+                      softmax_mask=None,
+                      reduction: Optional[str] = 'mean'
                       ):
     """
     Examples:
@@ -96,7 +101,14 @@ def contrastive_loss2(query: torch.Tensor, key: torch.Tensor,
         key_neg: bool
         qk_graph: [bq, bq], >= 0
         qm_graph: [bq, bm], >= 0
+<<<<<<< HEAD
         eye_one_in_qk: bool
+=======
+        reduction: str
+            'mean',
+            'sum',
+            'none'
+>>>>>>> 5e6084b180c805c7e7d85e5ffd5789eea054abf1
 
     Returns:
         loss
@@ -151,8 +163,17 @@ def contrastive_loss2(query: torch.Tensor, key: torch.Tensor,
         pos_index.scatter_(1, _temp_eye_indice + pos_offset, 1)
 
     logits_mask = (pos_index > 0) | neg_index
+    if softmax_mask is not None:
+        if logits_mask.shape != softmax_mask.shape:
+            raise ValueError(f'softmax_mask.shape should be {logits_mask.shape}, but got {softmax_mask.shape}')
+        logits_mask = softmax_mask.bool() * logits_mask
     loss = -torch.sum(masked_log_softmax(logits, logits_mask, dim=-1) * pos_index, dim=1)
-    loss = (loss / pos_index.sum(1)).mean()
+    loss = (loss / pos_index.sum(1))
+    if reduction == 'mean':
+        loss = loss.mean()
+    elif reduction == 'sum':
+        loss = loss.sum()
+
     return loss
 
 
@@ -170,7 +191,6 @@ def cluster_loss(query, key, label_graph_mask=None, temperature=0.7):
         loss_fn = ClusterLoss(5,0.7,'cpu')
         loss_fn(prob_a,prob_b)
         cluster_loss(prob_a,prob_b,temperature=0.7)
-
 
     """
     return contrastive_loss(query.t(), key.t(), norm=True,
