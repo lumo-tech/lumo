@@ -719,7 +719,10 @@ class Trainer(_BaseTrainer):
                 v = self.accelerator.prepare(self._optims[k])
                 self._optims[k] = v
         else:
-            return to_device(item, device_args_kwargs)
+            item = to_device(item, device_args_kwargs)
+            if self.accelerator.use_fp16:
+                item = item.half()
+            return item
 
     def prepare_dataloader(self, stage: TrainerStage, dataloader=None) -> DataLoader:
         """
