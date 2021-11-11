@@ -2,6 +2,7 @@
 Methods about git.
 """
 import os
+import warnings
 from functools import lru_cache
 
 from lumo.base_classes import attr
@@ -235,6 +236,8 @@ def git_enable():
     try:
         import git
     except ImportError:
+        warnings.warn('python library `gitpython` not installed, git operations will be ignored. '
+                      'If you want lumo to use git to manage your code, please install it by executing `pip install gitpython`')
         return False
     try:
         git.Git().execute(['git', 'rev-parse', '--git-dir'])
