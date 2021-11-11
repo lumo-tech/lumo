@@ -132,6 +132,15 @@ class GitCommit(ExpHook):
                     'repo': exp.project_root,
                 })
 
+            file = exp.root_branch.file(hash(exp.project_root), 'repos')
+            exps = {}
+            if os.path.exists(file):
+                exps = IO.load_json(file)
+            res = exps.setdefault(exp.project_root, list())
+            if exp.exp_root not in res:
+                res.append(exp.exp_root)
+            IO.dump_json(exps, file)
+
 
 class ExecuteInfo(ExpHook):
     INFOs = 'execute'
