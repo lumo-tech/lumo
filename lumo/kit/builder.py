@@ -9,6 +9,7 @@ from functools import wraps
 from torch.utils.data import Dataset, sampler as sp, DataLoader
 import numpy as np
 from lumo.contrib.data.collate import CollateBase
+from lumo.base_classes.memoty_bank import MemoryBank
 from .delegate import DataDelegate, Data, DelegateDataTypeError
 
 Loader = TypeVar('Loader')
@@ -75,7 +76,7 @@ class BaseBuilder(Dataset):
         else:
             assert self._dataset_len == len(source), f"{self._dataset_len} != {len(source)}"
 
-    def _map_index(self, index):
+    def map_index(self, index):
         """
         Map the raw index to the final index for source data.
         Args:
@@ -253,6 +254,7 @@ class DatasetBuilder(BaseBuilder):
         self._last = None
         self._input_dict = OrderedDict()
         self._output_dict = OrderedDict()
+        self._mb_dict = OrderedDict()  # memory bank dict
         self._delegate_keys = set()
         self._delegate_outs = OrderedDict()
         self._check_delegate_flag = set()
@@ -279,7 +281,7 @@ class DatasetBuilder(BaseBuilder):
                 f")")
 
     def _get_item(self, index):
-        index = self._map_index(index)
+        index = self.map_index(index)
 
         names = set(self._output_dict.values())
 
@@ -414,7 +416,7 @@ class DatasetBuilder(BaseBuilder):
         else:
             assert outkey in self._output_dict, f'outkey "{outkey}" has not been added'
 
-    def _map_index(self, index):
+    def map_index(self, index):
         """
         Map the raw index to the final index for source data.
         Args:
@@ -451,6 +453,14 @@ class DatasetBuilder(BaseBuilder):
         if transform is not None:
             self.add_input_transform(name, transform)
         return self
+
+    def create_data_memory_bank(self, name, queue_size=512, memory_bank_cls=MemoryBank, *args, **kwargs):
+        res = memory_bank_cls(queue_size=queue_size, *args, **kwargs)
+        self._mb_dict[name] = res
+        return res
+
+    def get_memory_bank(self, name):
+        return self._mb_dict[name]
 
     def add_output(self, name, outkey=None, transform=None, in_delegate=False):
         """
@@ -601,7 +611,7 @@ class ConcatDataset(BaseBuilder):
 class ChainDataset(ConcatDataset):
 
     def __getitem__(self, index):
-        index = self._map_index(index)
+        index = self.map_index(index)
         lens = [len(i) for i in self._chunk]
 
         for i, offset in enumerate(accumulate(lens, add)):
@@ -626,7 +636,7 @@ class ZipDataset(ConcatDataset):
         return max(len(i) for i in self._chunk)
 
     def __getitem__(self, index):
-        index = self._map_index(index)
+        index = self.map_index(index)
         lens = [len(i) for i in self._chunk]
 
         n_counter = []
