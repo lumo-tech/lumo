@@ -1,7 +1,7 @@
 import os
 import shutil
 from collections import OrderedDict
-from copy import copy
+from copy import copy, deepcopy
 from itertools import accumulate
 from operator import add
 from typing import Sized, Sequence, Union, Callable, Dict, Any, List, overload, TypeVar, ClassVar
@@ -93,10 +93,7 @@ class BaseBuilder(Dataset):
         return index
 
     def copy(self):
-        builder = DatasetBuilder()
-        builder._sub_indices = copy(self._sub_indices)
-        builder._reindices = copy(self._reindices)
-        return builder
+        return deepcopy(self)
 
     def subset(self, indices: Sequence[int], copy=False):
         indices = np.array(indices)
@@ -254,7 +251,9 @@ class DatasetBuilder(BaseBuilder):
         self._last = None
         self._input_dict = OrderedDict()
         self._output_dict = OrderedDict()
-        self._mb_dict = OrderedDict()  # memory bank dict
+        self._output_names = set()
+        self._memory_bank = None  # type: MemoryBank#memory bank dict
+        self._mb_output_names = set()
         self._delegate_keys = set()
         self._delegate_outs = OrderedDict()
         self._check_delegate_flag = set()
@@ -263,13 +262,14 @@ class DatasetBuilder(BaseBuilder):
         self._input_transform = OrderedDict()
         self._output_transform = OrderedDict()
         self._global_transform = []
+        self._global_transform_callback = []
 
         if xs is not None:
             self.add_input('xs', xs, xs_ipt_transform)
             if auto_output:
                 self.add_output('xs', 'xs', xs_opt_transform)
         if ys is not None:
-            self.add_input('ys', ys, ys_opt_transform)
+            self.add_input('ys', ys, ys_ipt_transform)
             if auto_output:
                 self.add_output('ys', 'ys', ys_opt_transform)
 
@@ -316,11 +316,24 @@ class DatasetBuilder(BaseBuilder):
             if outkey in sample:
                 sample[outkey] = transform(sample[outkey])
 
+        for outkey in self._mb_output_names:
+            sample[outkey] = self._memory_bank.choice()
+
         for transform in self._global_transform:
             sample = transform(sample)
 
+        for transform_cb in self._global_transform_callback:
+            sample = transform_cb(self, sample)
+
+        for outkey in self._mb_output_names:
+            if outkey in sample:
+                sample.pop(outkey)
+
         if self._chain:
-            return list(sample.values())
+            sample = list(sample.values())
+
+        if self._memory_bank is not None:
+            self._memory_bank.push(sample)
         return sample
 
     def __getitem__(self, index):
@@ -398,7 +411,7 @@ class DatasetBuilder(BaseBuilder):
                 f'Delegate must return `Data` object or its list/dict wrap, but got {type(sample_)}.'
             )
 
-    def _check_source_name(self, name, added=True):
+    def _check_input_name(self, name, added=True):
         """
         Each source must have different name, or the newer will replace the older.
         """
@@ -407,14 +420,14 @@ class DatasetBuilder(BaseBuilder):
         else:
             assert name in self._input_dict, f'source "{name}" has not been added'
 
-    def _check_outkey_name(self, outkey, added=True):
+    def _check_output_name(self, outkey, added=True):
         """
         Each output key must be different, or new output will cover the old one.
         """
         if added:
-            assert outkey not in self._output_dict, f'outkey "{outkey}" has been added'
+            assert outkey not in self._output_names, f'outkey "{outkey}" has been added.'
         else:
-            assert outkey in self._output_dict, f'outkey "{outkey}" has not been added'
+            assert outkey in self._output_names, f'outkey "{outkey}" has not been added.'
 
     def map_index(self, index):
         """
@@ -429,11 +442,12 @@ class DatasetBuilder(BaseBuilder):
             index = self._sub_indices[index]
         if self._reindices is not None:
             index = self._reindices[index]
-
         return index
 
     def add_ids(self, name):
-        assert name not in self._idnames, f'id key "{name}" has been added'
+        self._check_output_name(name)
+        # assert name not in self._idnames, f'id key "{name}" has been added'
+        self._output_names.add(name)
         self._idnames.append(name)
         return self
 
@@ -445,7 +459,7 @@ class DatasetBuilder(BaseBuilder):
             source:
         """
         self._check_len(source)
-        self._check_source_name(name, added=True)
+        self._check_input_name(name, added=True)
         self._input_dict[name] = source
         if isinstance(source, DataDelegate):
             self._delegate_keys.add(name)
@@ -453,14 +467,6 @@ class DatasetBuilder(BaseBuilder):
         if transform is not None:
             self.add_input_transform(name, transform)
         return self
-
-    def create_data_memory_bank(self, name, queue_size=512, memory_bank_cls=MemoryBank, *args, **kwargs):
-        res = memory_bank_cls(queue_size=queue_size, *args, **kwargs)
-        self._mb_dict[name] = res
-        return res
-
-    def get_memory_bank(self, name):
-        return self._mb_dict[name]
 
     def add_output(self, name, outkey=None, transform=None, in_delegate=False):
         """
@@ -472,15 +478,25 @@ class DatasetBuilder(BaseBuilder):
 
         if not in_delegate:
             assert outkey is not None
-            self._check_source_name(name, added=False)
-            self._check_outkey_name(outkey)
+            self._check_input_name(name, added=False)
+            self._check_output_name(outkey)
             self._output_dict[outkey] = name
+            self._output_names.add(outkey)
             if transform is not None:
                 self.add_output_transform(outkey, transform)
         else:
             if outkey is None:
                 outkey = f"dele_{len(self._delegate_outs)}"
+            self._check_output_name(outkey)
             self._delegate_outs[outkey] = name
+            self._output_names.add(outkey)
+        return self
+
+    def add_memory_bank_sample(self, outkey):
+        self._check_output_name(outkey)
+        assert self._memory_bank is not None, 'you must call `create_data_memory_bank(...)` to create a memory bank before.'
+        self._mb_output_names.add(outkey)
+        self._output_names.add(outkey)
         return self
 
     def add_input_transform(self, name, transform: Callable[[Any], Any]):
@@ -497,7 +513,7 @@ class DatasetBuilder(BaseBuilder):
               when added second one with the same `name`. So combine your transforms when you have multiple transforms
               for the `name` source.
         """
-        self._check_source_name(name, added=False)
+        self._check_input_name(name, added=False)
         self._input_transform[name] = transform
         return self
 
@@ -515,13 +531,25 @@ class DatasetBuilder(BaseBuilder):
               when added second one with the same `outkey`. So combine your transforms when you have multiple transforms
               for the `outkey` data.
         """
-        self._check_outkey_name(outkey, added=False)
+        self._check_output_name(outkey, added=False)
         self._output_transform[outkey] = transform
         return self
 
     def add_global_transform(self, transform: Callable[[Dict[str, Any]], Any]):
         self._global_transform.append(transform)
         return self
+
+    def add_global_transform_callback(self, transform: Callable[['DatasetBuilder', Dict[str, Any]], Any]):
+        self._global_transform_callback.append(transform)
+        return self
+
+    def create_data_memory_bank(self, queue_size=512, memory_bank_cls=MemoryBank, *args, **kwargs):
+        res = memory_bank_cls(queue_size=queue_size, *args, **kwargs)
+        self._memory_bank = res
+        return self
+
+    def get_memory_bank(self):
+        return self._memory_bank
 
     def safe(self):
         self._safe = True
