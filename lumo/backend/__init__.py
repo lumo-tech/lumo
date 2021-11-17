@@ -10,7 +10,7 @@ def get_heartbeats():
     cur = time.time()
     res = []
     for f in FileBranch(libhome()).branch('heartbeat').find_file_in_depth('hb'):
-        if cur - os.stat(f).st_mtime > 10:
+        if cur - os.stat(f).st_mtime < 10:
             test_root = IO.load_text(f)
             res.append(test_root)
         else:

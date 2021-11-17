@@ -46,9 +46,18 @@ class PlusOne(Trainer):
         loss = torch.mean((ys - logits) ** 2)
         self.optim.zero_grad()
         loss.backward()
-        time.sleep(2)
         self.optim.step()
         meter.Lce = loss
+        return meter
+
+    def test_step(self, idx, batch, params: ParamsType, *args, **kwargs) -> Meter:
+        meter = Meter()
+        xs, ys = batch
+        logits = self.model(xs.float())
+
+        loss = torch.mean((ys - logits) ** 2)
+        meter.Lce = loss
+        meter.sum.C = xs.shape[0]
         return meter
 
 
