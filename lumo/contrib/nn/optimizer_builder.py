@@ -17,8 +17,12 @@ class OptimBuilder(attr):
         lname = self['name'].lower()
         args = dict(self)
         args.pop('name')
+
         if optim_cls is None:
-            optim_lib = importlib.import_module("torch.optim.{}".format(lname))
+            if lname in {'lars'}:
+                optim_lib = importlib.import_module("lumo.contrib.optim.{}".format(lname))
+            else:
+                optim_lib = importlib.import_module("torch.optim.{}".format(lname))
             optim_cls = getattr(optim_lib, self.name, None)
 
         return optim_cls(parameters, **args)
