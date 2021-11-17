@@ -1,15 +1,15 @@
-import os
-import shutil
 from collections import OrderedDict
-from copy import copy, deepcopy
+from copy import deepcopy
+from functools import wraps
 from itertools import accumulate
 from operator import add
-from typing import Sized, Sequence, Union, Callable, Dict, Any, List, overload, TypeVar, ClassVar
-from functools import wraps
-from torch.utils.data import Dataset, sampler as sp, DataLoader
+from typing import Sized, Sequence, Union, Callable, Dict, Any, List, TypeVar, ClassVar
+
 import numpy as np
-from lumo.contrib.data.collate import CollateBase
+from torch.utils.data import Dataset, sampler as sp, DataLoader
+
 from lumo.base_classes.memoty_bank import MemoryBank
+from lumo.contrib.data.collate import CollateBase
 from .delegate import DataDelegate, Data, DelegateDataTypeError
 
 Loader = TypeVar('Loader')
@@ -322,9 +322,6 @@ class DatasetBuilder(BaseBuilder):
         for transform in self._global_transform:
             sample = transform(sample)
 
-        for transform_cb in self._global_transform_callback:
-            sample = transform_cb(self, sample)
-
         for outkey in self._mb_output_names:
             if outkey in sample:
                 sample.pop(outkey)
@@ -337,22 +334,10 @@ class DatasetBuilder(BaseBuilder):
         return sample
 
     def __getitem__(self, index):
-        if self._safe:
-            try:
-                sample = self._get_item(index)
-                self._last = sample
-            except BaseException as e:
-                import traceback
-                from lumo.kit.logger import get_global_logger
-                logger = get_global_logger()
-                if self._last is not None:
-                    except_str = traceback.format_exception(type(e), e, e.__traceback__)
-                    logger.error(index, except_str)
-                    return self._last
-                else:
-                    raise e
-        else:
-            return self._get_item(index)
+        sample = self._get_item(index)
+        for transform_cb in self._global_transform_callback:
+            sample = transform_cb(self, sample)
+        return sample
 
     @property
     def raw_len(self):
@@ -550,10 +535,6 @@ class DatasetBuilder(BaseBuilder):
 
     def get_memory_bank(self):
         return self._memory_bank
-
-    def safe(self):
-        self._safe = True
-        return self
 
     def copy(self):
         builder = super().copy()
