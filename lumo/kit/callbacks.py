@@ -242,12 +242,20 @@ class EvalCallback(TrainCallback):
         self._last_eval = -1
         self._last_test = -1
 
+    @property
+    def has_eval(self):
+        return self.eval_in_per_epoch is not None and self.eval_in_per_epoch > 0
+
+    @property
+    def has_test(self):
+        return self.test_in_per_epoch is not None and self.test_in_per_epoch > 0
+
     def _test_or_eval(self, params: Params, trainer: Trainer):
-        if self.eval_in_per_epoch is not None and self.eval_in_per_epoch > 0:
+        if self.has_eval:
             if params.eidx % self.eval_in_per_epoch == self.eval_in_per_epoch - 1:
                 self._last_eval = params.eidx
                 trainer.evaluate()
-        if self.test_in_per_epoch is not None and self.test_in_per_epoch > 0:
+        if self.has_test:
             if params.eidx % self.test_in_per_epoch == self.test_in_per_epoch - 1:
                 self._last_test = params.eidx
                 trainer.test()
@@ -256,9 +264,9 @@ class EvalCallback(TrainCallback):
         self._test_or_eval(params, trainer)
 
     def on_train_end(self, trainer: Trainer, func, params: Params, result: TrainerResult, *args, **kwargs):
-        if self._last_eval != params.eidx:
+        if self._last_eval != params.eidx and self.has_eval:
             trainer.evaluate()
-        if self._last_test != params.eidx:
+        if self._last_test != params.eidx and self.has_test:
             trainer.test()
 
     def __repr__(self):
