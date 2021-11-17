@@ -388,7 +388,6 @@ class LoggerCallback(TrainCallback, InitialCallback, SaveLoadCallback):
         self.meter.update(meter)
         meter = self.meter
         trainer.logger.inline("[[Test]]", "{}/{}".format(params.idx + 1, len(trainer.test_dataloader)), meter, fix=1)
-        self.reset_meter()
 
     def on_eval_begin(self, trainer: Trainer, func, params: Params, *args, **kwargs):
         trainer.logger.newline()
