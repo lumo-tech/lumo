@@ -101,14 +101,11 @@ def contrastive_loss2(query: torch.Tensor, key: torch.Tensor,
         key_neg: bool
         qk_graph: [bq, bq], >= 0
         qm_graph: [bq, bm], >= 0
-<<<<<<< HEAD
         eye_one_in_qk: bool
-=======
         reduction: str
             'mean',
             'sum',
             'none'
->>>>>>> 5e6084b180c805c7e7d85e5ffd5789eea054abf1
 
     Returns:
         loss
