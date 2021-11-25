@@ -387,7 +387,8 @@ class _BaseTrainer(ModelMix, CallbackMix, metaclass=Merge):
 
     @property
     def device(self) -> torch.device:
-        return self._state_dicts[TRAINER.DKEY.device]
+        return self.accelerator.device
+        # return self._state_dicts[TRAINER.DKEY.device]
 
     @property
     def device_arg_kwargs(self) -> Tuple[Sequence, dict]:
@@ -754,14 +755,15 @@ class Trainer(_BaseTrainer):
             self.datamodule.iidataloader(params, stage, initialized)
             dataloader_ = getattr(self.datamodule, f'{stage.name}_dataloader', None)
 
-        if isinstance(dataloader_, DataLoader):
-            dataloader_ = self.accelerator.prepare(dataloader_)
-        elif isinstance(dataloader_, DataBundler):
-            for k, (loader, func) in list(dataloader_.dataloaders.items()):
-                dataloader_.dataloaders[k] = [self.accelerator.prepare(loader), func]
+        if not initialized:
+            if isinstance(dataloader_, DataLoader):
+                dataloader_ = self.accelerator.prepare(dataloader_)
+            elif isinstance(dataloader_, DataBundler):
+                for k, (loader, func) in list(dataloader_.dataloaders.items()):
+                    dataloader_.dataloaders[k] = [self.accelerator.prepare(loader), func]
 
-        kwargs = {stage.name: dataloader_}
-        self.regist_dataloader(**kwargs)
+            kwargs = {stage.name: dataloader_}
+            self.regist_dataloader(**kwargs)
         return dataloader_
 
     def train(self, dataloader: Union[DataLoader, DataModuleMix] = None) -> TrainerResult:
