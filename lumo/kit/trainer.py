@@ -532,12 +532,12 @@ class _BaseTrainer(ModelMix, CallbackMix, metaclass=Merge):
             callback.on_hook_failed(self, msg)
             return
 
-        if callback.only_main_process and not is_main:
+        if callback.only_main_process and not is_main():
             msg = f"{callback.__class__.__name__} only_main_process but in local_rank {self.local_rank}"
             callback.on_hook_failed(self, msg)
             return
 
-        if callback.only_single_gpu and not is_dist:
+        if callback.only_single_gpu and not is_dist():
             msg = f"{callback.__class__.__name__} only_single_gpu but dist={self.is_dist}"
             callback.on_hook_failed(self, msg)
             return
