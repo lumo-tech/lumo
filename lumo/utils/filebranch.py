@@ -23,7 +23,7 @@ class FileBranch:
             self._listeners = [listener]
         else:
             self._listeners = listener
-
+        self._touch = touch
         if touch:
             self.makedir(root)
 
@@ -62,7 +62,7 @@ class FileBranch:
         return fdir
 
     def branch(self, *name):
-        res = FileBranch(os.path.join(self.root, *name), touch=True, listener=self._listeners)
+        res = FileBranch(os.path.join(self.root, *name), touch=self._touch, listener=self._listeners)
         self.send(res.root)
         return res
 
