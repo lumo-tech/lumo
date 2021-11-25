@@ -54,3 +54,12 @@ def get_timeline(day=3):
         ]
         res.extend(dayinfo)
     return res
+
+
+def find_test_by_name(test_name):
+    diary_dir = FileBranch(libhome()).branch('diary')
+    for f in sorted(diary_dir.listdir(), reverse=True):
+        for line in reversed(IO.load_text(diary_dir.file(f)).split('\n')):
+            if test_name in line:
+                return line.split()[-1]
+    return None
