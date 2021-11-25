@@ -231,7 +231,7 @@ class _BaseTrainer(ModelMix, CallbackMix, metaclass=Merge):
 
         if 'device' in params:
             _device = torch.device(params.device)
-            self.regist_device(_device)
+            # self.regist_device(_device)
 
         self._check_cb_init()
         self.exp.start()
@@ -713,7 +713,7 @@ class Trainer(_BaseTrainer):
             for k in self._models:
                 v = self._models[k]
                 if not self.accelerator.device_placement:
-                    v.to(self.accelerator.device)
+                    v.to(self.device)
                 v = self.accelerator.prepare(self._models[k])
                 self._models[k] = v
             for k in self._optims:
@@ -755,9 +755,9 @@ class Trainer(_BaseTrainer):
             self.datamodule.iidataloader(params, stage, initialized)
             dataloader_ = getattr(self.datamodule, f'{stage.name}_dataloader', None)
 
-        if not initialized:
+        if not initialized and stage.is_train:
             if isinstance(dataloader_, DataLoader):
-                dataloader_ = self.accelerator.prepare(dataloader_)
+                dataloader_ = self.accelerator.prepare_data_loader(dataloader_)
             elif isinstance(dataloader_, DataBundler):
                 for k, (loader, func) in list(dataloader_.dataloaders.items()):
                     dataloader_.dataloaders[k] = [self.accelerator.prepare(loader), func]
