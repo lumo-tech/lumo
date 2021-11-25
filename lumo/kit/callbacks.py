@@ -7,13 +7,13 @@ import os
 import sys
 from functools import wraps
 
+from lumo.base_classes.trickitems import NoneItem, AvgItem
+from lumo.utils.timer import format_second, Timer
 from .meter import AvgMeter
 from .meter import Meter
 from .mixin import CallbackMix
 from .params import Params
 from .trainer import Trainer, TrainerResult
-from ..base_classes.trickitems import NoneItem, AvgItem
-from ..utils.timer import format_second
 
 func_map = {
     'evaluate': 'eval',
@@ -319,8 +319,6 @@ class LoggerCallback(TrainCallback, InitialCallback, SaveLoadCallback):
         self._meter = None
 
     def on_train_begin(self, trainer: Trainer, func, params: Params, *args, **kwargs):
-        from ..utils.timer import Timer
-
         self.start = params.eidx
         self.traintime = Timer()
         self.traintime.start()

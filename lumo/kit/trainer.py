@@ -18,11 +18,13 @@ from torch.optim import Optimizer
 from torch.utils.data import DataLoader
 
 from lumo.base_classes import attr
-from .beans.trainstage import TrainerStage
 from lumo.contrib.hug_accelerate import Accelerator
 from lumo.contrib.itertools import safe_cycle
+from lumo.proc.const import TRAINER
+from lumo.proc.dist import is_main, is_dist
 from lumo.utils import dist
 from lumo.utils.device import construct_device_args_kwargs, to_device_enumrate
+from .beans.trainstage import TrainerStage
 from .bundler import DataBundler
 from .datamodule import DataModule
 from .environ import globs
@@ -33,7 +35,6 @@ from .mixin import ModelMix, CallbackMix, DataModuleMix
 from .params import ParamsType
 from .rnd import RndManager
 from .saver import Saver
-from ..proc.const import TRAINER
 
 
 @dataclass()
@@ -349,7 +350,8 @@ class _BaseTrainer(ModelMix, CallbackMix, metaclass=Merge):
             if self.params.get('debug', False):
                 self._logger.set_verbose(Logger.V_DEBUG)
                 self._logger.debug('Enable debug log.')
-            self._logger.add_log_dir(self.exp.log_dir)
+            if is_main():
+                self._logger.add_log_dir(self.exp.log_dir)
         return self._logger
 
     @property
@@ -530,12 +532,12 @@ class _BaseTrainer(ModelMix, CallbackMix, metaclass=Merge):
             callback.on_hook_failed(self, msg)
             return
 
-        if callback.only_main_process and self.local_rank > 0:
+        if callback.only_main_process and not is_main:
             msg = f"{callback.__class__.__name__} only_main_process but in local_rank {self.local_rank}"
             callback.on_hook_failed(self, msg)
             return
 
-        if callback.only_single_gpu and self.is_dist:
+        if callback.only_single_gpu and not is_dist:
             msg = f"{callback.__class__.__name__} only_single_gpu but dist={self.is_dist}"
             callback.on_hook_failed(self, msg)
             return
@@ -603,7 +605,8 @@ class _BaseTrainer(ModelMix, CallbackMix, metaclass=Merge):
         return {k: v.state_dict() for k, v in self.optim_dict.items()}
 
     def model_state_dict(self):
-        return {k: v.state_dict() for k, v in self.model_dict.items()}
+
+        return {k: self.accelerator.unwrap_model(v).state_dict() for k, v in self.model_dict.items()}
 
     def buffer_state_dict(self):
         return self.buffers
@@ -627,6 +630,7 @@ class _BaseTrainer(ModelMix, CallbackMix, metaclass=Merge):
     def _load_fun_state_dict(self, src: dict, tgt: dict):
         for k, v in tgt.items():
             if k in src:
+                v = self.accelerator.unwrap_model(v)
                 v.load_state_dict(src[k])
 
     def ignore_object_state_dict(self, item):
@@ -664,21 +668,33 @@ class _BaseTrainer(ModelMix, CallbackMix, metaclass=Merge):
 
     def save_checkpoint(self, max_keep=10, is_best=False, meta_info: Union[str, dict, Meter] = None):
         info = self._build_trainer_meta_info(meta_info)
-        return self.saver.save_checkpoint(self.eidx, self.state_dict(),
-                                          meta_info=info,
-                                          max_keep=max_keep,
-                                          is_best=is_best)
+        val = self.saver.save_checkpoint(self.eidx, self.state_dict(),
+                                         meta_info=info,
+                                         max_keep=max_keep,
+                                         is_best=is_best)
+        self.wait_for_everyone()
+        return val
+
+    def wait_for_everyone(self):
+        """
+        making sure all processes have reached this point before continuing.
+        """
+        self.accelerator.wait_for_everyone()
 
     def save_keypoint(self, meta_info: Union[str, dict, Meter] = None):
         info = self._build_trainer_meta_info(meta_info)
-        return self.saver.save_keypoint(self.eidx, self.state_dict(),
-                                        meta_info=info)
+        val = self.saver.save_keypoint(self.eidx, self.state_dict(),
+                                       meta_info=info)
+        self.wait_for_everyone()
+        return val
 
     def save_model(self, is_best=False, meta_info: Union[str, dict, Meter] = None):
         info = self._build_trainer_meta_info(meta_info)
-        return self.saver.save_model(self.eidx, {'models': self.model_state_dict()},
-                                     meta_info=info,
-                                     is_best=is_best)
+        val = self.saver.save_model(self.eidx, {'models': self.model_state_dict()},
+                                    meta_info=info,
+                                    is_best=is_best)
+        self.wait_for_everyone()
+        return val
 
 
 class Trainer(_BaseTrainer):
