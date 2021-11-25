@@ -13,12 +13,13 @@ import traceback
 from typing import TYPE_CHECKING, Union, Optional
 
 from lumo.base_classes import attr
+from lumo.base_classes.types import PathLike
+from lumo.decorators.process import call_on_main_process_wrap
 from lumo.proc.dist import is_dist, is_main
 from lumo.proc.path import local_dir, libhome
 from lumo.utils.filebranch import FileBranch
+from lumo.utils.fmt import to_filename
 from lumo.utils.safe_io import IO
-from ..base_classes.types import PathLike
-from ..utils.fmt import to_filename
 
 if TYPE_CHECKING:
     from .exphook import ExpHook
@@ -135,6 +136,7 @@ class Experiment:
             return {}
         return attr.from_dict(IO.load_json(fn))
 
+    @call_on_main_process_wrap
     def dump_info(self, key: str, info: dict, append=False):
         info = attr(info).jsonify()
         fn = self.test_file(f'{key}.json', 'info')
@@ -145,11 +147,13 @@ class Experiment:
         IO.dump_json(info, fn)
         return fn
 
+    @call_on_main_process_wrap
     def dump_string(self, fn: PathLike, info: str):
         fn = self.test_file(fn, 'info')
         IO.dump_text(str(info), fn)
         return fn
 
+    @call_on_main_process_wrap
     def add_tag(self, tag: str, tag_value: Optional[Union[str, int, float, bool]] = None):
         fn = self.test_file(to_filename(tag), 'tag')
         IO.dump_json({
@@ -158,25 +162,30 @@ class Experiment:
         }, fn)
         return fn
 
+    @call_on_main_process_wrap
     def start(self):
         for hook in self._hooks.values():  # type: ExpHook
             hook.on_start(self)
         return self
 
+    @call_on_main_process_wrap
     def end(self, end_code=0, *args, **extra):
         for hook in self._hooks.values():  # type: ExpHook
             hook.on_end(self, end_code=end_code, *args, **extra)
         return self
 
+    @call_on_main_process_wrap
     def update(self, step, *args, **kwargs):
         for hook in self._hooks.values():  # type: ExpHook
             hook.on_progress(self, step, *args, **kwargs)
 
+    @call_on_main_process_wrap
     def set_hook(self, hook: 'ExpHook'):
         hook.regist(self)
         self._hooks[hook.__class__.__name__] = hook
         return self
 
+    @call_on_main_process_wrap
     def add_exit_hook(self, func):
         import atexit
         def exp_func():
@@ -322,3 +331,13 @@ class ReimplementExperiment(TrainerExperiment):
     def __init__(self, exp_name: str, test_name: str = None, root: PathLike = None):
         super().__init__(exp_name, test_name, root)
         self.add_tag('lumo.reimplement')
+
+
+class BackendView(Experiment):
+
+    def __init__(self, test_root: str):
+        test_root = test_root.rstrip('/\\')
+        test_name = os.path.basename(test_root)
+        exp_name = os.path.basename(os.path.dirname(test_root))
+        root = os.path.dirname(os.path.dirname(os.path.dirname(test_root)))
+        super().__init__(exp_name, test_name, root)
