@@ -25,6 +25,11 @@ if TYPE_CHECKING:
     from .exphook import ExpHook
 
 
+def checkdir(path):
+    os.makedirs(path, exist_ok=True)
+    return path
+
+
 def listener(func):
     def inner(self: Experiment, *args, **kwargs):
         return func(*args, **kwargs)
@@ -266,12 +271,12 @@ class Experiment:
     @property
     def exp_root(self) -> str:
         """root dir for current experiment"""
-        return self.exp_branch.root
+        return checkdir(self.exp_branch.root)
 
     @property
     def test_root(self) -> str:
         """Root dir for current test"""
-        return self.test_branch.root
+        return checkdir(self.test_branch.root)
 
 
 class SimpleExperiment(Experiment):
