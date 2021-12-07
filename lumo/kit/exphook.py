@@ -124,13 +124,14 @@ class GitCommit(ExpHook):
         if git_enable() and is_main():
             from lumo.utils.repository import commit
             commit_ = commit(key='lumo', info=exp.test_root)
-            commit_hex = commit_.hexsha[:8]
 
-            if commit_ is not None:
-                exp.dump_info('git', {
-                    'commit': commit_hex,
-                    'repo': exp.project_root,
-                })
+            if commit_ is None:
+                return
+            commit_hex = commit_.hexsha[:8]
+            exp.dump_info('git', {
+                'commit': commit_hex,
+                'repo': exp.project_root,
+            })
 
             file = exp.root_branch.file(hash(exp.project_root), 'repos')
             exps = {}
