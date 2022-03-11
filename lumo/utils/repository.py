@@ -155,11 +155,14 @@ class GitEnabledWrap(GitWrap):
                 change_file.extend(repo.untracked_files)
                 change_file.extend([i.a_path for i in repo.index.diff('Head')])
                 change_file.extend([i.a_path for i in repo.index.diff(None)])
-                repo.git.add(' '.join(change_file))
-                commit_info = '[[EMPTY]]'
-                if info is not None:
-                    commit_info = info
-                commit_ = repo.index.commit(commit_info)
+                if len(change_file) > 0:
+                    repo.git.add(change_file)
+                    commit_info = '[[EMPTY]]'
+                    if info is not None:
+                        commit_info = info
+                    commit_ = repo.index.commit(commit_info)
+                else:
+                    commit_ = repo.head.commit
             if key is not None:
                 _commits_map[key] = commit_
         except git.GitCommandError:
