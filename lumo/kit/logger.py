@@ -2,16 +2,16 @@
 used for logging
 """
 
+import logging
 import os
 import sys
 from collections import namedtuple
 from datetime import datetime
 from typing import Any, Callable
 
-from ..utils.fmt import strftime
-from ..utils.screen import ScreenStr
-
-import logging
+from lumo.proc.dist import is_dist, local_rank
+from lumo.utils.fmt import strftime
+from lumo.utils.screen import ScreenStr
 
 logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.INFO)
 
@@ -49,6 +49,12 @@ def set_global_logger(logger_):
     return logger
 
 
+def process_str():
+    if is_dist():
+        return f'[{local_rank()}]'
+    return ''
+
+
 class Logger:
     VERBOSE = 20
     VVV_DEBUG = VVV_DEBUG
@@ -72,7 +78,7 @@ class Logger:
             return
 
         self.adddate = adddate
-        self.datefmt = datefmt
+        self.datefmt = process_str() + datefmt
         self.out_channel = []
         self.pipe_key = set()
         self.sep = sep

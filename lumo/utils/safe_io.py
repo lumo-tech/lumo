@@ -106,14 +106,6 @@ def cached(fn):
         shutil.move(cache_fn, fn)
 
 
-# def auto_load(file: str):
-#     if os.path.isdir(file):
-#         return {'msg': 'isdir', 'content': None, 'res': 1}
-#     if file.endswith('.json'):
-#         return {'msg': '', 'content': IO.load_json(file), 'res': 0}
-#     return {'msg': '', 'content': IO.load_text(file), 'res': 0}
-
-
 class IO:
     dump_json = dump_json
     load_json = load_json

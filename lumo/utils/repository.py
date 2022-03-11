@@ -151,7 +151,11 @@ class GitEnabledWrap(GitWrap):
                 return _commits_map[key]
 
             with branch(repo, branch_name):
-                repo.git.add(all=True)
+                change_file = []
+                change_file.extend(repo.untracked_files)
+                change_file.extend([i.a_path for i in repo.index.diff('Head')])
+                change_file.extend([i.a_path for i in repo.index.diff(None)])
+                repo.git.add(' '.join(change_file))
                 commit_info = '[[EMPTY]]'
                 if info is not None:
                     commit_info = info

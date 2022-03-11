@@ -243,3 +243,8 @@ def cross_entropy_with_targets(logits, targets, mask=None):
     if mask is not None:
         out = out * mask.float()
     return -torch.mean(out)
+
+
+def minent(logits, w_ent=1):
+    loss = - torch.sum(F.log_softmax(logits, dim=-1) * F.softmax(logits, dim=-1), dim=-1).mean() * w_ent
+    return loss

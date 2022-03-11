@@ -1,5 +1,4 @@
 """
-
 """
 
 import inspect
@@ -8,6 +7,7 @@ import sys
 from functools import wraps
 
 from lumo.base_classes.trickitems import NoneItem, AvgItem
+from lumo.proc.dist import is_main
 from lumo.utils.timer import format_second, Timer
 from .meter import AvgMeter
 from .meter import Meter
@@ -15,34 +15,57 @@ from .mixin import CallbackMix
 from .params import Params
 from .trainer import Trainer, TrainerResult
 
-func_map = {
+_func_map = {
     'evaluate': 'eval',
     'evaluate_step': 'eval_step'
 }
 
 
 def map_func_name(name):
-    return func_map.get(name, name)
+    return _func_map.get(name, name)
 
 
 class BaseCallback:
     """
-    base callback class
+    Abstract base class used to build new callbacks.
 
-    only have two methods `on_begin()` and `on_end()`.
+    Callbacks are created to hook into the various stages of lumo's Trainer training, inference or data preparing.
+    You can hook any subclasses of `BaseCallback` in `lumo.kit.trainer.Trainer` class.
 
-    for simpler using, see TrainCallback.
+    To create a custom callback class, subclass `lumo.kit.callbacks.BaseCallback`, and define the callback methods
+    you want to do something before or after that.
+
+    The callback method must be named like on_xxx_begin()/on_xxx_end(), where `xxx` is a function in trainer.
+
+
+    TrainCallback, SaveLoadCallback and InitialCallback define the most methods in Trainer, you can simply subclass these
+    callback class to custom your callback.
+
+    Notes:
+        There is no need for you to call the on_xxx function in your function's logic.
+
+        The Trainer has some magic feature... not like keras or other framework with trainer/callback logic that
+        you may need to manully call the callback function `on_xxx...()` in you overrided or newly defined method in Trainer,
+        If you define a function `foo()` in your trainer, the callback function on_foo_begin() and on_foo_end() will be found
+        automatically and be called, There is no need for you to call them in your function's logic.
+
+
+    Examples:
+        {{examples/docs/basecallback.py}}
+
+        {{examples/docs/basecallback2.py}}
+
     """
-    priority = 0  # type:int # All callbacks in lumo will have priority in range 0-100
-    only_single_gpu = False  # only hooked in single gpu mode
-    only_main_process = False  # whether can be hooked in children process( local_rank > 0)
+    priority = 0  # type: int # All callbacks in lumo will have priority in range 0-100
+    only_single_gpu = False  # Callback only works when single gpu mode
+    only_main_process = False  # Callback only works when in main process
 
     def __new__(cls, *_, **__):
         self = super().__new__(cls)
         self._hooked = None
 
         def ecp_wrap(func):
-            """同一个异常第一次调用的时候运行"""
+            """Wrapper for cache exceptions"""
 
             @wraps(func)
             def on_exception(hooked: Trainer, tfunc, params: Params, e: BaseException, *args, **kwargs):
@@ -125,7 +148,14 @@ class BaseCallback:
 
 class TrainCallback(BaseCallback):
     """
-    实现了一般训练过程中的函数函数回调，主要将 on_begin() / on_end() 方法分发到各具体的回调方法中
+    Abstract base class used to build new callbacks. Defined some methods used in train/eval/test loop.
+
+    Subclass TrainCallback if you want to control or add behavior before or after
+        - train/train_epoch/train_step
+        - eval/eval_epoch/eval_step
+        - test/test_epoch/test_step
+        - predict
+        - inference
     """
 
     def on_train_begin(self, trainer: Trainer, func, params: Params, *args, **kwargs):
@@ -184,6 +214,14 @@ class TrainCallback(BaseCallback):
 
 
 class SaveLoadCallback(BaseCallback):
+    """
+    Abstract base class used to build new callbacks. Defined some methods used in save/load.
+
+    Subclass SaveLoadCallback if you want to control or add behavior before or after
+        - save_xxx
+        - load_xxx
+    """
+
     def on_save_keypoint_begin(self, trainer: Trainer, func, params: Params, *args, **kwargs):
         pass
 
@@ -210,6 +248,13 @@ class SaveLoadCallback(BaseCallback):
 
 
 class InitialCallback(BaseCallback):
+    """
+    Abstract base class used to build new callbacks. Defined some methods used in save/load.
+
+    Subclass InitialCallback if you want to control or add behavior before or after
+        - initialization of optims/models/dataloader
+    """
+
     def on_ioptims_begin(self, trainer: Trainer, func, params: Params, *args, **kwargs):
         pass
 
@@ -231,10 +276,16 @@ class InitialCallback(BaseCallback):
 
 class EvalCallback(TrainCallback):
     """
+    Callback for evaluation.
+
+    Args:
+        eval_per_epoch:
+        test_per_epoch:
     """
     only_main_process = True
 
     def __init__(self, eval_per_epoch=1, test_per_epoch=10):
+
         self.eval_in_per_epoch = eval_per_epoch
         self.test_in_per_epoch = test_per_epoch
 
@@ -275,12 +326,9 @@ class EvalCallback(TrainCallback):
 
 class LoggerCallback(TrainCallback, InitialCallback, SaveLoadCallback):
     """
-    用于日志输出的回调，当 BaseTrainer 在 epoch / batch 等级别的训练结束、异常发生等过程后，Logger 会对这些事件，
-    或方法返回的结果进行输出。
-
-    一般情况下 Logger 支持所有类型输出，但如果使用 Meter 类进行包装，会有更好的输出形式
+    Callback to log info produced during whole Trainer lifecycle.
     """
-    only_main_process = True
+    # only_main_process = True
     priority = 100
 
     def __init__(self, avg=True, step_frequence=3, breakline_in=1000):
@@ -288,6 +336,7 @@ class LoggerCallback(TrainCallback, InitialCallback, SaveLoadCallback):
         self.step_frequence = step_frequence
         self.breakline = breakline_in
         self.history_loader = set()
+        self.is_main = is_main()
 
     @property
     def meter(self):
@@ -303,9 +352,13 @@ class LoggerCallback(TrainCallback, InitialCallback, SaveLoadCallback):
         self._meter = meter
 
     def _need_log(self, step):
+        if not self.is_main:
+            return False
         return self.step_frequence > 0 and step % self.step_frequence == 0
 
     def _need_breakline(self, step):
+        if not self.is_main:
+            return False
         return self.breakline > 0 and step % self.breakline == 0
 
     def on_hooked(self, source: Trainer, params: Params):
@@ -333,7 +386,6 @@ class LoggerCallback(TrainCallback, InitialCallback, SaveLoadCallback):
         trainer.logger.info(f"[[Train End in {format_second(self.traintime['use'])}]]", meter)
 
     def on_train_epoch_begin(self, trainer: Trainer, func, params: Params, *args, **kwargs):
-        from ..utils.timer import Timer
         self.reset_meter()
         self.epochtime = Timer()
         self.epochtime.start()
@@ -445,8 +497,7 @@ class LoggerCallback(TrainCallback, InitialCallback, SaveLoadCallback):
 
 class MeterCheckpoint(TrainCallback):
     """
-    用于检视训练过程中模型的某个指标，并根据其提升进行 checkpoint 类型的保存
-    该类参考了 Keras 中相应的实现。
+    Callback to save the model checkpoints by a monitored metric get it's best value.
     """
     only_main_process = True
 
@@ -525,6 +576,9 @@ class GlobalStepCheckpoint(TrainCallback):
 
 
 class KeyErrorSave(TrainCallback):
+    """
+    Callback to save checkpoints when you interrupt the program.
+    """
     only_main_process = True
     only_single_gpu = True
     priority = -1
@@ -547,8 +601,7 @@ class KeyErrorSave(TrainCallback):
 
 class ScalarRecorder(TrainCallback):
     """
-    自动记录训练过程中的所有变量到 tensorboard 中（epoch 级）
-    TODO
+    This callback logs scalars yield in train/test/eval by TensorBoard.
     """
     only_main_process = True
     priority = 100
@@ -588,7 +641,13 @@ class ScalarRecorder(TrainCallback):
 
 
 class EMAUpdate(TrainCallback):
-    only_main_process = True
+    """
+    Callback to update EMA model every train step.
+
+    Variable in Trainer instance is identified as EMA model when
+     - is instance of torch.nn.Module
+     - name is started with 'ema'
+    """
 
     def on_train_step_end(self, trainer: Trainer, func, params: Params, meter: Meter, *args, **kwargs):
         super().on_train_step_end(trainer, func, params, meter, *args, **kwargs)
@@ -598,6 +657,13 @@ class EMAUpdate(TrainCallback):
 
 
 class AutoLoadModel(InitialCallback):
+    """
+    Callback to automatically load pretrained model.
+
+    The load function will be executed if and only if
+     - both the params `pretrain` and `pretrain_path` are defined in Params
+     - `pretrain` is True and `pretrain_path` is not None.
+    """
 
     def on_imodels_end(self, trainer: Trainer, func, params: Params, meter: Meter, *args, **kwargs):
         super().on_imodels_end(trainer, func, params, meter, *args, **kwargs)
@@ -608,6 +674,9 @@ class AutoLoadModel(InitialCallback):
 
 
 class EvalFirst(AutoLoadModel):
+    """
+    Callback to evaluation before the first train step. Aften used to debug or evaluate some dataset by restored model.
+    """
 
     def __init__(self, datamodule=None):
         super().__init__()
@@ -620,3 +689,21 @@ class EvalFirst(AutoLoadModel):
                 trainer.evaluate(self.datamodule)
             else:
                 trainer.evaluate()
+
+
+class RemoteMonitor(TrainCallback, InitialCallback, SaveLoadCallback):
+    pass  # TODO
+
+
+class StopByCode(TrainCallback):
+    def __init__(self, step=100):
+        self.step = step
+
+    def on_train_step_end(self, trainer: Trainer, func, params: Params, meter: Meter, *args, **kwargs):
+        super().on_train_step_end(trainer, func, params, meter, *args, **kwargs)
+        if trainer.global_step % self.step == 0:
+            if os.path.exists(trainer.exp.test_file('.stop')):
+                trainer.exp.add_tag('lumo.early_stop')
+                trainer.logger.info('Early stop this test manully.')
+                trainer.stop_train_epoch()
+                trainer.stop_train()

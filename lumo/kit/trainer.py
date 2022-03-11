@@ -125,7 +125,7 @@ class _BaseTrainer(ModelMix, CallbackMix, metaclass=Merge):
     """
 
     __exp_name__ = None
-    _call_backs = {
+    callback_function = {
         "save_keypoint", "save_checkpoint", "save_model", "load_state_dict",
         'ioptims', 'icallbacks', 'imodels',
     }
@@ -183,7 +183,7 @@ class _BaseTrainer(ModelMix, CallbackMix, metaclass=Merge):
 
         vars = dir(self)
         for name in vars:
-            if name not in self._call_backs:
+            if name not in self.callback_function:
                 continue
             if name.startswith("_"):
                 continue
@@ -698,7 +698,7 @@ class _BaseTrainer(ModelMix, CallbackMix, metaclass=Merge):
 
 
 class Trainer(_BaseTrainer):
-    _call_backs = {
+    callback_function = {
         "train", "train_epoch", "train_step",
         "test", "test_step",
         "evaluate", "evaluate_step",

@@ -1,4 +1,5 @@
 import fire
+from joblib import hash
 
 doc = """
 Usage:
@@ -9,6 +10,8 @@ lumo init [dir]
 # lumo board [--logdir=<logdir>]
 # lumo board [--test=<test_name>] # find test_name and tensorboard it 
 # lumo board  # default open ./board
+
+# lumo mark <test_name>
 
 # restore code snapshot of some test
 lumo reset <test_name>
@@ -32,11 +35,7 @@ lumo config global --k=v
 lumo port
 
 """
-import sys
-# from lumo import __version__
-
 from lumo.decorators import regist_func_to
-from lumo import globs
 
 func_map = {}
 
@@ -60,93 +59,36 @@ def _find_test_name(*args, **kwargs):
     return None
 
 
-@regist_func_to(func_map)
-def checkout(*args, **kwargs):
-    test_name = _find_test_name(*args, **kwargs)
-    query = Q.tests(test_name)
-    if query.empty:
-        print("can't find test {}".format(test_name))
-        exit(1)
-    exp = query.to_viewer().reset()
-    print('reset from {} to {}'.format(exp.plugins['reset']['from'], exp.plugins['reset']['to']))
-
-
-#
-@regist_func_to(func_map)
-def archive(*args, **kwargs):
-    test_name = _find_test_name(*args, **kwargs)
-    query = Q.tests(test_name)
-    if query.empty:
-        print("can't find test {}".format(test_name))
-        exit(1)
-    exp = query.to_viewer().archive()
-
-    print('archive {} to {}'.format(test_name, exp.plugins['archive']['file']))
-
-
-def find(*args, **kwargs):
-    pass
-
-
-def report(*args, **kwargs):
-    pass
-
-
-@regist_func_to(func_map)
-def params(*args, **kwargs):
-    test_name = _find_test_name(*args, **kwargs)
-    query = Q.tests(test_name)
-    if query.empty:
-        print("can't find test {}".format(test_name))
-        exit(1)
-
-    vw = query.to_viewer()
-    p = vw.params
-    if p is not None:
-        print(p)
-    else:
-        print("can't find param object of [{}]".format(test_name))
-        exit(1)
-
-
-def main(*args, **kwargs):
-    # print(args, kwargs)
-    print(f"lumo {__version__}")
-    if len(args) == 0 or 'help' in kwargs:
-        print(doc)
-        return
-
-    branch = args[0]
-    if branch in func_map:
-        func_map[branch](*args[1:], **kwargs)
-    else:
-        print(doc)
-
-
-class Board:
-    pass
-
-
-class Main():
+class Main:
     def init(self):
         pass
 
     def board(self, logdir=None, test_name=None):
         pass
 
-    def new(self, file):
-        """
-        lumo new <field>/<trainer_file_name>.py
-        lumo new proj/project <project>
-        Args:
-            file:
+    def mark(self, test_name=None):
+        from lumo.proc.path import libhome
+        from lumo.utils import FileBranch
+        from lumo.utils import IO
 
-        Returns:
+        collection_dir = FileBranch(libhome()).branch('collection')
+        if test_name is None:
+            for f in collection_dir.listdir(True):
+                print(IO.load_text(f))
+            return
+        from lumo.backend import find_test_by_name
 
-        """
-        pass
+        res = find_test_by_name(test_name)
+        if res is None:
+            print(f'cannot find {test_name}')
+        mark_file = collection_dir.file(hash(res))
+        IO.dump_text(res, mark_file)
+        print(f'{res} marked.')
+
+        return
+
+    # Fire 不能嵌套在 __main__ 判断里，否则 sys.argv 识别会出问题，目前原因未知
 
 
-# Fire 不能嵌套在 __main__ 判断里，否则 sys.argv 识别会出问题，目前原因未知
 fire.Fire(Main())
 # exit(0)
