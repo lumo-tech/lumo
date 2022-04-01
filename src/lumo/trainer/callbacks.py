@@ -360,13 +360,15 @@ class LoggerCallback(TrainCallback, InitialCallback):
         super().on_process_loader_end(trainer, func, params, loader, dm, stage, *args, **kwargs)
         if loader is None:
             return
+        if stage in self.stage:
+            return
         loader_str = summarize_loader(loader)
-        trainer.logger.info(f'{loader_str} for {stage.value} prepared.')
         try:
             lsize = len(loader)
         except:
             lsize = None
         self.stage[stage] = lsize
+        trainer.logger.info(f'{loader_str} for {stage.value} prepared.')
 
     def on_train_begin(self, trainer: 'Trainer', func, params: ParamsType, *args, **kwargs):
         super().on_train_begin(trainer, func, params, *args, **kwargs)
@@ -386,7 +388,10 @@ class LoggerCallback(TrainCallback, InitialCallback):
     def update(self, trainer):
         self.cur_tqdm.update()
         if self.c % self.step == 0:
-            trainer.logger.inline(self.cur_tqdm)
+            if '820' in str(self.cur_tqdm):
+                trainer.logger.info(self.cur_tqdm)
+
+            trainer.logger.info(self.cur_tqdm)
 
     def flush(self, stage, trainer: 'Trainer', close=False):
         self.c = 0

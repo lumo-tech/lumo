@@ -24,8 +24,8 @@ from .saver import Saver
 class Trainer(_BaseTrainer):
     callback_function = {
         "save_keypoint", "save_checkpoint", "save_model", "load_state_dict",
-        'ioptims', 'imodels', 'train', 'test', 'val', 'train_epoch', 'train_step',
-        'test_step', 'val_step', 'process_loader', 'regist_dataloader'
+        'ioptims', 'imodels', 'train', 'test', 'evaluate', 'train_epoch', 'train_step',
+        'test_step', 'evaluate_step', 'process_loader', 'regist_dataloader'
     }
 
     def __init__(self, params: ParamsType, dm: DataModule = None):
@@ -72,7 +72,6 @@ class Trainer(_BaseTrainer):
         else:
             return None
 
-        loader = self.accelerate.prepare_data_loader(loader)
         return loader
 
     def _load_fun_state_dict(self, src: dict, tgt: dict):
@@ -302,10 +301,12 @@ class Trainer(_BaseTrainer):
             self.set_property('early_stop', 'Lack of train loader')
             return self._prop
 
+        loader = self.accelerate.prepare_data_loader(loader)
+
         if params is None:
             params = self.params
         for eidx in range(params.epoch):
-            self.set_epoch_ids(eidx)
+            self.set_epoch_idx(eidx)
             epoch_record = self.train_epoch(loader, params, limit_global_steps=limit_global_steps)
             self.set_property('record', epoch_record)
             self.set_property('record', epoch_record)
@@ -336,7 +337,7 @@ class Trainer(_BaseTrainer):
                 break
             metric = self.train_step(batch, params)
             self._prop['global_steps'] += 1
-            self._prop['idx'] = idx
+            self.set_idx(idx)
             record.record(metric)
         record.flush()
         return record
@@ -347,8 +348,11 @@ class Trainer(_BaseTrainer):
     def set_global_steps(self, val):
         self.set_property('global_steps', val)
 
-    def set_epoch_ids(self, val):
+    def set_epoch_idx(self, val):
         self.set_property('eidx', val)
+
+    def set_idx(self, val):
+        self.set_property('idx', val)
 
     @property
     def trainstage(self) -> TrainStage:
@@ -412,12 +416,15 @@ class Trainer(_BaseTrainer):
         self.change_stage(stage)
 
         loader = self.test_dataloader
+
         if loader is None:
             return None
 
+        loader = self.accelerate.prepare_data_loader(loader)
+
         record = self.create_record(stage=stage)
         for idx, batch in enumerate(loader):
-            self._prop['idx'] += idx
+            self.set_idx(idx)
             if limit_step is not None and idx >= limit_step:
                 break
             metric = self.test_step(batch, params)
@@ -432,9 +439,11 @@ class Trainer(_BaseTrainer):
         if loader is None:
             return None
 
+        loader = self.accelerate.prepare_data_loader(loader)
+
         record = self.create_record(stage=stage)
         for idx, batch in enumerate(loader):
-            self._prop['idx'] += idx
+            self.set_idx(idx)
             if limit_step is not None and idx >= limit_step:
                 break
             metric = self.evaluate_step(batch, params)
