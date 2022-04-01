@@ -1,9 +1,8 @@
 import warnings
 from functools import partial
 from pprint import pformat
-from collections import Sequence
 
-from typing import Callable, NewType, Dict, Any, Iterable
+from typing import Callable, NewType, Dict, Any, Iterable, Sequence
 
 import numpy as np
 from torch.utils.data import Dataset

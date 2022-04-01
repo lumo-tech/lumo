@@ -15,3 +15,9 @@ class TrainStage(enum.Enum):
 
     def is_val(self):
         return self.value == 'val'
+
+    @staticmethod
+    def create_from_str(value):
+        if value in {'eval', 'evaluate'}:
+            value = 'val'
+        return TrainStage(value)

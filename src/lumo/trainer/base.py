@@ -22,6 +22,7 @@ import torch
 from torch.optim.optimizer import Optimizer
 
 from .components import TrainerPropVar
+from .. import TrainStage
 
 if TYPE_CHECKING:
     pass
@@ -88,10 +89,13 @@ class _BaseTrainer(metaclass=TrainerPropVar):
 
         def init_wrapper(func):
             @wraps(func)
-            def inner(*args, **kwargs):
+            def inner(dm=None, params=None, *args, **kwargs):
                 init_fn = getattr(self, 'initialize', None)
                 if init_fn is not None:
                     init_fn()
+                process_loader = getattr(self, 'process_loader', None)
+                if process_loader is not None:
+                    process_loader(dm, TrainStage.create_from_str(func.__name__))
                 func(*args, **kwargs)
 
             return inner

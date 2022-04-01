@@ -50,7 +50,7 @@ class PlusOne(Trainer):
         meter.Lce = loss
         return meter
 
-    def test_step(self, idx, batch, params: ParamsType, *args, **kwargs) -> Meter:
+    def test_step(self, batch, params: ParamsType = None) -> MetricType:
         meter = Meter()
         xs, ys = batch
         logits = self.model(xs.float())

@@ -46,7 +46,7 @@ class Trainer(_BaseTrainer):
         self.train_epoch_toggle = False
         self.train_toggle = False
 
-        self.accelerate = Accelerator()
+        self.accelerate = Accelerator(device=params.get('device', None))
         self.set_global_steps(params.get('global_steps', 0))
         if params.get('debug', False):
             self.exp.set_prop('debug', True)
@@ -54,20 +54,25 @@ class Trainer(_BaseTrainer):
     def regist_dataloader(self, dataloader: DataLoader, stage: TrainStage):
         self.datamodule.regist_dataloader_with_stage(stage, dataloader)
 
-    def process_loader(self, dm: Union[DataModule, DataLoader], stage: TrainStage):
+    def process_loader(self, dm: Union[DataModule, DataLoader] = None, stage: TrainStage = TrainStage.train):
+        assert stage is not None, '`stage` cannot be None'
         if dm is None and self.dm is not None:
             dm = self.dm
 
         if isinstance(dm, DataModule):
-            loader = dm.get_loader_with_stage(stage)
+            loader = dm[stage.value]
+            if loader is None:
+                loader = dm.get_loader_with_stage(stage)
+                if loader is None:
+                    return None
+                self.regist_dataloader(loader, stage=stage)
         elif isinstance(dm, DataLoader):
             loader = dm
+            self.regist_dataloader(loader, stage=stage)
         else:
             return None
 
-        self.regist_dataloader(loader, stage=stage)
         loader = self.accelerate.prepare_data_loader(loader)
-
         return loader
 
     def _load_fun_state_dict(self, src: dict, tgt: dict):
@@ -234,15 +239,15 @@ class Trainer(_BaseTrainer):
 
     @property
     def train_dataloader(self):
-        return self.dm.train_dataloader
+        return self.dm['train']
 
     @property
     def test_dataloader(self):
-        return self.dm.test_dataloader
+        return self.dm['test']
 
     @property
     def val_dataloader(self):
-        return self.dm.val_dataloader
+        return self.dm['val']
 
     @property
     def global_steps(self):
@@ -291,7 +296,8 @@ class Trainer(_BaseTrainer):
         self.train_epoch_toggle = True
 
     def train(self, dm: Union[DataModule, DataLoader] = None, params: ParamsType = None, limit_global_steps=None):
-        loader = self.process_loader(dm, TrainStage.train)
+        loader = self.train_dataloader
+
         if loader is None:
             self.set_property('early_stop', 'Lack of train loader')
             return self._prop
@@ -389,20 +395,23 @@ class Trainer(_BaseTrainer):
         pass
 
     def change_stage(self, stage: TrainStage):
-        if stage.value:
-            for v in self.model_dict.values():
-                v.train()
-        else:
-            for v in self.model_dict.values():
-                v.eval()
+        if self.trainstage == stage:
+            return
 
         self.set_stage(stage)
+        for k, v in self.model_dict.items():
+            if 'ema' in k.lower():
+                continue
+            if stage.value:
+                v.train()
+            else:
+                v.eval()
 
     def test(self, dm: Union[DataModule, DataLoader] = None, params: ParamsType = None, limit_step=None):
-
         stage = TrainStage.test
         self.change_stage(stage)
-        loader = self.process_loader(dm, stage)
+
+        loader = self.test_dataloader
         if loader is None:
             return None
 
@@ -419,7 +428,7 @@ class Trainer(_BaseTrainer):
     def evaluate(self, dm: Union[DataModule, DataLoader] = None, params: ParamsType = None, limit_step: int = None):
         stage = TrainStage.val
         self.change_stage(stage)
-        loader = self.process_loader(dm, stage)
+        loader = self.val_dataloader
         if loader is None:
             return None
 

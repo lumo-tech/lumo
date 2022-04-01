@@ -68,7 +68,7 @@ class MTDM(DataModule):
         super().idataloader(params, stage)
         ds = mtds(params)
 
-        if stage.is_train:
+        if stage.is_train():
             ds.subset(range(len(ds) * 4 // 5))
         elif stage.is_eval:
             ds.subset(range(len(ds) * 4 // 5, len(ds)))

@@ -248,10 +248,12 @@ class InitialCallback(BaseCallback):
                               *args, **kwargs):
         pass
 
-    def on_regist_dataloader_begin(self, trainer: 'Trainer', func, params: ParamsType, *args, **kwargs):
+    def on_regist_dataloader_begin(self, trainer: 'Trainer', func, params: ParamsType,
+                                   dataloader: DataLoader, stage: TrainStage, *args, **kwargs):
         pass
 
-    def on_regist_dataloader_end(self, trainer: 'Trainer', func, params: ParamsType, result: Any, *args, **kwargs):
+    def on_regist_dataloader_end(self, trainer: 'Trainer', func, params: ParamsType, result: Any,
+                                 dataloader: DataLoader, stage: TrainStage, *args, **kwargs):
         pass
 
 
@@ -339,6 +341,8 @@ class LoggerCallback(TrainCallback, InitialCallback):
         self.breakin = break_in
         self.c = 0
         self.step = step_frequence
+        file = tempfile.TemporaryFile('w')
+        self.temp = file
 
     # def on_imodels_begin(self, trainer: 'Trainer', func, params: ParamsType, *args, **kwargs):
     #     super().on_imodels_begin(trainer, func, params, *args, **kwargs)
@@ -353,58 +357,59 @@ class LoggerCallback(TrainCallback, InitialCallback):
 
     def on_process_loader_end(self, trainer: 'Trainer', func, params: ParamsType, loader: DataLoader, dm: DataModule,
                               stage: TrainStage, *args, **kwargs):
+        super().on_process_loader_end(trainer, func, params, loader, dm, stage, *args, **kwargs)
+        if loader is None:
+            return
+        loader_str = summarize_loader(loader)
+        trainer.logger.info(f'{loader_str} for {stage.value} prepared.')
         try:
             lsize = len(loader)
         except:
             lsize = None
         self.stage[stage] = lsize
-        self.record = Record()
-        loader_str = summarize_loader(loader)
-        trainer.logger.info(f'{loader_str} for {stage.value} prepared.')
-        file = tempfile.TemporaryFile('w')
-        self.temp = file
-        self.cur_tqdm = None
+
+    def on_train_begin(self, trainer: 'Trainer', func, params: ParamsType, *args, **kwargs):
+        super().on_train_begin(trainer, func, params, *args, **kwargs)
+        trainer.logger.info('[[Train Begin]]')
         self.global_tqdm = inlinetqdm(total=params.epoch,
                                       position=0, leave=True,
-                                      bar_format='Ela:{elapsed} | Last:{remaining} | {rate}',
-                                      file=file)
+                                      bar_format='Ela: {elapsed} | Last: {remaining} | Avg: {rate}',
+                                      file=self.temp)
 
-        self.flush(stage, trainer)
+    def renew(self, stage):
+        """创建一个新的"""
+        self.cur_tqdm = inlinetqdm(total=self.stage[stage], position=0, leave=True,
+                                   bar_format='{desc}{elapsed}<{remaining} ({percentage:3.0f}%){postfix}',
+                                   file=self.temp)
+        self.record = Record()
+
+    def update(self, trainer):
+        self.cur_tqdm.update()
+        if self.c % self.step == 0:
+            trainer.logger.inline(self.cur_tqdm)
 
     def flush(self, stage, trainer: 'Trainer', close=False):
         self.c = 0
-
         if self.cur_tqdm is not None and close:
-            desc = f"{trainer.idx + 1}/{self.stage[TrainStage.train]}, "
+            desc = f"{trainer.idx + 1}/{self.stage[stage]}, "
             self.cur_tqdm.set_description_str(desc)
             self.cur_tqdm.close()
             trainer.logger.inline(self.cur_tqdm)
             trainer.logger.newline()
 
-        self.cur_tqdm = inlinetqdm(total=self.stage[stage], position=0, leave=True,
-                                   bar_format='{desc}{elapsed}<{remaining} ({percentage:3.0f}%){postfix}',
-                                   file=self.temp)
-
-    def on_train_begin(self, trainer: 'Trainer', func, params: ParamsType, *args, **kwargs):
-        super().on_train_begin(trainer, func, params, *args, **kwargs)
-        trainer.logger.info('[[Train Begin]]')
-
     def on_train_epoch_begin(self, trainer: 'Trainer', func, params: ParamsType, *args, **kwargs):
         super().on_train_epoch_begin(trainer, func, params, *args, **kwargs)
-        self.flush(TrainStage.train, trainer)
-        self.record.clear()
+        self.renew(TrainStage.train)
         self.time = time.time()
 
     def on_test_begin(self, trainer: 'Trainer', func, params: ParamsType, *args, **kwargs):
         super().on_test_begin(trainer, func, params, *args, **kwargs)
-        # self.flush(TrainStage.test, trainer)
-        # self.record.clear()
+        self.renew(TrainStage.test)
         trainer.logger.info('[[Test Begin]]')
 
     def on_eval_begin(self, trainer: 'Trainer', func, params: ParamsType, *args, **kwargs):
         super().on_eval_begin(trainer, func, params, *args, **kwargs)
-        # self.flush(TrainStage.val, trainer)
-        # self.record.clear()
+        self.renew(TrainStage.val)
         trainer.logger.info('[[Evaluate Begin]]')
 
     @staticmethod
@@ -445,28 +450,21 @@ class LoggerCallback(TrainCallback, InitialCallback):
 
     def on_train_epoch_end(self, trainer: 'Trainer', func, params: ParamsType, record: Record, *args, **kwargs):
         super().on_train_epoch_end(trainer, func, params, record, *args, **kwargs)
-
         self.global_tqdm.update()
         self.flush(TrainStage.train, trainer, close=True)
         trainer.logger.info(self.format_train_epoch_time(**self.global_tqdm.format_dict))
 
     def on_test_end(self, trainer: 'Trainer', func, params: ParamsType, result: Optional[Record], *args, **kwargs):
-        self.flush(TrainStage.train, trainer, close=True)
+        self.flush(TrainStage.test, trainer, close=True)
         trainer.logger.info('[[Test End]]')
 
     def on_eval_end(self, trainer: 'Trainer', func, params: ParamsType, result: Optional[Record], *args, **kwargs):
-        self.flush(TrainStage.train, trainer, close=True)
+        self.flush(TrainStage.val, trainer, close=True)
         trainer.logger.info('[[Evaluate End]]')
 
     def on_train_end(self, trainer: 'Trainer', func, params: ParamsType, result: Optional[Record], *args, **kwargs):
-        # self.flush(TrainStage.train, trainer, new=False, close=True)
         trainer.logger.newline()
         trainer.logger.info('[[Train End]]')
-
-    def update(self, trainer):
-        self.cur_tqdm.update()
-        if self.c % self.step == 0:
-            trainer.logger.inline(self.cur_tqdm)
 
     def on_train_step_end(self, trainer: 'Trainer', func, params: ParamsType, metric: MetricType, *args, **kwargs):
         self.record.record(metric)

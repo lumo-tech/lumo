@@ -4,7 +4,7 @@ psutil
 decorator
 torch
 numpy
-accelerate
-hydra
+accelerate==0.6.2
+hydra-core
 omegaconf
 tqdm

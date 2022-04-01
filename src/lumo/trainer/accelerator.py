@@ -1,7 +1,7 @@
 from typing import Optional, List, Union
 
 import torch
-from accelerate import Accelerator as HugAccelerator
+from accelerate import Accelerator as HugAccelerator, DeepSpeedPlugin
 from accelerate.kwargs_handlers import DistributedDataParallelKwargs, GradScalerKwargs, KwargsHandler
 from accelerate.state import AcceleratorState as HugAcceleratorState, DistributedType
 from accelerate.utils import RNGType
@@ -27,14 +27,18 @@ class AcceleratorState(HugAcceleratorState):
 
 
 class Accelerator(HugAccelerator):
-    def __init__(self, device_placement: bool = True,
-                 split_batches: bool = False,
-                 fp16: bool = None,
-                 cpu: bool = False,
-                 rng_types: Optional[List[Union[str, RNGType]]] = None,
-                 kwargs_handlers: Optional[List[KwargsHandler]] = None, device=None,
+
+    def __init__(self, device_placement: bool = True, split_batches: bool = False, fp16: bool = None,
+                 mixed_precision: str = None, cpu: bool = False, deepspeed_plugin: DeepSpeedPlugin = None,
+                 rng_types: Optional[List[Union[str, RNGType]]] = None, dispatch_batches: Optional[bool] = None,
+                 kwargs_handlers: Optional[List[KwargsHandler]] = None,
+                 device=None,
                  accelerator_state: HugAcceleratorState = None):
-        super().__init__(device_placement, split_batches, fp16, cpu, rng_types, kwargs_handlers)
+        super().__init__(device_placement=device_placement,
+                         split_batches=split_batches, fp16=fp16, mixed_precision=mixed_precision, cpu=cpu,
+                         deepspeed_plugin=deepspeed_plugin, rng_types=rng_types,
+                         dispatch_batches=dispatch_batches, kwargs_handlers=kwargs_handlers)
+
         if accelerator_state is None:
             self.state = AcceleratorState(fp16=fp16, cpu=cpu, _from_accelerator=True, device=device)
         else:

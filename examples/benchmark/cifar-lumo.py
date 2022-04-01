@@ -45,9 +45,9 @@ class CVDM(DataModule):
     def idataloader(self, params: ParamsType, stage: TrainerStage, repeat: bool = False):
         from torchvision.datasets import cifar
         if params.dataset == 'cifar10':
-            dataset = cifar.CIFAR10(params.dataset_root, train=stage.is_train, download=params.download_dataset)
+            dataset = cifar.CIFAR10(params.dataset_root, train=stage.is_train(), download=params.download_dataset)
         else:
-            dataset = cifar.CIFAR100(params.dataset_root, train=stage.is_train, download=params.download_dataset)
+            dataset = cifar.CIFAR100(params.dataset_root, train=stage.is_train(), download=params.download_dataset)
 
         ds = (
             DatasetBuilder()
