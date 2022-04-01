@@ -1,4 +1,4 @@
-from lumo.kit.meter import AvgItem
+from lumo import AvgItem
 import torch
 import numpy as np
 

@@ -1,4 +1,4 @@
-from lumo.contrib.string.lcs import lcs
+from lumo.contrib.string import lcs
 
 
 def test_lcs():

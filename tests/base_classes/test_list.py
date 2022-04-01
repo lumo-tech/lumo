@@ -1,5 +1,5 @@
 def test_llist():
-    from lumo.base_classes import llist
+    from lumo import llist
     import numpy as np
 
     k = llist([1,2,3,4])

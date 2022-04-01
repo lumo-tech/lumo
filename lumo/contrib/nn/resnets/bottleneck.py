@@ -1,1 +1,0 @@
-from torchvision.models.resnet import resnet18

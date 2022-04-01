@@ -2,7 +2,7 @@
 
 """
 
-from lumo.frame.experiment import globs
+from lumo import globs
 
 globs["nddatasets"] = "E:/Download/dataset"
 

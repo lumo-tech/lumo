@@ -2,7 +2,7 @@
 
 """
 
-from lumo.kit.trainer import Merge
+from lumo import Merge
 
 
 def test_merge():

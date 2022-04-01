@@ -1,4 +1,4 @@
-from lumo.base_classes import attr
+from lumo import attr
 import numpy as np
 import torch
 

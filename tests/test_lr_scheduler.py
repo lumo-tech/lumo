@@ -1,5 +1,5 @@
 from lumo.contrib.optim import lr_scheduler
-from lumo.base_classes import attr
+from lumo import attr
 
 
 def test_scheduler_is_attr():

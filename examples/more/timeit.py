@@ -2,7 +2,7 @@
 
 """
 
-from lumo.utils.timer import Timer
+from lumo.utils import Timer
 import time
 
 if __name__ == '__main__':
@@ -14,6 +14,4 @@ if __name__ == '__main__':
 
     t.end()
     print(t.meter())
-from torch.utils.data.dataloader import DataLoader
 
-from torch.nn import Module

@@ -2,13 +2,12 @@
  - 图 Dataset， gg['item_id'] -> gg['words'] -> gg['item_id'] ，先随机采样，然后尝试直接聚类的方式？
  - Bart 模型 + p-tuning
 """
-from lumo import Trainer, Logger, Params, DatasetBuilder, DataModule, K, callbacks
-from lumo.contrib.data.collate import CollateBase
-from lumo.kit.beans.trainstage import TrainerStage
-from lumo.kit import ParamsType
+from lumo import Trainer, TrainerParams, DatasetBuilder, DataModule, MetricType
+from lumo.trainer import callbacks
+from lumo import CollateBase, TrainStage
 
 
-class MultiPM(Params):
+class MultiPM(TrainerParams):
 
     def __init__(self):
         super().__init__()
@@ -27,23 +26,19 @@ class MultiPM(Params):
                                      right=1e-6)
 
 
-class Key(K):
-    pass
-
-
-K = Key
+ParamsType = MultiPM
 
 
 # DataModule
-class GlobalTransform():
-    def __init__(self, params: MultiPM):
+class GlobalTransform:
+    def __init__(self, params: ParamsType):
         self.params = params
 
     def __call__(self, mem: dict):
         return mem
 
 
-def mtds(params: MultiPM):
+def mtds(params: ParamsType):
     """
     视频路径
 
@@ -69,7 +64,8 @@ class MTCollate(CollateBase):
 
 class MTDM(DataModule):
 
-    def idataloader(self, params: MultiPM, stage: TrainerStage, repeat: bool = False):
+    def idataloader(self, params: ParamsType = None, stage: TrainStage = None):
+        super().idataloader(params, stage)
         ds = mtds(params)
 
         if stage.is_train:
@@ -92,7 +88,6 @@ class MTTrainer(callbacks.TrainCallback,
                 Trainer):
     def icallbacks(self, params: ParamsType):
         callbacks.LoggerCallback(step_frequence=1).hook(self)
-        callbacks.LRSchedule().hook(self)  # auto get params.lr_sche to apply lr rate
         callbacks.AutoLoadModel().hook(self)
 
         if isinstance(self, callbacks.TrainCallback):
@@ -101,11 +96,11 @@ class MTTrainer(callbacks.TrainCallback,
     def imodels(self, params: ParamsType):
         super().imodels(params)
 
-    def train_step(self, idx, batch, params: ParamsType, *args, **kwargs):
-        pass
+    def train_step(self, batch, params: ParamsType = None) -> MetricType:
+        super().train_step(batch, params)
 
-    def evaluate_step(self, idx, batch, params: ParamsType, *args, **kwargs):
-        pass
+    def evaluate_step(self, batch, params: ParamsType = None) -> MetricType:
+        super().evaluate_step(batch, params)
 
 
 def main():
@@ -114,8 +109,8 @@ def main():
 
     dm = MTDM()
 
-    tr = MTTrainer(pm)
-    tr.train(dm)
+    tr = MTTrainer(pm, dm)
+    tr.train()
 
 
 if __name__ == '__main__':

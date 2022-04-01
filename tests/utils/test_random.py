@@ -2,8 +2,6 @@
 
 """
 
-from lumo.utils.random import *
-
 
 def test_state():
     state_dict = fix_seed(10)

@@ -1,4 +1,4 @@
-from lumo.kit.builder import DatasetBuilder
+from lumo import DatasetBuilder
 
 
 def global_check(dic):

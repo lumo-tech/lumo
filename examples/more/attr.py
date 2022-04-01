@@ -2,7 +2,7 @@
 
 """
 
-from lumo.base_classes.attr import attr
+from lumo import attr
 
 dic = attr()
 

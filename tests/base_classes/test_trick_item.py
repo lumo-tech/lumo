@@ -2,7 +2,7 @@
 
 """
 
-from lumo.base_classes.trickitems import NoneItem, AvgItem
+from lumo import NoneItem, AvgItem
 
 
 def test_none_item():

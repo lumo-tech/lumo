@@ -8,7 +8,8 @@ print(__version__)
 
 
 import time
-from lumo import Logger,Meter,Params
+from lumo import Logger,Meter
+
 logger = Logger()
 
 meter = Meter()

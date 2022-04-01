@@ -18,7 +18,7 @@
 # ==============================================================================
 """Keras integration for TensorBoard hparams.
 
-Most users should use `tensorboard.plugins.hparams.api` to access this
+Most users should use `tensorboard.plugins.hparams.apis` to access this
 module's contents.
 """
 

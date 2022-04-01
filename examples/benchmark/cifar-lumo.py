@@ -3,8 +3,9 @@
 from torchvision.models.resnet import resnet34
 from torch.nn import functional as F
 from torch import nn
-from lumo import Trainer, Params, DatasetBuilder, DataModule, callbacks, Meter
-from lumo.kit.beans.trainstage import TrainerStage
+from lumo import Trainer, Params, DatasetBuilder, DataModule, Meter
+from lumo.trainer import callbacks
+from lumo import TrainerStage
 from lumo.proc import path
 
 

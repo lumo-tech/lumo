@@ -5,9 +5,10 @@ from torch import nn
 
 from torch.utils.data import DataLoader
 
-from lumo import Trainer, DataModule, callbacks, Params, Meter
-from lumo.kit.beans.trainstage import TrainerStage
-from lumo.kit import ParamsType, DataModuleMix
+from lumo import Trainer, DataModule, Params, Meter
+from lumo.trainer import callbacks
+from lumo import TrainerStage
+from lumo import ParamsType, DataModuleMix
 
 
 class TempCallback(callbacks.TrainCallback):

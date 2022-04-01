@@ -4,7 +4,7 @@
 import sys
 sys.path.insert(0,"../")
 from lumo import __version__
-import time
+
 print(__version__)
 
 import random

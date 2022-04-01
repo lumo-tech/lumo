@@ -2,7 +2,7 @@
 
 """
 
-from lumo.utils.markdown import Markdown
+from lumo.utils import Markdown
 
 if __name__ == '__main__':
     md = Markdown()

@@ -2,7 +2,7 @@
 
 """
 
-from lumo.base_classes.trickitems import AvgItem
+from lumo import AvgItem
 
 avg = AvgItem()
 avg.update(10/3)

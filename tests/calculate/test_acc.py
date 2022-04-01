@@ -4,7 +4,7 @@
 
 import torch
 
-from lumo.calculate import accuracy as acc
+from lumo.contrib.torch import accuracy as acc
 
 
 def test_classify():

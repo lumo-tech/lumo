@@ -1,5 +1,6 @@
-from lumo import Trainer, callbacks, Params
-from lumo.kit import ParamsType
+from lumo import Trainer, Params
+from lumo.trainer import callbacks
+from lumo import ParamsType
 
 
 class MyCallback(callbacks.BaseCallback):

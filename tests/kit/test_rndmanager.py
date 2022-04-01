@@ -1,5 +1,4 @@
-from lumo.kit.random import Random
-from lumo.utils.random import *
+from lumo import Random
 
 
 def test_random():

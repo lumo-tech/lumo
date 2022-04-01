@@ -1,18 +1,11 @@
-[English](https://github.com/sailist/lumo/blob/master/README.en.md)
-
 # lumo
 
-`lumo` 是一个轻量级的 Pytorch 深度学习实验框架。
+`lumo`：轻量、可扩展的 Pytorch 实验框架。
 
 ## 设计理念
 
-- 高内聚，低耦合。所有模块尽可能解耦，除 [Trainer]() 外，其余模块均可以单独使用。
-    - 这使得 lumo 不要求完全依赖。你可以只在你的项目中使用数据加载、训练逻辑、参数配置、日志输出中的一个或几个模块。
-- 约定大于配置。在没有规定配置的地方，均采用默认配置，当存在特殊需求时候，自定义配置即可。
-    - 灵活大于封装。在封装的同时保留原始训练逻辑，方便非通用训练内容的定制。
-- 显式优于隐式。这是 Python
-  的核心原则 [PEP 20](https://www.python.org/dev/peps/pep-0020/)。引用 [Django](https://docs.djangoproject.com/en/3.2/misc/design-philosophies/)
-  设计哲学: 除非必要，否则魔法(Magic)不应该发生。除非有足够的收益，魔法不应该被使用。即使添加了魔法，它的实现方式也不应该使学习者感到困惑。
+- 细节由使用者掌控：lumo 只封装了外部逻辑，内部实现由使用者自行实现（或借助框架用更少的代码量实现）
+- 模块解耦合：所有模块可以单独作为您现在使用的框架中的一个插件使用
 
 ## Install
 
@@ -31,9 +24,9 @@ pip install git+https://github.com/sailist/lumo
 ### 参数控制
 
 ```python
-from lumo import Params
+from lumo import Params, TrainerParams
 
-params = Params()
+params = TrainerParams()
 params.epoch = 20
 params.optim = params.OPTIM.create_optim('Adam', lr=0.0001, weight_decay=4e-5)
 params.dataset = params.choice('cifar10', 'cifar100')

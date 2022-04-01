@@ -5,3 +5,6 @@ decorator
 torch
 numpy
 accelerate
+hydra
+omegaconf
+tqdm

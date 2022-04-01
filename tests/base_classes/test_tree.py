@@ -2,7 +2,7 @@
 
 """
 
-from lumo.base_classes.tree import tree
+from lumo.core import tree
 
 
 def test_tree():

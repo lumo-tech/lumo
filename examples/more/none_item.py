@@ -2,7 +2,7 @@
 
 """
 
-from lumo.base_classes.trickitems import NoneItem
+from lumo import NoneItem
 
 none = NoneItem()
 assert none > 0
