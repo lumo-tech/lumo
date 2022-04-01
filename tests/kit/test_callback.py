@@ -17,58 +17,58 @@ class TempCallback(callbacks.TrainCallback):
         super().__init__()
         self.c = 0
 
-    def on_train_begin(self, trainer: Trainer, func, params: Params, *args, **kwargs):
+    def on_train_begin(self, trainer: Trainer, func, params: ParamsType, *args, **kwargs):
         self.c += 1
 
-    def on_train_epoch_begin(self, trainer: Trainer, func, params: Params, *args, **kwargs):
+    def on_train_epoch_begin(self, trainer: Trainer, func, params: ParamsType, *args, **kwargs):
         self.c += 1
 
-    def on_test_begin(self, trainer: Trainer, func, params: Params, *args, **kwargs):
+    def on_test_begin(self, trainer: Trainer, func, params: ParamsType, *args, **kwargs):
         self.c += 1
 
-    def on_eval_begin(self, trainer: Trainer, func, params: Params, *args, **kwargs):
+    def on_eval_begin(self, trainer: Trainer, func, params: ParamsType, *args, **kwargs):
         self.c += 1
 
-    def on_train_step_begin(self, trainer: Trainer, func, params: Params, *args, **kwargs):
+    def on_train_step_begin(self, trainer: Trainer, func, params: ParamsType, *args, **kwargs):
         self.c += 1
 
-    def on_eval_step_begin(self, trainer: Trainer, func, params: Params, *args, **kwargs):
+    def on_eval_step_begin(self, trainer: Trainer, func, params: ParamsType, *args, **kwargs):
         self.c += 1
 
-    def on_test_step_begin(self, trainer: Trainer, func, params: Params, *args, **kwargs):
+    def on_test_step_begin(self, trainer: Trainer, func, params: ParamsType, *args, **kwargs):
         self.c += 1
 
-    def on_train_end(self, trainer: Trainer, func, params: Params, meter: Meter, *args, **kwargs):
+    def on_train_end(self, trainer: Trainer, func, params: ParamsType, meter: Meter, *args, **kwargs):
         self.c += 1
 
-    def on_train_epoch_end(self, trainer: Trainer, func, params: Params, meter: Meter, *args, **kwargs):
+    def on_train_epoch_end(self, trainer: Trainer, func, params: ParamsType, meter: Meter, *args, **kwargs):
         self.c += 1
 
-    def on_test_end(self, trainer: Trainer, func, params: Params, meter: Meter, *args, **kwargs):
+    def on_test_end(self, trainer: Trainer, func, params: ParamsType, meter: Meter, *args, **kwargs):
         self.c += 1
 
-    def on_eval_end(self, trainer: Trainer, func, params: Params, meter: Meter, *args, **kwargs):
+    def on_eval_end(self, trainer: Trainer, func, params: ParamsType, meter: Meter, *args, **kwargs):
         self.c += 1
 
-    def on_train_step_end(self, trainer: Trainer, func, params: Params, meter: Meter, *args, **kwargs):
+    def on_train_step_end(self, trainer: Trainer, func, params: ParamsType, meter: Meter, *args, **kwargs):
         self.c += 1
 
-    def on_eval_step_end(self, trainer: Trainer, func, params: Params, meter: Meter, *args, **kwargs):
+    def on_eval_step_end(self, trainer: Trainer, func, params: ParamsType, meter: Meter, *args, **kwargs):
         self.c += 1
 
-    def on_test_step_end(self, trainer: Trainer, func, params: Params, meter: Meter, *args, **kwargs):
+    def on_test_step_end(self, trainer: Trainer, func, params: ParamsType, meter: Meter, *args, **kwargs):
         self.c += 1
 
-    def on_predict_begin(self, trainer: Trainer, func, params: Params, *args, **kwargs):
+    def on_predict_begin(self, trainer: Trainer, func, params: ParamsType, *args, **kwargs):
         self.c += 1
 
-    def on_predict_end(self, trainer: Trainer, func, params: Params, meter: Meter, *args, **kwargs):
+    def on_predict_end(self, trainer: Trainer, func, params: ParamsType, meter: Meter, *args, **kwargs):
         self.c += 1
 
-    def on_inference_begin(self, trainer: Trainer, func, params: Params, *args, **kwargs):
+    def on_inference_begin(self, trainer: Trainer, func, params: ParamsType, *args, **kwargs):
         self.c += 1
 
-    def on_inference_end(self, trainer: Trainer, func, params: Params, meter: Meter, *args, **kwargs):
+    def on_inference_end(self, trainer: Trainer, func, params: ParamsType, meter: Meter, *args, **kwargs):
         self.c += 1
 
 

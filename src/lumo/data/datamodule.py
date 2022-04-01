@@ -1,7 +1,7 @@
-from typing import NoReturn, Union, overload
+from typing import NoReturn, Union, overload, Optional
 
 from lumo.core import PropVar, ParamsType, TrainStage
-from .loader import DataLoader
+from .loader import DataLoaderType
 
 
 class DataModule(metaclass=PropVar):
@@ -9,15 +9,15 @@ class DataModule(metaclass=PropVar):
         self.params = params
 
     @property
-    def train_dataloader(self) -> Union[NoReturn, DataLoader]:
+    def train_dataloader(self) -> Optional[DataLoaderType]:
         return self.get_loader_with_stage(TrainStage.train)
 
     @property
-    def test_dataloader(self) -> Union[NoReturn, DataLoader]:
+    def test_dataloader(self) -> Optional[DataLoaderType]:
         return self.get_loader_with_stage(TrainStage.test)
 
     @property
-    def val_dataloader(self) -> Union[NoReturn, DataLoader]:
+    def val_dataloader(self) -> Union[NoReturn, DataLoaderType]:
         return self.get_loader_with_stage(TrainStage.val)
 
     def get_loader_with_stage(self, stage: TrainStage):
@@ -38,7 +38,7 @@ class DataModule(metaclass=PropVar):
         for k, v in kwargs.items():
             self._prop[k] = v
 
-    def regist_dataloader_with_stage(self, stage: TrainStage, dl: DataLoader):
+    def regist_dataloader_with_stage(self, stage: TrainStage, dl: DataLoaderType):
         self._prop[stage.value] = dl
 
     def idataloader(self, params: ParamsType = None, stage: TrainStage = None):
