@@ -25,6 +25,26 @@ def checkdir(path: Union[Path, str]):
     return path
 
 
+# 220321.003.b7t
+def is_test_root(test_root: str):
+    test_name = os.path.basename(test_root.rstrip('/'))
+    chunk = test_name.split('.')
+    if len(test_name) != 14:
+        return False
+
+    if len(chunk) != 3:
+        return False
+    for k, c in zip(chunk, [6, 3, 3]):
+        if len(k) != c:
+            return False
+    for k in chunk[:2]:
+        try:
+            int(k)
+        except:
+            return False
+    return True
+
+
 class Experiment(metaclass=PropVar):
     def __init__(self, exp_name: str, root=None):
         if not can_be_filename(exp_name):
@@ -86,6 +106,10 @@ class Experiment(metaclass=PropVar):
     def root_branch(self):
         val = self._root
         return checkdir(val)
+
+    @property
+    def lib_root(self):
+        return self.root_branch.as_posix()
 
     @property
     def exp_branch(self):
@@ -320,6 +344,9 @@ class Experiment(metaclass=PropVar):
 
     @classmethod
     def from_disk(cls, path):
+        if not is_test_root(path):
+            raise ValueError(f'{path} is not a valid test_root')
+
         test_root = Path(path)
         root = test_root.parent.parent.parent.as_posix()
         self = cls(test_root.parent.name, root=root)

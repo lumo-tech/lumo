@@ -161,3 +161,4 @@ temp
 lumo_temp
 .lumo/
 *scratch*
+*.zip

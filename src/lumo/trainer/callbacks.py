@@ -703,6 +703,22 @@ class TensorBoardCallback(RecordCallback):
         # for k, v in metrics.items():
         #     writer
 
+class LocalRecordCallback(RecordCallback):
+
+
+    def on_hooked(self, source: 'Trainer', params: ParamsType):
+        super().on_hooked(source, params)
+        source.exp.blob_file('')
+
+    def log_text(self, metrics: Dict, step: int, namespace: str):
+        return super().log_text(metrics, step, namespace)
+
+    def log_scalars(self, metrics: Dict, step: int, namespace: str):
+        return super().log_scalars(metrics, step, namespace)
+
+    def log_matrix(self, metrics: Dict, step: int, namespace: str):
+        return super().log_matrix(metrics, step, namespace)
+
 
 class StopByCode(TrainCallback):
     def __init__(self, step=100):
@@ -718,3 +734,14 @@ class StopByCode(TrainCallback):
 
 
 CallbackType = NewType('CallbackType', BaseCallback)
+
+
+class SeedCallback(InitialCallback):
+
+    def on_imodels_begin(self, trainer: 'Trainer', func, params: ParamsType, *args, **kwargs):
+        super().on_imodels_begin(trainer, func, params, *args, **kwargs)
+        seed = params.get('seed', None)
+        if seed is None:
+            trainer.logger.info('params.seed is None, seed will be set as 0')
+            seed = 0
+        trainer.rnd.mark(seed)

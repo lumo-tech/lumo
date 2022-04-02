@@ -118,6 +118,7 @@ class Trainer(_BaseTrainer):
     def wandb(self):
         import wandb
         wandb.init(project=self.exp.exp_name, name=self.exp.test_name)
+        wandb.config(self.params.to_dict())
         return wandb
 
     @property

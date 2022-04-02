@@ -1,6 +1,7 @@
 import fire
 import os
 from .functional import *
+from lumo import Experiment
 
 doc = """
 Usage:
@@ -42,6 +43,10 @@ class Main:
     def init(self, path):
         git_init(path)
         print(os.path.abspath(path))
+
+    def extract(self, test_root):
+        exp = Experiment.from_disk(test_root)
+
 
     def clone(self, arg: str, alias: str = None):
         """
