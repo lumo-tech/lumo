@@ -119,7 +119,7 @@ class Experiment(metaclass=PropVar):
             return {}
         return io.load_json(fn)
 
-    def dump_string(self, key: str, info: str, append=False):
+    def dump_string(self, key: str, info: str):
         fn = self.test_file(f'{key}.str', 'text')
         io.dump_text(info, fn)
         self.set_prop(key, info)
@@ -199,7 +199,7 @@ class Experiment(metaclass=PropVar):
 
     def blob_file(self, filename, *args):
         parent = self.blob_branch.joinpath(*args)
-        return checkdir(parent).as_posix()
+        return checkdir(parent).joinpath(filename).as_posix()
 
     def blob_dir(self, *args):
         """

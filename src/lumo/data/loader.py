@@ -1,11 +1,12 @@
 from collections import OrderedDict
+from pprint import pformat
 from typing import NewType, Union
 
 from torch.utils.data import DataLoader
 
 from lumo.core.metaclasses import PropVar
 
-__all__ = ['DataLoader', 'LumoDataLoader', 'DataLoaderSide']
+__all__ = ['DataLoader', 'LumoDataLoader', 'DataLoaderSide', 'DataLoaderType']
 
 
 class DataLoaderIterWrap:
@@ -66,9 +67,15 @@ class LumoDataLoader(DataLoader, metaclass=PropVar):
 
 
 def summarize_loader(loader: DataLoader):
-    if loader.batch_sampler is not None:
-        batch_size = loader.batch_sampler.batch_size
-    return f"DataLoader(batch_size={batch_size}, num_workers={loader.num_workers})"
+    if isinstance(loader, DataLoaderSide):
+        inner = pformat({f"{k}(cycle={loader._cycle[k]})": summarize_loader(v) for k, v in loader._loaders.items()})
+        return f"DataLoaderSide({inner})"
+    elif isinstance(loader, DataLoader):
+        if loader.batch_sampler is not None:
+            batch_size = loader.batch_sampler.batch_size
+        return f"DataLoader(batch_size={batch_size}, num_workers={loader.num_workers})"
+    else:
+        raise ValueError(f'Need {DataLoaderType}, got type {type(loader)}')
 
 
 class DataLoaderSide:
@@ -86,6 +93,13 @@ class DataLoaderSide:
         self._cycle[name] = cycle
         return self
 
+    def copy(self):
+        loader = DataLoaderSide()
+        loader._loaders = self._loaders
+        loader._cycle = self._cycle
+        loader._state = self._state
+        return loader
+
     def zip(self):
         self._state = 'zip'
         return self
@@ -95,7 +109,8 @@ class DataLoaderSide:
         return self
 
     def __len__(self):
-        pass
+        valid_keys = [k for k, cycle in self._cycle.items() if not cycle]
+        return min([len(self._loaders[k]) for k in valid_keys])
 
     def __iter__(self):
         iters = {k: iter(v)
@@ -112,8 +127,8 @@ class DataLoaderSide:
                         iters[k] = v
                         batch = next(v)
                     else:
-                        stop = e
-                        break
+                        # stop = e
+                        return
                 res[k] = batch
             if self._state == 'zip':
                 yield res

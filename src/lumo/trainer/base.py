@@ -23,16 +23,39 @@ from torch.optim.optimizer import Optimizer
 
 from .components import TrainerPropVar
 from .. import TrainStage
+import six
 
 if TYPE_CHECKING:
     pass
 
 
-def _exit_hook(exc_type, exc, tb, *args):
+def _exit_hook_v0(exc_type, exc, tb, *args):
     import traceback
     res = traceback.format_exception(exc_type, exc, tb)
     res = [i for i in res if 'in _newfunc' not in i]
     print(''.join(res), file=sys.stderr)
+
+
+def _exit_hook(exc_type, exc, tb, *args):
+    from rich.console import Console
+    console = Console()
+    _exit_hook_v0(exc_type, exc, tb, *args)
+    try:
+        six.reraise(exc_type, exc, tb)
+    except:
+        from rich.traceback import Traceback
+        traceback = Traceback(
+            width=100,
+            extra_lines=3,
+            theme=None,
+            word_wrap=False,
+            show_locals=False,
+            suppress=(),
+            max_frames=100,
+        )
+        for stack in traceback.trace.stacks:
+            stack.frames = [i for i in stack.frames if all([i.name != k for k in {'_newfunc'}])]
+        console.print(traceback)
 
 
 def wrapper(self, func, _call_set: list):

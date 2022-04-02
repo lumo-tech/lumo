@@ -6,14 +6,15 @@ import os
 import tempfile
 import time
 from functools import wraps
-from typing import TYPE_CHECKING, NewType, Any, Optional
+from typing import TYPE_CHECKING, NewType, Any, Optional, Dict, Union
 
 from torch.utils.data import DataLoader
 
-from lumo.core import ParamsType, Meter, MetricType, Record, TrainStage
+from lumo.core import ParamsType, Meter, MetricType, Record, TrainStage, wrap_result
 from lumo.data import DataModule
 from lumo.utils.screen import inlinetqdm
-from ..data.loader import summarize_loader
+from lumo.data.loader import summarize_loader, DataLoaderType
+from lumo.utils import fmt
 
 if TYPE_CHECKING:
     from .trainer import Trainer
@@ -65,7 +66,7 @@ class BaseCallback:
 
     def __new__(cls, *_, **__):
         self = super().__new__(cls)
-        self._hooked = None
+        self._hooked = None  # type: Trainer
 
         def ecp_wrap(func):
             """Wrapper for cache exceptions"""
@@ -161,7 +162,9 @@ class TrainCallback(BaseCallback):
         - inference
     """
 
-    def on_train_begin(self, trainer: 'Trainer', func, params: ParamsType, *args, **kwargs):
+    def on_train_begin(self, trainer: 'Trainer', func, params: ParamsType,
+                       dm: Union[DataModule, DataLoaderType] = None, arg_params: ParamsType = None,
+                       *args, **kwargs):
         pass
 
     def on_train_epoch_begin(self, trainer: 'Trainer', func, params: ParamsType, *args, **kwargs):
@@ -182,32 +185,35 @@ class TrainCallback(BaseCallback):
     def on_test_step_begin(self, trainer: 'Trainer', func, params: ParamsType, *args, **kwargs):
         pass
 
-    def on_train_end(self, trainer: 'Trainer', func, params: ParamsType, result: Record, *args, **kwargs):
+    def on_train_end(self, trainer: 'Trainer', func, params: ParamsType, record: Record, *args, **kwargs):
         pass
 
     def on_train_epoch_end(self, trainer: 'Trainer', func, params: ParamsType, record: Record, *args,
                            **kwargs):
         pass
 
-    def on_test_end(self, trainer: 'Trainer', func, params: ParamsType, result: Record, *args, **kwargs):
+    def on_test_end(self, trainer: 'Trainer', func, params: ParamsType, record: Record = None, *args, **kwargs):
         pass
 
-    def on_eval_end(self, trainer: 'Trainer', func, params: ParamsType, result: Record, *args, **kwargs):
+    def on_eval_end(self, trainer: 'Trainer', func, params: ParamsType, record: Record = None, *args, **kwargs):
         pass
 
-    def on_train_step_end(self, trainer: 'Trainer', func, params: ParamsType, metric: MetricType, *args, **kwargs):
+    def on_train_step_end(self, trainer: 'Trainer', func, params: ParamsType, metric: MetricType = None, *args,
+                          **kwargs):
         pass
 
-    def on_eval_step_end(self, trainer: 'Trainer', func, params: ParamsType, metric: MetricType, *args, **kwargs):
+    def on_eval_step_end(self, trainer: 'Trainer', func, params: ParamsType, metric: MetricType = None, *args,
+                         **kwargs):
         pass
 
-    def on_test_step_end(self, trainer: 'Trainer', func, params: ParamsType, metric: MetricType, *args, **kwargs):
+    def on_test_step_end(self, trainer: 'Trainer', func, params: ParamsType, metric: MetricType = None, *args,
+                         **kwargs):
         pass
 
     def on_predict_begin(self, trainer: 'Trainer', func, params: ParamsType, *args, **kwargs):
         pass
 
-    def on_predict_end(self, trainer: 'Trainer', func, params: ParamsType, result: Any, *args, **kwargs):
+    def on_predict_end(self, trainer: 'Trainer', func, params: ParamsType, result: Any = None, *args, **kwargs):
         pass
 
     def on_inference_begin(self, trainer: 'Trainer', func, params: ParamsType, *args, **kwargs):
@@ -298,7 +304,7 @@ class EvalCallback(TrainCallback):
                            **kwargs):
         self._test_or_eval(params, trainer)
 
-    def on_train_end(self, trainer: 'Trainer', func, params: ParamsType, result: Record, *args, **kwargs):
+    def on_train_end(self, trainer: 'Trainer', func, params: ParamsType, record: Record, *args, **kwargs):
         if self._last_eval != params.eidx and self.has_eval:
             trainer.evaluate()
         if self._last_test != params.eidx and self.has_test:
@@ -317,6 +323,13 @@ class DebugCallback(BaseCallback):
     def on_first_exception(self, source: 'Trainer', func, params: ParamsType, e: BaseException, *args, **kwargs):
         super().on_first_exception(source, func, params, e, *args, **kwargs)
         print('on_first_exception()', func.__name__)
+        # from rich.console import Console
+        # console = Console()
+        # try:
+        #     import six
+        #     six.reraise(type(e), e, e.__traceback__)
+        #
+        # except:
 
     def on_exception(self, source: 'Trainer', func, params: ParamsType, e: BaseException, *args, **kwargs):
         return super().on_exception(source, func, params, e, *args, **kwargs)
@@ -344,9 +357,6 @@ class LoggerCallback(TrainCallback, InitialCallback):
         file = tempfile.TemporaryFile('w')
         self.temp = file
 
-    # def on_imodels_begin(self, trainer: 'Trainer', func, params: ParamsType, *args, **kwargs):
-    #     super().on_imodels_begin(trainer, func, params, *args, **kwargs)
-
     def on_imodels_end(self, trainer: 'Trainer', func, params: ParamsType, result: Any, *args, **kwargs):
         super().on_imodels_end(trainer, func, params, result, *args, **kwargs)
         trainer.logger.info('Model initialized.')
@@ -355,7 +365,8 @@ class LoggerCallback(TrainCallback, InitialCallback):
         super().on_hooked(source, params)
         source.logger.raw(params)
 
-    def on_process_loader_end(self, trainer: 'Trainer', func, params: ParamsType, loader: DataLoader, dm: DataModule,
+    def on_process_loader_end(self, trainer: 'Trainer', func, params: ParamsType, loader: DataLoaderType,
+                              dm: DataModule,
                               stage: TrainStage, *args, **kwargs):
         super().on_process_loader_end(trainer, func, params, loader, dm, stage, *args, **kwargs)
         if loader is None:
@@ -385,22 +396,20 @@ class LoggerCallback(TrainCallback, InitialCallback):
                                    file=self.temp)
         self.record = Record()
 
-    def update(self, trainer):
+    def update(self, trainer: 'Trainer'):
+        self.c += 1
         self.cur_tqdm.update()
         if self.c % self.step == 0:
-            if '820' in str(self.cur_tqdm):
-                trainer.logger.info(self.cur_tqdm)
+            trainer.logger.raw(self.cur_tqdm, inline=True)
 
-            trainer.logger.info(self.cur_tqdm)
-
-    def flush(self, stage, trainer: 'Trainer', close=False):
-        self.c = 0
-        if self.cur_tqdm is not None and close:
-            desc = f"{trainer.idx + 1}/{self.stage[stage]}, "
-            self.cur_tqdm.set_description_str(desc)
-            self.cur_tqdm.close()
+        if self.c % self.breakin == 0 or ((trainer.idx + 1) == self.stage[TrainStage.train]):
             trainer.logger.inline(self.cur_tqdm)
             trainer.logger.newline()
+
+    def flush(self, trainer: 'Trainer'):
+        self.c = 0
+        trainer.logger.inline(self.cur_tqdm)
+        trainer.logger.newline()
 
     def on_train_epoch_begin(self, trainer: 'Trainer', func, params: ParamsType, *args, **kwargs):
         super().on_train_epoch_begin(trainer, func, params, *args, **kwargs)
@@ -456,19 +465,19 @@ class LoggerCallback(TrainCallback, InitialCallback):
     def on_train_epoch_end(self, trainer: 'Trainer', func, params: ParamsType, record: Record, *args, **kwargs):
         super().on_train_epoch_end(trainer, func, params, record, *args, **kwargs)
         self.global_tqdm.update()
-        self.flush(TrainStage.train, trainer, close=True)
+        # self.flush(trainer)
         trainer.logger.info(self.format_train_epoch_time(**self.global_tqdm.format_dict))
 
-    def on_test_end(self, trainer: 'Trainer', func, params: ParamsType, result: Optional[Record], *args, **kwargs):
-        self.flush(TrainStage.test, trainer, close=True)
+    def on_test_end(self, trainer: 'Trainer', func, params: ParamsType, record: Optional[Record], *args, **kwargs):
+        self.flush(trainer)
         trainer.logger.info('[[Test End]]')
 
-    def on_eval_end(self, trainer: 'Trainer', func, params: ParamsType, result: Optional[Record], *args, **kwargs):
-        self.flush(TrainStage.val, trainer, close=True)
+    def on_eval_end(self, trainer: 'Trainer', func, params: ParamsType, record: Optional[Record], *args, **kwargs):
+        self.flush(trainer)
         trainer.logger.info('[[Evaluate End]]')
 
-    def on_train_end(self, trainer: 'Trainer', func, params: ParamsType, result: Optional[Record], *args, **kwargs):
-        trainer.logger.newline()
+    def on_train_end(self, trainer: 'Trainer', func, params: ParamsType, record: Optional[Record], *args, **kwargs):
+        self.flush(trainer)
         trainer.logger.info('[[Train End]]')
 
     def on_train_step_end(self, trainer: 'Trainer', func, params: ParamsType, metric: MetricType, *args, **kwargs):
@@ -477,27 +486,17 @@ class LoggerCallback(TrainCallback, InitialCallback):
         self.cur_tqdm.set_postfix(**self.record.avg(), refresh=False)
         self.update(trainer)
 
-        self.c += 1
-        if self.c >= self.breakin:
-            self.flush(TrainStage.train, trainer)
-
     def on_eval_step_end(self, trainer: 'Trainer', func, params: ParamsType, metric: MetricType, *args, **kwargs):
         self.record.record(metric)
         self.cur_tqdm.set_description_str(f"{trainer.idx + 1}/{self.stage[TrainStage.val]}, ", refresh=False)
         self.cur_tqdm.set_postfix(**self.record.avg(), refresh=False)
         self.update(trainer)
-        self.c += 1
-        if self.c >= self.breakin:
-            self.flush(TrainStage.train, trainer)
 
     def on_test_step_end(self, trainer: 'Trainer', func, params: ParamsType, metric: MetricType, *args, **kwargs):
         self.record.record(metric)
         self.cur_tqdm.set_description_str(f"{trainer.idx + 1}/{self.stage[TrainStage.test]}, ", refresh=False)
         self.cur_tqdm.set_postfix(**self.record.avg(), refresh=False)
         self.update(trainer)
-        self.c += 1
-        if self.c >= self.breakin:
-            self.flush(TrainStage.train, trainer)
 
 
 class EpochCheckpoint(TrainCallback):
@@ -509,9 +508,9 @@ class EpochCheckpoint(TrainCallback):
     def __init__(self, per_epoch=50):
         self.per_epoch = per_epoch
 
-    def on_train_epoch_end(self, trainer: 'Trainer', func, params: ParamsType, result: Optional[Record], *args,
+    def on_train_epoch_end(self, trainer: 'Trainer', func, params: ParamsType, record: Optional[Record], *args,
                            **kwargs):
-        meter = result.meter
+        meter = record.avg()
         if params.eidx % self.per_epoch == 0 and params.eidx > 0:
             trainer.save_checkpoint(meta_info=Meter.wrap_result(meter))
 
@@ -603,6 +602,106 @@ class EvalFirst(AutoLoadModel):
                 trainer.evaluate(self.datamodule)
             else:
                 trainer.evaluate()
+
+
+class RecordCallback(TrainCallback):
+    def log(self, metrics: MetricType, step, namespace):
+        metrics = wrap_result(metrics)
+        scalar_metrics = {}
+        matrix_metrics = {}
+        text_metrics = {}
+        for k, v in metrics.items():
+            v = fmt.to_ndarray(v)
+            dtype = v.dtype.name
+            elnum = v.size
+            if 'str' in dtype:
+                text_metrics[k] = str(v.tolist())
+            else:
+                if elnum == 1:
+                    scalar_metrics[k] = v
+                elif elnum > 1:
+                    matrix_metrics[k] = v
+        self.log_text(text_metrics, step, namespace)
+        self.log_scalars(scalar_metrics, step, namespace)
+        self.log_matrix(matrix_metrics, step, namespace)
+
+    def log_text(self, metrics: Dict, step: int, namespace: str):
+        return NotImplemented
+
+    def log_scalars(self, metrics: Dict, step: int, namespace: str):
+        return NotImplemented
+
+    def log_matrix(self, metrics: Dict, step: int, namespace: str):
+        return NotImplemented
+
+    def on_hooked(self, source: 'Trainer', params: ParamsType):
+        super().on_hooked(source, params)
+        source.exp.set_prop('AutoRecord', self.__class__.__name__)
+
+    def on_train_step_end(self, trainer: 'Trainer', func, params: ParamsType, metric: MetricType, *args, **kwargs):
+        super().on_train_step_end(trainer, func, params, metric, *args, **kwargs)
+        self.log(metric, step=trainer.global_steps, namespace='train.step')
+
+    def on_train_epoch_end(self, trainer: 'Trainer', func, params: ParamsType, record: Record, *args, **kwargs):
+        super().on_train_epoch_end(trainer, func, params, record, *args, **kwargs)
+        self.log(record.avg(), step=trainer.global_steps, namespace='train.epoch')
+
+    def on_test_end(self, trainer: 'Trainer', func, params: ParamsType, record: Record, *args, **kwargs):
+        super().on_test_end(trainer, func, params, record, *args, **kwargs)
+        self.log(record.avg(), step=trainer.global_steps, namespace='test')
+
+    def on_eval_end(self, trainer: 'Trainer', func, params: ParamsType, record: Record, *args, **kwargs):
+        super().on_eval_end(trainer, func, params, record, *args, **kwargs)
+        self.log(record.avg(), step=trainer.global_steps, namespace='evaluate')
+
+
+class WandbCallback(RecordCallback):
+
+    def log(self, metrics: MetricType, step, namespace):
+        metrics = {
+            f"{namespace}.{k}": v
+            for k, v in wrap_result(metrics).items()}
+        self._hooked.wandb.log(metrics, step=step)
+
+    def log_text(self, metrics: Dict, step: int, namespace: str):
+        wandb = self._hooked.wandb
+        metrics = {k: v for k, v in metrics.items()}
+        wandb.log(metrics, step=step)
+
+    def log_scalars(self, metrics: Dict, step: int, namespace: str):
+        wandb = self._hooked.wandb
+        metrics = {k: wandb.Html(v) for k, v in metrics.items()}
+        wandb.log(metrics, step=step)
+
+    def log_matrix(self, metrics: Dict, step: int, namespace: str):
+        wandb = self._hooked.wandb
+        metrics = {k: wandb.Image(v) for k, v in metrics.items()}
+        wandb.log(metrics, step=step)
+
+    def on_first_exception(self, source: 'Trainer', func, params: ParamsType, e: BaseException, *args, **kwargs):
+        super().on_first_exception(source, func, params, e, *args, **kwargs)
+
+
+class TensorBoardCallback(RecordCallback):
+    def log(self, metrics: MetricType, step, namespace):
+        metrics = wrap_result(metrics)
+        self._hooked.safe_writer.add_scalars(main_tag=namespace, tag_scalar_dict=metrics, global_step=step)
+
+    def log_text(self, metrics: Dict, step: int, namespace: str):
+        writer = self._hooked.safe_writer
+        for k, v in metrics.items():
+            writer.add_text(k, v, global_step=step)
+
+    def log_scalars(self, metrics: Dict, step: int, namespace: str):
+        writer = self._hooked.safe_writer
+        writer.add_scalars(main_tag=namespace, tag_scalar_dict=metrics, global_step=step)
+
+    def log_matrix(self, metrics: Dict, step: int, namespace: str):
+        return NotImplemented
+        # writer = self._hooked.safe_writer
+        #
+        # for k, v in metrics.items():
+        #     writer
 
 
 class StopByCode(TrainCallback):

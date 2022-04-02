@@ -19,6 +19,7 @@ from .accelerator import Accelerator
 from .base import _BaseTrainer
 from .components import TrainerExperiment
 from .saver import Saver
+from ..data.loader import DataLoaderType, DataLoaderSide
 
 
 class Trainer(_BaseTrainer):
@@ -62,6 +63,7 @@ class Trainer(_BaseTrainer):
         if isinstance(dm, DataModule):
             loader = dm[stage.value]
             if loader is None:
+                # where datamodule.idataloader() methods first invoked (automaticly).
                 loader = dm.get_loader_with_stage(stage)
                 if loader is None:
                     return None
@@ -111,6 +113,12 @@ class Trainer(_BaseTrainer):
     @property
     def world_size(self):
         return dist.world_size()
+
+    @property
+    def wandb(self):
+        import wandb
+        wandb.init(project=self.exp.exp_name, name=self.exp.test_name)
+        return wandb
 
     @property
     def logger(self):
@@ -176,7 +184,10 @@ class Trainer(_BaseTrainer):
         Returns:
             A SummaryWriter instance
         """
-        from torch.utils.tensorboard import SummaryWriter
+        try:
+            from torch.utils.tensorboard import SummaryWriter
+        except ModuleNotFoundError:
+            from tensorboardX import SummaryWriter
 
         kwargs = self.exp.board_args
         res = SummaryWriter(**kwargs)
@@ -237,28 +248,20 @@ class Trainer(_BaseTrainer):
         return self.dm
 
     @property
-    def train_dataloader(self):
-        return self.dm['train']
+    def train_dataloader(self) -> Optional[DataLoaderType]:
+        return self.datamodule['train']
 
     @property
-    def test_dataloader(self):
-        return self.dm['test']
+    def test_dataloader(self) -> Optional[DataLoaderType]:
+        return self.datamodule['test']
 
     @property
-    def val_dataloader(self):
-        return self.dm['val']
+    def val_dataloader(self) -> Optional[DataLoaderType]:
+        return self.datamodule['val']
 
     @property
-    def global_steps(self):
+    def global_steps(self) -> int:
         return self._prop['global_steps']
-
-    @property
-    def record_backend(self):
-        return self.params.get('record', {}).get('dbrecord', 500)
-
-    @property
-    def record_window_size(self):
-        return self.params.get('record', {}).get('window_size', 500)
 
     @property
     def device(self):
@@ -294,19 +297,30 @@ class Trainer(_BaseTrainer):
     def stop_train_epoch(self):
         self.train_epoch_toggle = True
 
-    def train(self, dm: Union[DataModule, DataLoader] = None, params: ParamsType = None, limit_global_steps=None):
+    def prepare_dataloader(self, loader: DataLoaderType):
+        """do not change original loader stage"""
+        if isinstance(loader, DataLoader):
+            loader = self.accelerate.prepare_data_loader(loader)
+        elif isinstance(loader, DataLoaderSide):
+            loader = loader.copy()
+            loader._loaders = {k: self.prepare_dataloader(v) for k, v in loader._loaders.items()}
+        return loader
+
+    def train(self, dm: Union[DataModule, DataLoaderType] = None, params: ParamsType = None, limit_global_steps=None):
         loader = self.train_dataloader
 
         if loader is None:
             self.set_property('early_stop', 'Lack of train loader')
             return self._prop
 
-        loader = self.accelerate.prepare_data_loader(loader)
+        loader = self.prepare_dataloader(loader)
 
         if params is None:
             params = self.params
+
         for eidx in range(params.epoch):
             self.set_epoch_idx(eidx)
+            print(loader)
             epoch_record = self.train_epoch(loader, params, limit_global_steps=limit_global_steps)
             self.set_property('record', epoch_record)
             self.set_property('record', epoch_record)
@@ -326,6 +340,9 @@ class Trainer(_BaseTrainer):
         self.change_stage(stage)
         record = self.create_record(stage=stage)
 
+        if params is None:
+            params = self.params
+
         for idx, batch in enumerate(loader):
             if self.train_epoch_toggle:
                 self.train_epoch_toggle = False
@@ -335,9 +352,10 @@ class Trainer(_BaseTrainer):
                 break
             if limit_global_steps is not None and self.global_steps >= limit_global_steps:
                 break
-            metric = self.train_step(batch, params)
-            self._prop['global_steps'] += 1
+
             self.set_idx(idx)
+            self._prop['global_steps'] += 1
+            metric = self.train_step(batch, params)
             record.record(metric)
         record.flush()
         return record
@@ -420,13 +438,16 @@ class Trainer(_BaseTrainer):
         if loader is None:
             return None
 
+        if params is None:
+            params = self.params
+
         loader = self.accelerate.prepare_data_loader(loader)
 
         record = self.create_record(stage=stage)
         for idx, batch in enumerate(loader):
-            self.set_idx(idx)
             if limit_step is not None and idx >= limit_step:
                 break
+            self.set_idx(idx)
             metric = self.test_step(batch, params)
             record.record(metric)
         record.flush()
@@ -439,13 +460,16 @@ class Trainer(_BaseTrainer):
         if loader is None:
             return None
 
+        if params is None:
+            params = self.params
+
         loader = self.accelerate.prepare_data_loader(loader)
 
         record = self.create_record(stage=stage)
         for idx, batch in enumerate(loader):
-            self.set_idx(idx)
             if limit_step is not None and idx >= limit_step:
                 break
+            self.set_idx(idx)
             metric = self.evaluate_step(batch, params)
             record.record(metric)
         record.flush()
@@ -504,30 +528,10 @@ class Trainer(_BaseTrainer):
     def Meter(self):
         return Meter()
 
-    def create_record(self, stage: TrainStage = None, prefix=None, blob=False, **kwargs):
+    def create_record(self, stage: TrainStage = None):
         if stage is None:
             stage = self.trainstage
-
-        if prefix is None:
-            prefix = ''
-        else:
-            prefix = f'{prefix}.'
-
-        if stage is None:
-            stage = ''
-        else:
-            stage = f'{stage.value}.'
-
-        if blob:
-            fn = self.exp.blob_file(f'{stage}{prefix}{self.global_steps:06d}.rd', 'metric')
-        else:
-            fn = self.exp.test_file(f'{stage}{prefix}{self.global_steps:06d}.rd', 'metric')
-
-        kwargs.setdefault('backend', self.record_backend)
-        kwargs.setdefault('window_size', self.record_window_size)
-
-        record = Record(location=fn,
-                        **kwargs)
+        record = Record(stage=stage)
         return record
 
     def wait_for_everyone(self):

@@ -2,8 +2,10 @@ import torch
 from torch import nn
 from torch.nn import functional as F
 from lumo.core import MetricType
-from lumo import Trainer, TrainerParams, callbacks, Meter
+from lumo import Trainer, TrainerParams, callbacks, Meter, TrainStage
 from lumo.data import DatasetBuilder
+
+from lumo import DataModule
 
 
 # from lumo import ParamsType
@@ -74,24 +76,47 @@ class MyTrainer(Trainer):
         return meter
 
 
+class MyDataModule(DataModule):
+
+    def idataloader(self, params: ParamsType = None, stage: TrainStage = None):
+        super().idataloader(params, stage)
+        # Use stage.is_xxx() to decide which type of dataloader you need to create.
+        if stage.is_train():
+            db = (
+                DatasetBuilder()
+                    .add_input('xs', torch.rand(5000, 28, 28))
+                    .add_input('ys', torch.randint(0, 10, (5000,)))
+                    .add_output('xs', 'xs')
+                    .add_output('ys', 'ys')
+            )
+            loader = db.DataLoader(batch_size=params.batch_size)
+
+        else:
+            # if stage.is_test()
+            # if stage.is_val()
+            db = (
+                DatasetBuilder()
+                    .add_input('xs', torch.rand(500, 28, 28))
+                    .add_input('ys', torch.randint(0, 10, (500,)))
+                    .add_output('xs', 'xs')
+                    .add_output('ys', 'ys')
+            )
+            loader = db.DataLoader(batch_size=params.batch_size)
+        self.regist_dataloader_with_stage(stage, loader)
+
+
 def main():
     params = MyParams()
     params.from_args()  # see params example for more usage methods.
 
-    # Create a small mnist-like dummy dataset
-    db = (
-        DatasetBuilder()
-            .add_input('xs', torch.rand(5000, 28, 28))
-            .add_input('ys', torch.randint(0, 10, (5000,)))
-            .add_output('xs', 'xs')
-            .add_output('ys', 'ys')
-    )
+    # Create a DataModule object to handle all dataloaders
+    dm = MyDataModule()
 
-    trainer = MyTrainer(params)
+    trainer = MyTrainer(params, dm)
 
     # Create loader for train
-    loader = db.DataLoader(batch_size=params.batch_size)
-    trainer.train(loader)
+    # trainer.train(loader)
+    trainer.train()
 
 
 if __name__ == '__main__':

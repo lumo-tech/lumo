@@ -49,9 +49,9 @@ class Meter(metaclass=PropVar):
 
             if self._stage in {'min', 'max'} and not isscalar:
                 raise ValueError(
-                    f'Only support min/max operator on tensor metrics, but got data of shape {value.shape}.')
+                    f'Only support min/max(a) operator on scalar metrics, but got data of shape {value.shape}.')
             elif self._stage in {'min', 'max', 'sum', 'mean', 'smean'} and 'str' in dtype:
-                raise ValueError(f'Only support min/max/sum/mean operator on scalar metrics, but got type {dtype}.')
+                raise ValueError(f'Only support min/max/sum/mean operator on tensor metrics, but got type {dtype}.')
 
             if self._stage == 'default':
                 if isscalar:

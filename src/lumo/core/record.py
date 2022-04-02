@@ -1,4 +1,5 @@
 import time
+import warnings
 from numbers import Number
 
 from . import Attr
@@ -34,40 +35,34 @@ def wrap_result(metric: MetricType) -> Meter:
 
 
 class Record(metaclass=PropVar):
-    def __init__(self, location=None, backend='memory', window_size=500):
-        self._prop['backend'] = backend
-        self._prop['location'] = location
-        self._prop['window_size'] = window_size
-
+    def __init__(self, window_size=500, **kwargs):
+        self._prop.update(kwargs)
         self._cache = []
         self._agg = {}  # type:Dict[str,AggItem]
 
     def avg(self) -> Attr:
+        warnings.warn('avg will be deprecated in later version, use agg() instead.')
+        return self.agg()
+
+    def agg(self) -> Attr:
         res = Attr()
         for k, v in self._agg.items():
             res[k] = v.res
         return res
 
     @property
-    def backend(self):
-        return self._prop['backend']
-
-    @property
-    def window_size(self):
-        return self._prop['window_size']
-
-    def record_tensor(self, name, tensor):
-        pass
+    def stage(self):
+        return self._prop['stage']
 
     def record(self, metric, global_step=None):
         meter = wrap_result(metric)
-        self._cache.append(record_event(
-            metric=meter,
-            global_step=global_step,
-            time=time.time())
-        )
-        if len(self._cache) > self.window_size:
-            self.flush()
+        # self._cache.append(record_event(
+        #     metric=meter,
+        #     global_step=global_step,
+        #     time=time.time())
+        # )
+        # if len(self._cache) > self.window_size:
+        #     self.flush()
         agg = meter._avg
 
         for k, v in meter.items():
@@ -83,19 +78,13 @@ class Record(metaclass=PropVar):
         self._cache.clear()
 
     def flush(self):
-        if self.backend == 'memory':
-            self._cache.clear()
-        elif self.backend == 'dbrecord':
-            pass
-        elif self.backend == 'csv':
-            pass
-        elif self.backend == 'pickle':
-            pass
+        self._cache.clear()
 
 
 class AggItem:
     def __init__(self, stg):
         self.stg = stg
+        self._last = 0
         self.acc = 0
         self.c = 0
 
@@ -112,6 +101,10 @@ class AggItem:
 
         return self.acc
 
+    @property
+    def last(self):
+        return self._last
+
     def update(self, val):
         if self.stg == 'last':
             self.acc = val
@@ -122,3 +115,4 @@ class AggItem:
         elif self.stg in {'mean', 'sum'}:
             self.acc += val
             self.c += 1
+        self._last = val

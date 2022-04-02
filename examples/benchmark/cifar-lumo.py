@@ -95,7 +95,7 @@ class ResnetTrainer(callbacks.TrainCallback,
         meter.Acc = (logits.argmax(dim=-1) == ys).float().mean()
 
         self.optim.zero_grad()
-        self.accelerator.backward(loss)
+        self.accelerate.backward(loss)
         self.optim.step()
         return meter
 

@@ -26,10 +26,8 @@ def validate_scalar_shape(ndarray, name=''):
     return ndarray
 
 
-def is_scalar(ndarray):
-    if ndarray.ndim != 0:
-        return False
-    return True
+def is_scalar(ndarray: np.ndarray):
+    return ndarray.size == 1
 
 
 def strftime(fmt='%y-%m-%d-%H%M%S', dateobj: datetime = None):
