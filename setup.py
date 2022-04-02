@@ -1,3 +1,7 @@
+import sys
+
+sys.path.insert(0, './src/')
+print(sys.path)
 from setuptools import setup, find_packages
 from lumo import __version__
 
@@ -15,7 +19,7 @@ sudo pip install dist/$(python3 install.py);
 pip install dist/$(python3 install.py) --user
 """
 
-print(find_packages('.', exclude=('tests', 'lumo_frontend')))
+print(find_packages('src'))
 
 setup(
     name='lumo',
@@ -34,11 +38,12 @@ setup(
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
     ],
+    package_dir={"": "src"},
     keywords='lumo',
-    packages=find_packages('.', exclude=('tests', 'lumo_frontend')),
+    packages=find_packages('src'),
     entry_points={
-        'console_scripts': [
-            'lumo = lumo.cli.cli:main'
-        ]
+        # 'console_scripts': [
+        #     'lumo = lumo.cli.cli:main'
+        # ]
     },
 )
