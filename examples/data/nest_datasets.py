@@ -4,7 +4,7 @@ import torch
 
 sup_db = (
     DatasetBuilder()
-        .add_input('xs', torch.rand(50, 14, 14, 3))
+        .add_input('xs', torch.rand(50, 14, 14))
         .add_input('ys', torch.randint(0, 10, (50,)))
         .add_output('xs', 'xs1', transforms.RandomHorizontalFlip())
         .add_output('xs', 'xs2')
@@ -14,14 +14,16 @@ sup_db = (
 
 un_db = (
     DatasetBuilder()
-        .add_input('xs', torch.rand(500, 14, 14, 3))
+        .add_input('xs', torch.rand(500, 14, 14))
         .add_input('ys', torch.randint(0, 10, (500,)))
         .add_output('xs', 'xs1', transforms.RandomHorizontalFlip())
         .add_output('xs', 'xs2')
         .add_output('ys', 'ys')
 )
 
+# Scale size of sup_db to the same size as un_db(500)
 sup_db.scale_to_size(len(un_db))
+print(len(sup_db))
 
 db = (
     DatasetBuilder()
