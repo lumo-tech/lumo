@@ -4,6 +4,7 @@ from typing import Union, Dict, Any, Optional, Sequence, Mapping
 
 import numpy as np
 import torch
+from accelerate import DistributedDataParallelKwargs
 from accelerate.utils import send_to_device
 from torch import nn
 from torch.optim import Optimizer
@@ -47,10 +48,20 @@ class Trainer(_BaseTrainer):
         self.train_epoch_toggle = False
         self.train_toggle = False
 
-        self.accelerate = Accelerator(device=params.get('device', None))
+        device = params.get('device', None) if not is_dist() else None
+
+        self.accelerate = Accelerator(device=device,
+                                      kwargs_handlers=[DistributedDataParallelKwargs(find_unused_parameters=True)])
+
         self.set_global_steps(params.get('global_steps', 0))
         if params.get('debug', False):
             self.exp.set_prop('debug', True)
+
+    # def __getstate__(self):
+    #     return self.__dict__
+    #
+    # def __setstate__(self, state):
+    #     self.__dict__.update(state)
 
     def regist_dataloader(self, dataloader: DataLoader, stage: TrainStage):
         self.datamodule.regist_dataloader_with_stage(stage, dataloader)

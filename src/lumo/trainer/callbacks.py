@@ -618,6 +618,8 @@ class EvalFirst(AutoLoadModel):
 
 
 class RecordCallback(TrainCallback):
+    only_main_process = True
+
     def log(self, metrics: MetricType, step, namespace):
         metrics = wrap_result(metrics)
         scalar_metrics = {}
@@ -669,6 +671,7 @@ class RecordCallback(TrainCallback):
 
 
 class WandbCallback(RecordCallback):
+    only_main_process = True
 
     def __init__(self, metric_step=500) -> None:
         super().__init__()
@@ -703,6 +706,7 @@ class WandbCallback(RecordCallback):
 
 
 class TensorBoardCallback(RecordCallback):
+    only_main_process = True
 
     def on_hooked(self, source: 'Trainer', params: ParamsType):
         super().on_hooked(source, params)
@@ -755,6 +759,8 @@ class SeedCallback(InitialCallback):
 
 
 class NotionCallback(TrainCallback, InitialCallback):
+    only_main_process = True
+
     def __init__(self, auth, database_id):
         import potion
         self.auth = auth

@@ -174,10 +174,10 @@ class _BaseTrainer(metaclass=TrainerPropVar):
         return self
 
     def __setattr__(self, name, value):
+        super().__setattr__(name, value)
         if name.startswith('_') or name.endswith('_'):
             # when callback is trainer itself, _hooked will be passed, and caused recursion
             # if some pretrained models need to be ignored in save/load stage, it can be named like 'some_' or '_some'
-            super().__setattr__(name, value)
             return
 
         if isinstance(value, torch.device):
@@ -196,22 +196,22 @@ class _BaseTrainer(metaclass=TrainerPropVar):
             super().__setattr__(name, value)
             return
 
-        if name in self.__dict__:
-            self.__dict__.pop(name)
+        # if name in self.__dict__: TODO workaround multi-gpu error: Expected to mark a variable ready only once
+        #     self.__dict__.pop(name)
 
         self._state_dicts.setdefault(type_name, {})[name] = value
         self._rev_index[name] = type_name
 
-    def __getattr__(self, name):
-        if name.startswith('_') or name.endswith('_'):
-            # when callback is trainer itself, _hooked will be passed, and caused recursion
-            # if some pretrained models need to be ignored in save/load stage, it can be named like 'some_' or '_some'
-            raise AttributeError(name)
-        type_name = self._rev_index.get(name, None)
-        if type_name is None:
-            raise AttributeError(name)
-
-        return self._state_dicts[type_name][name]
+    # def __getattr__(self, name):
+    #     if name.startswith('_') or name.endswith('_'):
+    #         # when callback is trainer itself, _hooked will be passed, and caused recursion
+    #         # if some pretrained models need to be ignored in save/load stage, it can be named like 'some_' or '_some'
+    #         raise AttributeError(name)
+    #     type_name = self._rev_index.get(name, None)
+    #     if type_name is None:
+    #         raise AttributeError(name)
+    #
+    #     return self._state_dicts[type_name][name]
 
     @classmethod
     def _gene_class_exp_name(cls) -> str:
