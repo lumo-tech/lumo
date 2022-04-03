@@ -25,26 +25,6 @@ def checkdir(path: Union[Path, str]):
     return path
 
 
-# 220321.003.b7t
-def is_test_root(test_root: str):
-    test_name = os.path.basename(test_root.rstrip('/'))
-    chunk = test_name.split('.')
-    if len(test_name) != 14:
-        return False
-
-    if len(chunk) != 3:
-        return False
-    for k, c in zip(chunk, [6, 3, 3]):
-        if len(k) != c:
-            return False
-    for k in chunk[:2]:
-        try:
-            int(k)
-        except:
-            return False
-    return True
-
-
 class Experiment(metaclass=PropVar):
     def __init__(self, exp_name: str, root=None):
         if not can_be_filename(exp_name):
@@ -55,8 +35,6 @@ class Experiment(metaclass=PropVar):
         if root is None:
             root = libhome()
         self._root = Path(os.path.abspath(root))
-        self.add_tag(self.__class__.__name__, 'exp_type')
-
         self.add_exit_hook(self.end)
 
     @property
@@ -132,10 +110,9 @@ class Experiment(metaclass=PropVar):
             old_info = self.load_info(key, info_dir=info_dir)
             old_info.update(info)
             info = old_info
-        if not set_prop:
-            io.dump_json(info, fn)
         if set_prop:
             self.set_prop(key, info)
+        io.dump_json(info, fn)
 
     def load_info(self, key: str, info_dir='info'):
         fn = self.test_file(f'{key}.json', info_dir)
@@ -261,10 +238,21 @@ class Experiment(metaclass=PropVar):
 
         atexit.register(exp_func)
 
+    def initial(self):
+        self.add_tag(self.__class__.__name__, 'exp_type')
+        self.dump_info('execute', {
+            'repo': self.project_root,
+            'cwd': os.getcwd(),
+            'exec_file': sys.argv[0],
+            'exec_bin': sys.executable,
+            'exec_argv': sys.argv
+        })
+
     @call_on_main_process_wrap
     def start(self):
         if self.get_prop('start', False):
             return
+        self.initial()
         self.set_prop('start', True)
         for hook in self._hooks.values():  # type: ExpHook
             hook.on_start(self)
@@ -306,6 +294,9 @@ class Experiment(metaclass=PropVar):
     def get_prop(self, key, default=None):
         return self._prop.get(key, default)
 
+    def has_prop(self, key):
+        return key in self._prop
+
     def set_prop(self, key, value):
         self._prop[key] = value
 
@@ -344,6 +335,7 @@ class Experiment(metaclass=PropVar):
 
     @classmethod
     def from_disk(cls, path):
+        from .finder import is_test_root
         if not is_test_root(path):
             raise ValueError(f'{path} is not a valid test_root')
 
@@ -356,7 +348,11 @@ class Experiment(metaclass=PropVar):
 
     @property
     def exec_argv(self):
-        return [os.path.basename(sys.executable), *sys.argv]
+        execute_info = self.get_prop('execute')
+        try:
+            return [os.path.basename(execute_info['exec_bin']), *execute_info['exec_argv']]
+        except:
+            return []
 
 
 class SimpleExperiment(Experiment):
@@ -366,7 +362,6 @@ class SimpleExperiment(Experiment):
         from . import exphook
         self.set_hook(exphook.LastCmd())
         self.set_hook(exphook.LockFile())
-        self.set_hook(exphook.ExecuteInfo())
         self.set_hook(exphook.GitCommit())
         self.set_hook(exphook.RecordAbort())
         self.set_hook(exphook.Diary())

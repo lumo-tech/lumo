@@ -2,7 +2,6 @@ import os
 import stat
 import subprocess
 import sys
-import textwrap
 from collections import OrderedDict
 from pprint import pformat
 
@@ -13,7 +12,7 @@ from lumo.proc.dependency import get_lock
 from lumo.proc.dist import is_main
 from lumo.utils import safe_io as io
 from lumo.utils.exithook import wrap_before
-from lumo.utils.fmt import strftime
+from lumo.utils.fmt import strftime, indent_print
 from .experiment import Experiment
 
 
@@ -150,19 +149,6 @@ class GitCommit(ExpHook):
         io.dump_json(exps, file)
 
 
-class ExecuteInfo(ExpHook):
-
-    def regist(self, exp: Experiment):
-        super().regist(exp)
-        exp.dump_info('execute', {
-            'repo': exp.project_root,
-            'cwd': os.getcwd(),
-            'exec_file': sys.argv[0],
-            'exec_bin': sys.executable,
-            'exec_argv': sys.argv
-        })
-
-
 class LockFile(ExpHook):
 
     def on_start(self, exp: Experiment, *args, **kwargs):
@@ -175,10 +161,6 @@ class LockFile(ExpHook):
                                        'accelerate',
                                        'hydra',
                                        'omegaconf', ))
-
-
-def indent_print(text, indent='    '):
-    print(textwrap.indent(text, indent))
 
 
 class FinalReport(ExpHook):
