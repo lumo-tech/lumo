@@ -238,6 +238,7 @@ class Experiment(metaclass=PropVar):
 
         atexit.register(exp_func)
 
+    @call_on_main_process_wrap
     def initial(self):
         self.add_tag(self.__class__.__name__, 'exp_type')
         self.dump_info('execute', {
