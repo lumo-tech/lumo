@@ -9,7 +9,7 @@ class BatchEmbedding():
     """用于将多个 batch 的输入一同添加到 tensorboard 中"""
     def __init__(self, writer, global_step=None, tag="default"):
         self.writer = writer
-        self.global_step = global_step
+        self.global_steps = global_step
         self.tag = tag
         self.mats = []
         self.metadatas = []
@@ -25,5 +25,5 @@ class BatchEmbedding():
                                   torch.cat(self.metadatas[:max_len]),
                                   self.label_imgs,
                                   tag=self.tag,
-                                  global_step=self.global_step)
+                                  global_step=self.global_steps)
 
