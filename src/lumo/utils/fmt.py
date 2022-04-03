@@ -1,3 +1,4 @@
+import textwrap
 from datetime import datetime
 
 import numpy as np
@@ -49,3 +50,7 @@ def to_filename(basename):
 
 def can_be_filename(basename):
     return re.search(_invalid_fc, basename) is None
+
+
+def indent_print(text, indent='    '):
+    print(textwrap.indent(text, indent))
