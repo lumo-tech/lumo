@@ -455,7 +455,10 @@ class LoggerCallback(TrainCallback, InitialCallback):
         remaining = (total - n) / rate if rate and total else 0
         remaining_str = self.format_interval(remaining) if rate else '?'
 
-        rate_str = self.format_interval(1 / rate)
+        if rate is None:
+            rate_str = '?'
+        else:
+            rate_str = self.format_interval(1 / rate)
 
         last = time.time() - self.time
         last_str = self.format_interval(last)
@@ -468,11 +471,15 @@ class LoggerCallback(TrainCallback, InitialCallback):
         # self.flush(trainer)
         trainer.logger.info(self.format_train_epoch_time(**self.global_tqdm.format_dict))
 
-    def on_test_end(self, trainer: 'Trainer', func, params: ParamsType, record: Optional[Record], *args, **kwargs):
+    def on_test_end(self, trainer: 'Trainer', func, params: ParamsType,
+                    record: Optional[Record] = None,
+                    *args, **kwargs):
         self.flush(trainer)
         trainer.logger.info('[[Test End]]')
 
-    def on_eval_end(self, trainer: 'Trainer', func, params: ParamsType, record: Optional[Record], *args, **kwargs):
+    def on_eval_end(self, trainer: 'Trainer', func, params: ParamsType,
+                    record: Optional[Record] = None,
+                    *args, **kwargs):
         self.flush(trainer)
         trainer.logger.info('[[Evaluate End]]')
 
@@ -480,22 +487,28 @@ class LoggerCallback(TrainCallback, InitialCallback):
         self.flush(trainer)
         trainer.logger.info('[[Train End]]')
 
-    def on_train_step_end(self, trainer: 'Trainer', func, params: ParamsType, metric: MetricType, *args, **kwargs):
+    def on_train_step_end(self, trainer: 'Trainer', func, params: ParamsType,
+                          metric: MetricType = None,
+                          *args, **kwargs):
         self.record.record(metric)
         self.cur_tqdm.set_description_str(f"{trainer.idx + 1}/{self.stage[TrainStage.train]}, ", refresh=False)
-        self.cur_tqdm.set_postfix(**self.record.avg(), refresh=False)
+        self.cur_tqdm.set_postfix_str(self.record.tostr(), refresh=False)
         self.update(trainer)
 
-    def on_eval_step_end(self, trainer: 'Trainer', func, params: ParamsType, metric: MetricType, *args, **kwargs):
+    def on_eval_step_end(self, trainer: 'Trainer', func, params: ParamsType,
+                         metric: MetricType = None,
+                         *args, **kwargs):
         self.record.record(metric)
         self.cur_tqdm.set_description_str(f"{trainer.idx + 1}/{self.stage[TrainStage.val]}, ", refresh=False)
-        self.cur_tqdm.set_postfix(**self.record.avg(), refresh=False)
+        self.cur_tqdm.set_postfix_str(self.record.tostr(), refresh=False)
         self.update(trainer)
 
-    def on_test_step_end(self, trainer: 'Trainer', func, params: ParamsType, metric: MetricType, *args, **kwargs):
+    def on_test_step_end(self, trainer: 'Trainer', func, params: ParamsType,
+                         metric: MetricType = None,
+                         *args, **kwargs):
         self.record.record(metric)
         self.cur_tqdm.set_description_str(f"{trainer.idx + 1}/{self.stage[TrainStage.test]}, ", refresh=False)
-        self.cur_tqdm.set_postfix(**self.record.avg(), refresh=False)
+        self.cur_tqdm.set_postfix_str(self.record.tostr(), refresh=False)
         self.update(trainer)
 
 
@@ -657,11 +670,18 @@ class RecordCallback(TrainCallback):
 
 class WandbCallback(RecordCallback):
 
+    def __init__(self, metric_step=500) -> None:
+        super().__init__()
+        self.metric_step = metric_step
+        self.c = 0
+
     def log(self, metrics: MetricType, step, namespace):
-        metrics = {
-            f"{namespace}.{k}": v
-            for k, v in wrap_result(metrics).items()}
-        self._hooked.wandb.log(metrics, step=step)
+        self.c += 1
+        if self.c % self.metric_step == 0:
+            metrics = {
+                f"{namespace}.{k}": v
+                for k, v in wrap_result(metrics).items()}
+            self._hooked.wandb.log(metrics, step=step)
 
     def log_text(self, metrics: Dict, step: int, namespace: str):
         wandb = self._hooked.wandb
@@ -683,9 +703,14 @@ class WandbCallback(RecordCallback):
 
 
 class TensorBoardCallback(RecordCallback):
-    def log(self, metrics: MetricType, step, namespace):
-        metrics = wrap_result(metrics)
-        self._hooked.safe_writer.add_scalars(main_tag=namespace, tag_scalar_dict=metrics, global_step=step)
+
+    def on_hooked(self, source: 'Trainer', params: ParamsType):
+        super().on_hooked(source, params)
+        _ = source.safe_writer
+        # get experiment property of writer
+        args = source.exp.get_prop('tensorboard_args')
+        log_dir = args['log_dir']
+        source.logger.raw(f'tensorboard --logdir {log_dir}')
 
     def log_text(self, metrics: Dict, step: int, namespace: str):
         writer = self._hooked.safe_writer
@@ -694,30 +719,12 @@ class TensorBoardCallback(RecordCallback):
 
     def log_scalars(self, metrics: Dict, step: int, namespace: str):
         writer = self._hooked.safe_writer
-        writer.add_scalars(main_tag=namespace, tag_scalar_dict=metrics, global_step=step)
+        for k, v in metrics.items():
+            writer.add_scalar(tag=f'{namespace}.{k}', scalar_value=v,
+                              global_step=step)
 
     def log_matrix(self, metrics: Dict, step: int, namespace: str):
         return NotImplemented
-        # writer = self._hooked.safe_writer
-        #
-        # for k, v in metrics.items():
-        #     writer
-
-class LocalRecordCallback(RecordCallback):
-
-
-    def on_hooked(self, source: 'Trainer', params: ParamsType):
-        super().on_hooked(source, params)
-        source.exp.blob_file('')
-
-    def log_text(self, metrics: Dict, step: int, namespace: str):
-        return super().log_text(metrics, step, namespace)
-
-    def log_scalars(self, metrics: Dict, step: int, namespace: str):
-        return super().log_scalars(metrics, step, namespace)
-
-    def log_matrix(self, metrics: Dict, step: int, namespace: str):
-        return super().log_matrix(metrics, step, namespace)
 
 
 class StopByCode(TrainCallback):
@@ -745,3 +752,10 @@ class SeedCallback(InitialCallback):
             trainer.logger.info('params.seed is None, seed will be set as 0')
             seed = 0
         trainer.rnd.mark(seed)
+
+
+class NotionCallback(TrainCallback, InitialCallback):
+    def __init__(self, auth, database_id):
+        import potion
+        self.auth = auth
+        self.database_id = database_id

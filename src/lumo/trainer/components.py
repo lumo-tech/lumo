@@ -19,11 +19,17 @@ class TrainerExperiment(SimpleExperiment):
 
     @property
     def board_args(self):
-        log_dir = self.test_dir('board')
-        return {
-            'filename_suffix': '.bd',
-            'log_dir': log_dir,
-        }
+        key = 'tensorboard_args'
+        if self.has_prop(key):
+            return self.get_prop(key)
+        else:
+            log_dir = self.test_dir('board')
+            res = {
+                'filename_suffix': '.bd',
+                'log_dir': log_dir,
+            }
+            self.dump_info('tensorboard_args', res)
+            return res
 
     @property
     def saver_dir(self):

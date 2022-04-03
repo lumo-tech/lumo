@@ -118,7 +118,7 @@ class Trainer(_BaseTrainer):
     def wandb(self):
         import wandb
         wandb.init(project=self.exp.exp_name, name=self.exp.test_name)
-        wandb.config(self.params.to_dict())
+        wandb.config = self.params.to_dict()
         return wandb
 
     @property
@@ -131,7 +131,8 @@ class Trainer(_BaseTrainer):
                 self._logger.set_verbose(Logger.V_DEBUG)
                 self._logger.debug('Enable debug log.')
             if is_main():
-                self._logger.add_log_dir(self.exp.log_dir)
+                fn = self._logger.add_log_dir(self.exp.log_dir)
+                self.exp.dump_info('logger_args', {'log_dir': fn})
         return self._logger
 
     @property
@@ -321,7 +322,6 @@ class Trainer(_BaseTrainer):
 
         for eidx in range(params.epoch):
             self.set_epoch_idx(eidx)
-            print(loader)
             epoch_record = self.train_epoch(loader, params, limit_global_steps=limit_global_steps)
             self.set_property('record', epoch_record)
             self.set_property('record', epoch_record)

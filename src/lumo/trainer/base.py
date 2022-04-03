@@ -196,6 +196,9 @@ class _BaseTrainer(metaclass=TrainerPropVar):
             super().__setattr__(name, value)
             return
 
+        if name in self.__dict__:
+            self.__dict__.pop(name)
+
         self._state_dicts.setdefault(type_name, {})[name] = value
         self._rev_index[name] = type_name
 
