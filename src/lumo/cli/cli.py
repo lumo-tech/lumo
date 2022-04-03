@@ -40,13 +40,28 @@ lumo port
 
 
 class Main:
+    def sum(self, tid):
+        """
+
+        Args:
+            tid: test_name or test_root
+
+        Returns:
+
+        """
+        from ..exp.finder import summary_experiment
+        summary_experiment(tid)
+
+    def today(self):
+
+
     def init(self, path):
         git_init(path)
         print(os.path.abspath(path))
 
-    def extract(self, test_root):
+    def extract(self, test_root, output=None, verbose=True):
         exp = Experiment.from_disk(test_root)
-
+        test_extract(test_root, output=output, verbose=verbose)
 
     def clone(self, arg: str, alias: str = None):
         """
