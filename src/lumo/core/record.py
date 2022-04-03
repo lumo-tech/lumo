@@ -1,4 +1,3 @@
-import time
 import warnings
 from numbers import Number
 
@@ -8,6 +7,7 @@ from .meter import Meter
 import torch
 import numpy as np
 from typing import NewType, Mapping, Union, Sequence, Dict
+from collections import OrderedDict
 
 MetricType = NewType('MetricType', Union[Mapping, Meter, Sequence,
                                          Number, torch.Tensor, np.ndarray
@@ -38,7 +38,7 @@ class Record(metaclass=PropVar):
     def __init__(self, window_size=500, **kwargs):
         self._prop.update(kwargs)
         self._cache = []
-        self._agg = {}  # type:Dict[str,AggItem]
+        self._agg = OrderedDict()  # type:Dict[str,AggItem]
 
     def avg(self) -> Attr:
         warnings.warn('avg will be deprecated in later version, use agg() instead.')
@@ -54,15 +54,15 @@ class Record(metaclass=PropVar):
     def stage(self):
         return self._prop['stage']
 
+    def __str__(self):
+        res = self.agg()
+        return ', '.join([f'{k}={v:.4g}' for k, v in res.items()])
+
+    def tostr(self):
+        return str(self)
+
     def record(self, metric, global_step=None):
         meter = wrap_result(metric)
-        # self._cache.append(record_event(
-        #     metric=meter,
-        #     global_step=global_step,
-        #     time=time.time())
-        # )
-        # if len(self._cache) > self.window_size:
-        #     self.flush()
         agg = meter._avg
 
         for k, v in meter.items():
