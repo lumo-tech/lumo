@@ -18,6 +18,15 @@ class Meter(metaclass=PropVar):
         self._rec = {}
         self._avg = {}
 
+    def sorted(self) -> 'Meter':
+        m = Meter()
+        m._rec = self._rec
+        m._avg = OrderedDict()
+        m._prop = self._prop
+        for k in sorted(self._avg.keys()):
+            m._avg[k] = self._avg[k]
+        return m
+
     @property
     def _stage(self):
         return self._prop.get('stage', 'default')
