@@ -1,12 +1,16 @@
+import math
 from typing import Optional, List, Union
 
 import torch
 from accelerate.data_loader import (IterableDatasetShard, BatchSamplerShard, _PYTORCH_DATALOADER_KWARGS,
                                     DataLoaderDispatcher as _DataLoaderDispatcher, DataLoaderShard as _DataLoaderShard)
-from accelerate.state import AcceleratorState
-from accelerate.utils import RNGType
+from accelerate.state import AcceleratorState, DistributedType, is_tpu_available
+from accelerate.utils import RNGType, synchronize_rng_states, send_to_device
 from torch.utils.data import DataLoader, IterableDataset
 from .loader import LumoDataLoader, DataLoaderIterWrap
+
+if is_tpu_available():
+    import torch_xla.core.xla_model as xm
 
 
 class DataLoaderDispatcher(_DataLoaderDispatcher, LumoDataLoader):
@@ -17,8 +21,14 @@ class DataLoaderDispatcher(_DataLoaderDispatcher, LumoDataLoader):
 
 class DataLoaderShard(_DataLoaderShard, LumoDataLoader):
 
-    def __iter__(self) -> DataLoaderIterWrap:
-        return super().__iter__()
+    def __iter__(self):
+        if self.rng_types is not None:
+            synchronize_rng_states(self.rng_types, self.generator)
+        state = AcceleratorState()
+        for batch in LumoDataLoader.__iter__(self):
+            if state.distributed_type == DistributedType.TPU:
+                xm.mark_step()
+            yield batch if self.device is None else send_to_device(batch, self.device)
 
 
 def prepare_data_loader(
@@ -173,7 +183,7 @@ def prepare_data_loader(
             **kwargs,
         )
 
-    if isinstance(dataloader,LumoDataLoader):
+    if isinstance(dataloader, LumoDataLoader):
         res.set_prop(dataloader._prop)
 
     return res

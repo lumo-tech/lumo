@@ -1,4 +1,5 @@
 import bisect
+import warnings
 from functools import lru_cache
 from typing import Union, Dict, Any, Optional, Sequence, Mapping
 
@@ -9,11 +10,11 @@ from accelerate.utils import send_to_device
 from torch import nn
 from torch.optim import Optimizer
 from torch.utils.data import DataLoader
-
+from lumo.data.accelerator import DataLoaderShard, DataLoaderDispatcher
 from lumo.core import ParamsType, TrainStage, Record, MetricType, Meter, Attr
 from lumo.data import DataModule
 from lumo.proc import dist
-from lumo.proc.dist import is_main, is_dist
+
 from lumo.trainer.rnd import RndManager
 from lumo.utils.logger import Logger
 from .accelerator import Accelerator
@@ -48,7 +49,7 @@ class Trainer(_BaseTrainer):
         self.train_epoch_toggle = False
         self.train_toggle = False
 
-        device = params.get('device', None) if not is_dist() else None
+        device = params.get('device', None) if not self.is_dist else None
 
         self.accelerate = Accelerator(device=device,
                                       kwargs_handlers=[DistributedDataParallelKwargs(find_unused_parameters=True)])
@@ -78,9 +79,11 @@ class Trainer(_BaseTrainer):
                 loader = dm.get_loader_with_stage(stage)
                 if loader is None:
                     return None
+                loader = self.prepare_dataloader(loader, stage)
                 self.regist_dataloader(loader, stage=stage)
         elif isinstance(dm, DataLoader):
             loader = dm
+            loader = self.prepare_dataloader(loader, stage)
             self.regist_dataloader(loader, stage=stage)
         else:
             return None
@@ -114,6 +117,10 @@ class Trainer(_BaseTrainer):
         return self.params.get('debug', False)
 
     @property
+    def is_main(self):
+        return dist.is_main()
+
+    @property
     def is_dist(self):
         return dist.is_dist()
 
@@ -141,7 +148,7 @@ class Trainer(_BaseTrainer):
             if self.params.get('debug', False):
                 self._logger.set_verbose(Logger.V_DEBUG)
                 self._logger.debug('Enable debug log.')
-            if is_main():
+            if self.is_main:
                 fn = self._logger.add_log_dir(self.exp.log_dir)
                 self.exp.dump_info('logger_args', {'log_dir': fn})
         return self._logger
@@ -310,13 +317,21 @@ class Trainer(_BaseTrainer):
     def stop_train_epoch(self):
         self.train_epoch_toggle = True
 
-    def prepare_dataloader(self, loader: DataLoaderType):
+    def prepare_dataloader(self, loader: DataLoaderType, stage: TrainStage = None):
+        if isinstance(loader, (DataLoaderShard, DataLoaderDispatcher)):
+            warnings.warn('Duplicated prepare a same DataLoader twice, check your code.')
+            return loader
+
+        split_batches = self.params.get('split_batches', None)
+        if stage is not None and not stage.is_train():
+            split_batches = True
+
         """do not change original loader stage"""
         if isinstance(loader, DataLoader):
-            loader = self.accelerate.prepare_data_loader(loader)
+            loader = self.accelerate.prepare_data_loader(loader, split_batches=split_batches)
         elif isinstance(loader, DataLoaderSide):
             loader = loader.copy()
-            loader._loaders = {k: self.prepare_dataloader(v) for k, v in loader._loaders.items()}
+            loader._loaders = {k: self.prepare_dataloader(v, stage) for k, v in loader._loaders.items()}
         return loader
 
     def train(self, dm: Union[DataModule, DataLoaderType] = None, params: ParamsType = None, limit_global_steps=None):
@@ -325,8 +340,6 @@ class Trainer(_BaseTrainer):
         if loader is None:
             self.set_property('early_stop', 'Lack of train loader')
             return self._prop
-
-        loader = self.prepare_dataloader(loader)
 
         if params is None:
             params = self.params
@@ -355,6 +368,7 @@ class Trainer(_BaseTrainer):
         if params is None:
             params = self.params
 
+        self.wait_for_everyone()
         for idx, batch in enumerate(loader):
             if self.train_epoch_toggle:
                 self.train_epoch_toggle = False
@@ -405,12 +419,12 @@ class Trainer(_BaseTrainer):
             callback.on_hook_failed(self, msg)
             return False
 
-        if callback.only_main_process and not is_main():
+        if callback.only_main_process and not self.is_main:
             msg = f"{callback.__class__.__name__} only_main_process but in local_rank {self.local_rank}"
             callback.on_hook_failed(self, msg)
             return False
 
-        if callback.only_single_gpu and not is_dist():
+        if callback.only_single_gpu and not self.is_dist:
             msg = f"{callback.__class__.__name__} only_single_gpu but dist={self.is_dist}"
             callback.on_hook_failed(self, msg)
             return False
@@ -453,9 +467,8 @@ class Trainer(_BaseTrainer):
         if params is None:
             params = self.params
 
-        loader = self.accelerate.prepare_data_loader(loader)
-
         record = self.create_record(stage=stage)
+        self.wait_for_everyone()
         for idx, batch in enumerate(loader):
             if limit_step is not None and idx >= limit_step:
                 break
@@ -474,8 +487,6 @@ class Trainer(_BaseTrainer):
 
         if params is None:
             params = self.params
-
-        loader = self.accelerate.prepare_data_loader(loader)
 
         record = self.create_record(stage=stage)
         for idx, batch in enumerate(loader):
@@ -528,9 +539,9 @@ class Trainer(_BaseTrainer):
 
     def state_dict(self):
         res = {
-            'optims': self.optim_state_dict(),
-            'models': self.model_state_dict(),
-            'others': self.other_state_dict(),
+            'optims': self.optim_state_dict(wrap=False),
+            'models': self.model_state_dict(wrap=False),
+            'others': self.other_state_dict(wrap=False),
             'thtensor': self.torch_tensor,
             'nptensor': self.numpy_tensor,
         }
@@ -554,7 +565,7 @@ class Trainer(_BaseTrainer):
 
     def save_model(self, is_best=False, meta_info: Union[str, dict, Attr] = None):
         info = self._build_trainer_meta_info(meta_info)
-        val = self.saver.save_model(self.eidx, {'models': self.model_state_dict()},
+        val = self.saver.save_model(self.eidx, self.model_state_dict(),
                                     meta_info=info,
                                     is_best=is_best)
         self.wait_for_everyone()

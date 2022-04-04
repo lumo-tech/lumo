@@ -27,6 +27,12 @@ class AcceleratorState(HugAcceleratorState):
 
 
 class Accelerator(HugAccelerator):
+    """
+
+    split_batches: If `True`, length of DataLoader on each process will be the same as the original batch size assigned.
+    If `False`, this will be batch_size / num_process, see the source code of `BatchSamplerShard` for details.
+
+    """
 
     def __init__(self, device_placement: bool = True, split_batches: bool = False, fp16: bool = None,
                  mixed_precision: str = None, cpu: bool = False, deepspeed_plugin: DeepSpeedPlugin = None,
@@ -82,13 +88,15 @@ class Accelerator(HugAccelerator):
         if rng_types is None:
             self.rng_types = ["torch"] if version.parse(torch.__version__) <= version.parse("1.5.1") else ["generator"]
 
-    def prepare_data_loader(self, data_loader):
+    def prepare_data_loader(self, data_loader, split_batches=None):
+        if split_batches is None:
+            split_batches = self.split_batches
         return prepare_data_loader(
             data_loader,
             self.device,
             num_processes=self.num_processes,
             process_index=self.process_index,
-            split_batches=self.split_batches,
+            split_batches=split_batches,
             put_on_device=self.device_placement,
             rng_types=self.rng_types.copy(),
             dispatch_batches=self.dispatch_batches,
