@@ -241,13 +241,9 @@ class BaseParams(DictConfig):
                 return
 
             for k, v in kwargs.items():
-                try:
-                    _get_item(self, k.split('.'))
-                except:
-                    warnings.simplefilter('always', NewParamWarning)
-                    warnings.warn(
-                        "'{}' is a new param,please check your spelling.\n it's more recommended to define in advance.".format(
-                            k), NewParamWarning)
+                # try:
+                #     _get_item(self, k.split('.'))
+                # except:
                 # self[k] = v
                 _set_item(self, k.split('.'), v)
 
