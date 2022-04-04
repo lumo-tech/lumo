@@ -61,9 +61,12 @@ class LumoDataLoader(DataLoader, metaclass=PropVar):
             return super(LumoDataLoader, self).__len__()
         return bc
 
-    def __iter__(self) -> DataLoaderIterWrap:
+    def _wraooed_iter_(self):
         return DataLoaderIterWrap(super().__iter__,
                                   self._prop.get('batch_count', None))
+
+    def __iter__(self) -> DataLoaderIterWrap:
+        return self._wraooed_iter_()
 
 
 def summarize_loader(loader: DataLoader):
@@ -71,9 +74,26 @@ def summarize_loader(loader: DataLoader):
         inner = pformat({f"{k}(cycle={loader._cycle[k]})": summarize_loader(v) for k, v in loader._loaders.items()})
         return f"DataLoaderSide({inner})"
     elif isinstance(loader, DataLoader):
+        size = '?'
+        try:
+            size = len(loader)
+        except:
+            pass
         if loader.batch_sampler is not None:
             batch_size = loader.batch_sampler.batch_size
-        return f"DataLoader(batch_size={batch_size}, num_workers={loader.num_workers})"
+
+        # clss = type(loader).__mro__
+        # cls_str = []
+        # for cls in clss:
+        #     if isinstance(cls, DataLoader):
+        #         if len(cls_str) == 0:
+        #             cls_str.append(cls.__name__)
+        #         break
+        #     else:
+        #         cls_str.append(cls.__name__)
+        #
+        # cls_str = '|'.join(cls_str)
+        return f"{loader.__class__.__name__}(batch_size={batch_size}, num_workers={loader.num_workers}, size={size})"
     else:
         raise ValueError(f'Need {DataLoaderType}, got type {type(loader)}')
 
