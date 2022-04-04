@@ -1,13 +1,6 @@
 import sys
 
-sys.path.insert(0, './src/')
-print(sys.path)
 from setuptools import setup, find_packages
-from lumo import __version__
-
-# from rename_templete import copy_templete
-
-# copy_templete()
 
 """
 python3 setup.py sdist bdist_wheel; 
@@ -23,8 +16,8 @@ print(find_packages('src'))
 
 setup(
     name='lumo',
-    version=__version__,
-    description='torch kit for programing your dl experiments code elegant.',
+    version="0.9.1.dev",
+    description='library to manage your pytorch experiments.',
     url='https://github.com/sailist/lumo',
     author='sailist',
     author_email='sailist@outlook.com',
@@ -42,8 +35,8 @@ setup(
     keywords='lumo',
     packages=find_packages('src'),
     entry_points={
-        # 'console_scripts': [
-        #     'lumo = lumo.cli.cli:main'
-        # ]
+        'console_scripts': [
+            'lumo = lumo.cli.cli:main'
+        ]
     },
 )
