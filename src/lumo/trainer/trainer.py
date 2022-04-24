@@ -54,6 +54,9 @@ class Trainer(_BaseTrainer):
         self.accelerate = Accelerator(device=device,
                                       kwargs_handlers=[DistributedDataParallelKwargs(find_unused_parameters=True)])
 
+        if dist.is_main():
+            self.params.to_yaml(self.exp.test_file('params.yaml'))
+
         self.set_global_steps(params.get('global_steps', 0))
         if params.get('debug', False):
             self.exp.set_prop('debug', True)

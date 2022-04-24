@@ -1,3 +1,4 @@
+import copy
 import warnings
 from functools import partial
 from pprint import pformat
@@ -25,6 +26,16 @@ class DatasetBuilder(Dataset):
         self._outkeys = []
 
         self._iter_cache = {}
+
+    def copy(self):
+        db = DatasetBuilder()
+        db._prop = copy.copy(self._prop)
+        db._idx_keys = copy.copy(self._idx_keys)
+        db._data = copy.copy(self._data)
+        db._outs = copy.deepcopy(self._outs)
+        db._transforms = copy.copy(self._transforms)
+        db._outkeys = copy.copy(self._outkeys)
+        return db
 
     def __repr__(self):
 
@@ -242,6 +253,11 @@ class DatasetBuilder(Dataset):
         self._transforms[name] = transform
         return self
 
+    def add_input_transform(self, name: str, transform: SingleValueTransform = None):
+        assert name in self._data, f'Source {name} should be added.'
+        self._transforms[name] = transform
+        return self
+
     def add_output(self, name: str, outkey: str, transform: SingleValueTransform = None):
         assert name in self._data, f'Must have data source {name} first.'
 
@@ -250,6 +266,11 @@ class DatasetBuilder(Dataset):
         outkeys.append(outkey)
         self._outkeys.append(outkey)
 
+        self._transforms[f'::{outkey}'] = transform
+        return self
+
+    def add_output_transform(self, outkey: str, transform: SingleValueTransform = None):
+        assert outkey in self._outkeys, f'Output key {outkey} should be added.'
         self._transforms[f'::{outkey}'] = transform
         return self
 

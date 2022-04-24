@@ -49,6 +49,10 @@ class Interpolate(BaseParams):
         self.constant = toggle
         return self
 
+    @classmethod
+    def interp(self, *args, **kwargs):
+        raise NotImplementedError()
+
     def __repr__(self):
         content = ', '.join(["{}={}".format(k, v) for k, v in self._prop.items()])
         return "{}({})".format(self.__class__.__name__, content)
@@ -128,8 +132,9 @@ class ABCContinuous(Interpolate):
 
     def __call__(self, cur):
         if self.constant:
-            return self.left
-        raise NotImplementedError()
+            return self.start
+        return self.interp(cur, start=self.start, end=self.end, left=self.left, right=self.right,
+                           constant=self.constant)
 
     def __init__(self, start=1e-3, end=1e-6, left=0, right=80, *args, **kwargs):
         super().__init__()
@@ -137,18 +142,18 @@ class ABCContinuous(Interpolate):
         self.right = right
         self.start = start
         self.end = end
-        self.constant = (left == right)
-        # assert left != right
+        self.constant = kwargs.get('constant', (left == right))
 
-    def ratio(self, cur):
-        if self.constant:
+    @classmethod
+    def ratio(cls, cur, left, right, constant=False):
+        if constant:
             return 0
-        return (cur - self.left) / (self.right - self.left)
+        return (cur - left) / (right - left)
 
     @classmethod
     def get_val(cls, cur, start=1e-3, end=1e-6, left=0, right=80, *args, **kwargs):
         """get the current schedule value without create `schedule` instance. """
-        return cls(start=0, end=1, left=0, right=1, *args, **kwargs)(cur)
+        return cls.interp(cur=cur, start=start, end=end, left=left, right=right, *args, **kwargs)
 
     def plot(self, num=1000, left=None, right=None, show=True):
         if left is None:
@@ -176,20 +181,21 @@ class ABCPeriod(Interpolate):
         self.end = end
         self.constant = (period == 0)
 
-    def ratio(self, cur):
-        if self.constant:
+    @classmethod
+    def ratio(cls, cur, left, period, constant=False):
+        if constant:
             return 0
-        if cur < self.left:
-            in_period = (self.period - (self.left - cur) % self.period) % self.period
+        if cur < left:
+            in_period = (period - (left - cur) % period) % period
         else:
-            in_period = float(cur - self.left) % self.period
-        return in_period / self.period
+            in_period = float(cur - left) % period
+        return in_period / period
 
     @classmethod
     def get_val(cls, cur, start=0, end=1, left=0, right=1, *args, **kwargs):
         """get the current schedule value without create `schedule` instance. """
-        return cls(start=start, end=end,
-                   left=left, right=right, *args, **kwargs)(cur)
+        return cls.interp(cur=cur, start=start, end=end,
+                          left=left, right=right, *args, **kwargs)
 
     def plot(self, num=1000, left=None, n_period=5, show=True):
         if left is None:
@@ -201,22 +207,28 @@ class ABCPeriod(Interpolate):
 
         return super().plot(num, left, right, show)
 
+    def __call__(self, cur):
+        return self.interp(cur, start=self.start, end=self.end, left=self.left, period=self.period,
+                           constant=self.constant)
+
 
 class Cos(ABCContinuous):
     """one cycle cosine functoin"""
 
-    def __call__(self, cur):
-        if self.constant:
-            return self.start
+    @classmethod
+    def interp(cls, cur, start=0., end=1., left=0., right=1., *args, **kwargs):
+        constant = kwargs.get('constant', False)
+        if constant:
+            return start
 
-        if cur < self.left:
-            return self.start
-        elif cur > self.right:
-            return self.end
+        if cur < left:
+            return start
+        elif cur > right:
+            return end
 
-        ratio = self.ratio(cur)
+        ratio = cls.ratio(cur, left=left, right=right, constant=constant)
         cos_ratio = 0.5 * (1 + np.cos(ratio * np.pi))
-        return self.start * cos_ratio + self.end * (1 - cos_ratio)
+        return start * cos_ratio + end * (1 - cos_ratio)
 
     def get(self, cur):
         return self(cur)
@@ -225,56 +237,62 @@ class Cos(ABCContinuous):
 class Linear(ABCContinuous):
     """linear schedule"""
 
-    def __call__(self, cur):
-        if self.constant:
-            return self.start
+    @classmethod
+    def interp(cls, cur, start=0., end=1., left=0., right=1., *args, **kwargs):
+        constant = kwargs.get('constant', False)
+        if constant:
+            return start
 
-        if cur < self.left:
-            return self.start
-        elif cur > self.right:
-            return self.end
+        if cur < left:
+            return start
+        elif cur > right:
+            return end
 
-        linear_ratio = self.ratio(cur)
-        return self.start * (1 - linear_ratio) + self.end * linear_ratio
+        linear_ratio = cls.ratio(cur, left=left, right=right, constant=constant)
+        return start * (1 - linear_ratio) + end * linear_ratio
 
 
 class Exp(ABCContinuous):
     """slow to quick"""
 
-    def __call__(self, cur):
-        if self.constant:
-            return self.start
+    @classmethod
+    def interp(cls, cur, start=0., end=1., left=0., right=1., *args, **kwargs):
+        constant = kwargs.get('constant', False)
+        if constant:
+            return start
 
-        if cur < self.left:
-            return self.start
-        elif cur > self.right:
-            return self.end
+        if cur < left:
+            return start
+        elif cur > right:
+            return end
 
-        ratio = self.ratio(cur)
+        ratio = cls.ratio(cur, left=left, right=right, constant=constant)
         residual = np.exp(-5)
 
         exp_ratio = np.exp((ratio - 1) * 5) - residual * (1 - ratio)
-        return self.start * (1 - exp_ratio) + self.end * exp_ratio
+        return start * (1 - exp_ratio) + end * exp_ratio
 
 
 class Log(ABCContinuous):
     """quick to slow"""
 
-    def __call__(self, cur):
-        if self.constant:
-            return self.start
+    @classmethod
+    def interp(cls, cur, start=0., end=1., left=0., right=1., *args, **kwargs):
+        constant = kwargs.get('constant', False)
+        if constant:
+            return start
 
-        if cur < self.left:
-            return self.start
-        elif cur > self.right:
-            return self.end
+        if cur < left:
+            return start
+        elif cur > right:
+            return end
 
-        ratio = self.ratio(cur)
+        ratio = cls.ratio(cur, left=left, right=right, constant=constant)
 
         residual = np.exp(-5)
 
         log_ratio = 1 - np.exp(-ratio * 5) + residual * ratio
-        return self.start * (1 - log_ratio) + self.end * log_ratio
+        return start * (1 - log_ratio) + end * log_ratio
 
 
 class Constant(ABCContinuous):
@@ -288,10 +306,13 @@ class PeriodCos(ABCPeriod):
     periodic cosine schedule
     """
 
-    def __call__(self, cur):
-        ratio = self.ratio(cur)
+    @classmethod
+    def interp(cls, cur, start=0., end=1., left=0., period=1., *args, **kwargs):
+        constant = kwargs.get('constant', False)
+
+        ratio = cls.ratio(cur, left=left, period=period, constant=constant)
         cos_ratio = 0.5 * (1 + np.cos(ratio * np.pi * 2))
-        return self.start * cos_ratio + self.end * (1 - cos_ratio)
+        return start * cos_ratio + end * (1 - cos_ratio)
 
 
 class PeriodHalfCos(ABCPeriod):
@@ -299,33 +320,36 @@ class PeriodHalfCos(ABCPeriod):
     half periodic cosine schedule, period is (right-left)
     """
 
-    def __call__(self, cur):
-        # cur = float(cur - self.left) % (self.right - self.left)
-        ratio = self.ratio(cur)
+    @classmethod
+    def interp(cls, cur, start=0., end=1., left=0., period=1., *args, **kwargs):
+        constant = kwargs.get('constant', False)
+        ratio = cls.ratio(cur, left=left, period=period, constant=constant)
         cos_ratio = 0.5 * (1 + np.cos(ratio * np.pi))
-        return self.start * cos_ratio + self.end * (1 - cos_ratio)
+        return start * cos_ratio + end * (1 - cos_ratio)
 
 
 class PeriodTriangle(ABCPeriod):
     def __init__(self, start=0, end=1, left=0, left_period=1, right_period=1, *args, **kwargs):
-        super().__init__(start=0, end=1, left=0,
+        super().__init__(start=start, end=end, left=left,
                          period=(left_period + right_period),
                          *args, **kwargs)
         assert left_period > 0 and right_period > 0
         self.left_period = left_period
         self.right_period = right_period
 
-    def __call__(self, cur):
-        ratio = self.ratio(cur)
-        mid_ratio = self.left_period / (self.right_period + self.left_period)
-        # if ratio < mid_ratio:
-        #     return self.
+    @classmethod
+    def interp(cls, cur, start=0., end=1., left=0., left_period=0., right_period=1., *args, **kwargs):
+        constant = kwargs.get('constant', False)
+        ratio = cls.ratio(cur, left=left, period=(left_period + right_period), constant=constant)
+
+        mid_ratio = left_period / (right_period + left_period)
+
         if ratio < mid_ratio:
             ratio = ratio / mid_ratio
-            return self.start * (1 - ratio) + self.end * ratio
+            return start * (1 - ratio) + end * ratio
         else:
             ratio = (ratio - mid_ratio) / (1 - mid_ratio)
-            return self.end * (1 - ratio) + self.start * ratio
+            return end * (1 - ratio) + start * ratio
 
 
 class PeriodLinear(ABCPeriod):
@@ -333,9 +357,11 @@ class PeriodLinear(ABCPeriod):
     sawtooth wave, like a period line schedule
     """
 
-    def __call__(self, cur):
-        ratio = self.ratio(cur)
-        return self.start * (1 - ratio) + self.end * ratio
+    @classmethod
+    def interp(cls, cur, start=0., end=1., left=0., period=1., *args, **kwargs):
+        constant = kwargs.get('constant', False)
+        ratio = cls.ratio(cur, left=left, period=period, constant=constant)
+        return start * (1 - ratio) + end * ratio
 
 
 class PowerDecay(Interpolate):
@@ -355,6 +381,32 @@ class PowerDecay(Interpolate):
             res = max(self.end, res)
 
         return res
+
+
+class PowerDecay2(Interpolate):
+    def __init__(self, start, schedules, gammas):
+        super().__init__()
+        self.start = start
+        self.schedules = schedules
+        self.gammas = gammas
+
+    @classmethod
+    def interp(cls, cur, start=0., gammas=None, schedules=None, *args, **kwargs):
+        if schedules is None:
+            schedules = []
+        if gammas is None:
+            gammas = []
+
+        res = start
+        for (gamma, step) in zip(gammas, schedules):
+            if (cur >= step):
+                res = res * gamma
+            else:
+                break
+        return res
+
+    def __call__(self, cur):
+        self.interp(cur, start=self.start, gammas=self.gammas, schedules=self.schedules)
 
 
 class InterpolateList(Interpolate):

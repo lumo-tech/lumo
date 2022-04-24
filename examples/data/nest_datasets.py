@@ -1,49 +1,42 @@
+import random
+
 from lumo import DatasetBuilder
 from torchvision.transforms import transforms
 import torch
 
-sup_db = (
-    DatasetBuilder()
-        .add_input('xs', torch.rand(50, 14, 14))
-        .add_input('ys', torch.randint(0, 10, (50,)))
-        .add_output('xs', 'xs1', transforms.RandomHorizontalFlip())
-        .add_output('xs', 'xs2')
-        .add_output('ys', 'ys')
-
-)
-
-un_db = (
-    DatasetBuilder()
-        .add_input('xs', torch.rand(500, 14, 14))
-        .add_input('ys', torch.randint(0, 10, (500,)))
-        .add_output('xs', 'xs1', transforms.RandomHorizontalFlip())
-        .add_output('xs', 'xs2')
-        .add_output('ys', 'ys')
-)
-
-# Scale size of sup_db to the same size as un_db(500)
-sup_db.scale_to_size(len(un_db))
-print(len(sup_db))
-
+# Create a mnist-like dummy dataset
 db = (
     DatasetBuilder()
-        .add_input('sup', sup_db)
-        .add_input('un', un_db)
-        .add_output('sup', 'sup')
-        .add_output('un', 'un')
+        .add_idx('id')
+        .add_input("xs", torch.rand(500, 28, 28))
+        .add_input("ys", torch.randint(0, 10, (500,)))
+        .add_output("xs", "xs1", transforms.RandomHorizontalFlip())
+        .add_output("xs", "xs2")
+        .add_output("ys", "ys")
 )
 
-print(db)
+
+# Watch dataset structure
+class SameClass:
+    def __init__(self, db: DatasetBuilder):
+        self.db = db
+        ys = db.get_source('ys')
+        cls_num = len(set(ys.tolist()))
+        pos_cls = []
+        for i in range(cls_num):
+            pos_cls.append(torch.where(ys == i)[0])
+        self.pos_cls = pos_cls
+
+    def __call__(self, ys):
+        index = random.choice(self.pos_cls[ys])
+        return self.db[index]
+
+
+pos_db = db.copy()
+db.add_output('ys', 'pos', SameClass(pos_db))
 
 sample = db[0]
-
-print(sample.keys())
-loader = db.DataLoader(batch_size=10)
-loader.set_batch_count(1024)  # will repeat __iter__ methods until satisfy the assigned `batch_count`
-print(len(loader))
-
-for batch in loader:
-    sup, un = batch['sup'], batch['un']
-    print(un['xs1'].shape)
-    print(sup['ys'].shape)
-    break
+print(sample['id'])
+print(sample['ys'])
+print(sample['pos']['id'])
+print(sample['pos']['ys'])

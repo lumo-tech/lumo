@@ -162,3 +162,5 @@ lumo_temp
 .lumo/
 *scratch*
 *.zip
+
+wandb

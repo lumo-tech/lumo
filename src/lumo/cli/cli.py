@@ -53,7 +53,7 @@ class Main:
         summary_experiment(tid)
 
     def today(self):
-
+        pass
 
     def init(self, path):
         git_init(path)

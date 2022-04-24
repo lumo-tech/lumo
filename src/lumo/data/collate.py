@@ -29,6 +29,8 @@ class CollateBase:
 
     def __init__(self, collate_fn=default_collate, *args, **kwargs) -> None:
         super().__init__()
+        if collate_fn is None:
+            collate_fn = default_collate
         self._collate_fn = collate_fn
         self.initial(*args, **kwargs)
 

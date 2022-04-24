@@ -7,6 +7,7 @@ from functools import lru_cache
 
 import git
 from git import Repo, Commit
+import io
 
 LUMO_BRANCH = 'lumo_experiments'
 
@@ -225,3 +226,20 @@ def git_dir(root='./'):
         return res
     else:
         return None
+
+
+def get_tree_from_commit(commit: Commit, tree=None):
+    if tree is None:
+        tree = commit.tree
+    yield tree.abspath, tree.blobs, tree.trees
+    for tree in tree.trees:
+        yield from get_tree_from_commit(commit, tree)
+
+
+def get_diff_tree_from_commits():
+    pass
+
+
+def get_file_of_commit(commit: Commit, file_name) -> bytes:
+    blob = commit.tree / file_name
+    return blob.data_stream.read()

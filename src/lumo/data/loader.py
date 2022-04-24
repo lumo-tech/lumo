@@ -1,3 +1,4 @@
+import warnings
 from collections import OrderedDict
 from pprint import pformat
 from typing import NewType, Union
@@ -52,6 +53,9 @@ class LumoDataLoader(DataLoader, metaclass=PropVar):
         return self._prop.update(prop)
 
     def set_batch_count(self, size):
+        warnings.warn(
+            "It's recommanded to use BatchSampler to redifine the batch count of one epoch, "
+            "this function will be deprecated sonn.")
         self._prop['batch_count'] = size
         return self
 

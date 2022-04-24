@@ -1,34 +1,47 @@
-from lumo import DatasetBuilder, CollateBase
-from torchvision.transforms import transforms
+from lumo import DatasetBuilder
 from transformers.models.bert import BertTokenizer
 import torch
+import random
+
+tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
+dictionary = list(tokenizer.vocab.keys())
 
 
-class TokenizerCollate(CollateBase):
+def get_dummy_sent():
+    return ' '.join(random.sample(dictionary, random.randint(10, 20)))
 
-    def before_collate(self, sample_list):
-        return super().before_collate(sample_list)
 
+data = [get_dummy_sent() for _ in range(500)]
+ys = torch.randint(0, 10, (500,))
 
 db = (
     DatasetBuilder()
-        .add_input('xs', torch.rand(500, 14, 14, 3))
-        .add_input('ys', torch.randint(0, 10, (500,)))
-        .add_output('xs', 'xs1', transforms.RandomHorizontalFlip())
-        .add_output('xs', 'xs2')
+        .add_input('xs', data)
+        .add_input('ys', ys)
+        .add_output('xs', 'xs')
         .add_output('ys', 'ys')
 )
-print(db)
-sample = db[0]
-print(sample.keys())
-print(sample['xs1'].shape, sample['xs2'].shape, sample['ys'])
 
-loader = db.DataLoader(batch_size=10)
-print(len(loader))
-loader.set_batch_count(1024)  # will repeat __iter__ methods until satisfy the assigned `batch_count`
-print(len(loader))
+from lumo import CollateBase
 
+
+class TokenizerCollate(CollateBase):
+    def __init__(self, tokenizer: BertTokenizer, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.tokenizer = tokenizer
+
+    def collate(self, sample_list):
+        xs = [sample['xs'] for sample in sample_list]
+        ys = [sample['ys'] for sample in sample_list]
+
+        input_txt = self.tokenizer(xs, return_tensors='pt', padding=True)
+        return {
+            'xs': input_txt,
+            'ys': ys
+        }
+
+
+loader = db.DataLoader(batch_size=10, collate_fn=TokenizerCollate(tokenizer))
 for batch in loader:
-    print(batch['xs1'].shape)
-    print(batch['ys'].shape)
+    print(batch['xs'])
     break

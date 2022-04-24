@@ -1,5 +1,6 @@
 """
 """
+from concurrent.futures import ThreadPoolExecutor, as_completed
 
 import inspect
 import json
@@ -18,6 +19,7 @@ from lumo.data import DataModule
 from lumo.utils.screen import inlinetqdm
 from lumo.data.loader import summarize_loader, DataLoaderType
 from lumo.utils import fmt
+from ..proc.dist import world_size
 
 if TYPE_CHECKING:
     from .trainer import Trainer
@@ -404,7 +406,8 @@ class LoggerCallback(TrainCallback, InitialCallback):
         if self.c % self.step == 0:
             trainer.logger.raw(self.cur_tqdm, inline=True)
 
-        if self.c % self.breakin == 0 or ((trainer.idx + 1) == self.stage[TrainStage.train]):
+        if self.c % self.breakin == 0 or (
+                TrainStage.train in self.stage and ((trainer.idx + 1) == self.stage[TrainStage.train])):
             trainer.logger.inline(self.cur_tqdm)
             trainer.logger.newline()
 
@@ -622,7 +625,16 @@ class EvalFirst(AutoLoadModel):
 class RecordCallback(TrainCallback):
     only_main_process = True
 
+    def __init__(self, metric_step=150) -> None:
+        super().__init__()
+        self.metric_step = metric_step
+        self.c = 0
+
     def log(self, metrics: MetricType, step, namespace):
+        self.c += 1
+        if self.c % self.metric_step != 0:
+            return
+
         metrics = wrap_result(metrics)
         scalar_metrics = {}
         matrix_metrics = {}
@@ -760,7 +772,93 @@ class SeedCallback(InitialCallback):
         trainer.rnd.mark(seed)
 
 
-class NotionCallback(callbacks.TrainCallback, callbacks.InitialCallback):
+class RemoteCallback(InitialCallback, TrainCallback):
+    only_main_process = True
+
+    def __init__(self, url=None):
+        import requests
+        self.url = url
+        self.req = requests
+        self.property = {}
+        self.submits = []
+        self.executor = ThreadPoolExecutor(1)
+
+    def make_data(self, source, event_name, **experimentInfo):
+        return {
+            'event': event_name,
+            'identity': {
+                'test_root': source.exp.test_root,
+                'test_name': source.exp.test_name,
+                'exp_name': source.exp.exp_name,
+                'pid': os.getpid(),
+                'ppid': os.getppid(),
+            },
+            'experimentInfo': experimentInfo,
+        }
+
+    def request(self, data: dict):
+        task = self.executor.submit(self.req.post, self.url, json={'data': data,
+                                                                   'type': 'timeevent',
+                                                                   'from': 'lumo.RemoteCallback',
+                                                                   'datetime': datetime.now().isoformat()})
+        self.submits.append(task)
+
+    def on_hooked(self, source: 'Trainer', params: ParamsType):
+        source.exp.dump_info('request', {
+            'url': self.url,
+        })
+        data = self.make_data(source, 'on_hooked', **{
+            'logfile': '\n'.join(source.logger.out_channel),
+            'param_hash': params.hash(),
+            'gpu_number': world_size(),
+            'params': params.to_dict(),
+            'args': source.exp.exec_argv,
+        })
+
+        self.request(data)
+
+    def on_imodels_end(self, trainer: 'Trainer', func, params: ParamsType, result: Any, *args, **kwargs):
+        super().on_imodels_end(trainer, func, params, result, *args, **kwargs)
+        commit_info = trainer.exp.get_prop('git')
+        if 'commit' in commit_info:
+            self.property['experimentInfo']['commit'] = commit_info['commit']
+
+        data = self.make_data(trainer, 'on_imodels_end', **{
+            'commit': commit_info['commit']})
+        self.request(data)
+
+    def on_train_begin(self, trainer: 'Trainer', func, params: ParamsType, *args, **kwargs):
+        self.request(self.make_data(trainer, 'on_train_begin'))
+
+    def on_train_end(self, trainer: 'Trainer', func, params: ParamsType, record: Record, *args, **kwargs):
+        self.request(self.make_data(trainer, 'on_train_end'))
+
+    def on_train_epoch_begin(self, trainer: 'Trainer', func, params: ParamsType, *args, **kwargs):
+        self.request(
+            self.make_data(trainer, 'on_train_epoch_end', eidx=trainer.eidx, global_steps=trainer.global_steps))
+
+    def finished(self, *args):
+        self.request(self.make_data(self._hooked, 'on_finished'))
+        _ = [i.result() for i in as_completed(self.submits)]
+
+    def on_test_begin(self, trainer: 'Trainer', func, params: ParamsType, *args, **kwargs):
+        self.request(
+            self.make_data(trainer, 'on_test_begin', eidx=trainer.eidx, global_steps=trainer.global_steps))
+
+    def on_eval_begin(self, trainer: 'Trainer', func, params: ParamsType, *args, **kwargs):
+        self.request(
+            self.make_data(trainer, 'on_eval_begin', eidx=trainer.eidx, global_steps=trainer.global_steps))
+
+    def on_first_exception(self, source: 'Trainer', func, params: ParamsType, e: BaseException, *args, **kwargs):
+        self.request(
+            self.make_data(source, 'on_exception',
+                           **{
+                               'exception': ''.join(traceback.format_exception(type(e), e, e.__traceback__)),
+                               'exception_type': type(e)
+                           }))
+
+
+class NotionCallback(TrainCallback, InitialCallback):
     class EmptyObject:
         def __getattr__(self, item):
             return self.__call__
@@ -807,13 +905,13 @@ class NotionCallback(callbacks.TrainCallback, callbacks.InitialCallback):
             return self.EmptyObject()
         return self._npage
 
-    def on_hooked(self, source: Trainer, params: ParamsType):
+    def on_hooked(self, source: 'Trainer', params: ParamsType):
         super(NotionCallback, self).on_hooked(source, params)
         self._npage = None
         if params.get('notion_page_id', None) is None:
             source.logger.info('notion_page_id not in params.')
             return
-        if not is_main():
+        if not source.is_main:
             return
         from potion.beans import NotionDatabase
 
@@ -894,7 +992,7 @@ class NotionCallback(callbacks.TrainCallback, callbacks.InitialCallback):
         self.npage.flush_children()
         self.npage.flush_property()
 
-    def on_train_begin(self, trainer: Trainer, func, params: ParamsType, *args, **kwargs):
+    def on_train_begin(self, trainer: 'Trainer', func, params: ParamsType, *args, **kwargs):
         if self.npage is None:
             return
         self.npage.add_option('Status', 'train')
@@ -910,17 +1008,17 @@ class NotionCallback(callbacks.TrainCallback, callbacks.InitialCallback):
         self.npage.flush_property()
         self.npage.flush_children()
 
-    def on_test_begin(self, trainer: Trainer, func, params: ParamsType, *args, **kwargs):
+    def on_test_begin(self, trainer: 'Trainer', func, params: ParamsType, *args, **kwargs):
         if self.npage is None:
             return
         self.npage.add_option('Status', 'test')
 
-    def on_eval_begin(self, trainer: Trainer, func, params: ParamsType, *args, **kwargs):
+    def on_eval_begin(self, trainer: 'Trainer', func, params: ParamsType, *args, **kwargs):
         if self.npage is None:
             return
         self.npage.add_option('Status', 'evaluation')
 
-    def on_first_exception(self, source: Trainer, func, params: ParamsType, e: BaseException, *args, **kwargs):
+    def on_first_exception(self, source: 'Trainer', func, params: ParamsType, e: BaseException, *args, **kwargs):
         if self.npage is None:
             return
 
