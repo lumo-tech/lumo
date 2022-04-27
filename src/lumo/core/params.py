@@ -14,10 +14,25 @@ from omegaconf._utils import _ensure_container
 
 from .raises import BoundCheckError, NewParamWarning
 
-arange_param = namedtuple('arange_param', ['default', 'left', 'right'], defaults=[None, float('-inf'), float('inf')])
-choice_param = namedtuple('choice_param', ['default', 'choices'], defaults=[None, []])
+# arange_param = namedtuple('arange_param', ['default', 'left', 'right'], defaults=[None, float('-inf'), float('inf')])
+# choice_param = namedtuple('choice_param', ['default', 'choices'], defaults=[None, []])
 
 __all__ = ['BaseParams', 'Params', 'ParamsType']
+
+
+class Arange:
+    def __init__(self, default=None, left=float('inf'), right=float('inf')):
+        self.default = default
+        self.left = left
+        self.right = right
+
+
+class Choices:
+    def __init__(self, default=None, choices=None):
+        if choices is None:
+            choices = []
+        self.default = default
+        self.choices = choices
 
 
 def _get_item(dic, keys: List[str]):
@@ -101,7 +116,7 @@ class BaseParams(DictConfig):
             # if isinstance(value, BaseParams):
             #     self._prop.setdefault('key_type', {})[key] = type(value)
 
-            if isinstance(value, (arange_param, choice_param)):
+            if isinstance(value, (Arange, Choices)):
                 res = self._prop.get('constrain', {})
                 res[key] = value
                 self._prop['constrain'] = res
@@ -117,7 +132,7 @@ class BaseParams(DictConfig):
             # if isinstance(value, BaseParams):
             #     self._prop.setdefault('key_type', {})[key] = type(value)
 
-            if isinstance(value, (arange_param, choice_param)):
+            if isinstance(value, (Arange, Choices)):
                 self._prop.setdefault('constrain', {})[key] = value
                 value = value.default
 
@@ -135,10 +150,10 @@ class BaseParams(DictConfig):
 
     def _check(self, name, value):
         bound = self._prop['constrain'][name]
-        if isinstance(bound, arange_param) and not (bound.left <= value and value <= bound.right):
+        if isinstance(bound, Arange) and not (bound.left <= value and value <= bound.right):
             raise BoundCheckError(
                 f"value of param '{name}' should in range [{bound.left}, {bound.right}], but got {value}")
-        elif isinstance(bound, choice_param) and value not in bound.choices:
+        elif isinstance(bound, Choices) and value not in bound.choices:
             raise BoundCheckError(f"value of param '{name}' should in values {bound.choices}, but got {value}")
 
     def __getitem__(self, key: DictKeyType) -> Any:
@@ -163,7 +178,7 @@ class BaseParams(DictConfig):
 
         return "{}.Space".format(self.__class__.__name__) + '(\n' + args_str + '\n)'
 
-    def arange(self, default, left=float("-inf"), right=float("inf")) -> arange_param:
+    def arange(self, default, left=float("-inf"), right=float("inf")) -> Arange:
         """
         Make sure some value is into some range.
 
@@ -184,11 +199,11 @@ class BaseParams(DictConfig):
             arange_param(default, left, right)
         """
         if left < default and default < right:
-            return arange_param(default, left, right)
+            return Arange(default, left, right)
         else:
             raise BoundCheckError(f"value {default}' should in range [{left}, {right}].")
 
-    def choice(self, *choices) -> choice_param:
+    def choice(self, *choices) -> Choices:
         """
         Make sure some value is into some limited values.
 
@@ -208,7 +223,7 @@ class BaseParams(DictConfig):
 
 
         """
-        return choice_param(choices[0], choices)
+        return Choices(choices[0], choices)
 
     def from_dict(self, dic: dict):
         for k, v in dic.items():

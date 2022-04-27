@@ -9,7 +9,7 @@ from typing import Union, TYPE_CHECKING
 from lumo.core.metaclasses import PropVar
 from lumo.decorators.process import call_on_main_process_wrap
 from lumo.proc.dist import is_main, is_dist
-from lumo.proc.path import libhome, local_dir
+from lumo.proc.path import exproot, local_dir
 from lumo.utils import safe_io as io
 from lumo.utils.fmt import can_be_filename
 
@@ -33,7 +33,7 @@ class Experiment(metaclass=PropVar):
         self._prop['exp_name'] = exp_name
         self._hooks = {}
         if root is None:
-            root = libhome()
+            root = exproot()
         self._root = Path(os.path.abspath(root))
         self.add_exit_hook(self.end)
 

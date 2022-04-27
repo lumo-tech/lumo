@@ -1,3 +1,4 @@
+import json
 import os
 import sys
 
@@ -25,6 +26,20 @@ def dataset_cache_dir(name=None):
 
 def libhome():
     return os.path.expanduser("~/.lumo")
+
+
+def exproot():
+    config_fn = global_config_path()
+    if os.path.exists(config_fn):
+        try:
+            with open(config_fn) as r:
+                config = json.load(r)
+                exp_root = config['exproot']
+        except:
+            exp_root = libhome()
+    else:
+        exp_root = libhome()
+    return exp_root
 
 
 def local_dir():

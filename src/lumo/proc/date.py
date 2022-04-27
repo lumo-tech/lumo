@@ -39,7 +39,7 @@ def file_ctime2date(file, fmt='%y%m%d-%H%M%S') -> str:
 
 def timehash():
     import time
-    time_ns = str(time.time_ns())
+    time_ns = str(time.time())
     hl = hashlib.md5()
     hl.update(time_ns.encode(encoding='utf-8'))
     return hl.hexdigest()
