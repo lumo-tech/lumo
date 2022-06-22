@@ -17,7 +17,8 @@ from lumo.proc import dist
 
 from lumo.trainer.rnd import RndManager
 from lumo.utils.logger import Logger
-from .accelerator import Accelerator
+# from .accelerator import Accelerator
+from accelerate import Accelerator
 from .base import _BaseTrainer
 from .components import TrainerExperiment
 from .saver import Saver
@@ -42,6 +43,7 @@ class Trainer(_BaseTrainer):
         self.params = params
         self._logger = None
         self._saver = None
+        self.shared_prop = {}
         self.params.iparams()
         self.exp = TrainerExperiment(self._gene_class_exp_name())
         self.rnd = RndManager()
@@ -51,8 +53,12 @@ class Trainer(_BaseTrainer):
 
         device = params.get('device', None) if not self.is_dist else None
 
-        self.accelerate = Accelerator(device=device,
-                                      kwargs_handlers=[DistributedDataParallelKwargs(find_unused_parameters=True)])
+        # self.accelerate = Accelerator(device=device,
+        #                               kwargs_handlers=[DistributedDataParallelKwargs(find_unused_parameters=True)])
+        print('new Accelerate')
+        self.accelerate = Accelerator(kwargs_handlers=[DistributedDataParallelKwargs(find_unused_parameters=True)])
+        if self.accelerate.state.distributed_type == self.accelerate.state.distributed_type.NO:
+            self.accelerate.state.device = torch.device(device)
 
         if dist.is_main():
             self.params.to_yaml(self.exp.test_file('params.yaml'))
@@ -248,23 +254,25 @@ class Trainer(_BaseTrainer):
 
     @property
     def model_dict(self) -> Dict[str, nn.Module]:
-        return self._state_dicts['models']
+        return {key: self[key]
+                for key in self._state_dicts['models']}
 
     @property
     def optim_dict(self) -> Dict[str, Optimizer]:
-        return self._state_dicts['optims']
+
+        return {key: self[key] for key in self._state_dicts['optims']}
 
     @property
     def torch_tensor(self) -> Dict[str, torch.Tensor]:
-        return self._state_dicts['tensor.th']
+        return {key: self[key] for key in self._state_dicts['tensor.th']}
 
     @property
     def numpy_tensor(self) -> Dict[str, np.ndarray]:
-        return self._state_dicts['tensor.np']
+        return {key: self[key] for key in self._state_dicts['tensor.np']}
 
     @property
     def others(self) -> Dict[str, Any]:
-        return self._state_dicts['others']
+        return {key: self[key] for key in self._state_dicts['others']}
 
     @property
     def datamodule(self) -> DataModule:
@@ -290,13 +298,17 @@ class Trainer(_BaseTrainer):
     def device(self):
         return self.accelerate.device
 
+    # def prepare(self):
+    #     pass
+
     def to_device(self, item: Optional[Union[nn.Module, torch.Tensor, Sequence, Mapping]] = None,
                   device: torch.device = None):
+
         if item is None:
             for k, v in list(self.model_dict.items()):
-                self.model_dict[k] = self.accelerate.prepare(v)
+                self[k] = self.accelerate.prepare(v)
             for k, v in list(self.optim_dict.items()):
-                self.optim_dict[k] = self.accelerate.prepare(v)
+                self[k] = self.accelerate.prepare(v)
         else:
             if device is None:
                 device = self.device
@@ -331,7 +343,8 @@ class Trainer(_BaseTrainer):
 
         """do not change original loader stage"""
         if isinstance(loader, DataLoader):
-            loader = self.accelerate.prepare_data_loader(loader, split_batches=split_batches)
+            self.accelerate.split_batches = split_batches
+            loader = self.accelerate.prepare_data_loader(loader)
         elif isinstance(loader, DataLoaderSide):
             loader = loader.copy()
             loader._loaders = {k: self.prepare_dataloader(v, stage) for k, v in loader._loaders.items()}
@@ -386,6 +399,10 @@ class Trainer(_BaseTrainer):
             self._prop['global_steps'] += 1
             metric = self.train_step(batch, params)
             record.record(metric)
+
+        for k, v in record.agg():
+            self.share(f'train_epoch.{k}', v)
+
         record.flush()
         return record
 
@@ -478,6 +495,8 @@ class Trainer(_BaseTrainer):
             self.set_idx(idx)
             metric = self.test_step(batch, params)
             record.record(metric)
+        for k, v in record.agg():
+            self.share(f'test.{k}', v)
         record.flush()
         return record
 
@@ -498,6 +517,8 @@ class Trainer(_BaseTrainer):
             self.set_idx(idx)
             metric = self.evaluate_step(batch, params)
             record.record(metric)
+        for k, v in record.agg():
+            self.share(f'test.{k}', v)
         record.flush()
         return record
 
@@ -594,3 +615,6 @@ class Trainer(_BaseTrainer):
                                          is_best=is_best)
         self.wait_for_everyone()
         return val
+
+    def share(self, key, value):
+        self.shared_prop[key] = value

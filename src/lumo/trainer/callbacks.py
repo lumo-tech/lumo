@@ -841,6 +841,13 @@ class RemoteCallback(InitialCallback, TrainCallback):
         self.request(self.make_data(self._hooked, 'on_finished'))
         _ = [i.result() for i in as_completed(self.submits)]
 
+    def on_train_step_end(self, trainer: 'Trainer', func, params: ParamsType, metric: MetricType = None, *args,
+                          **kwargs):
+        super().on_train_step_end(trainer, func, params, metric, *args, **kwargs)
+        metric = wrap_result(metric)
+        dict(metric.items())
+        self.request(self.make_data())
+
     def on_test_begin(self, trainer: 'Trainer', func, params: ParamsType, *args, **kwargs):
         self.request(
             self.make_data(trainer, 'on_test_begin', eidx=trainer.eidx, global_steps=trainer.global_steps))
@@ -1012,6 +1019,12 @@ class NotionCallback(TrainCallback, InitialCallback):
         if self.npage is None:
             return
         self.npage.add_option('Status', 'test')
+
+    def on_test_end(self, trainer: 'Trainer', func, params: ParamsType, record: Record = None, *args, **kwargs):
+        super().on_test_end(trainer, func, params, record, *args, **kwargs)
+        acc = trainer.shared_prop.get('acc', None)
+        if acc is not None:
+            self.npage.set_number()
 
     def on_eval_begin(self, trainer: 'Trainer', func, params: ParamsType, *args, **kwargs):
         if self.npage is None:

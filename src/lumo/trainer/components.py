@@ -69,11 +69,11 @@ class TrainerPropVar(type):
         ])
 
         make_dict(clazz, '_state_dicts', {
-            'optims': {},
-            'models': {},
-            'others': {},
-            'tensor.th': {},
-            'tensor.np': {},
+            'optims': set(),
+            'models': set(),
+            'others': set(),
+            'tensor.th': set(),
+            'tensor.np': set(),
         })
         return clazz
 

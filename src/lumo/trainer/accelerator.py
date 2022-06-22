@@ -103,23 +103,24 @@ class Accelerator(HugAccelerator):
         )
 
     def prepare_model(self, model):
-        if self.device_placement:
-            model = model.to(self.device)
-        if self.distributed_type == DistributedType.MULTI_GPU:
-            kwargs = self.ddp_handler.to_kwargs() if self.ddp_handler is not None else {}
-            model = torch.nn.parallel.DistributedDataParallel(
-                model, device_ids=[self.local_process_index],
-                output_device=self.local_process_index, **kwargs
-            )
-        elif self.distributed_type == DistributedType.MULTI_CPU:
-            kwargs = self.ddp_handler.to_kwargs() if self.ddp_handler is not None else {}
-            model = torch.nn.parallel.DistributedDataParallel(model, **kwargs)
-        if self.native_amp:
-            if self.mixed_precision == "fp16" and version.parse(torch.__version__) >= version.parse("1.10"):
-                model.forward = torch.cuda.amp.autocast(dtype=torch.float16)(model.forward)
-            elif self.mixed_precision == "bf16":
-                model.forward = torch.cuda.amp.autocast(dtype=torch.bfloat16)(model.forward)
-            else:
-                model.forward = torch.cuda.amp.autocast()(model.forward)
-            model.forward = convert_outputs_to_fp32(model.forward)
-        return model
+        return super(Accelerator, self).prepare_model(model)
+        # if self.device_placement:
+        #     model = model.to(self.device)
+        # if self.distributed_type == DistributedType.MULTI_GPU:
+        #     kwargs = self.ddp_handler.to_kwargs() if self.ddp_handler is not None else {}
+        #     model = torch.nn.parallel.DistributedDataParallel(
+        #         model, device_ids=[self.local_process_index],
+        #         output_device=self.local_process_index, **kwargs
+        #     )
+        # elif self.distributed_type == DistributedType.MULTI_CPU:
+        #     kwargs = self.ddp_handler.to_kwargs() if self.ddp_handler is not None else {}
+        #     model = torch.nn.parallel.DistributedDataParallel(model, **kwargs)
+        # if self.native_amp:
+        #     if self.mixed_precision == "fp16" and version.parse(torch.__version__) >= version.parse("1.10"):
+        #         model.forward = torch.cuda.amp.autocast(dtype=torch.float16)(model.forward)
+        #     elif self.mixed_precision == "bf16":
+        #         model.forward = torch.cuda.amp.autocast(dtype=torch.bfloat16)(model.forward)
+        #     else:
+        #         model.forward = torch.cuda.amp.autocast()(model.forward)
+        #     model.forward = convert_outputs_to_fp32(model.forward)
+        # return model

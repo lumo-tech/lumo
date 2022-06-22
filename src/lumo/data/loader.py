@@ -47,7 +47,7 @@ class DataLoaderIterWrap:
         return batch
 
 
-class MPropVar(type(DataLoader), PropVar): pass
+class MPropVar(PropVar): pass
 
 
 class LumoDataLoader(DataLoader, metaclass=MPropVar):

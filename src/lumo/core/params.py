@@ -1,8 +1,6 @@
 import json
 import sys
 import textwrap
-import warnings
-from collections import namedtuple
 from pprint import pformat
 from typing import Any, List, NewType
 

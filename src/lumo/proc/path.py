@@ -6,18 +6,20 @@ from lumo.utils.repository import git_dir
 
 
 def cache_dir():
-    try:
-        res = os.path.expanduser("~/.cache/lumo")
-        os.makedirs(res, exist_ok=True)
-    except PermissionError:
-        res = os.path.expanduser("~/.lumo/.cache")
-        os.makedirs(res, exist_ok=True)
+    res = glob.get('libhome', None)
+    if res is None:
+        try:
+            res = os.path.expanduser("~/.cache/lumo")
+            os.makedirs(res, exist_ok=True)
+        except PermissionError:
+            res = os.path.expanduser("~/.lumo/.cache")
+            os.makedirs(res, exist_ok=True)
     return res
 
 
 def dataset_cache_dir(name=None):
     if name is None:
-        res = os.path.join(cache_dir(), 'datasets')
+        res = os.path.join(cache_dir(), 'datasets', '__default__')
     else:
         res = os.path.join(cache_dir(), 'datasets', name)
     os.makedirs(res, exist_ok=True)
@@ -25,19 +27,15 @@ def dataset_cache_dir(name=None):
 
 
 def libhome():
-    return os.path.expanduser("~/.lumo")
+    lib_home = glob.get('libhome', None)
+    if lib_home is None:
+        lib_home = os.path.expanduser("~/.lumo")
+    return lib_home
 
 
 def exproot():
-    config_fn = global_config_path()
-    if os.path.exists(config_fn):
-        try:
-            with open(config_fn) as r:
-                config = json.load(r)
-                exp_root = config['exproot']
-        except:
-            exp_root = libhome()
-    else:
+    exp_root = glob.get('exproot', None)
+    if exp_root is None:
         exp_root = libhome()
     return exp_root
 
@@ -51,3 +49,32 @@ def local_dir():
 
 def global_config_path():
     return os.path.join(libhome(), "config.json")
+
+
+def local_config_path():
+    res = local_dir()
+    return os.path.join(res, "config.json")
+
+
+def get_config(path):
+    if os.path.exists(path):
+        try:
+            with open(path) as r:
+                config = json.load(r)
+            return config
+        except Exception as e:
+            print(f'Error read {path}')
+
+    return {}
+
+
+def create_runtime_config():
+    glob_cfg = get_config(global_config_path())
+    local_cfg = get_config(local_config_path())
+    cfg = {}
+    cfg.update(glob_cfg)
+    cfg.update(local_cfg)
+    return cfg
+
+
+glob = create_runtime_config()

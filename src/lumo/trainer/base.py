@@ -173,8 +173,15 @@ class _BaseTrainer(metaclass=TrainerPropVar):
             setattr(self, func.__name__, init_wrapper(func))
         return self
 
+    def __getitem__(self, item):
+        return getattr(self, item)
+
+    def __setitem__(self, key: str, value):
+        self.__setattr__(key, value)
+
     def __setattr__(self, name, value):
         super().__setattr__(name, value)
+
         if name.startswith('_') or name.endswith('_'):
             # when callback is trainer itself, _hooked will be passed, and caused recursion
             # if some pretrained models need to be ignored in save/load stage, it can be named like 'some_' or '_some'
@@ -199,7 +206,7 @@ class _BaseTrainer(metaclass=TrainerPropVar):
         # if name in self.__dict__: TODO workaround multi-gpu error: Expected to mark a variable ready only once
         #     self.__dict__.pop(name)
 
-        self._state_dicts.setdefault(type_name, {})[name] = value
+        self._state_dicts.setdefault(type_name, set()).add(name)
         self._rev_index[name] = type_name
 
     # def __getattr__(self, name):
