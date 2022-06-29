@@ -41,11 +41,27 @@ params.to_json('./config.json')
 ### 变量&日志记录
 
 ```python
+import random
+import time
+
 from lumo import Record, Meter, Logger
 
+log = Logger()
 
+record = Record()
+for idx in range(256):
+    meter = Meter()
+    meter.last.i = idx
+    meter.sum.acc = idx
+    meter.mean.loss = random.random()
 
-
+    record.record(meter)
+    log.inline(record)
+    time.sleep(0.5)
+    if idx % 50 == 0:
+        log.newline()
+        record.clear()
+log.info(record)
 ```
 
 ### 实验代码记录（通过 git）
@@ -71,7 +87,6 @@ pm.to_json(fn)
 print(exp.test_root)
 print(exp.get_prop('git'))  # see git commit history
 exp.end()
-
 ```
 
 ### 训练
