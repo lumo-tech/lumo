@@ -27,10 +27,10 @@ def dataset_cache_dir(name=None):
 
 
 def libhome():
-    lib_home = glob.get('libhome', None)
-    if lib_home is None:
-        lib_home = os.path.expanduser("~/.lumo")
-    return lib_home
+    return os.path.expanduser("~/.lumo")
+    # lib_home = glob.get('libhome', None)
+    # if lib_home is None:
+    # return lib_home
 
 
 def exproot():
@@ -75,6 +75,10 @@ def create_runtime_config():
     cfg.update(glob_cfg)
     cfg.update(local_cfg)
     return cfg
+
+
+def pretain_model_path(name):
+    pass
 
 
 glob = create_runtime_config()

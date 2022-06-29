@@ -60,7 +60,7 @@ def check_gitignore(path):
 
 def git_init(path=None):
     if path is None:
-        path = './'
+        path = '/'
 
     repo = git.Repo.init(path, mkdir=True)
     check_gitignore(path)

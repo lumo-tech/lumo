@@ -400,7 +400,7 @@ class Trainer(_BaseTrainer):
             metric = self.train_step(batch, params)
             record.record(metric)
 
-        for k, v in record.agg():
+        for k, v in record.agg().items():
             self.share(f'train_epoch.{k}', v)
 
         record.flush()
@@ -495,7 +495,7 @@ class Trainer(_BaseTrainer):
             self.set_idx(idx)
             metric = self.test_step(batch, params)
             record.record(metric)
-        for k, v in record.agg():
+        for k, v in record.agg().items():
             self.share(f'test.{k}', v)
         record.flush()
         return record
@@ -517,7 +517,7 @@ class Trainer(_BaseTrainer):
             self.set_idx(idx)
             metric = self.evaluate_step(batch, params)
             record.record(metric)
-        for k, v in record.agg():
+        for k, v in record.agg().items():
             self.share(f'test.{k}', v)
         record.flush()
         return record

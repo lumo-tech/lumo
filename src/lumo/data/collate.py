@@ -11,22 +11,6 @@ from torch.utils.data._utils.collate import default_collate
 
 class CollateBase:
 
-    def __new__(cls, *args, **kwargs) -> Any:
-        self = super().__new__(cls)
-
-        def wrap(func):
-            @wraps(func)
-            def inner(*args, **kwargs):
-                res = self.before_collate(*args, **kwargs)
-                res = func(res)
-                res = self.after_collate(res)
-                return res
-
-            return inner
-
-        self.collate = wrap(self.collate)
-        return self
-
     def __init__(self, collate_fn=default_collate, *args, **kwargs) -> None:
         super().__init__()
         if collate_fn is None:
@@ -38,7 +22,10 @@ class CollateBase:
         pass
 
     def __call__(self, *args, **kwargs):
-        return self.collate(*args, **kwargs)
+        res = self.before_collate(*args, **kwargs)
+        res = self._collate_fn(res)
+        res = self.after_collate(res)
+        return res
 
     def before_collate(self, sample_list):
         return sample_list

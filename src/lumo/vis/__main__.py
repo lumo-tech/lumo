@@ -6,8 +6,7 @@ sys.path.insert(0, './src/lumo')
 from . import parser
 
 from lumo.exp import finder, Experiment
-from lumo.trainer import TrainerExperiment
-from datetime import date, timedelta, datetime
+from datetime import date, timedelta
 
 
 class HeadType:
