@@ -81,5 +81,3 @@ lumo.Trainer 的主要功能：
 - 集成方法回调、变量记录、日志输出、模型存储、随机种子、实验管理等内置其他模块
 - 集成 [huggingface/accelerate](https://github.com/huggingface/accelerate) ，用于多卡训练
 
-[pytorch ImageNet example]() vs. [lumo ImageNet example]()
-
