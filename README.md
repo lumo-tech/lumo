@@ -8,7 +8,7 @@
 - 模块解耦合：所有模块可以单独作为您现在使用的框架中的一个插件使用
 - 约定大于配置：尽可能的减少配置产生的心智负担；当你使用深度学习中一些约定俗成的变量名时（如 Loss/loss/Lall/Acc），lumo 会格外的注意它们！
 
-## Install
+## 安装
 
 ```bash
 pip install lumo
@@ -88,6 +88,36 @@ print(exp.test_root)
 print(exp.get_prop('git'))  # see git commit history
 exp.end()
 ```
+
+### 数据集控制
+
+顶好用的 Dataset 构建类。
+
+```python
+from lumo import DatasetBuilder
+from torchvision.transforms import transforms
+import torch
+
+# Create a mnist-like dummy dataset
+db = (
+    DatasetBuilder()
+    .add_input("xs", torch.rand(500, 28, 28))
+    .add_input("ys", torch.randint(0, 10, (500,)))
+    .add_idx('id')
+    .add_output("xs", "xs1", transforms.RandomHorizontalFlip())
+    .add_output("xs", "xs2")
+    .add_output("ys", "ys")
+)
+# Watch dataset structure
+print(db)
+# Builder(flow={'::idx::': ['id'], 'xs': ['xs1', 'xs2'], 'ys': ['ys']}, sized=True, size=500, iterable=True)
+
+print(db[0])
+# dict_keys(['id', 'xs1', 'xs2', 'ys'])
+```
+
+
+进一步使用查看 [daatset.py](./examples/data/quick_start.py)
 
 ### 训练
 
