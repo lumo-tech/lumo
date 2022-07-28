@@ -27,7 +27,6 @@ class branch:
     def __init__(self, repo: Repo, branch: str):
         self.repo = repo
         self.lock = Lock(f'{hash(repo.git_dir)}_{branch}')
-        self.lock.abtain()
         self.old_branch = self.repo.head.reference
         self.branch = branch
 

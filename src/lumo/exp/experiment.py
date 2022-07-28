@@ -8,7 +8,7 @@ from typing import Union, TYPE_CHECKING
 
 from lumo.core.metaclasses import PropVar
 from lumo.decorators.process import call_on_main_process_wrap
-from lumo.proc.dist import is_main, is_dist
+from lumo.proc.dist import is_main, is_dist, local_rank
 from lumo.proc.path import exproot, local_dir
 from lumo.utils import safe_io as io
 from lumo.utils.fmt import can_be_filename
@@ -48,6 +48,22 @@ class Experiment(metaclass=PropVar):
     @_test_name.setter
     def _test_name(self, value):
         self._prop['test_name'] = value
+
+    @property
+    def test_name_with_dist(self):
+        """
+        Create different test_name for each process in multiprocess training.
+        Returns: in main process, will just return test_name itself,
+        in subprocess,  "{test_name}.{local_rank()}"
+        """
+        raw = self.test_name
+        if not is_dist():
+            return raw
+
+        if is_main():
+            return raw
+        else:
+            return f"{raw}.{local_rank()}"
 
     @property
     def test_name(self):

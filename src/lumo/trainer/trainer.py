@@ -21,6 +21,7 @@ from accelerate import Accelerator
 from .base import _BaseTrainer
 from .components import TrainerExperiment
 from .saver import Saver
+from ..core.table import TableRow
 from ..data.loader import DataLoaderType, DataLoaderSide
 
 
@@ -45,6 +46,9 @@ class Trainer(_BaseTrainer):
         self.shared_prop = {}
         self.params.iparams()
         self.exp = TrainerExperiment(self.generate_exp_name())
+
+        self._database = TableRow(self.exp.exp_name, self.exp.test_name_with_dist)
+
         self.rnd = RndManager()
 
         self.train_epoch_toggle = False
@@ -65,12 +69,6 @@ class Trainer(_BaseTrainer):
         self.set_global_steps(params.get('global_steps', 0))
         if params.get('debug', False):
             self.exp.set_prop('debug', True)
-
-    # def __getstate__(self):
-    #     return self.__dict__
-    #
-    # def __setstate__(self, state):
-    #     self.__dict__.update(state)
 
     def regist_dataloader(self, dataloader: DataLoader, stage: TrainStage):
         self.datamodule.regist_dataloader_with_stage(stage, dataloader)
@@ -119,6 +117,14 @@ class Trainer(_BaseTrainer):
             else:
                 self._state_dicts[k] = v
         return
+
+    @property
+    def db(self):
+        return self._database
+
+    @property
+    def database(self):
+        return self._database
 
     @property
     def saver(self) -> Saver:
