@@ -8,6 +8,8 @@ from functools import lru_cache
 import git
 from git import Repo, Commit
 import io
+from joblib import hash
+from .filelock import Lock
 
 LUMO_BRANCH = 'lumo_experiments'
 
@@ -22,8 +24,10 @@ class branch:
         repo.index.commit('...')
     """
 
-    def __init__(self, repo, branch: str):
+    def __init__(self, repo: Repo, branch: str):
         self.repo = repo
+        self.lock = Lock(f'{hash(repo.git_dir)}_{branch}')
+        self.lock.abtain()
         self.old_branch = self.repo.head.reference
         self.branch = branch
 
@@ -44,6 +48,7 @@ class branch:
         if self.branch is None:
             return
         self.repo.head.reference = self.old_branch
+        self.lock.release()
 
 
 def check_have_commit(repo):

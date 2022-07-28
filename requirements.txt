@@ -4,10 +4,11 @@ psutil
 decorator
 torch
 numpy
-accelerate==0.6.2
+accelerate
 omegaconf
 tqdm
 rich
 gitPython
 PyYAML>3.13
 tensorboardX
+dbrecord

@@ -1,9 +1,8 @@
 """
 
 """
-from functools import wraps
 from typing import Any, Mapping, Sequence
-
+from lumo.core.params import ParamsType
 import numpy as np
 import torch
 from torch.utils.data._utils.collate import default_collate
@@ -11,15 +10,16 @@ from torch.utils.data._utils.collate import default_collate
 
 class CollateBase:
 
-    def __init__(self, collate_fn=default_collate, *args, **kwargs) -> None:
-        super().__init__()
-        if collate_fn is None:
-            collate_fn = default_collate
-        self._collate_fn = collate_fn
-        self.initial(*args, **kwargs)
+    @classmethod
+    def from_collate(cls, collate_fn, params: ParamsType = None):
+        instance = cls(params)
+        instance._collate_fn = collate_fn
+        return instance
 
-    def initial(self, *args, **kwargs):
-        pass
+    def __init__(self, params: ParamsType = None) -> None:
+        super().__init__()
+        self._collate_fn = default_collate
+        self.params = params
 
     def __call__(self, *args, **kwargs):
         res = self.before_collate(*args, **kwargs)

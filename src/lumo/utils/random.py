@@ -35,8 +35,11 @@ def fix_seed(seed=10, cuda=True):
     torch.manual_seed(seed)
     torch.random.manual_seed(seed)
     if torch.cuda.is_available() and cuda:
+        torch.cuda.manual_seed(seed)
         torch.cuda.manual_seed_all(seed)
-    # fix_cuda()
+        torch.backends.cudnn.benchmark = False
+        torch.backends.cudnn.deterministic = True  # use determinisitic algorithm
+
     return get_state()
 
 
@@ -75,3 +78,6 @@ def set_state(state_dict, cuda=True):
         else:
             import warnings
             warnings.warn("Don't have torch.cuda random state")
+
+        torch.backends.cudnn.benchmark = False
+        torch.backends.cudnn.deterministic = True  # use determinisitic algorithm

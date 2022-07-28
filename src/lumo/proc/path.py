@@ -2,8 +2,6 @@ import json
 import os
 import sys
 
-from lumo.utils.repository import git_dir
-
 
 def cache_dir():
     res = glob.get('libhome', None)
@@ -41,6 +39,7 @@ def exproot():
 
 
 def local_dir():
+    from lumo.utils.repository import git_dir
     res = git_dir()
     if res is None:
         res = os.path.dirname(os.path.join(os.getcwd(), sys.argv[0]))

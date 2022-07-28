@@ -221,12 +221,22 @@ class _BaseTrainer(metaclass=TrainerPropVar):
     #     return self._state_dicts[type_name][name]
 
     @classmethod
-    def _gene_class_exp_name(cls) -> str:
+    def dirname(cls):
+        file = inspect.getfile(cls)
+        return os.path.basename(os.path.dirname(file))
+
+    @classmethod
+    def filebasename(cls):
         try:
             file = inspect.getfile(cls)
             pre = os.path.splitext(os.path.basename(file))[0]
         except:
             pre = 'builtin'
+        return pre
+
+    @classmethod
+    def generate_exp_name(cls) -> str:
+        pre = cls.filebasename()
 
         exp_name = cls.__exp_name__
         if exp_name is None:

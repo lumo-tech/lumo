@@ -115,6 +115,18 @@ def batch_cosine_similarity2(a: torch.Tensor, b: torch.Tensor, eps=0):
     return torch.mm(normalize(a, eps=eps), normalize(b, eps=eps).T)
 
 
+def sharpen(x: torch.Tensor, t=1):
+    """
+    让概率分布变的更 sharp，即倾向于 onehot
+    :param x: prediction, sum(x,dim=-1) = 1
+    :param t: temperature, default is 0.5
+    :return:
+    """
+    with torch.no_grad():
+        temp = torch.pow(x, 1 / t)
+        return temp / (temp.sum(dim=1, keepdim=True) + 1e-7)
+
+
 if __name__ == '__main__':
     a = torch.rand(2, 3)
     b = torch.rand(2, 3)

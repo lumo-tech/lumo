@@ -1,5 +1,5 @@
 """
-Do something you like before the programe exit.
+Do something you want before the programe exit.
 """
 import sys
 from functools import wraps

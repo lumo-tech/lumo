@@ -17,7 +17,6 @@ from lumo.proc import dist
 
 from lumo.trainer.rnd import RndManager
 from lumo.utils.logger import Logger
-# from .accelerator import Accelerator
 from accelerate import Accelerator
 from .base import _BaseTrainer
 from .components import TrainerExperiment
@@ -45,7 +44,7 @@ class Trainer(_BaseTrainer):
         self._saver = None
         self.shared_prop = {}
         self.params.iparams()
-        self.exp = TrainerExperiment(self._gene_class_exp_name())
+        self.exp = TrainerExperiment(self.generate_exp_name())
         self.rnd = RndManager()
 
         self.train_epoch_toggle = False
@@ -53,10 +52,10 @@ class Trainer(_BaseTrainer):
 
         device = params.get('device', None) if not self.is_dist else None
 
-        # self.accelerate = Accelerator(device=device,
-        #                               kwargs_handlers=[DistributedDataParallelKwargs(find_unused_parameters=True)])
-        print('new Accelerate')
-        self.accelerate = Accelerator(kwargs_handlers=[DistributedDataParallelKwargs(find_unused_parameters=True)])
+        self.accelerate = Accelerator(kwargs_handlers=[
+            DistributedDataParallelKwargs(find_unused_parameters=params.get('find_unused_parameters', False))
+        ])
+
         if self.accelerate.state.distributed_type == self.accelerate.state.distributed_type.NO:
             self.accelerate.state.device = torch.device(device)
 
@@ -77,6 +76,12 @@ class Trainer(_BaseTrainer):
         self.datamodule.regist_dataloader_with_stage(stage, dataloader)
 
     def process_loader(self, dm: Union[DataModule, DataLoader] = None, stage: TrainStage = TrainStage.train):
+        """
+        automatically called before train()/test()/evaluate(), see __new__ function of Trainer
+        :param dm:
+        :param stage:
+        :return:
+        """
         assert stage is not None, '`stage` cannot be None'
         if dm is None and self.dm is not None:
             dm = self.dm
@@ -333,6 +338,12 @@ class Trainer(_BaseTrainer):
         self.train_epoch_toggle = True
 
     def prepare_dataloader(self, loader: DataLoaderType, stage: TrainStage = None):
+        """
+        automatically called before train()/test()/evaluate(), see __new__ function of Trainer
+        :param loader:
+        :param stage:
+        :return:
+        """
         if isinstance(loader, (DataLoaderShard, DataLoaderDispatcher)):
             warnings.warn('Duplicated prepare a same DataLoader twice, check your code.')
             return loader
@@ -351,7 +362,9 @@ class Trainer(_BaseTrainer):
         return loader
 
     def train(self, dm: Union[DataModule, DataLoaderType] = None, params: ParamsType = None, limit_global_steps=None):
-        loader = self.train_dataloader
+        loader = self.select_loader(dm)
+        if not loader:
+            loader = self.train_dataloader
 
         if loader is None:
             self.set_property('early_stop', 'Lack of train loader')
@@ -374,7 +387,7 @@ class Trainer(_BaseTrainer):
                 break
         return self._prop
 
-    def train_epoch(self, loader: DataLoader, params: ParamsType = None,
+    def train_epoch(self, loader: DataLoaderType, params: ParamsType = None,
                     limit_step=None,
                     limit_global_steps=None) -> Record:
         stage = TrainStage.train
@@ -475,11 +488,25 @@ class Trainer(_BaseTrainer):
             else:
                 v.eval()
 
+    @classmethod
+    def select_loader(cls, dm=None):
+        loader = None
+        if dm:
+            if isinstance(dm, DataModule):
+                loader = dm.train_dataloader
+            elif isinstance(dm, DataLoader) or isinstance(dm, DataLoaderSide):
+                loader = dm
+            else:
+                raise TypeError(type(dm))
+        return loader
+
     def test(self, dm: Union[DataModule, DataLoader] = None, params: ParamsType = None, limit_step=None):
         stage = TrainStage.test
         self.change_stage(stage)
 
-        loader = self.test_dataloader
+        loader = self.select_loader(dm)
+        if not loader:
+            loader = self.test_dataloader
 
         if loader is None:
             return None
@@ -503,7 +530,10 @@ class Trainer(_BaseTrainer):
     def evaluate(self, dm: Union[DataModule, DataLoader] = None, params: ParamsType = None, limit_step: int = None):
         stage = TrainStage.val
         self.change_stage(stage)
-        loader = self.val_dataloader
+
+        loader = self.select_loader(dm)
+        if not loader:
+            loader = self.val_dataloader
         if loader is None:
             return None
 

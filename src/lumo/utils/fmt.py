@@ -1,3 +1,6 @@
+"""
+Format date/filename, check array shape, convert item from torch.Tensor to ndarray or scalar.
+"""
 import textwrap
 from datetime import datetime
 

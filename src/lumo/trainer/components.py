@@ -85,7 +85,6 @@ class TrainerParams(Params):
     def __init__(self):
         super().__init__()
         self.epoch = 10
-        self.batch_size = 32
         self.eidx = 0
         self.idx = 0
         self.global_step = 0
