@@ -4,17 +4,15 @@ import sys
 import time
 import traceback
 from pathlib import Path
-from typing import Union, TYPE_CHECKING
+from typing import Union
 
-from lumo.core.metaclasses import PropVar
 from lumo.decorators.process import call_on_main_process_wrap
-from lumo.proc.dist import is_main, is_dist, local_rank
-from lumo.proc.path import exproot, local_dir
-from lumo.utils import safe_io as io
-from lumo.utils.fmt import can_be_filename
 
-if TYPE_CHECKING:
-    from .exphook import ExpHook
+from .base import ExpHook
+from ..proc.dist import is_dist, is_main, local_rank
+from ..proc.path import exproot, local_dir
+from ..utils import safe_io as io
+from ..utils.fmt import can_be_filename
 
 
 def checkdir(path: Union[Path, str]):
@@ -25,11 +23,13 @@ def checkdir(path: Union[Path, str]):
     return path
 
 
-class Experiment(metaclass=PropVar):
+class Experiment:
     def __init__(self, exp_name: str, root=None):
         if not can_be_filename(exp_name):
             raise ValueError(f'Experiment name should be a ligal filename(bettor only contain letter or underline),'
                              f'but got {exp_name}.')
+
+        self._prop = {}
         self._prop['exp_name'] = exp_name
         self._hooks = {}
         if root is None:
@@ -287,6 +287,14 @@ class Experiment(metaclass=PropVar):
         return self
 
     @property
+    def repo_name(self):
+        return self.project_name
+
+    @property
+    def project_name(self):
+        return os.path.basename(self.project_root)
+
+    @property
     def project_root(self):
         return local_dir()
 
@@ -335,7 +343,7 @@ class Experiment(metaclass=PropVar):
         return set(self._prop.keys())
 
     @call_on_main_process_wrap
-    def set_hook(self, hook: 'ExpHook'):
+    def set_hook(self, hook: ExpHook):
         hook.regist(self)
         self._hooks[hook.__class__.__name__] = hook
         self.add_tag(hook.__class__.__name__, 'hooks')

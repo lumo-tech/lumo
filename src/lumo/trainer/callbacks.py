@@ -1,28 +1,25 @@
 """
 """
-from concurrent.futures import ThreadPoolExecutor, as_completed
-
 import inspect
 import json
 import os
 import tempfile
 import time
 import traceback
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime
 from functools import wraps
-from typing import TYPE_CHECKING, NewType, Any, Optional, Dict, Union
+from typing import NewType, Any, Optional, Dict, Union
 
 from torch.utils.data import DataLoader
 
 from lumo.core import ParamsType, Meter, MetricType, Record, TrainStage, wrap_result
 from lumo.data import DataModule
-from lumo.utils.screen import inlinetqdm
 from lumo.data.loader import summarize_loader, DataLoaderType
 from lumo.utils import fmt
+from lumo.utils.screen import inlinetqdm
+from .trainer import Trainer
 from ..proc.dist import world_size
-
-if TYPE_CHECKING:
-    from .trainer import Trainer
 
 _func_map = {
     'evaluate': 'eval',
@@ -38,8 +35,8 @@ class BaseCallback:
     """
     Abstract base class used to build new callbacks.
 
-    Callbacks are created to hook into the various stages of lumo's 'Trainer' training, inference or data preparing.
-    You can hook any subclasses of `BaseCallback` in `lumo.kit.trainer.'Trainer'` class.
+    Callbacks are created to hook into the various stages of lumo's Trainer training, inference or data preparing.
+    You can hook any subclasses of `BaseCallback` in `lumo.kit.trainer.Trainer` class.
 
     To create a custom callback class, subclass `lumo.kit.callbacks.BaseCallback`, and define the callback methods
     you want to do something before or after that.
@@ -47,14 +44,14 @@ class BaseCallback:
     The callback method must be named like on_xxx_begin()/on_xxx_end(), where `xxx` is a function in trainer.
 
 
-    TrainCallback, SaveLoadCallback and InitialCallback define the most methods in 'Trainer', you can simply subclass these
+    TrainCallback, SaveLoadCallback and InitialCallback define the most methods in Trainer, you can simply subclass these
     callback class to custom your callback.
 
     Notes:
         There is no need for you to call the on_xxx function in your function's logic.
 
-        The 'Trainer' has some magic feature... not like keras or other framework with trainer/callback logic that
-        you may need to manully call the callback function `on_xxx...()` in you overrided or newly defined method in 'Trainer',
+        The Trainer has some magic feature... not like keras or other framework with trainer/callback logic that
+        you may need to manully call the callback function `on_xxx...()` in you overrided or newly defined method in Trainer,
         If you define a function `foo()` in your trainer, the callback function on_foo_begin() and on_foo_end() will be found
         automatically and be called, There is no need for you to call them in your function's logic.
 
@@ -77,7 +74,7 @@ class BaseCallback:
             """Wrapper for cache exceptions"""
 
             @wraps(func)
-            def on_exception(hooked: 'Trainer', tfunc, params: ParamsType, e: BaseException, *args, **kwargs):
+            def on_exception(hooked: Trainer, tfunc, params: ParamsType, e: BaseException, *args, **kwargs):
                 self.ecp = getattr(self, "ecp", None)
                 res = None
                 if self.ecp != e:
@@ -101,11 +98,11 @@ class BaseCallback:
             res.pop('self')
         return res
 
-    def on_hooked(self, source: 'Trainer', params: ParamsType):
+    def on_hooked(self, source: Trainer, params: ParamsType):
         """called when callback hooked trainer"""
         pass
 
-    def on_first_exception(self, source: 'Trainer', func, params: ParamsType, e: BaseException, *args, **kwargs):
+    def on_first_exception(self, source: Trainer, func, params: ParamsType, e: BaseException, *args, **kwargs):
         """
         when an exception was raised in some function, on_exception() will be called.
 
@@ -116,7 +113,7 @@ class BaseCallback:
         """
         pass
 
-    def on_exception(self, source: 'Trainer', func, params: ParamsType, e: BaseException, *args, **kwargs):
+    def on_exception(self, source: Trainer, func, params: ParamsType, e: BaseException, *args, **kwargs):
         """called when exception raised in some function"""
         return False
 
@@ -124,13 +121,13 @@ class BaseCallback:
         """Any reason when callback cannot hook on trainer"""
         pass
 
-    def on_begin(self, source: 'Trainer', func, params: ParamsType, *args, **kwargs):
+    def on_begin(self, source: Trainer, func, params: ParamsType, *args, **kwargs):
         """called before trainer.func is called"""
         cb_func = getattr(self, f"on_{map_func_name(func.__name__)}_begin", None)
         if cb_func is not None:
             cb_func(source, func, params, *args, **kwargs)
 
-    def on_end(self, source: 'Trainer', func, params: ParamsType, result, *args, **kwargs):
+    def on_end(self, source: Trainer, func, params: ParamsType, result, *args, **kwargs):
         cb_func = getattr(self, f"on_{map_func_name(func.__name__)}_end", None)
         if cb_func is not None:
             cb_func(source, func, params, result, *args, **kwargs)
@@ -141,7 +138,7 @@ class BaseCallback:
     def __lt__(self, other):
         return self.priority < other.priority
 
-    def hook(self, source: 'Trainer'):
+    def hook(self, source: Trainer):
         source.add_callback(self)
 
     def unhook(self):
@@ -167,64 +164,64 @@ class TrainCallback(BaseCallback):
         - inference
     """
 
-    def on_train_begin(self, trainer: 'Trainer', func, params: ParamsType,
+    def on_train_begin(self, trainer: Trainer, func, params: ParamsType,
                        dm: Union[DataModule, DataLoaderType] = None, arg_params: ParamsType = None,
                        *args, **kwargs):
         pass
 
-    def on_train_epoch_begin(self, trainer: 'Trainer', func, params: ParamsType, *args, **kwargs):
+    def on_train_epoch_begin(self, trainer: Trainer, func, params: ParamsType, *args, **kwargs):
         pass
 
-    def on_test_begin(self, trainer: 'Trainer', func, params: ParamsType, *args, **kwargs):
+    def on_test_begin(self, trainer: Trainer, func, params: ParamsType, *args, **kwargs):
         pass
 
-    def on_eval_begin(self, trainer: 'Trainer', func, params: ParamsType, *args, **kwargs):
+    def on_eval_begin(self, trainer: Trainer, func, params: ParamsType, *args, **kwargs):
         pass
 
-    def on_train_step_begin(self, trainer: 'Trainer', func, params: ParamsType, *args, **kwargs):
+    def on_train_step_begin(self, trainer: Trainer, func, params: ParamsType, *args, **kwargs):
         pass
 
-    def on_eval_step_begin(self, trainer: 'Trainer', func, params: ParamsType, *args, **kwargs):
+    def on_eval_step_begin(self, trainer: Trainer, func, params: ParamsType, *args, **kwargs):
         pass
 
-    def on_test_step_begin(self, trainer: 'Trainer', func, params: ParamsType, *args, **kwargs):
+    def on_test_step_begin(self, trainer: Trainer, func, params: ParamsType, *args, **kwargs):
         pass
 
-    def on_train_end(self, trainer: 'Trainer', func, params: ParamsType, record: Record, *args, **kwargs):
+    def on_train_end(self, trainer: Trainer, func, params: ParamsType, record: Record, *args, **kwargs):
         pass
 
-    def on_train_epoch_end(self, trainer: 'Trainer', func, params: ParamsType, record: Record, *args,
+    def on_train_epoch_end(self, trainer: Trainer, func, params: ParamsType, record: Record, *args,
                            **kwargs):
         pass
 
-    def on_test_end(self, trainer: 'Trainer', func, params: ParamsType, record: Record = None, *args, **kwargs):
+    def on_test_end(self, trainer: Trainer, func, params: ParamsType, record: Record = None, *args, **kwargs):
         pass
 
-    def on_eval_end(self, trainer: 'Trainer', func, params: ParamsType, record: Record = None, *args, **kwargs):
+    def on_eval_end(self, trainer: Trainer, func, params: ParamsType, record: Record = None, *args, **kwargs):
         pass
 
-    def on_train_step_end(self, trainer: 'Trainer', func, params: ParamsType, metric: MetricType = None, *args,
+    def on_train_step_end(self, trainer: Trainer, func, params: ParamsType, metric: MetricType = None, *args,
                           **kwargs):
         pass
 
-    def on_eval_step_end(self, trainer: 'Trainer', func, params: ParamsType, metric: MetricType = None, *args,
+    def on_eval_step_end(self, trainer: Trainer, func, params: ParamsType, metric: MetricType = None, *args,
                          **kwargs):
         pass
 
-    def on_test_step_end(self, trainer: 'Trainer', func, params: ParamsType, metric: MetricType = None, *args,
+    def on_test_step_end(self, trainer: Trainer, func, params: ParamsType, metric: MetricType = None, *args,
                          **kwargs):
         pass
 
-    def on_predict_begin(self, trainer: 'Trainer', func, params: ParamsType, *args, **kwargs):
+    def on_predict_begin(self, trainer: Trainer, func, params: ParamsType, *args, **kwargs):
         pass
 
-    def on_predict_end(self, trainer: 'Trainer', func, params: ParamsType, result: Any = None, *args, **kwargs):
+    def on_predict_end(self, trainer: Trainer, func, params: ParamsType, result: Any = None, *args, **kwargs):
         pass
 
-    def on_inference_begin(self, trainer: 'Trainer', func, params: ParamsType, *args, **kwargs):
+    def on_inference_begin(self, trainer: Trainer, func, params: ParamsType, *args, **kwargs):
         pass
 
-    def on_inference_end(self, trainer: 'Trainer', func, params: ParamsType, result: Any, *args, **kwargs):
+    def on_inference_end(self, trainer: Trainer, func, params: ParamsType, result: Any, *args, **kwargs):
         pass
 
 
@@ -236,34 +233,34 @@ class InitialCallback(BaseCallback):
         - initialization of optims/models/dataloader
     """
 
-    def on_imodels_begin(self, trainer: 'Trainer', func, params: ParamsType, *args, **kwargs):
+    def on_imodels_begin(self, trainer: Trainer, func, params: ParamsType, *args, **kwargs):
         pass
 
-    def on_imodels_end(self, trainer: 'Trainer', func, params: ParamsType, result: Any, *args, **kwargs):
+    def on_imodels_end(self, trainer: Trainer, func, params: ParamsType, result: Any, *args, **kwargs):
         pass
 
-    def on_prepare_dataloader_begin(self, trainer: 'Trainer', func, params: ParamsType, *args, **kwargs):
+    def on_prepare_dataloader_begin(self, trainer: Trainer, func, params: ParamsType, *args, **kwargs):
         pass
 
-    def on_prepare_dataloader_end(self, trainer: 'Trainer', func, params: ParamsType, loader: DataLoader,
+    def on_prepare_dataloader_end(self, trainer: Trainer, func, params: ParamsType, loader: DataLoader,
                                   *args, **kwargs):
         pass
 
-    def on_process_loader_begin(self, trainer: 'Trainer', func, params: ParamsType,
+    def on_process_loader_begin(self, trainer: Trainer, func, params: ParamsType,
                                 dm: DataModule, stage: TrainStage,
                                 *args, **kwargs):
         pass
 
-    def on_process_loader_end(self, trainer: 'Trainer', func, params: ParamsType, loader: DataLoader,
+    def on_process_loader_end(self, trainer: Trainer, func, params: ParamsType, loader: DataLoader,
                               dm: DataModule, stage: TrainStage,
                               *args, **kwargs):
         pass
 
-    def on_regist_dataloader_begin(self, trainer: 'Trainer', func, params: ParamsType,
+    def on_regist_dataloader_begin(self, trainer: Trainer, func, params: ParamsType,
                                    dataloader: DataLoader, stage: TrainStage, *args, **kwargs):
         pass
 
-    def on_regist_dataloader_end(self, trainer: 'Trainer', func, params: ParamsType, result: Any,
+    def on_regist_dataloader_end(self, trainer: Trainer, func, params: ParamsType, result: Any,
                                  dataloader: DataLoader, stage: TrainStage, *args, **kwargs):
         pass
 
@@ -294,7 +291,7 @@ class EvalCallback(TrainCallback):
     def has_test(self):
         return self.test_in_per_epoch is not None and self.test_in_per_epoch > 0
 
-    def _test_or_eval(self, params: ParamsType, trainer: 'Trainer'):
+    def _test_or_eval(self, params: ParamsType, trainer: Trainer):
         if self.has_eval:
             if params.eidx % self.eval_in_per_epoch == self.eval_in_per_epoch - 1:
                 self._last_eval = params.eidx
@@ -304,11 +301,11 @@ class EvalCallback(TrainCallback):
                 self._last_test = params.eidx
                 trainer.test()
 
-    def on_train_epoch_end(self, trainer: 'Trainer', func, params: ParamsType, record: Record, *args,
+    def on_train_epoch_end(self, trainer: Trainer, func, params: ParamsType, record: Record, *args,
                            **kwargs):
         self._test_or_eval(params, trainer)
 
-    def on_train_end(self, trainer: 'Trainer', func, params: ParamsType, record: Record, *args, **kwargs):
+    def on_train_end(self, trainer: Trainer, func, params: ParamsType, record: Record, *args, **kwargs):
         if self._last_eval != params.eidx and self.has_eval:
             trainer.evaluate()
         if self._last_test != params.eidx and self.has_test:
@@ -320,11 +317,11 @@ class EvalCallback(TrainCallback):
 
 class DebugCallback(BaseCallback):
 
-    def on_hooked(self, source: 'Trainer', params: ParamsType):
+    def on_hooked(self, source: Trainer, params: ParamsType):
         super().on_hooked(source, params)
         print('on_hooked()')
 
-    def on_first_exception(self, source: 'Trainer', func, params: ParamsType, e: BaseException, *args, **kwargs):
+    def on_first_exception(self, source: Trainer, func, params: ParamsType, e: BaseException, *args, **kwargs):
         super().on_first_exception(source, func, params, e, *args, **kwargs)
         print('on_first_exception()', func.__name__)
         # from rich.console import Console
@@ -335,18 +332,18 @@ class DebugCallback(BaseCallback):
         #
         # except:
 
-    def on_exception(self, source: 'Trainer', func, params: ParamsType, e: BaseException, *args, **kwargs):
+    def on_exception(self, source: Trainer, func, params: ParamsType, e: BaseException, *args, **kwargs):
         return super().on_exception(source, func, params, e, *args, **kwargs)
 
     def on_hook_failed(self, source, message):
         super().on_hook_failed(source, message)
         print('on_hook_failed()', message)
 
-    def on_begin(self, source: 'Trainer', func, params: ParamsType, *args, **kwargs):
+    def on_begin(self, source: Trainer, func, params: ParamsType, *args, **kwargs):
         super().on_begin(source, func, params, *args, **kwargs)
         print('on_begin()', func.__name__)
 
-    def on_end(self, source: 'Trainer', func, params: ParamsType, result, *args, **kwargs):
+    def on_end(self, source: Trainer, func, params: ParamsType, result, *args, **kwargs):
         super().on_end(source, func, params, result, *args, **kwargs)
         print('on_end()', func.__name__)
 
@@ -361,15 +358,15 @@ class LoggerCallback(TrainCallback, InitialCallback):
         file = tempfile.TemporaryFile('w')
         self.temp = file
 
-    def on_imodels_end(self, trainer: 'Trainer', func, params: ParamsType, result: Any, *args, **kwargs):
+    def on_imodels_end(self, trainer: Trainer, func, params: ParamsType, result: Any, *args, **kwargs):
         super().on_imodels_end(trainer, func, params, result, *args, **kwargs)
         trainer.logger.info('Model initialized.')
 
-    def on_hooked(self, source: 'Trainer', params: ParamsType):
+    def on_hooked(self, source: Trainer, params: ParamsType):
         super().on_hooked(source, params)
         source.logger.raw(params)
 
-    def on_process_loader_end(self, trainer: 'Trainer', func, params: ParamsType, loader: DataLoaderType,
+    def on_process_loader_end(self, trainer: Trainer, func, params: ParamsType, loader: DataLoaderType,
                               dm: DataModule,
                               stage: TrainStage, *args, **kwargs):
         super().on_process_loader_end(trainer, func, params, loader, dm, stage, *args, **kwargs)
@@ -385,7 +382,7 @@ class LoggerCallback(TrainCallback, InitialCallback):
         self.stage[stage] = lsize
         trainer.logger.info(f'{loader_str} for {stage.value} prepared.')
 
-    def on_train_begin(self, trainer: 'Trainer', func, params: ParamsType, *args, **kwargs):
+    def on_train_begin(self, trainer: Trainer, func, params: ParamsType, *args, **kwargs):
         super().on_train_begin(trainer, func, params, *args, **kwargs)
         trainer.logger.info('[[Train Begin]]')
         self.global_tqdm = inlinetqdm(total=params.epoch,
@@ -400,7 +397,7 @@ class LoggerCallback(TrainCallback, InitialCallback):
                                    file=self.temp)
         self.record = Record()
 
-    def update(self, trainer: 'Trainer'):
+    def update(self, trainer: Trainer):
         self.c += 1
         self.cur_tqdm.update()
         if self.c % self.step == 0:
@@ -411,22 +408,22 @@ class LoggerCallback(TrainCallback, InitialCallback):
             trainer.logger.inline(self.cur_tqdm)
             trainer.logger.newline()
 
-    def flush(self, trainer: 'Trainer'):
+    def flush(self, trainer: Trainer):
         self.c = 0
         trainer.logger.inline(self.cur_tqdm)
         trainer.logger.newline()
 
-    def on_train_epoch_begin(self, trainer: 'Trainer', func, params: ParamsType, *args, **kwargs):
+    def on_train_epoch_begin(self, trainer: Trainer, func, params: ParamsType, *args, **kwargs):
         super().on_train_epoch_begin(trainer, func, params, *args, **kwargs)
         self.renew(TrainStage.train)
         self.time = time.time()
 
-    def on_test_begin(self, trainer: 'Trainer', func, params: ParamsType, *args, **kwargs):
+    def on_test_begin(self, trainer: Trainer, func, params: ParamsType, *args, **kwargs):
         super().on_test_begin(trainer, func, params, *args, **kwargs)
         self.renew(TrainStage.test)
         trainer.logger.info('[[Test Begin]]')
 
-    def on_eval_begin(self, trainer: 'Trainer', func, params: ParamsType, *args, **kwargs):
+    def on_eval_begin(self, trainer: Trainer, func, params: ParamsType, *args, **kwargs):
         super().on_eval_begin(trainer, func, params, *args, **kwargs)
         self.renew(TrainStage.val)
         trainer.logger.info('[[Evaluate Begin]]')
@@ -470,29 +467,29 @@ class LoggerCallback(TrainCallback, InitialCallback):
 
         return f'{n}/{total} train: {elapsed_str} | epoch: {last_str} | last: {remaining_str} | avg: {rate_str}'
 
-    def on_train_epoch_end(self, trainer: 'Trainer', func, params: ParamsType, record: Record, *args, **kwargs):
+    def on_train_epoch_end(self, trainer: Trainer, func, params: ParamsType, record: Record, *args, **kwargs):
         super().on_train_epoch_end(trainer, func, params, record, *args, **kwargs)
         self.global_tqdm.update()
         # self.flush(trainer)
         trainer.logger.info(self.format_train_epoch_time(**self.global_tqdm.format_dict))
 
-    def on_test_end(self, trainer: 'Trainer', func, params: ParamsType,
+    def on_test_end(self, trainer: Trainer, func, params: ParamsType,
                     record: Optional[Record] = None,
                     *args, **kwargs):
         self.flush(trainer)
         trainer.logger.info('[[Test End]]')
 
-    def on_eval_end(self, trainer: 'Trainer', func, params: ParamsType,
+    def on_eval_end(self, trainer: Trainer, func, params: ParamsType,
                     record: Optional[Record] = None,
                     *args, **kwargs):
         self.flush(trainer)
         trainer.logger.info('[[Evaluate End]]')
 
-    def on_train_end(self, trainer: 'Trainer', func, params: ParamsType, record: Optional[Record], *args, **kwargs):
+    def on_train_end(self, trainer: Trainer, func, params: ParamsType, record: Optional[Record], *args, **kwargs):
         self.flush(trainer)
         trainer.logger.info('[[Train End]]')
 
-    def on_train_step_end(self, trainer: 'Trainer', func, params: ParamsType,
+    def on_train_step_end(self, trainer: Trainer, func, params: ParamsType,
                           metric: MetricType = None,
                           *args, **kwargs):
         self.record.record(metric)
@@ -500,7 +497,7 @@ class LoggerCallback(TrainCallback, InitialCallback):
         self.cur_tqdm.set_postfix_str(self.record.tostr(), refresh=False)
         self.update(trainer)
 
-    def on_eval_step_end(self, trainer: 'Trainer', func, params: ParamsType,
+    def on_eval_step_end(self, trainer: Trainer, func, params: ParamsType,
                          metric: MetricType = None,
                          *args, **kwargs):
         self.record.record(metric)
@@ -508,7 +505,7 @@ class LoggerCallback(TrainCallback, InitialCallback):
         self.cur_tqdm.set_postfix_str(self.record.tostr(), refresh=False)
         self.update(trainer)
 
-    def on_test_step_end(self, trainer: 'Trainer', func, params: ParamsType,
+    def on_test_step_end(self, trainer: Trainer, func, params: ParamsType,
                          metric: MetricType = None,
                          *args, **kwargs):
         self.record.record(metric)
@@ -519,14 +516,14 @@ class LoggerCallback(TrainCallback, InitialCallback):
 
 class EpochCheckpoint(TrainCallback):
     """
-    在 'Trainer' 训练过程中定时保存模型
+    在 Trainer 训练过程中定时保存模型
     """
     only_main_process = True
 
     def __init__(self, per_epoch=50):
         self.per_epoch = per_epoch
 
-    def on_train_epoch_end(self, trainer: 'Trainer', func, params: ParamsType, record: Optional[Record], *args,
+    def on_train_epoch_end(self, trainer: Trainer, func, params: ParamsType, record: Optional[Record], *args,
                            **kwargs):
         meter = record.avg()
         if params.eidx % self.per_epoch == 0 and params.eidx > 0:
@@ -542,7 +539,7 @@ class GlobalStepCheckpoint(TrainCallback):
     def __init__(self, per_step=2500):
         self.per = per_step
 
-    def on_train_step_end(self, trainer: 'Trainer', func, params: ParamsType, metric: Meter, *args, **kwargs):
+    def on_train_step_end(self, trainer: Trainer, func, params: ParamsType, metric: Meter, *args, **kwargs):
         super().on_train_step_end(trainer, func, params, metric, *args, **kwargs)
         if params.global_step % self.per == 0 and params.global_step > 0:
             trainer.save_checkpoint(meta_info=Meter.wrap_result(metric))
@@ -559,7 +556,7 @@ class KeyErrorSave(TrainCallback):
     def __init__(self, wait_input=False):
         self.wait_input = wait_input
 
-    def on_first_exception(self, source: 'Trainer', func, params: ParamsType, e: BaseException, *args, **kwargs):
+    def on_first_exception(self, source: Trainer, func, params: ParamsType, e: BaseException, *args, **kwargs):
         if isinstance(e, KeyboardInterrupt):
             source.logger.info("KeyErrorSave trigged, save checkpoint")
             source.save_checkpoint({"mode": "KeyboardInterrupt"})
@@ -576,12 +573,12 @@ class EMAUpdate(TrainCallback):
     """
     Callback to update EMA model every train step.
 
-    Variable in 'Trainer' instance is identified as EMA model when
+    Variable in Trainer instance is identified as EMA model when
      - is instance of torch.nn.Module
      - name is started with 'ema'
     """
 
-    def on_train_step_end(self, trainer: 'Trainer', func, params: ParamsType, metric: MetricType, *args, **kwargs):
+    def on_train_step_end(self, trainer: Trainer, func, params: ParamsType, metric: MetricType, *args, **kwargs):
         super().on_train_step_end(trainer, func, params, metric, *args, **kwargs)
         for k, v in trainer.model_dict.items():
             if k.lower().startswith('ema'):
@@ -597,7 +594,7 @@ class AutoLoadModel(InitialCallback):
      - `pretrain` is True and `pretrain_path` is not None.
     """
 
-    def on_imodels_end(self, trainer: 'Trainer', func, params: ParamsType, result: Any, *args, **kwargs):
+    def on_imodels_end(self, trainer: Trainer, func, params: ParamsType, result: Any, *args, **kwargs):
         super().on_imodels_end(trainer, func, params, result, *args, **kwargs)
         if params.get('pretrain', False):
             path = params.get('pretrain_path', None)
@@ -614,7 +611,7 @@ class EvalFirst(AutoLoadModel):
         super().__init__()
         self.datamodule = datamodule
 
-    def on_imodels_end(self, trainer: 'Trainer', func, params: ParamsType, result: Meter, *args, **kwargs):
+    def on_imodels_end(self, trainer: Trainer, func, params: ParamsType, result: Meter, *args, **kwargs):
         if params.get('eval_first', True):
             if self.datamodule is not None:
                 trainer.evaluate(self.datamodule)
@@ -663,23 +660,23 @@ class RecordCallback(TrainCallback):
     def log_matrix(self, metrics: Dict, step: int, namespace: str):
         return NotImplemented
 
-    def on_hooked(self, source: 'Trainer', params: ParamsType):
+    def on_hooked(self, source: Trainer, params: ParamsType):
         super().on_hooked(source, params)
         source.exp.set_prop('AutoRecord', self.__class__.__name__)
 
-    def on_train_step_end(self, trainer: 'Trainer', func, params: ParamsType, metric: MetricType, *args, **kwargs):
+    def on_train_step_end(self, trainer: Trainer, func, params: ParamsType, metric: MetricType, *args, **kwargs):
         super().on_train_step_end(trainer, func, params, metric, *args, **kwargs)
         self.log(metric, step=trainer.global_steps, namespace='train.step')
 
-    def on_train_epoch_end(self, trainer: 'Trainer', func, params: ParamsType, record: Record, *args, **kwargs):
+    def on_train_epoch_end(self, trainer: Trainer, func, params: ParamsType, record: Record, *args, **kwargs):
         super().on_train_epoch_end(trainer, func, params, record, *args, **kwargs)
         self.log(record.avg(), step=trainer.global_steps, namespace='train.epoch')
 
-    def on_test_end(self, trainer: 'Trainer', func, params: ParamsType, record: Record, *args, **kwargs):
+    def on_test_end(self, trainer: Trainer, func, params: ParamsType, record: Record, *args, **kwargs):
         super().on_test_end(trainer, func, params, record, *args, **kwargs)
         self.log(record.avg(), step=trainer.global_steps, namespace='test')
 
-    def on_eval_end(self, trainer: 'Trainer', func, params: ParamsType, record: Record, *args, **kwargs):
+    def on_eval_end(self, trainer: Trainer, func, params: ParamsType, record: Record, *args, **kwargs):
         super().on_eval_end(trainer, func, params, record, *args, **kwargs)
         self.log(record.avg(), step=trainer.global_steps, namespace='evaluate')
 
@@ -715,14 +712,14 @@ class WandbCallback(RecordCallback):
         metrics = {k: wandb.Image(v) for k, v in metrics.items()}
         wandb.log(metrics, step=step)
 
-    def on_first_exception(self, source: 'Trainer', func, params: ParamsType, e: BaseException, *args, **kwargs):
+    def on_first_exception(self, source: Trainer, func, params: ParamsType, e: BaseException, *args, **kwargs):
         super().on_first_exception(source, func, params, e, *args, **kwargs)
 
 
 class TensorBoardCallback(RecordCallback):
     only_main_process = True
 
-    def on_hooked(self, source: 'Trainer', params: ParamsType):
+    def on_hooked(self, source: Trainer, params: ParamsType):
         super().on_hooked(source, params)
         _ = source.safe_writer
         # get experiment property of writer
@@ -749,7 +746,7 @@ class StopByCode(TrainCallback):
     def __init__(self, step=100):
         self.step = step
 
-    def on_train_step_end(self, trainer: 'Trainer', func, params: ParamsType, metric: Meter, *args, **kwargs):
+    def on_train_step_end(self, trainer: Trainer, func, params: ParamsType, metric: Meter, *args, **kwargs):
         if trainer.global_steps % self.step == 0:
             if os.path.exists(trainer.exp.test_file('.stop')):
                 trainer.exp.add_tag('lumo.early_stop')
@@ -763,7 +760,7 @@ CallbackType = NewType('CallbackType', BaseCallback)
 
 class SeedCallback(InitialCallback):
 
-    def on_imodels_begin(self, trainer: 'Trainer', func, params: ParamsType, *args, **kwargs):
+    def on_imodels_begin(self, trainer: Trainer, func, params: ParamsType, *args, **kwargs):
         super().on_imodels_begin(trainer, func, params, *args, **kwargs)
         seed = params.get('seed', None)
         if seed is None:
@@ -803,7 +800,7 @@ class RemoteCallback(InitialCallback, TrainCallback):
                                                                    'datetime': datetime.now().isoformat()})
         self.submits.append(task)
 
-    def on_hooked(self, source: 'Trainer', params: ParamsType):
+    def on_hooked(self, source: Trainer, params: ParamsType):
         source.exp.dump_info('request', {
             'url': self.url,
         })
@@ -817,7 +814,7 @@ class RemoteCallback(InitialCallback, TrainCallback):
 
         self.request(data)
 
-    def on_imodels_end(self, trainer: 'Trainer', func, params: ParamsType, result: Any, *args, **kwargs):
+    def on_imodels_end(self, trainer: Trainer, func, params: ParamsType, result: Any, *args, **kwargs):
         super().on_imodels_end(trainer, func, params, result, *args, **kwargs)
         commit_info = trainer.exp.get_prop('git')
         if 'commit' in commit_info:
@@ -827,13 +824,13 @@ class RemoteCallback(InitialCallback, TrainCallback):
             'commit': commit_info['commit']})
         self.request(data)
 
-    def on_train_begin(self, trainer: 'Trainer', func, params: ParamsType, *args, **kwargs):
+    def on_train_begin(self, trainer: Trainer, func, params: ParamsType, *args, **kwargs):
         self.request(self.make_data(trainer, 'on_train_begin'))
 
-    def on_train_end(self, trainer: 'Trainer', func, params: ParamsType, record: Record, *args, **kwargs):
+    def on_train_end(self, trainer: Trainer, func, params: ParamsType, record: Record, *args, **kwargs):
         self.request(self.make_data(trainer, 'on_train_end'))
 
-    def on_train_epoch_begin(self, trainer: 'Trainer', func, params: ParamsType, *args, **kwargs):
+    def on_train_epoch_begin(self, trainer: Trainer, func, params: ParamsType, *args, **kwargs):
         self.request(
             self.make_data(trainer, 'on_train_epoch_end', eidx=trainer.eidx, global_steps=trainer.global_steps))
 
@@ -841,22 +838,22 @@ class RemoteCallback(InitialCallback, TrainCallback):
         self.request(self.make_data(self._hooked, 'on_finished'))
         _ = [i.result() for i in as_completed(self.submits)]
 
-    def on_train_step_end(self, trainer: 'Trainer', func, params: ParamsType, metric: MetricType = None, *args,
+    def on_train_step_end(self, trainer: Trainer, func, params: ParamsType, metric: MetricType = None, *args,
                           **kwargs):
         super().on_train_step_end(trainer, func, params, metric, *args, **kwargs)
         metric = wrap_result(metric)
         dict(metric.items())
         self.request(self.make_data())
 
-    def on_test_begin(self, trainer: 'Trainer', func, params: ParamsType, *args, **kwargs):
+    def on_test_begin(self, trainer: Trainer, func, params: ParamsType, *args, **kwargs):
         self.request(
             self.make_data(trainer, 'on_test_begin', eidx=trainer.eidx, global_steps=trainer.global_steps))
 
-    def on_eval_begin(self, trainer: 'Trainer', func, params: ParamsType, *args, **kwargs):
+    def on_eval_begin(self, trainer: Trainer, func, params: ParamsType, *args, **kwargs):
         self.request(
             self.make_data(trainer, 'on_eval_begin', eidx=trainer.eidx, global_steps=trainer.global_steps))
 
-    def on_first_exception(self, source: 'Trainer', func, params: ParamsType, e: BaseException, *args, **kwargs):
+    def on_first_exception(self, source: Trainer, func, params: ParamsType, e: BaseException, *args, **kwargs):
         self.request(
             self.make_data(source, 'on_exception',
                            **{
@@ -912,7 +909,7 @@ class NotionCallback(TrainCallback, InitialCallback):
             return self.EmptyObject()
         return self._npage
 
-    def on_hooked(self, source: 'Trainer', params: ParamsType):
+    def on_hooked(self, source: Trainer, params: ParamsType):
         super(NotionCallback, self).on_hooked(source, params)
         self._npage = None
         if params.get('notion_page_id', None) is None:
@@ -988,7 +985,7 @@ class NotionCallback(TrainCallback, InitialCallback):
         self.npage.append_code(' '.join(source.exp.exec_argv), 'shell')
         self.npage.append_code(params.to_yaml(), language='yaml')
 
-    def on_imodels_end(self, trainer: 'Trainer', func, params: ParamsType, result: Any, *args, **kwargs):
+    def on_imodels_end(self, trainer: Trainer, func, params: ParamsType, result: Any, *args, **kwargs):
         super().on_imodels_end(trainer, func, params, result, *args, **kwargs)
         commit_info = trainer.exp.get_prop('git')
         if self.npage is None:
@@ -999,7 +996,7 @@ class NotionCallback(TrainCallback, InitialCallback):
         self.npage.flush_children()
         self.npage.flush_property()
 
-    def on_train_begin(self, trainer: 'Trainer', func, params: ParamsType, *args, **kwargs):
+    def on_train_begin(self, trainer: Trainer, func, params: ParamsType, *args, **kwargs):
         if self.npage is None:
             return
         self.npage.add_option('Status', 'train')
@@ -1015,23 +1012,23 @@ class NotionCallback(TrainCallback, InitialCallback):
         self.npage.flush_property()
         self.npage.flush_children()
 
-    def on_test_begin(self, trainer: 'Trainer', func, params: ParamsType, *args, **kwargs):
+    def on_test_begin(self, trainer: Trainer, func, params: ParamsType, *args, **kwargs):
         if self.npage is None:
             return
         self.npage.add_option('Status', 'test')
 
-    def on_test_end(self, trainer: 'Trainer', func, params: ParamsType, record: Record = None, *args, **kwargs):
+    def on_test_end(self, trainer: Trainer, func, params: ParamsType, record: Record = None, *args, **kwargs):
         super().on_test_end(trainer, func, params, record, *args, **kwargs)
         acc = trainer.shared_prop.get('acc', None)
         if acc is not None:
             self.npage.set_number()
 
-    def on_eval_begin(self, trainer: 'Trainer', func, params: ParamsType, *args, **kwargs):
+    def on_eval_begin(self, trainer: Trainer, func, params: ParamsType, *args, **kwargs):
         if self.npage is None:
             return
         self.npage.add_option('Status', 'evaluation')
 
-    def on_first_exception(self, source: 'Trainer', func, params: ParamsType, e: BaseException, *args, **kwargs):
+    def on_first_exception(self, source: Trainer, func, params: ParamsType, e: BaseException, *args, **kwargs):
         if self.npage is None:
             return
 

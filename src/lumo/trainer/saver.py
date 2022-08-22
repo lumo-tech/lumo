@@ -5,12 +5,14 @@ from typing import Optional, Union, List
 
 from lumo.utils import safe_io as io
 
+
 # state_dict_tuple = namedtuple('state_dict_tuplt', ['state_dict', 'meta_info'], defaults=[None])
 
 class state_dict_tuple:
     def __init__(self, state_dict=None, meta_info=None):
-        self.state_dict=state_dict
+        self.state_dict = state_dict
         self.meta_info = meta_info
+
 
 class Saver:
     """

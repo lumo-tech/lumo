@@ -9,7 +9,7 @@ from joblib import hash
 from lumo.core import BaseParams
 from lumo.utils import safe_io as IO
 from lumo.utils.fmt import strftime
-from .experiment import Experiment
+from lumo.exp import Experiment
 
 
 def wait_pid_stop(exp_name=None, test_root=None, state_key='state1'):

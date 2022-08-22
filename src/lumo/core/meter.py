@@ -27,6 +27,9 @@ class Meter(metaclass=PropVar):
             m._avg[k] = self._avg[k]
         return m
 
+    def todict(self):
+        return self._rec
+
     @property
     def _stage(self):
         return self._prop.get('stage', 'default')

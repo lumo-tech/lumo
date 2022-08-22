@@ -9,7 +9,7 @@ import git
 from git import Repo, Commit
 import io
 from joblib import hash
-from .filelock import Lock
+from .filelock2 import Lock
 
 LUMO_BRANCH = 'lumo_experiments'
 
@@ -27,6 +27,7 @@ class branch:
     def __init__(self, repo: Repo, branch: str):
         self.repo = repo
         self.lock = Lock(f'{hash(repo.git_dir)}_{branch}')
+        self.lock.abtain()
         self.old_branch = self.repo.head.reference
         self.branch = branch
 
@@ -80,7 +81,7 @@ def add(repo=None):
     return repo.git.add(all=True)
 
 
-def git_commit(repo=None, key=None, branch_name=LUMO_BRANCH, info: str = None):
+def git_commit(repo=None, key=None, branch_name=LUMO_BRANCH, info: str = None, filter_files=None):
     """
     ```
         cd <repo working dir>
@@ -114,6 +115,11 @@ def git_commit(repo=None, key=None, branch_name=LUMO_BRANCH, info: str = None):
             change_file = []
             change_file.extend(repo.untracked_files)
             change_file.extend([i.a_path for i in repo.index.diff(None)])
+            if filter_files is not None:
+                # print('before filter', change_file)
+                change_file = [i for i in change_file if i in filter_files]
+                # print('after filter', change_file)
+
             if len(change_file) > 0:
                 repo.git.add(change_file)
                 commit_info = '[[EMPTY]]'

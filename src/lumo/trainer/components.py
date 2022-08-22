@@ -1,6 +1,6 @@
 import torch
 
-from lumo.core import Params, Attr
+from lumo.core import Params
 from lumo.core.metaclasses import make_dicts, make_dict
 from lumo.exp import SimpleExperiment
 from .factory import OptimFactory, InterpFactory

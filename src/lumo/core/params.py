@@ -24,6 +24,9 @@ class Arange:
         self.left = left
         self.right = right
 
+    def __repr__(self):
+        return f"Arange: {self.default}, [{self.left}, {self.right}] "
+
 
 class Choices:
     def __init__(self, default=None, choices=None):
@@ -31,6 +34,9 @@ class Choices:
             choices = []
         self.default = default
         self.choices = choices
+
+    def __repr__(self):
+        return f"Choice: [{self.default}], {self.choices}"
 
 
 def _get_item(dic, keys: List[str]):

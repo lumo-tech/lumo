@@ -1,7 +1,7 @@
 import fire
 import os
 from .functional import *
-from lumo import Experiment
+from ..exp import Experiment
 
 doc = """
 Usage:

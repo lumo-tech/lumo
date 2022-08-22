@@ -3,7 +3,7 @@ import os
 from lumo.proc.path import libhome
 from lumo.utils.fmt import indent_print
 
-from .experiment import Experiment
+from . import Experiment
 
 
 def find_experiments():

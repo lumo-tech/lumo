@@ -1,28 +1,30 @@
 import bisect
+import sys
 import warnings
+from datetime import datetime
 from functools import lru_cache
-from typing import Union, Dict, Any, Optional, Sequence, Mapping
+from typing import Union, Dict, Any, Optional, Sequence, Mapping, Callable
 
 import numpy as np
 import torch
+from accelerate import Accelerator
 from accelerate import DistributedDataParallelKwargs
 from accelerate.utils import send_to_device
 from torch import nn
 from torch.optim import Optimizer
 from torch.utils.data import DataLoader
-from lumo.data.accelerator import DataLoaderShard, DataLoaderDispatcher
-from lumo.core import ParamsType, TrainStage, Record, MetricType, Meter, Attr
-from lumo.data import DataModule
-from lumo.proc import dist
 
+from lumo.core import ParamsType, TrainStage, Record, MetricType, Meter, Attr
+from lumo.core.disk import TableRow, Metrics
+from lumo.data import DataModule
+from lumo.data.accelerator import DataLoaderShard, DataLoaderDispatcher
+from lumo.data.loader import DataLoaderType, DataLoaderSide
+from lumo.proc import dist
 from lumo.trainer.rnd import RndManager
 from lumo.utils.logger import Logger
-from accelerate import Accelerator
 from .base import _BaseTrainer
 from .components import TrainerExperiment
 from .saver import Saver
-from ..core.table import TableRow
-from ..data.loader import DataLoaderType, DataLoaderSide
 
 
 class Trainer(_BaseTrainer):
@@ -47,7 +49,8 @@ class Trainer(_BaseTrainer):
         self.params.iparams()
         self.exp = TrainerExperiment(self.generate_exp_name())
 
-        self._database = TableRow(self.exp.exp_name, self.exp.test_name_with_dist)
+        self._database = TableRow(self.exp.project_name, self.exp.exp_name, self.exp.test_name_with_dist)
+        self.metric_board = Metrics(self.exp.test_root)
 
         self.rnd = RndManager()
 
@@ -69,54 +72,6 @@ class Trainer(_BaseTrainer):
         self.set_global_steps(params.get('global_steps', 0))
         if params.get('debug', False):
             self.exp.set_prop('debug', True)
-
-    def regist_dataloader(self, dataloader: DataLoader, stage: TrainStage):
-        self.datamodule.regist_dataloader_with_stage(stage, dataloader)
-
-    def process_loader(self, dm: Union[DataModule, DataLoader] = None, stage: TrainStage = TrainStage.train):
-        """
-        automatically called before train()/test()/evaluate(), see __new__ function of Trainer
-        :param dm:
-        :param stage:
-        :return:
-        """
-        assert stage is not None, '`stage` cannot be None'
-        if dm is None and self.dm is not None:
-            dm = self.dm
-
-        if isinstance(dm, DataModule):
-            loader = dm[stage.value]
-            if loader is None:
-                # where datamodule.idataloader() methods first invoked (automaticly).
-                loader = dm.get_loader_with_stage(stage)
-                if loader is None:
-                    return None
-                loader = self.prepare_dataloader(loader, stage)
-                self.regist_dataloader(loader, stage=stage)
-        elif isinstance(dm, DataLoader):
-            loader = dm
-            loader = self.prepare_dataloader(loader, stage)
-            self.regist_dataloader(loader, stage=stage)
-        else:
-            return None
-
-        return loader
-
-    def _load_fun_state_dict(self, src: dict, tgt: dict):
-        for k, v in tgt.items():
-            if k in src:
-                v.load_state_dict(src[k])
-
-    def load_state_dict(self, state_dict: dict):
-        _sub = {'models', 'optims', 'other'}
-        _missing = []
-
-        for k, v in state_dict.items():
-            if k in _sub:
-                self._load_fun_state_dict(v, self._state_dicts[k])
-            else:
-                self._state_dicts[k] = v
-        return
 
     @property
     def db(self):
@@ -309,8 +264,53 @@ class Trainer(_BaseTrainer):
     def device(self):
         return self.accelerate.device
 
-    # def prepare(self):
-    #     pass
+    def _load_fun_state_dict(self, src: dict, tgt: dict):
+        for k, v in tgt.items():
+            if k in src:
+                v.load_state_dict(src[k])
+
+    def regist_dataloader(self, dataloader: DataLoader, stage: TrainStage):
+        self.datamodule.regist_dataloader_with_stage(stage, dataloader)
+
+    def process_loader(self, dm: Union[DataModule, DataLoader] = None, stage: TrainStage = TrainStage.train):
+        """
+        automatically called before train()/test()/evaluate(), see __new__ function of Trainer
+        :param dm:
+        :param stage:
+        :return:
+        """
+        assert stage is not None, '`stage` cannot be None'
+        if dm is None and self.dm is not None:
+            dm = self.dm
+
+        if isinstance(dm, DataModule):
+            loader = dm[stage.value]
+            if loader is None:
+                # where datamodule.idataloader() methods first invoked (automaticly).
+                loader = dm.get_loader_with_stage(stage)
+                if loader is None:
+                    return None
+                loader = self.prepare_dataloader(loader, stage)
+                self.regist_dataloader(loader, stage=stage)
+        elif isinstance(dm, DataLoader):
+            loader = dm
+            loader = self.prepare_dataloader(loader, stage)
+            self.regist_dataloader(loader, stage=stage)
+        else:
+            return None
+
+        return loader
+
+    def load_state_dict(self, state_dict: dict):
+        _sub = {'models', 'optims', 'other'}
+        _missing = []
+
+        for k, v in state_dict.items():
+            if k in _sub:
+                self._load_fun_state_dict(v, self._state_dicts[k])
+            else:
+                self._state_dicts[k] = v
+        return
 
     def to_device(self, item: Optional[Union[nn.Module, torch.Tensor, Sequence, Mapping]] = None,
                   device: torch.device = None):
@@ -326,10 +326,30 @@ class Trainer(_BaseTrainer):
             item = send_to_device(item, device)
             return item
 
+    def on_trainer_exception(self, func: Callable, exception: BaseException):
+        self.database.update_dict(dict(end=datetime.now(),
+                                       finished=False,
+                                       error=str(exception),
+                                       trainer_frame=str(func)),
+                                  flush=True)
+
     def initialize(self):
         if self._prop.get('initial', False):
             return
         self.exp.start()
+
+        commit_info = self.exp.get_prop('git')
+        commit_hex = None
+        if commit_info is not None and 'commit' in commit_info:
+            commit_hex = commit_info['commit']
+        self.database.update('commit_hex', commit_hex)
+        self.database.update_dict(dict(
+            test_name=self.exp.test_name,
+            path=self.exp.test_root,
+            start=datetime.now()))
+        self.database.set_params(self.params.to_dict())
+        self.database.update('command', ' '.join(sys.argv))
+
         self.icallbacks(self.params)
         self.set_property('initial.callbacks', True)
         self.imodels(self.params)
@@ -391,6 +411,8 @@ class Trainer(_BaseTrainer):
             if limit_global_steps is not None and self.global_steps >= limit_global_steps:
                 self.set_property('early_stop', f'meet limit_global_steps {limit_global_steps}')
                 break
+
+        self.database.update_dict(dict(end=datetime.now(), finished=True), flush=True)
         return self._prop
 
     def train_epoch(self, loader: DataLoaderType, params: ParamsType = None,
@@ -423,6 +445,7 @@ class Trainer(_BaseTrainer):
             self.share(f'train_epoch.{k}', v)
 
         record.flush()
+        self.database.update_dict(dict(eidx=self.eidx, end=datetime.now()))
         return record
 
     def set_property(self, key, value):

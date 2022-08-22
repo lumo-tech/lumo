@@ -13,12 +13,13 @@ from lumo.proc.dist import is_main
 from lumo.utils import safe_io as io
 from lumo.utils.exithook import wrap_before
 from lumo.utils.fmt import strftime, indent_print
-from .experiment import Experiment
+from . import Experiment
+from .base import ExpHook as BaseExpHook
 
 
-class ExpHook:
-
-    def regist(self, exp: Experiment): self.exp = exp
+class ExpHook(BaseExpHook):
+    def regist(self, exp: Experiment):
+        self.exp = exp
 
     def on_start(self, exp: Experiment, *args, **kwargs): pass
 
@@ -113,7 +114,10 @@ class GitCommit(ExpHook):
             })
             return
 
-        from lumo.utils.repository import git_enable, git_commit
+        from lumo.utils.repository import git_enable, git_commit, git_dir
+        from lumo.utils.ast import analyse_module_dependency
+        from lumo.utils.hash import hash_iter
+        import inspect
 
         if not git_enable():
             exp.dump_info('git', {
@@ -125,7 +129,23 @@ class GitCommit(ExpHook):
         if not is_main():
             return
 
-        commit_ = git_commit(key='lumo', info=exp.test_root)
+        import __main__
+
+        root = git_dir()
+        mem = analyse_module_dependency(__main__, root=root)
+
+        filter_files = set()
+        dep_source = []
+        for fn, dep_module in sorted(mem.items()):
+            if os.path.commonprefix([fn, root]) == root:
+                filter_files.add(os.path.relpath(fn, root))
+                try:
+                    dep_source.append(inspect.getsource(dep_module))
+                except OSError:
+                    pass
+
+        dep_hash = hash_iter(*dep_source)
+        commit_ = git_commit(key='lumo', info=exp.test_root, filter_files=filter_files)
 
         if commit_ is None:
             exp.dump_info('git', {
@@ -133,10 +153,12 @@ class GitCommit(ExpHook):
                 'msg': 'commit error'
             })
             return
+
         commit_hex = commit_.hexsha[:8]
         exp.dump_info('git', {
             'commit': commit_hex,
             'repo': exp.project_root,
+            'dep_hash': dep_hash,
         })
 
         file = exp.root_file(hash(exp.project_root), 'repos')

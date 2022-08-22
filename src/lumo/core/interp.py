@@ -54,7 +54,7 @@ class Interpolate(BaseParams):
         raise NotImplementedError()
 
     def __repr__(self):
-        content = ', '.join(["{}={}".format(k, v) for k, v in self._prop.items()])
+        content = ', '.join(["{}={}".format(k, v) for k, v in self.items()])
         return "{}({})".format(self.__class__.__name__, content)
 
     def __call__(self, cur):

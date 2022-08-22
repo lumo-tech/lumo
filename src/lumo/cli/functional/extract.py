@@ -1,4 +1,4 @@
-from lumo import Experiment
+from lumo.exp import Experiment
 import os
 
 import zipfile

@@ -47,10 +47,12 @@ class DataLoaderIterWrap:
         return batch
 
 
-class MPropVar(PropVar): pass
+class LumoDataLoader(DataLoader):
 
-
-class LumoDataLoader(DataLoader, metaclass=MPropVar):
+    def __new__(cls, *args, **kwargs):
+        self = super().__new__(cls, *args, **kwargs)
+        self._prop = {}
+        return self
 
     def set_prop(self, prop):
         return self._prop.update(prop)
