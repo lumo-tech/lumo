@@ -18,6 +18,7 @@ setup(
     name='lumo',
     version="0.14.0",
     description='library to manage your pytorch experiments.',
+    long_description_content_type='text/markdown',
     url='https://github.com/sailist/lumo',
     author='sailist',
     author_email='sailist@outlook.com',
