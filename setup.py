@@ -16,7 +16,7 @@ print(find_packages('src'))
 
 setup(
     name='lumo',
-    version="0.13.0",
+    version="0.14.0",
     description='library to manage your pytorch experiments.',
     url='https://github.com/sailist/lumo',
     author='sailist',
