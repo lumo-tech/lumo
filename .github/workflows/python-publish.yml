@@ -45,7 +45,7 @@ jobs:
     name: Create tag
     runs-on: ubuntu-latest
     needs: extract_version
-    if: $(needs.extract_version.outputs.can_publish)
+    if: ${{ needs.extract_version.outputs.can_publish == true }}
     steps:
       - run: echo ${{ needs.extract_version.outputs.can_publish }}
       - run: echo ${{ needs.extract_version.outputs.can_release }}
