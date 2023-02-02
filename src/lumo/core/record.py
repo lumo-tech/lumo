@@ -56,7 +56,14 @@ class Record(metaclass=PropVar):
 
     def __str__(self):
         res = self.agg()
-        return ', '.join([f'{k}={v:.4g}' for k, v in res.items()])
+        rep = []
+        for k, v in res.items():
+            if isinstance(v, float):
+                rep.append(f'{k}={v:.4g}')
+            else:
+                rep.append(f'{k}={str(v)}')
+
+        return ', '.join(rep)
 
     def tostr(self):
         return str(self)
