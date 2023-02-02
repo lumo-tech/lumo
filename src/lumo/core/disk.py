@@ -51,7 +51,7 @@ class TableRow:
         return res
 
     def update_metric(self, key, value, compare=None, flush=False):
-        dic = self.value.setdefault('metric', {})
+        dic = self.metric
         old = dic.setdefault(key, None)
 
         update = False
@@ -74,10 +74,14 @@ class TableRow:
         if flush:
             self.flush()
 
-        return {key: old}
+        return {key: value}
+
+    @property
+    def metric(self):
+        return self.value.setdefault('metric', {})
 
     def update_metric_pair(self, key, value, key2, value2, compare=None, flush=False):
-        dic = self.value.setdefault('metric', {})
+        dic = self.metric
         old = dic.setdefault(key, None)
         old2 = dic.setdefault(key2, None)
 
@@ -102,7 +106,7 @@ class TableRow:
         if flush:
             self.flush()
 
-        return {key: old, key2: old2}
+        return {key: value, key2: value2}
 
     def set_params(self, params: dict):
         self.value['params'] = params
