@@ -59,6 +59,8 @@ jobs:
     runs-on: ubuntu-latest
     name: Publish on pypi
     steps:
+      - run: echo ${{ needs.extract_version.outputs.can_publish }}
+      - run: echo ${{ needs.extract_version.outputs.can_release }}
       - uses: actions/checkout@v3
       - name: Set up Python
         uses: actions/setup-python@v3
