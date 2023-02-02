@@ -333,8 +333,14 @@ class Trainer(_BaseTrainer):
                                        trainer_frame=str(func)),
                                   flush=True)
 
-    def initialize(self):
+    @property
+    def is_initialized(self):
         if self._prop.get('initial', False):
+            return True
+        return False
+
+    def initialize(self):
+        if self.is_initialized:
             return
         self.exp.start()
 
