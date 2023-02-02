@@ -40,14 +40,14 @@ class branch:
         else:
             head = self.repo.heads[self.branch]
 
-        self.repo.head.reference = head
+        self.repo.head.set_reference(head)
         # self.repo.head.reset(index=True, working_tree=True)
         return head
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         if self.branch is None:
             return
-        self.repo.head.reference = self.old_branch
+        self.repo.head.set_reference(self.old_branch)
         self.lock.release()
 
 
@@ -110,28 +110,34 @@ def git_commit(repo=None, key=None, branch_name=LUMO_BRANCH, info: str = None, f
         if key is not None and key in _commits_map:
             return _commits_map[key]
 
-        # if branch_name is not None:
-        with branch(repo, branch_name):
-            change_file = []
-            change_file.extend(repo.untracked_files)
-            change_file.extend([i.a_path for i in repo.index.diff(None)])
-            if filter_files is not None:
-                # print('before filter', change_file)
-                change_file = [i for i in change_file if i in filter_files]
-                # print('after filter', change_file)
+        exp_head_commit = repo.heads[LUMO_BRANCH].commit
+        diff = repo.active_branch.commit.diff(exp_head_commit)
 
-            if len(change_file) > 0:
+        if filter_files is not None:
+            diff = [i.a_path for i in diff if i.a_path in filter_files]
+
+        if len(diff) == 0:
+            commit_ = exp_head_commit
+        else:
+            with branch(repo, branch_name):
+                change_file = []
+                change_file.extend(repo.untracked_files)
+                change_file.extend([i.a_path for i in repo.head.commit.diff(None)])
+                # print(change_file)
+                if filter_files is not None:
+                    print('before filter', change_file)
+                    change_file = [i for i in change_file if i in filter_files]
+                print('after filter', change_file)
+
                 repo.git.add(change_file)
                 commit_info = '[[EMPTY]]'
                 if info is not None:
                     commit_info = info
                 commit_ = repo.index.commit(commit_info)
-            else:
-                commit_ = repo.head.commit
 
         if key is not None:
             _commits_map[key] = commit_
-    except git.GitCommandError:
+    except (git.GitCommandError, ValueError) as e:
         commit_ = None
     return commit_
 
