@@ -27,8 +27,8 @@ jobs:
         id: version
       - id: check
         run: |
-          echo "can_publish=$(echo $(git tag -l "${{ steps.version.outputs.pypi_version }}*" | head -n 1)" >> $GITHUB_OUTPUT
-          echo "can_release=$(echo $(git tag -l ${{ steps.version.outputs.full_version }})" >> $GITHUB_OUTPUT
+          echo "can_publish=$(echo $(git tag -l "${{ steps.version.outputs.pypi_version }}*" | head -n 1))" >> $GITHUB_OUTPUT
+          echo "can_release=$(echo $(git tag -l ${{ steps.version.outputs.full_version }}))" >> $GITHUB_OUTPUT
       - run: echo ${{ steps.version.outputs.full_version }}
       - run: echo ${{ steps.check.outputs.exists }}
       - run: echo ${{ steps.version.outputs.full_version == steps.check.outputs.exists }}
