@@ -70,16 +70,13 @@ jobs:
         uses: actions/checkout@master
         with:
           fetch-depth: 0
-      - name: Create Release
+      - uses: ncipollo/release-action@v1
+        name: Create Release
         id: create_release
-        uses: actions/create-release@latest
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
         with:
-          tag_name: ${{needs.extract_version.outputs.version}}
-          release_name: Release ${{needs.extract_version.outputs.version}}
+          tag: ${{needs.extract_version.outputs.version}}
+          name: ${{needs.extract_version.outputs.version}}
+          artifacts: "release.tar.gz,foo/*.txt"
           body: |
             Automatically created by Github Action.
             Latest commit message: ${{ github.event.head_commit.message }}
-          draft: false
-          prerelease: false
