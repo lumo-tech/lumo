@@ -1,7 +1,7 @@
 import os
 import pickle
 import time
-
+from joblib import hash
 from lumo.proc.path import cache_dir
 from lumo.utils import random
 
@@ -14,6 +14,11 @@ class RndManager:
     def __init__(self):
         self.save_dir = os.path.join(cache_dir(), 'rnd')
 
+    def int_obj(self, obj):
+        if isinstance(obj, (int, float, bool)):
+            return int(obj)
+        return int(hash(obj)[:4], 16)
+
     def mark(self, name):
         """
         用于数据集读取一类的，需要特定步骤每一次试验完全相同
@@ -24,13 +29,7 @@ class RndManager:
         Returns:
 
         """
-        stt = self._get_rnd_state(name)
-        if stt is not None:
-            random.set_state(stt)
-            return True
-        else:
-            self._save_rnd_state(name)
-            return False
+        random.fix_seed(self.int_obj(name))
 
     def int_time(self):
         return int(str(time.time()).split(".")[-1])
