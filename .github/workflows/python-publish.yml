@@ -57,7 +57,7 @@ jobs:
 
   publish:
     needs: [ extract_version,create_tag ]
-    if: ${{ needs.extract_version.outputs.can_publish }}
+    if: ${{ needs.extract_version.outputs.can_publish == true }}
     runs-on: ubuntu-latest
     name: Publish on pypi
     steps:
@@ -81,7 +81,7 @@ jobs:
   create_release:
     needs: [ create_tag,extract_version ]
     name: Create Release
-    if: ${{ needs.extract_version.outputs.can_publish }}
+    if: ${{ needs.extract_version.outputs.can_publish == true }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
