@@ -14,8 +14,8 @@ jobs:
     runs-on: ubuntu-latest
     name: A job to generation version of current library
     outputs:
-      can_publish: ${{ steps.version.outputs.full_version != steps.check.outputs.can_release }}
-      can_release: ${{ steps.version.outputs.full_version != steps.check.outputs.can_publish }}
+      can_publish: ${{ steps.version.outputs.full_version != steps.check.outputs.can_publish }}
+      can_release: ${{ steps.version.outputs.full_version != steps.check.outputs.can_release }}
       full_version: ${{ steps.version.outputs.full_version }}
       pypi_version: ${{ steps.version.outputs.pypi_version }}
     steps:
