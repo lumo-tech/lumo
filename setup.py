@@ -5,7 +5,7 @@ from setuptools import setup, find_packages
 def extract_version():
     return re.search(
         r'__version__ = "([\d.d\-]+)"',
-        open('src/lumo_core/__init__.py', 'r', encoding='utf-8').read()).group(1)
+        open('src/lumo/__init__.py', 'r', encoding='utf-8').read()).group(1)
 
 
 setup(
