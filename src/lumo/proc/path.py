@@ -1,7 +1,6 @@
-import json
 import os
 import sys
-from .config import HOME, EXPROOT, CACHEROOT
+from .config import HOME, EXP_ROOT, CACHE_ROOT
 
 
 def home():
@@ -11,8 +10,8 @@ def home():
 
 
 def cache_dir():
-    if CACHEROOT:
-        return CACHEROOT
+    if CACHE_ROOT:
+        return CACHE_ROOT
 
     try:
         res = os.path.join(home(), '.cache/lumo')
@@ -37,8 +36,8 @@ def libhome():
 
 
 def exproot():
-    if EXPROOT:
-        return EXPROOT
+    if EXP_ROOT:
+        return EXP_ROOT
     return libhome()
 
 
