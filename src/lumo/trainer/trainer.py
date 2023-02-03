@@ -7,9 +7,13 @@ from typing import Union, Dict, Any, Optional, Sequence, Mapping, Callable
 
 import numpy as np
 import torch
-from accelerate import Accelerator
+from lumo.contrib.accelerate import Accelerator
+from lumo.contrib.accelerate.utils import send_to_device
+# overwrite send_to_device to resolve https://github.com/pytorch/pytorch/issues/83015
+# from accelerate import Accelerator
+# from accelerate.utils import send_to_device
+
 from accelerate import DistributedDataParallelKwargs
-from accelerate.utils import send_to_device
 from torch import nn
 from torch.optim import Optimizer
 from torch.utils.data import DataLoader
@@ -433,6 +437,7 @@ class Trainer(_BaseTrainer):
 
         self.wait_for_everyone()
         for idx, batch in enumerate(loader):
+            batch = send_to_device(batch)
             if self.train_epoch_toggle:
                 self.train_epoch_toggle = False
                 break
@@ -552,6 +557,7 @@ class Trainer(_BaseTrainer):
         record = self.create_record(stage=stage)
         self.wait_for_everyone()
         for idx, batch in enumerate(loader):
+            batch = send_to_device(batch)
             if limit_step is not None and idx >= limit_step:
                 break
             self.set_idx(idx)
@@ -577,6 +583,7 @@ class Trainer(_BaseTrainer):
 
         record = self.create_record(stage=stage)
         for idx, batch in enumerate(loader):
+            batch = send_to_device(batch)
             if limit_step is not None and idx >= limit_step:
                 break
             self.set_idx(idx)

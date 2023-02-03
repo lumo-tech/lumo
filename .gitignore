@@ -164,3 +164,4 @@ lumo_temp
 *.zip
 
 wandb
+.lumorc.json

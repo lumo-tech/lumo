@@ -287,6 +287,7 @@ class DatasetBuilder(Dataset):
         return self
 
     DataLoader = LumoDataLoader
+    DL = LumoDataLoader  # alias to DataLoader
 
     def __getattribute__(self, item):
         res = super(DatasetBuilder, self).__getattribute__(item)

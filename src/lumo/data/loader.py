@@ -49,30 +49,8 @@ class DataLoaderIterWrap:
 
 class LumoDataLoader(DataLoader):
 
-    def __new__(cls, *args, **kwargs):
-        self = super().__new__(cls, *args, **kwargs)
-        self._prop = {}
-        return self
-
-    def set_prop(self, prop):
-        return self._prop.update(prop)
-
-    def set_batch_count(self, size):
-        warnings.warn(
-            "It's recommanded to use BatchSampler to redifine the batch count of one epoch, "
-            "this function will be deprecated sonn.")
-        self._prop['batch_count'] = size
-        return self
-
-    def __len__(self):
-        bc = self._prop.get('batch_count', None)
-        if bc is None:
-            return super(LumoDataLoader, self).__len__()
-        return bc
-
     def _wraooed_iter_(self):
-        return DataLoaderIterWrap(super().__iter__,
-                                  self._prop.get('batch_count', None))
+        return DataLoaderIterWrap(super().__iter__, len(self))
 
     def __iter__(self) -> DataLoaderIterWrap:
         return self._wraooed_iter_()
