@@ -12,6 +12,7 @@ def home():
 def cache_dir():
     try:
         os.makedirs(CACHE_ROOT, exist_ok=True)
+        res = CACHE_ROOT
     except PermissionError:
         res = os.path.join(home(), '.lumo/.cache')
         os.makedirs(res, exist_ok=True)
