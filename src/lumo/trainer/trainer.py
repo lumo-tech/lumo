@@ -49,13 +49,14 @@ class Trainer(_BaseTrainer):
         self.params = params
         self._logger = None
         self._saver = None
-        self.shared_prop = {}
+
         self.params.iparams()
         self.exp = TrainerExperiment(self.generate_exp_name())
 
-        self._database = TableRow(self.exp.project_name, self.exp.exp_name, self.exp.test_name_with_dist)
+        self.database = TableRow(self.exp.project_name, self.exp.exp_name, self.exp.test_name_with_dist)
         self.metric_board = Metrics(self.exp.test_root)
-
+        self.exp.dump_info('metric_board', self.metric_board.fpath)
+        self.exp.dump_info('table_row', self.database.fpath)
         self.rnd = RndManager()
 
         self.train_epoch_toggle = False
@@ -78,12 +79,12 @@ class Trainer(_BaseTrainer):
             self.exp.set_prop('debug', True)
 
     @property
-    def db(self):
-        return self._database
+    def metrics(self):
+        return self.metric_board
 
     @property
-    def database(self):
-        return self._database
+    def db(self):
+        return self.database
 
     @property
     def saver(self) -> Saver:
@@ -423,6 +424,7 @@ class Trainer(_BaseTrainer):
                 break
 
         self.database.update_dict(dict(end=datetime.now(), finished=True), flush=True)
+        self.database.flush()
         return self._prop
 
     def train_epoch(self, loader: DataLoaderType, params: ParamsType = None,
@@ -451,7 +453,7 @@ class Trainer(_BaseTrainer):
             self._prop['global_steps'] += 1
             metric = self.train_step(batch, params)
             record.record(metric)
-
+            self.database.flush()
         for k, v in record.agg().items():
             self.share(f'train_epoch.{k}', v)
 
@@ -687,6 +689,3 @@ class Trainer(_BaseTrainer):
                                          is_best=is_best)
         self.wait_for_everyone()
         return val
-
-    def share(self, key, value):
-        self.shared_prop[key] = value

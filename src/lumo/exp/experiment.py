@@ -7,7 +7,7 @@ from pathlib import Path
 from typing import Union
 
 from lumo.decorators.process import call_on_main_process_wrap
-
+from lumo.proc.path import blobroot, exproot, cache_dir, libhome
 from .base import ExpHook
 from ..proc.dist import is_dist, is_main, local_rank
 from ..proc.path import exproot, local_dir
@@ -24,6 +24,32 @@ def checkdir(path: Union[Path, str]):
 
 
 class Experiment:
+    """
+    (by default), the directory structure is as following:
+    .lumo (libroot)
+        - experiments # (exp_root) record information (e.g., .log, params files, etc.)
+            - {experiment-name-1}
+                - {test-1}
+                - {test-2}
+            - {experiment-name-2}
+                - {test-1}
+                - {test-2}
+        - blob # (blob_root) record big binary files (like model state dicts)
+            - {experiment-name-1}
+                - {test-1}
+                - {test-2}
+            - {experiment-name-2}
+                - {test-1}
+                - {test-2}
+        - metric # (metric_root) record metrics (by trainer.database)
+            - {experiment-name-1}
+                - {test-1}
+                - {test-2}
+            - {experiment-name-2}
+                - {test-1}
+                - {test-2}
+    """
+
     def __init__(self, exp_name: str, root=None):
         if not can_be_filename(exp_name):
             raise ValueError(f'Experiment name should be a ligal filename(bettor only contain letter or underline),'
@@ -33,7 +59,7 @@ class Experiment:
         self._prop['exp_name'] = exp_name
         self._hooks = {}
         if root is None:
-            root = exproot()
+            root = libhome()
         self._root = Path(os.path.abspath(root))
         self.add_exit_hook(self.end)
 
@@ -107,17 +133,17 @@ class Experiment:
 
     @property
     def exp_branch(self):
-        val = self._root.joinpath('experiment', self.exp_name)
+        val = Path(exproot()).joinpath(self.exp_name)
+        return checkdir(val)
+
+    @property
+    def blob_branch(self):
+        val = Path(blobroot()).joinpath(self.exp_name, self.test_name)
         return checkdir(val)
 
     @property
     def test_branch(self):
         val = self.exp_branch.joinpath(self.test_name)
-        return checkdir(val)
-
-    @property
-    def blob_branch(self):
-        val = self._root.joinpath('blob', self.exp_name, self.test_name)
         return checkdir(val)
 
     def dump_info(self, key: str, info: dict, append=False, info_dir='info', set_prop=True):
@@ -288,10 +314,12 @@ class Experiment:
 
     @property
     def repo_name(self):
+        """repository name"""
         return self.project_name
 
     @property
     def project_name(self):
+        """same as repository name, directory name of project root"""
         return os.path.basename(self.project_root)
 
     @property
@@ -300,14 +328,17 @@ class Experiment:
 
     @property
     def exp_root(self):
+        """path to multiple tests of this experiment"""
         return self.exp_branch.as_posix()
 
     @property
     def test_root(self):
+        """path to record information of one experiment"""
         return self.test_branch.as_posix()
 
     @property
     def blob_root(self):
+        """path to storing big binary files"""
         return self.blob_branch.as_posix()
 
     def __getitem__(self, item):

@@ -226,9 +226,9 @@ def git_enable():
 def git_dir(root='./'):
     """
     git repository directory
+    git rev-parse --git-dir
     Args:
         root:
-
     Returns:
 
     """

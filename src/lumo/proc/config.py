@@ -6,6 +6,7 @@ GLOBAL_DEFAULT = {
     'cache_dir': os.path.expanduser("~/.cache/lumo"),
     'exp_root': os.path.expanduser("~/.lumo/experiments"),
     'blob_root': os.path.expanduser("~/.lumo/blob"),
+    'metric_root': os.path.expanduser("~/.lumo/metric"),
 }
 
 
@@ -58,3 +59,4 @@ HOME = glob.get("home")
 CACHE_ROOT = glob.get('cache_dir')
 EXP_ROOT = glob.get('exp_root')
 BLOB_ROOT = glob.get('exp_root')
+METRIC_ROOT = glob.get('metric_root')

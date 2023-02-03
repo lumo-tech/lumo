@@ -6,6 +6,10 @@ from lumo.utils import safe_io as IO
 
 
 class Metrics:
+    """
+    Record metrics at multiple steps. Supported by dbrecord.
+    """
+
     def __init__(self, test_path: str):
         os.makedirs(test_path, exist_ok=True)
         self.fpath = os.path.join(test_path, f'metric_board.sqlite')
@@ -25,6 +29,13 @@ class Metrics:
 
 
 class TableRow:
+    """
+    It can be regarded as a serialized dictionary,
+    or a certain row in the table, so the same key value will be overwritten.
+
+    If you need to record records at different times, please use trainer.metrics
+    """
+
     def __init__(self, table, partition, rowkey):
         dirpath = os.path.join(path.libhome(), 'metrics', table)
         os.makedirs(dirpath, exist_ok=True)

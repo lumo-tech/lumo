@@ -1,6 +1,6 @@
 import os
 import sys
-from .config import HOME, EXP_ROOT, CACHE_ROOT
+from .config import HOME, EXP_ROOT, CACHE_ROOT, BLOB_ROOT
 
 
 def home():
@@ -35,6 +35,12 @@ def libhome():
 def exproot():
     if EXP_ROOT:
         return EXP_ROOT
+    return libhome()
+
+
+def blobroot():
+    if BLOB_ROOT:
+        return BLOB_ROOT
     return libhome()
 
 
