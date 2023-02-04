@@ -100,7 +100,6 @@ jobs:
         with:
           tag: ${{needs.extract_version.outputs.full_version}}
           name: ${{needs.extract_version.outputs.full_version}}
-          artifacts: "release.tar.gz,foo/*.txt"
           body: |
             Automatically created by Github Action.
             Latest commit message: ${{ github.event.head_commit.message }}
