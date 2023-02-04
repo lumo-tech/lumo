@@ -45,8 +45,8 @@ jobs:
     name: Debug outputs
     needs: extract_version
     steps:
-      - run: ${{ needs.extract_version.outputs.can_publish }}
-      - run: ${{ needs.extract_version.outputs.can_publish == true }}
+      - run: echo ${{ needs.extract_version.outputs.can_publish }}
+      - run: echo ${{ needs.extract_version.outputs.can_publish == 'true' }}
   create_tag:
     name: Create tag
     runs-on: ubuntu-latest
