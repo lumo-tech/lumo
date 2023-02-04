@@ -5,7 +5,7 @@ import time
 import traceback
 from pathlib import Path
 from typing import Union
-
+from lumo.utils.logger import Logger
 from lumo.decorators.process import call_on_main_process_wrap
 from lumo.proc.path import blobroot, exproot, cache_dir, libhome
 from .base import ExpHook
@@ -62,6 +62,7 @@ class Experiment:
             root = libhome()
         self._root = Path(os.path.abspath(root))
         self.add_exit_hook(self.end)
+        self.logger = Logger()
 
     @property
     def exp_name(self):
@@ -376,6 +377,7 @@ class Experiment:
     @call_on_main_process_wrap
     def set_hook(self, hook: ExpHook):
         hook.regist(self)
+        self.logger.info(f'Register {hook}.')
         self._hooks[hook.__class__.__name__] = hook
         self.add_tag(hook.__class__.__name__, 'hooks')
         return self
