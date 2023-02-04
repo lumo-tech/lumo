@@ -137,8 +137,9 @@ def git_commit(repo=None, key=None, branch_name=LUMO_BRANCH, info: str = None, f
 
         if key is not None:
             _commits_map[key] = commit_
-    except (git.GitCommandError, ValueError) as e:
+    except (git.GitCommandError, ValueError, IndexError) as e:
         commit_ = None
+        print(f'git commit Exception {e}')
     return commit_
 
 
