@@ -40,6 +40,10 @@ jobs:
           echo ${{ steps.check.outputs.can_release }}
           echo ${{ steps.version.outputs.full_version != steps.check.outputs.can_release }}
           echo ${{ steps.version.outputs.full_version != steps.check.outputs.can_publish }}
+  debug:
+    steps:
+      - run: ${{ needs.extract_version.outputs.can_publish }}
+      - run: ${{ needs.extract_version.outputs.can_publish == true }}
 
   create_tag:
     name: Create tag
