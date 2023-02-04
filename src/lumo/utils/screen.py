@@ -163,5 +163,8 @@ class ScreenStr:
 
 class inlinetqdm(tqdm):
 
+    def full_str(self):
+        return self.format_meter(**self.format_dict)
+
     def __str__(self):
-        return ScreenStr(self.format_meter(**self.format_dict))._screen_str()
+        return ScreenStr(self.full_str())._screen_str()
