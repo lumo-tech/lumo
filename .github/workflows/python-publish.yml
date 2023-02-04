@@ -41,6 +41,8 @@ jobs:
           echo ${{ steps.version.outputs.full_version != steps.check.outputs.can_release }}
           echo ${{ steps.version.outputs.full_version != steps.check.outputs.can_publish }}
   debug:
+    runs-on: ubuntu-latest
+    name: Debug outputs
     needs: extract_version
     steps:
       - run: ${{ needs.extract_version.outputs.can_publish }}
