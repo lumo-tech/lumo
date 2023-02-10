@@ -32,6 +32,27 @@ from .saver import Saver
 
 
 class Trainer(_BaseTrainer):
+    """
+    Trainer provides a complete training and evaluation logic to help users focus on specific training details.
+    It integrates logging, metric recording, experiment saving, version control, and complete callback control
+    of each life cycle.
+
+    When to use lumo.Trainer:
+     - At the beginning of the investigation direction, there will be many code branches and experiments
+        based on the same set of data and models, but with different training details.
+     - Reproduce multiple papers in the same field, which are also based on the same dataset and evaluation logic.
+
+    When to simply use lumo.SimpleExperiment:
+     - You have maintained a mature training framework yourself, but there are still certain requirements
+        for allocating dynamic(different) storage path and version control in each program.
+
+    At present, I have explored best practices based on lumo in two fields, this includs:
+     - https://github.com/pytorch-lumo/image-classification
+     - https://github.com/pytorch-lumo/MMERC
+
+    Both two reposiroties are github templates and you can use them to create you new (private) repository.
+    """
+
     callback_function = {
         "save_keypoint", "save_checkpoint", "save_model", "load_state_dict",
         'ioptims', 'imodels', 'train', 'test', 'evaluate', 'train_epoch', 'train_step',
