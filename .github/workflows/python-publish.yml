@@ -14,8 +14,8 @@ jobs:
     runs-on: ubuntu-latest
     name: A job to generation version of current library
     outputs:
-      can_publish: ${{ steps.version.outputs.full_version != steps.check.outputs.can_publish }}
-      can_release: ${{ steps.version.outputs.full_version != steps.check.outputs.can_release }}
+      can_publish: ${{ steps.version.outputs.full_version != '' }}
+      can_release: ${{ steps.version.outputs.full_version != '' }}
       full_version: ${{ steps.version.outputs.full_version }}
       pypi_version: ${{ steps.version.outputs.pypi_version }}
     steps:
@@ -38,8 +38,8 @@ jobs:
           echo ${{ steps.version.outputs.pypi_version }}
           echo ${{ steps.check.outputs.can_publish }}
           echo ${{ steps.check.outputs.can_release }}
-          echo ${{ steps.version.outputs.full_version != steps.check.outputs.can_release }}
-          echo ${{ steps.version.outputs.full_version != steps.check.outputs.can_publish }}
+          echo ${{ steps.version.outputs.full_version != '' }}
+          echo ${{ steps.version.outputs.full_version != '' }}
   debug:
     runs-on: ubuntu-latest
     name: Debug outputs
