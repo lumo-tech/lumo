@@ -465,7 +465,7 @@ class LoggerCallback(TrainCallback, InitialCallback):
         last = time.time() - self.time
         last_str = self.format_interval(last)
 
-        return f'[{n}/{total} end] train: {elapsed_str} | epoch: {last_str} | last: {remaining_str} | avg: {rate_str}'
+        return f'[Epoch {n}/{total} End] cost: {elapsed_str} | current: {last_str} | remain: {remaining_str} | avg: {rate_str}'
 
     def on_train_epoch_end(self, trainer: Trainer, func, params: ParamsType, record: Record, *args, **kwargs):
         super().on_train_epoch_end(trainer, func, params, record, *args, **kwargs)
