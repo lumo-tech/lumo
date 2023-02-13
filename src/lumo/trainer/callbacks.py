@@ -384,7 +384,7 @@ class LoggerCallback(TrainCallback, InitialCallback):
 
     def on_train_begin(self, trainer: Trainer, func, params: ParamsType, *args, **kwargs):
         super().on_train_begin(trainer, func, params, *args, **kwargs)
-        trainer.logger.info('[[Train Begin]]')
+        trainer.logger.raw('[[Train Begin]]')
         self.global_tqdm = inlinetqdm(total=params.epoch,
                                       position=0, leave=True,
                                       bar_format='Ela: {elapsed} | Last: {remaining} | Avg: {rate}',
@@ -421,12 +421,12 @@ class LoggerCallback(TrainCallback, InitialCallback):
     def on_test_begin(self, trainer: Trainer, func, params: ParamsType, *args, **kwargs):
         super().on_test_begin(trainer, func, params, *args, **kwargs)
         self.renew(TrainStage.test)
-        trainer.logger.info('[[Test Begin]]')
+        trainer.logger.raw('[[Test Begin]]')
 
     def on_eval_begin(self, trainer: Trainer, func, params: ParamsType, *args, **kwargs):
         super().on_eval_begin(trainer, func, params, *args, **kwargs)
         self.renew(TrainStage.val)
-        trainer.logger.info('[[Evaluate Begin]]')
+        trainer.logger.raw('[[Evaluate Begin]]')
 
     @staticmethod
     def format_interval(t: float):
@@ -465,29 +465,29 @@ class LoggerCallback(TrainCallback, InitialCallback):
         last = time.time() - self.time
         last_str = self.format_interval(last)
 
-        return f'{n}/{total} train: {elapsed_str} | epoch: {last_str} | last: {remaining_str} | avg: {rate_str}'
+        return f'[{n}/{total} end] train: {elapsed_str} | epoch: {last_str} | last: {remaining_str} | avg: {rate_str}'
 
     def on_train_epoch_end(self, trainer: Trainer, func, params: ParamsType, record: Record, *args, **kwargs):
         super().on_train_epoch_end(trainer, func, params, record, *args, **kwargs)
         self.global_tqdm.update()
         # self.flush(trainer)
-        trainer.logger.info(self.format_train_epoch_time(**self.global_tqdm.format_dict))
+        trainer.logger.raw(self.format_train_epoch_time(**self.global_tqdm.format_dict))
 
     def on_test_end(self, trainer: Trainer, func, params: ParamsType,
                     record: Optional[Record] = None,
                     *args, **kwargs):
         self.flush(trainer)
-        trainer.logger.info('[[Test End]]')
+        trainer.logger.raw('[[Test End]]')
 
     def on_eval_end(self, trainer: Trainer, func, params: ParamsType,
                     record: Optional[Record] = None,
                     *args, **kwargs):
         self.flush(trainer)
-        trainer.logger.info('[[Evaluate End]]')
+        trainer.logger.raw('[[Evaluate End]]')
 
     def on_train_end(self, trainer: Trainer, func, params: ParamsType, record: Optional[Record], *args, **kwargs):
         self.flush(trainer)
-        trainer.logger.info('[[Train End]]')
+        trainer.logger.raw('[[Train End]]')
 
     def on_train_step_end(self, trainer: Trainer, func, params: ParamsType,
                           metric: MetricType = None,
