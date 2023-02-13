@@ -95,7 +95,9 @@ class Trainer(_BaseTrainer):
         if dist.is_main():
             self.params.to_yaml(self.exp.test_file('params.yaml'))
 
-        self.set_global_steps(params.get('global_steps', 0))
+        self.set_global_steps(0)
+        self.set_epoch_idx(0)
+        self.set_idx(0)
         if params.get('debug', False):
             self.exp.set_prop('debug', True)
 
@@ -230,11 +232,18 @@ class Trainer(_BaseTrainer):
 
     @property
     def idx(self):
+        # started from 0
         return self._prop.get('idx', 0)
 
     @property
     def eidx(self):
+        # started from 0
         return self._prop.get('eidx', 0)
+
+    @property
+    def global_steps(self) -> int:
+        # started from 0
+        return self._prop['global_steps']
 
     @property
     def trainer_state(self):
@@ -281,10 +290,6 @@ class Trainer(_BaseTrainer):
     @property
     def val_dataloader(self) -> Optional[DataLoaderType]:
         return self.datamodule['val']
-
-    @property
-    def global_steps(self) -> int:
-        return self._prop['global_steps']
 
     @property
     def device(self):
