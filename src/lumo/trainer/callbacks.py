@@ -293,12 +293,12 @@ class EvalCallback(TrainCallback):
 
     def _test_or_eval(self, params: ParamsType, trainer: Trainer):
         if self.has_eval:
-            if params.eidx % self.eval_in_per_epoch == self.eval_in_per_epoch - 1:
-                self._last_eval = params.eidx
+            if trainer.eidx % self.eval_in_per_epoch == self.eval_in_per_epoch - 1:
+                self._last_eval = trainer.eidx
                 trainer.evaluate()
         if self.has_test:
-            if params.eidx % self.test_in_per_epoch == self.test_in_per_epoch - 1:
-                self._last_test = params.eidx
+            if trainer.eidx % self.test_in_per_epoch == self.test_in_per_epoch - 1:
+                self._last_test = trainer.eidx
                 trainer.test()
 
     def on_train_epoch_end(self, trainer: Trainer, func, params: ParamsType, record: Record, *args,
@@ -306,9 +306,9 @@ class EvalCallback(TrainCallback):
         self._test_or_eval(params, trainer)
 
     def on_train_end(self, trainer: Trainer, func, params: ParamsType, record: Record, *args, **kwargs):
-        if self._last_eval != params.eidx and self.has_eval:
+        if self._last_eval != trainer.eidx and self.has_eval:
             trainer.evaluate()
-        if self._last_test != params.eidx and self.has_test:
+        if self._last_test != trainer.eidx and self.has_test:
             trainer.test()
 
     def __repr__(self):
@@ -526,7 +526,7 @@ class EpochCheckpoint(TrainCallback):
     def on_train_epoch_end(self, trainer: Trainer, func, params: ParamsType, record: Optional[Record], *args,
                            **kwargs):
         meter = record.avg()
-        if params.eidx % self.per_epoch == 0 and params.eidx > 0:
+        if trainer.eidx % self.per_epoch == 0 and trainer.eidx > 0:
             trainer.save_checkpoint(meta_info=Meter.wrap_result(meter))
 
     def __repr__(self) -> str:
@@ -541,7 +541,7 @@ class GlobalStepCheckpoint(TrainCallback):
 
     def on_train_step_end(self, trainer: Trainer, func, params: ParamsType, metric: Meter, *args, **kwargs):
         super().on_train_step_end(trainer, func, params, metric, *args, **kwargs)
-        if params.global_step % self.per == 0 and params.global_step > 0:
+        if trainer.global_steps % self.per == 0 and trainer.global_steps > 0:
             trainer.save_checkpoint(meta_info=Meter.wrap_result(metric))
 
 
