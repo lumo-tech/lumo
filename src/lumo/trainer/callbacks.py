@@ -324,13 +324,6 @@ class DebugCallback(BaseCallback):
     def on_first_exception(self, source: Trainer, func, params: ParamsType, e: BaseException, *args, **kwargs):
         super().on_first_exception(source, func, params, e, *args, **kwargs)
         print('on_first_exception()', func.__name__)
-        # from rich.console import Console
-        # console = Console()
-        # try:
-        #     import six
-        #     six.reraise(type(e), e, e.__traceback__)
-        #
-        # except:
 
     def on_exception(self, source: Trainer, func, params: ParamsType, e: BaseException, *args, **kwargs):
         return super().on_exception(source, func, params, e, *args, **kwargs)
@@ -349,6 +342,7 @@ class DebugCallback(BaseCallback):
 
 
 class LoggerCallback(TrainCallback, InitialCallback):
+    priority = 99999
 
     def __init__(self, step_frequence=3, break_in=1000):
         self.stage = {}
