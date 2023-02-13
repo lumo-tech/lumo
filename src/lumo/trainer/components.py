@@ -85,8 +85,4 @@ class TrainerParams(Params):
     def __init__(self):
         super().__init__()
         self.epoch = 10
-        self.eidx = 0
-        self.idx = 0
-        self.global_step = 0
-        self.stage = self.choice('init', 'train', 'test', 'val')
         self.device = "cuda:0" if torch.cuda.is_available() else "cpu"

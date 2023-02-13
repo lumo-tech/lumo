@@ -95,7 +95,6 @@ trainer.test()
 trainer.test()
 trainer.save_keypoint()
 #
-# params.eidx = 0
 # trainer.train()
 # print(list(trainer.model.parameters()))
 
