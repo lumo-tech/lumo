@@ -14,3 +14,4 @@ tensorboardX
 dbrecord
 packaging
 pandas
+hydra
