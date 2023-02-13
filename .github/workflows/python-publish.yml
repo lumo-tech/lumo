@@ -7,7 +7,10 @@
 # documentation.
 
 name: Upload Python Package and create release
-on: [ push ]
+on:
+  push:
+    branches:
+      - 'master'
 
 jobs:
   extract_version:
