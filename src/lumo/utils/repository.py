@@ -110,6 +110,10 @@ def git_commit(repo=None, key=None, branch_name=LUMO_BRANCH, info: str = None, f
         if key is not None and key in _commits_map:
             return _commits_map[key]
 
+        if LUMO_BRANCH not in repo.branches:
+            repo.create_head(LUMO_BRANCH)
+            print(f'branch {LUMO_BRANCH} not found, will be created automatically.')
+
         exp_head_commit = repo.heads[LUMO_BRANCH].commit
         diff = repo.active_branch.commit.diff(exp_head_commit)
 
