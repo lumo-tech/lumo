@@ -237,7 +237,15 @@ class Trainer(_BaseTrainer):
 
     @property
     def eidx(self):
-        # started from 0
+        """
+        This value will be automatically incremented by 1 before calling the train_epoch method
+        current epoch round. The value remains unchanged in below methods:
+         - `.on_train_epoch_begin()`: eidx
+         - `.train_step()`: eidx
+         - `.on_train_epoch_end()`: eidx
+
+        This behaviour of `.idx` and `.global_steps` is the same as `.eidx`
+        """
         return self._prop.get('eidx', 0)
 
     @property
