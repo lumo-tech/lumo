@@ -95,13 +95,28 @@ call_dependency = {
 }
 
 
-class _BaseTrainer(metaclass=TrainerPropVar):
+class _BaseTrainer:
     __exp_name__ = None
+
+    callback_function = {}
 
     def __new__(cls, *args, **kwargs):
         self = super().__new__(cls)
         if cls.__exp_name__ is None:
             cls.__exp_name__ = cls.__name__.lower().replace("trainer", "Exp")
+
+        self._prop = {}
+        self._cmp = {}
+        self._rev_index = {}
+        self._call_order = {}
+
+        self._state_dicts = {
+            'optims': set(),
+            'models': set(),
+            'others': set(),
+            'tensor.th': set(),
+            'tensor.np': set(),
+        }
 
         from lumo.utils.exithook import replace
 

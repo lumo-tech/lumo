@@ -176,33 +176,33 @@ class Trainer(_BaseTrainer):
         ------
         When using add_embedding, there may raise some exceptions cased by version conflict, here is some solutions:
 
-        1. tensorflow_core._api.v1.io.gfile' or'tensorflow_core._api.v2.io.gfile' has no attribute 'get_filesystem'
+        1. `tensorflow_core._api.v1.io.gfile` or `tensorflow_core._api.v2.io.gfile` has no attribute `get_filesystem`
         first, try upgrade tensorboard and tensorflow as followed version:
             tensorboard==2.0.2
             tensorflow==2.0.0
 
-        if you still have the same problem, use this code as a temporary solution:
+        If you still have the same problem, use this code as a temporary solution:
 
             import tensorflow as tf
             import tensorboard as tb
             tf.io.gfile = tb.compat.tensorflow_stub.io.gfile
 
-        use `trainer.safe_writer` to get a writter with these code added inside thexp.
+        Use `trainer.safe_writer` to get a writter with these code added inside thexp.
 
-        solution is referred by https://github.com/pytorch/pytorch/issues/30966
+        > This solution is referred by https://github.com/pytorch/pytorch/issues/30966 .
 
 
-        2. You may cause PermissionError like: [Errno 13] Permission denied: '/tmp/.tensorboard-info/pid-20281.info'
-        the solution is to set environment variable TMPDIR
+        2. You may cause PermissionError like: [Errno 13] Permission denied: '/tmp/.tensorboard-info/pid-20281.info'.
+        The solution is to set environment variable TMPDIR
 
             export TMPDIR=/tmp/$USER;
             mkdir -p $TMPDIR;
             tensorboard --logdir ...
 
-        code in line:
+        One line command version:
             export TMPDIR=/tmp/$USER; mkdir -p $TMPDIR; tensorboard --logdir ....
 
-        solution is referred by https://github.com/tensorflow/tensorboard/issues/2010
+        > This solution is referred by https://github.com/tensorflow/tensorboard/issues/2010 .
 
         Returns:
             A SummaryWriter instance
@@ -210,7 +210,10 @@ class Trainer(_BaseTrainer):
         try:
             from torch.utils.tensorboard import SummaryWriter
         except ModuleNotFoundError:
-            from tensorboardX import SummaryWriter
+            try:
+                from tensorboardX import SummaryWriter
+            except ModuleNotFoundError:
+                return None
 
         kwargs = self.exp.board_args
         res = SummaryWriter(**kwargs)
@@ -224,10 +227,12 @@ class Trainer(_BaseTrainer):
 
     @property
     def first_epoch(self):
+        """Determine whether the current epoch is the first"""
         return self.eidx == 0
 
     @property
     def first_step(self):
+        """Determine whether the current step is the first"""
         return self.global_steps == 0
 
     @property
@@ -268,7 +273,6 @@ class Trainer(_BaseTrainer):
 
     @property
     def optim_dict(self) -> Dict[str, Optimizer]:
-
         return {key: self[key] for key in self._state_dicts['optims']}
 
     @property
