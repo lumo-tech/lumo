@@ -83,10 +83,6 @@ class DeviceMem:
 
         return total
 
-    def choice_free_gpu(self, non_block=False):
-        """choice a free gpu"""
-        pass
-
     def get_device_mem(self, device):
         """  returns device total memory(unit: MB)        """
         return torch.cuda.get_device_properties(device).total_memory // (1024 * 1024)
@@ -142,7 +138,7 @@ class memory(object):
         https://github.com/pytorch/pytorch/issues/12873
     """
 
-    def __init__(self, memory, device=None, hold=False) -> None:
+    def __init__(self, memory, device=None, hold=False, invade=False) -> None:
         super().__init__()
         if device is None:
             device = torch.cuda.current_device()
@@ -152,6 +148,7 @@ class memory(object):
         self.need = memory
         self.device = device
         self.hold = hold
+        self.is_invade = invade
         self.exc_time = 0
         self.acc = 5
         self.mem = []
@@ -215,16 +212,8 @@ class memory(object):
             return False
 
     def end(self):
-        print()
-        if self.hold:
-            print('press keyboardinterrupt to end')
-            try:
-                while True:
-                    # do some Fake thing
-                    self.mem[-1].random_()
-                    time.sleep(0.1)
-            except KeyboardInterrupt:
-                print('continue')
+        del self.mem[:]
+        torch.cuda.empty_cache()
 
     def start(self, immediately=True):
         if immediately:
@@ -254,11 +243,10 @@ class memory(object):
             print('\nabort.')
 
     def __enter__(self):
-        self.invade()
+        self.start(immediately=not self.is_invade)
 
     def __exit__(self, *args):
-        del self.mem[:]
-        torch.cuda.empty_cache()
+        self.end()
         return True
 
     def __call__(self, func):
