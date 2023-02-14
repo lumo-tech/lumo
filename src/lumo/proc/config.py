@@ -55,7 +55,7 @@ def pretain_model_path(name):
 
 glob = create_runtime_config()
 
-HOME = glob.get("home")
+LIBHOME = glob.get("home")
 CACHE_ROOT = glob.get('cache_dir')
 EXP_ROOT = glob.get('exp_root')
 BLOB_ROOT = glob.get('blob_root')

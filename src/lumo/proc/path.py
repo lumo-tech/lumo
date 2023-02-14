@@ -1,11 +1,9 @@
 import os
 import sys
-from .config import HOME, EXP_ROOT, CACHE_ROOT, BLOB_ROOT
+from .config import LIBHOME, EXP_ROOT, CACHE_ROOT, BLOB_ROOT
 
 
 def home():
-    if HOME:
-        return HOME
     return os.path.expanduser("~")
 
 
@@ -29,19 +27,21 @@ def dataset_cache_dir(name=None):
 
 
 def libhome():
+    if LIBHOME:
+        return LIBHOME
     return os.path.join(home(), '.lumo')
 
 
 def exproot():
     if EXP_ROOT:
         return EXP_ROOT
-    return libhome()
+    return os.path.join(libhome(), 'experiments')
 
 
 def blobroot():
     if BLOB_ROOT:
         return BLOB_ROOT
-    return libhome()
+    return os.path.join(libhome(), 'blob')
 
 
 def local_dir():
