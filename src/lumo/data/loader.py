@@ -95,6 +95,14 @@ class DataLoaderSide:
         self._cycle = OrderedDict()
         self._state = 'zip'
 
+    @property
+    def dataset(self):
+        return {k: v.dataset for k, v in self.source.items()}
+
+    @property
+    def source(self):
+        return self._loaders
+
     def add(self, name, loader: DataLoader, cycle=False):
         self._loaders[name] = loader
         self._cycle[name] = cycle
