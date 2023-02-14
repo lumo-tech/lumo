@@ -17,8 +17,8 @@ jobs:
     runs-on: ubuntu-latest
     name: A job to generation version of current library
     outputs:
-      can_publish: ${{ steps.version.outputs.full_version == '' }}
-      can_release: ${{ steps.version.outputs.full_version == '' }}
+      can_publish: ${{ steps.version.outputs.can_publish == '' }}
+      can_release: ${{ steps.version.outputs.can_publish == '' }}
       full_version: ${{ steps.version.outputs.full_version }}
       pypi_version: ${{ steps.version.outputs.pypi_version }}
     steps:
@@ -41,15 +41,15 @@ jobs:
           echo ${{ steps.version.outputs.pypi_version }}
           echo ${{ steps.check.outputs.can_publish }}
           echo ${{ steps.check.outputs.can_release }}
-          echo ${{ steps.version.outputs.full_version == '' }}
-          echo ${{ steps.version.outputs.full_version == '' }}
+          echo ${{ steps.version.outputs.can_publish == '' }}
+          echo ${{ steps.version.outputs.can_release == '' }}
   debug:
     runs-on: ubuntu-latest
     name: Debug outputs
     needs: extract_version
     steps:
       - run: echo ${{ needs.extract_version.outputs.can_publish }}
-      - run: echo ${{ needs.extract_version.outputs.can_publish == 'true' }}
+      - run: echo ${{ needs.extract_version.outputs.can_publish == '' }}
   create_tag:
     name: Create tag
     runs-on: ubuntu-latest
@@ -66,7 +66,7 @@ jobs:
 
   publish:
     needs: [ extract_version,create_tag ]
-    if: ${{ needs.extract_version.outputs.can_publish == 'true' }}
+    if: ${{ needs.extract_version.outputs.can_publish == '' }}
     runs-on: ubuntu-latest
     name: Publish on pypi
     steps:
@@ -90,7 +90,7 @@ jobs:
   create_release:
     needs: [ create_tag,extract_version ]
     name: Create Release
-    if: ${{ needs.extract_version.outputs.can_publish == 'true' }}
+    if: ${{ needs.extract_version.outputs.can_publish == '' }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
