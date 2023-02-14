@@ -144,6 +144,8 @@ exp.end()
 
 ### 数据集构建
 
+![DatasetBuilder](./images/DatasetBuilder.png)
+
 DatasetBuilder 是采用有向无环图思路设计的数据集构建类。将数据集的构件划分为输入-输出两阶段，同时提供 `.chain()`（序列格式）和`.zip()`（字典格式） 两种输出方式。
 
 ```python
