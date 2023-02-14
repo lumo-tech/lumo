@@ -18,9 +18,12 @@ if __name__ == '__main__':
         url='https://github.com/pytorch-lumo/lumo',
         author='sailist',
         author_email='sailist@outlook.com',
-        license='Apache License 2.0',
+        license_files=('LICENSE',),
         include_package_data=True,
         classifiers=[
+            'Programming Language :: Python :: 3.6',
+            'Programming Language :: Python :: 3.7',
+            'Programming Language :: Python :: 3.8',
             'Programming Language :: Python :: 3.9',
         ],
         package_dir={"": "src"},
