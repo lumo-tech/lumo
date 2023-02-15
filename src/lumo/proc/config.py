@@ -4,9 +4,6 @@ import json
 GLOBAL_DEFAULT = {
     'home': os.path.expanduser("~/.lumo/"),
     'cache_dir': os.path.expanduser("~/.cache/lumo"),
-    'exp_root': os.path.expanduser("~/.lumo/experiments"),
-    'blob_root': os.path.expanduser("~/.lumo/blob"),
-    'metric_root': os.path.expanduser("~/.lumo/metric"),
 }
 
 
@@ -57,6 +54,6 @@ glob = create_runtime_config()
 
 LIBHOME = glob.get("home")
 CACHE_ROOT = glob.get('cache_dir')
-EXP_ROOT = glob.get('exp_root')
-BLOB_ROOT = glob.get('blob_root')
-METRIC_ROOT = glob.get('metric_root')
+EXP_ROOT = glob.get('exp_root', None)
+BLOB_ROOT = glob.get('blob_root', None)
+METRIC_ROOT = glob.get('metric_root', None)

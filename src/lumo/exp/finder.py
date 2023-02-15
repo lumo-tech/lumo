@@ -1,17 +1,46 @@
+"""
+list ->
+    experiment
+    test
+retrieval ->
+    test_name
+    test_root
+
+"""
 from pprint import pformat
 import os
-from lumo.proc.path import libhome
+from typing import List, Dict
+
+from lumo.proc.path import libhome, exproot
 from lumo.utils.fmt import indent_print
+from lumo.utils import re
 
 from . import Experiment
 
 
-def find_experiments():
-    return os.listdir(os.path.join(libhome(), 'experiment'))
+def list_experiment_paths(exp_root=None):
+    if exp_root is None:
+        exp_root = exproot()
+    return [os.path.join(exp_root, i) for i in os.listdir(exp_root)]
 
 
-def list_test_names_from_experiment(experiment):
-    return os.listdir(os.path.join(libhome(), 'experiment', experiment))
+def _get_exp_name(exp_path: str):
+    return os.path.basename(exp_path.rstrip('/'))
+
+
+def list_all(exp_root) -> Dict[str:List[Experiment]]:
+    return {
+        _get_exp_name(exp_path): retrieval_tests(exp_path)
+        for exp_path in list_experiment_paths(exp_root)
+    }
+
+
+def retrieval_tests(exp_path) -> List[Experiment]:
+    return [retrieval_experiment(os.path.join(exp_path, f)) for f in os.listdir(exp_path)]
+
+
+def list_test_names_from_experiment(experiment_name):
+    return os.listdir(os.path.join(exproot(), experiment_name))
 
 
 def find_path_from_test_name(test_name: str):
@@ -30,62 +59,52 @@ def find_path_from_test_name(test_name: str):
 
 
 def is_test_name(test_name: str):
-    chunk = test_name.split('.')
-    if len(test_name) != 14:
-        return False
-
-    if len(chunk) != 3:
-        return False
-    for k, c in zip(chunk, [6, 3, 3]):
-        if len(k) != c:
-            return False
-    for k in chunk[:2]:
-        try:
-            int(k)
-        except:
-            return False
-    return True
+    """
+    [0-9]{6}.[0-9]{3}.[a-z0-9]{2}t
+    """
+    return re.search(r'\d{6}\.\d{3}\.[a-z\d]{2}t', test_name) is not None
 
 
-def is_test_root(test_root: str):
-    test_name = os.path.basename(test_root.rstrip('/'))
+def is_test_root(path: str):
+    test_name = os.path.basename(path.rstrip('/'))
     return is_test_name(test_name)
 
 
-def format_experiment(exp: Experiment):
-    return {
-        'Properties': exp.properties,
-        'tags': exp.tags,
-        'paths': exp.paths,
-        'exec_argv': exp.exec_argv,
-    }
-
-
-def get_experiment_name(test_root:str):
-    return os.path.basename(os.path.dirname(test_root.rstrip('/')))
-
-def get_test_name(test_root:str):
-    return os.path.basename(test_root.rstrip('/'))
-
-def ensure_test_root(tid: str):
-    if is_test_name(tid):
-        test_root = find_path_from_test_name(tid)
+def retrieval_test_root(test_flag: str):
+    """
+    test_flag can be a name like `230214.037.62t` or path like `path/to/230214.037.62t`
+    """
+    if is_test_name(test_flag):
+        test_root = find_path_from_test_name(test_flag)
         if test_root is None:
             return None
-    elif is_test_root(tid):
-        test_root = tid
+    elif is_test_root(test_flag):
+        test_root = test_flag
     else:
         return None
 
     return test_root
 
 
-def summary_experiment(tid: str):
-    test_root = ensure_test_root(tid)
+def retrieval_experiment(test_name=None, test_root: str = None):
     if test_root is None:
-        return test_root
-
+        test_root = retrieval_test_root(test_name)
+    if test_root is None:
+        return None
     exp = Experiment.from_disk(test_root)
+    return exp
+
+
+def summary_experiment(test_name: str = None, test_root: str = None):
+    if test_root is None:
+        if test_name is None:
+            raise ValueError()
+        test_root = retrieval_test_root(test_name)
+
+    if test_root is None:
+        return
+
+    exp = retrieval_experiment(test_root)
 
     print('Properties:')
     indent_print(pformat(exp.properties))
@@ -96,3 +115,12 @@ def summary_experiment(tid: str):
     print('Execute:')
     indent_print(' '.join(exp.exec_argv))
     print('-----------------------------------')
+
+
+def format_experiment(exp: Experiment):
+    return {
+        'Properties': exp.properties,
+        'tags': exp.tags,
+        'paths': exp.paths,
+        'exec_argv': exp.exec_argv,
+    }

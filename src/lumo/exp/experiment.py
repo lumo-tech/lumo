@@ -115,6 +115,9 @@ class Experiment:
         return self._test_name
 
     def _create_test_name(self):
+        """
+        [0-9]{6}.[0-9]{3}.[a-z0-9]{3}t
+        """
         from lumo.proc.date import timehash
         from ..utils.fmt import strftime
         fs = os.listdir(self.exp_root)

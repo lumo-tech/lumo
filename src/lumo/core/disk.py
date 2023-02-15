@@ -37,7 +37,7 @@ class TableRow:
     """
 
     def __init__(self, table, partition, rowkey):
-        dirpath = os.path.join(path.libhome(), 'metrics', table)
+        dirpath = os.path.join(path.metricroot(), table)
         os.makedirs(dirpath, exist_ok=True)
         self.fpath = os.path.join(dirpath, partition, f'{rowkey}.pkl')
         self.key = rowkey
