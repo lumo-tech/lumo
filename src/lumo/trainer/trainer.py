@@ -394,6 +394,8 @@ class Trainer(_BaseTrainer):
         self.database.update('commit_hex', commit_hex)
         self.database.update_dict(dict(
             test_name=self.exp.test_name,
+            exp_name=self.exp.exp_name,
+            project=self.exp.project_name,
             path=self.exp.test_root,
             start=datetime.now()))
         self.database.set_params(self.params.to_dict())
