@@ -14,7 +14,7 @@ def list_all_metrics(metric_root=None):
 
     res = {}
     for root, dirs, fs in os.walk(metric_root):
-        fs = [i for i in fs if not i.startswith('.')]
+        fs = [os.path.join(root, i) for i in fs if not i.startswith('.')]
         res[os.path.basename(root)] = fs
     return res
 
