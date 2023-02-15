@@ -24,7 +24,7 @@ class Step:
 
 
 def find_metric_fron_test_root(test_root):
-    test_root = finder.ensure_test_root(test_root)
+    test_root = finder.retrieval_test_root(test_root)
     if test_root is None:
         return False, {}
 

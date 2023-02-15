@@ -18,7 +18,7 @@ class Main():
     def __init__(self):
         test_names = self.select_head()
         for test_name in test_names:
-            test_root = finder.ensure_test_root(test_name)
+            test_root = finder.retrieval_test_root(test_name)
             if test_root:
                 # with st.expander(test_root):
                 self.make_test(test_root)
@@ -79,7 +79,7 @@ class Main():
 
     def query_head(self, st):
         sd = st
-        self.experiments = finder.find_experiments()
+        self.experiments = finder.list_experiment_paths()
         default_exp_name = None
 
         selection = sd.multiselect('Experiments', self.experiments, default=default_exp_name)
