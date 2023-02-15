@@ -14,6 +14,8 @@ def list_all_metrics(metric_root=None):
 
     res = {}
     for root, dirs, fs in os.walk(metric_root):
+        if root == metric_root:
+            continue
         fs = [os.path.join(root, i) for i in fs if not i.startswith('.')]
         res[os.path.basename(root)] = fs
     return res
@@ -35,6 +37,8 @@ def collect_table_rows(metric_root=None):
         logger.info(f'collecting {len(rows)} tests.')
 
         for row_fn in rows:
+            if not row_fn.endswith('pkl'):
+                continue
             row = IO.load_pkl(row_fn)
             test_name = os.path.splitext(os.path.basename(row_fn))[0]
             global_dic[test_name] = row
