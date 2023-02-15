@@ -59,6 +59,7 @@ def blobroot():
 
 @cache
 def metricroot():
+    """only used for table_row"""
     if METRIC_ROOT:
         res = METRIC_ROOT
     else:
