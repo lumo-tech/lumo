@@ -60,9 +60,9 @@ def find_path_from_test_name(test_name: str):
 
 def is_test_name(test_name: str):
     """
-    [0-9]{6}.[0-9]{3}.[a-z0-9]{2}t
+    ^[0-9]{6}.[0-9]{3}.[a-z0-9]{2}t$
     """
-    return re.search(r'\d{6}\.\d{3}\.[a-z\d]{2}t', test_name) is not None
+    return re.search(r'^\d{6}\.\d{3}\.[a-z\d]{2}t$', test_name) is not None
 
 
 def is_test_root(path: str):
