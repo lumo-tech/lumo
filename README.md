@@ -2,25 +2,24 @@
 
 `lumo`：轻量、可扩展、功能解耦合的 Pytorch 实验框架。
 
-## 设计理念
+lumo 的设计理念：
 
-- 模块解耦合：所有模块可以单独作为您现在使用的框架中的一个插件使用
-- 细节由使用者掌控：lumo 只封装了外部逻辑，内部实现由使用者自行实现（或借助框架用更少的代码量实现）
-- 全流程适用：从单文件到包含多个领域多个方法的项目，lumo 都可以提供舒适的使用体验。
+- 模块解耦合：所有模块可以单独作为您现在使用的框架中的一个插件使用（而不像其他框架几乎耦合在一起）
+- 恰到好处的抽象：和模型相关的细节完全由使用者掌控，lumo 只封装了外部通用逻辑（而不像其他一些框架会代理模型初始化或损失迭代）
+- 覆盖整个生命周期：数据集构建、模型初始化、随机种子、训练/测试...，lumo 为所有步骤提供了功能包或流程简化
+- 极强的可扩展性：从单文件到包含多个领域多个方法的项目，lumo 都可以提供舒适的使用体验。已在两个领域有复现项目的最佳实践示例（见[Related Work](#Related Work)）。
+
+# 如何使用
 
 ## 安装
 
-安装最新的稳定版本
+从 pypi 或 github 主页安装最新的稳定版本：
 
 ```bash
 pip install -U lumo
-```
-
-对于不稳定版本，
-
-```bash
 pip install git+https://github.com/pytorch-lumo/lumo
 ```
+
 
 ## 快速开始
 
@@ -31,10 +30,10 @@ pip install git+https://github.com/pytorch-lumo/lumo
 
 ### 参数控制
 
-参数控制底层依托于 [omegaconf](https://github.com/omry/omegaconf) 和 [fire](https://github.com/google/python-fire)
-，只需要简单的配置，就可以从文件、命令行中读取参数，不需要 arguments 的冗余代码。
+`argparse` 的更优替代。`Params` 底层依托于 [omegaconf](https://github.com/omry/omegaconf) 和 [fire](https://github.com/google/python-fire)
+，只需要简单的配置，就可以从文件、命令行中读取参数。
 
-直接基于 Params 类定义参数
+直接基于 Params 类定义参数：
 
 ```python
 # python main.py --epoch=30 --dataset=100
@@ -60,26 +59,11 @@ params.from_json('./config.json')
 params.from_yaml('./config.yaml')
 ```
 
-通过继承定义参数
-
-```python
-from lumo import Params
-
-
-class MyParams(Params):
-    def __init__(self):
-        super(Params, self).__init__()
-        self.epoch = 30
-        self.dataset = self.choice('cifar10', 'cifar100')
-
-
-params = MyParams()
-# ...
-```
+也可以通过继承、多重继承来嵌套，组合参数。即使在命令行中输入了不存在的参数，Params 也会正常读取。 
 
 ### 变量&日志记录
 
-通过 Meter、Record 和 Logger，可以实现变量的记录和格式化输出。其中：
+`logging` 的更优替代。通过 Meter、Record 和 Logger，可以实现变量的记录和格式化输出。其中：
 
 - Meter 记录单次的值
 - Record 以一定规则归约 Meter 实例（如 mean、sum 等）
@@ -112,8 +96,8 @@ log.info(record)
 
 ### 路径管理&版本控制
 
-[Experiment]() 主要提供路径管理，可以为每一次试验根据实验名、日期、次数等自动提供不一样的保存路径。此外，Experiment 还可以通过 hook
-提供如代码版本管理、元数据记录等功能。在实验中，可以使用其子类 [SimpleExperiment]() 实现大部分需求。
+`Experiment` 主要提供路径管理，可以为每一次试验根据实验名、日期、次数等自动提供不一样的保存路径。此外，Experiment 还可以通过 hook
+提供如代码版本管理、元数据记录等功能。在实验中，可以使用其子类 `SimpleExperiment` 实现大部分需求。
 
 ```python
 from lumo import SimpleExperiment
@@ -146,7 +130,9 @@ exp.end()
 
 ![DatasetBuilder](./images/DatasetBuilder.png)
 
-DatasetBuilder 是采用有向无环图思路设计的数据集构建类。将数据集的构件划分为输入-输出两阶段，同时提供 `.chain()`（序列格式）和`.zip()`（字典格式） 两种输出方式。
+`DatasetBuilder` 是采用有向无环图思路设计的数据集构建类，该类提供了一个恰当的抽象逻辑，避免了在一个实验里定义多个重复 Datasets 类。
+
+`DatasetBuilder `将数据集的构件划分为输入-输出两阶段，同时提供 `.chain()`（序列格式）和`.zip()`（字典格式） 两种输出方式。
 
 ```python
 from lumo import DatasetBuilder
@@ -171,17 +157,24 @@ print(db[0])
 # dict_keys(['id', 'xs1', 'xs2', 'ys'])
 ```
 
-进一步使用查看 [daatset.py](./examples/data/quick_start.py)
+# 更多教程
 
-### 训练
+# Related Work
 
-lumo.Trainer 的主要功能：
+- [image-classification](https://github.com/pytorch-lumo/image-classification): supervised/semi-supervised/self-supervised/noisy label learning on image-classfication
+  field. (suporrted datasets: CIFAR10/CIFAR100/STL-10/SVHN/ImageNet/tinyimagenet)
+- [emotion-recognition-in-conversation](https://github.com/pytorch-lumo/emotion-recognition-in-conversation):Multimodel emotional recognition on conversation. (suporrted datasets: IEMOCAP/MELD/MOSEI) 
 
-- 集成方法回调、变量记录、日志输出、模型存储、随机种子、实验管理等内置其他模块
-- 集成 [huggingface/accelerate](https://github.com/huggingface/accelerate) ，用于多卡训练
 
-# Examples
+# Acknowledge
 
-- [image-classification](): supervised/semi-supervised/self-supervised/noisy label learning on image-classfication
-  field. (CIFAR10/CIFAR100/STL-10/SVHN/ImageNet/tinyimagenet)
-- [MMERC]():Multimodel emotional recognition on conversation. (IEMOCAP/MELD/MOSEI) 
+ 一个人维护一个库四年，背后的动力是我持续不断的使用，感谢 lumo 陪我见证我的学术生涯。lumo 确实不一定适合所有人的习惯，但一定最适合我自己。lumo 取自 lumos，这是哈利波特里魔法杖发光的咒语。torch 是火炬，ignite 是点燃，所以 lumo 也向往着发光发热，希望 lumo 给大家带来美好的使用体验。
+
+# License 
+
+Distributed under the GNU General Public License 3.0. See [LICENSE](./LICENSE) for more information.
+
+# Contact
+
+ - [sailist@outlook.com](mailto:sailist@outlook.com)
+

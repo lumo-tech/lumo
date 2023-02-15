@@ -165,3 +165,4 @@ lumo_temp
 
 wandb
 .lumorc.json
+docs/
