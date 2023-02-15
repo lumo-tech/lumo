@@ -28,7 +28,7 @@ def _get_exp_name(exp_path: str):
     return os.path.basename(exp_path.rstrip('/'))
 
 
-def list_all(exp_root) -> Dict[str:List[Experiment]]:
+def list_all(exp_root) -> Dict[str, List[Experiment]]:
     return {
         _get_exp_name(exp_path): retrieval_tests(exp_path)
         for exp_path in list_experiment_paths(exp_root)
