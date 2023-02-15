@@ -1,27 +1,72 @@
 import os.path
 import shutil
+from typing import Iterable
 
 from dbrecord import PDict
 from lumo import Logger
+from lumo.exp.finder import list_all_metrics
 from lumo.utils import safe_io as IO
 from lumo.proc.path import metricroot
 import pandas as pd
 
 
-def list_all_metrics(metric_root=None):
-    if metric_root is None:
-        metric_root = metricroot()
+def recursive_get(dic: dict, key: str, default=None):
+    """
+    Recursively retrieval value with provided key.
+    The keys include hierarchical information should be separated by dot, like "a.b"
 
-    res = {}
-    for root, dirs, fs in os.walk(metric_root):
-        if root == metric_root:
-            continue
-        fs = [os.path.join(root, i) for i in fs if not i.startswith('.')]
-        res[os.path.basename(root)] = fs
-    return res
+    Args:
+        dic: a dict instance
+        key: string
+        default: default value if provided key not exists.
+
+    Returns:
+        `value` in the `dic`
+
+    Caution:
+        The `key` argument will be splited by '.' at first, so any value stored like "a.b" won't be retrieved.
+
+    Examples:
+        dic = {"a":{"b":1},"c":2}
+        assert recursive_get(dic,'a.b') == 1
+        assert recursive_get(dic,'c') == 2
+    """
+    for key in key.split('.'):
+        if isinstance(dic, dict):
+            dic = dic.get(key, default)
+        else:
+            return dic
+
+    return dic
+
+
+def flatten_dict(df, key: str, keys: Iterable, prefix: str = None, default=None):
+    """
+    The behaviour of
+    `flatten_dict(df, "a",["b"])` are the same as
+    ```
+    for key in ["b"]:
+        df[f"a.{key}"] = df["a"].apply(lambda x:x.get(key))
+    ```
+    """
+    if prefix is None:
+        prefix = key
+    for k in keys:
+        df[f'{prefix}.{k}'] = df[key].apply(lambda x: recursive_get(x, k, default))
+
+
+def flatten_params(df, *keys: str):
+    """See flatten_dict for details"""
+    return flatten_dict(df, 'params', keys, prefix='p')
+
+
+def flatten_metric(df, *keys: str):
+    """See flatten_dict for details"""
+    return flatten_dict(df, 'metric', keys, prefix='m')
 
 
 def collect_table_rows(metric_root=None):
+    """Collect all table_row into a pandas.DataFrame"""
     res = []
     logger = Logger()
     exp_map = list_all_metrics(metric_root)
