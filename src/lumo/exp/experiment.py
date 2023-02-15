@@ -415,6 +415,12 @@ class Experiment:
         except:
             return []
 
+    def __repr__(self):
+        return f'{self.exp_name}->({self.test_name})'
+
+    def __str__(self):
+        return self.__repr__()
+
 
 class SimpleExperiment(Experiment):
 
