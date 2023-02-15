@@ -45,7 +45,6 @@ def collect_table_rows(metric_root=None):
             except:
                 print(f'Failed on load {row_fn}, renameed to f ".{test_name}.failed.pkl"')
                 shutil.move(row_fn, os.path.join(os.path.dirname(row_fn), f'.{test_name}.failed.pkl'))
-
                 continue
             global_dic[test_name] = row
             shutil.move(row_fn, os.path.join(os.path.dirname(row_fn), f'.{test_name}.pkl'))
