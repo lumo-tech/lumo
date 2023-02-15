@@ -1,11 +1,14 @@
-import torch
-from torch.nn import functional as F
+from typing import Optional
 
 import torch
 from torch.nn import functional as F
 
+import torch
+from torch.nn import functional as F
+from torch import Tensor
 
-def normalize(feature: torch.Tensor, inplace=False, eps=1e-08):
+
+def normalize(feature: Tensor, inplace=False, eps=1e-08):
     """
     a = torch.rand(2, 3)
     b = torch.rand(2, 3)
@@ -31,7 +34,7 @@ def normalize(feature: torch.Tensor, inplace=False, eps=1e-08):
     return feature
 
 
-def batch_cosine_similarity(a: torch.Tensor, b: torch.Tensor, eps=1e-08):
+def batch_cosine_similarity(a: Tensor, b: Tensor, eps=1e-08):
     """
     a: [bs_a, feature_dim]
     a: [bs_b, feature_dim]
@@ -39,7 +42,7 @@ def batch_cosine_similarity(a: torch.Tensor, b: torch.Tensor, eps=1e-08):
     return F.cosine_similarity(a.unsqueeze(1), b.unsqueeze(0), dim=2, eps=eps)
 
 
-def batch_cosine_similarity2(a: torch.Tensor, b: torch.Tensor, eps=0):
+def batch_cosine_similarity2(a: Tensor, b: Tensor, eps=0):
     """
     a: [bs_a, feature_dim]
     a: [bs_b, feature_dim]
@@ -90,7 +93,7 @@ def masked_softmax(logits, mask=None, dim=-1, eps=1e-08):
         return res
 
 
-def normalize(feature: torch.Tensor, inplace=False, dim=-1, eps=1e-08):
+def normalize(feature: Tensor, inplace=False, dim=-1, eps=1e-08):
     if inplace:
         feature /= (feature.norm(dim=dim, keepdim=True) + eps)
     else:
@@ -98,7 +101,7 @@ def normalize(feature: torch.Tensor, inplace=False, dim=-1, eps=1e-08):
     return feature
 
 
-def batch_cosine_similarity(a: torch.Tensor, b: torch.Tensor, eps=1e-08):
+def batch_cosine_similarity(a: Tensor, b: Tensor, eps=1e-08):
     """
     a: [bs_a, feature_dim]
     a: [bs_b, feature_dim]
@@ -106,7 +109,7 @@ def batch_cosine_similarity(a: torch.Tensor, b: torch.Tensor, eps=1e-08):
     return F.cosine_similarity(a.unsqueeze(1), b.unsqueeze(0), dim=2, eps=eps)
 
 
-def batch_cosine_similarity2(a: torch.Tensor, b: torch.Tensor, eps=0):
+def batch_cosine_similarity2(a: Tensor, b: Tensor, eps=0):
     """
     a: [bs_a, feature_dim]
     a: [bs_b, feature_dim]
@@ -115,7 +118,30 @@ def batch_cosine_similarity2(a: torch.Tensor, b: torch.Tensor, eps=0):
     return torch.mm(normalize(a, eps=eps), normalize(b, eps=eps).T)
 
 
-def sharpen(x: torch.Tensor, t=1):
+def log_softmax_stable(input: Tensor, dim: Optional[int] = -1):
+    """
+    Applies a softmax followed by a logarithm.
+    Both CPU and GPU implementations of `log_softmax` use following formula:
+        $log_softmax(a)=(a-C)−log(\sum{exp(a-C)}), C = max(a)$
+    But, in early version of MPS backend, the implementation is log(softmax(x)), which may cause unstable result (inf).
+    See https://github.com/pytorch/pytorch/issues/94043 for details.
+
+    For that reasom, I rewrite this function to temporarily avoid this problem. Before the MPS backend fix this implementation,
+    you can use this function to workaround.
+
+    Args:
+        input: same as F.log_softmax
+        dim: same as F.log_softmax
+
+    See Also:
+        `~lumo.contrib.nn.loss.cross_entropy_stable`
+    """
+    c = input.max(dim=dim, keepdim=True).values
+    logsumexp = torch.log(torch.exp(input - c).sum(dim=dim, keepdim=True))
+    return input - c - logsumexp
+
+
+def sharpen(x: Tensor, t=1):
     """
     让概率分布变的更 sharp，即倾向于 onehot
     :param x: prediction, sum(x,dim=-1) = 1

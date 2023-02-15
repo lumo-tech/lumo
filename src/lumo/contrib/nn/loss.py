@@ -1,9 +1,20 @@
 from typing import Optional
-
+from torch import Tensor
 import torch
 from torch.nn import functional as F
 
 from lumo.contrib.nn.functional import masked_log_softmax
+from .functional import log_softmax_stable
+
+
+def cross_entropy_stable(input: Tensor, target: Tensor, dim=-1):
+    """
+    This criterion computes the cross entropy loss between input logits and target.
+
+    For why have this function and when to use this instead of F.cross_entropy, see `~lumo.contrib.nn.log_softmax_stable`
+    for details.
+    """
+    return F.nll_loss(log_softmax_stable(input, dim=dim), target)
 
 
 def contrastive_loss(query: torch.Tensor, key: torch.Tensor,
