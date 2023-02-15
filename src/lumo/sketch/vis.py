@@ -35,6 +35,6 @@ def make_grid_from_stacked_imgs(imgs: np.ndarray, pad=1, ncol=None, padvalue=0):
             pad + col * (w + pad):pad + col * (w + pad) + w, ] = img
     return nimgs
 
-vr = decord.VideoReader('v_HulaHoop_g07_c04.avi',width=32,height=32)
-plt.figure(dpi=100)
-plt.imshow(make_grid_from_nplist(vr[::4].asnumpy(),ncol=8))
+# vr = decord.VideoReader('v_HulaHoop_g07_c04.avi',width=32,height=32)
+# plt.figure(dpi=100)
+# plt.imshow(make_grid_from_nplist(vr[::4].asnumpy(),ncol=8))
