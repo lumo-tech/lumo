@@ -39,12 +39,14 @@ def collect_table_rows(metric_root=None):
         for row_fn in rows:
             if not row_fn.endswith('pkl'):
                 continue
+            test_name = os.path.splitext(os.path.basename(row_fn))[0]
             try:
                 row = IO.load_pkl(row_fn)
             except:
-                print(f'Failed on load {row_fn}')
+                print(f'Failed on load {row_fn}, renameed to f ".{test_name}.failed.pkl"')
+                shutil.move(row_fn, os.path.join(os.path.dirname(row_fn), f'.{test_name}.failed.pkl'))
+
                 continue
-            test_name = os.path.splitext(os.path.basename(row_fn))[0]
             global_dic[test_name] = row
             shutil.move(row_fn, os.path.join(os.path.dirname(row_fn), f'.{test_name}.pkl'))
             res.append(row)
