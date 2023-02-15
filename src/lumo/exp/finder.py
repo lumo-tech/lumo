@@ -11,7 +11,7 @@ from pprint import pformat
 import os
 from typing import List, Dict
 
-from lumo.proc.path import libhome, exproot
+from lumo.proc.path import libhome, exproot, metricroot
 from lumo.utils.fmt import indent_print
 from lumo.utils import re
 
@@ -124,3 +124,16 @@ def format_experiment(exp: Experiment):
         'paths': exp.paths,
         'exec_argv': exp.exec_argv,
     }
+
+
+def list_all_metrics(metric_root=None):
+    if metric_root is None:
+        metric_root = metricroot()
+
+    res = {}
+    for root, dirs, fs in os.walk(metric_root):
+        if root == metric_root:
+            continue
+        fs = [os.path.join(root, i) for i in fs if not i.startswith('.')]
+        res[os.path.basename(root)] = fs
+    return res
