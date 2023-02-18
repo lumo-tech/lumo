@@ -1,5 +1,8 @@
 from operator import and_, gt, ge, le, lt, eq, ne
 from itertools import accumulate
+from pandas import DataFrame
+
+__all__ = ['C', 'filter_by_condition']
 
 
 def in_(ser, value):
@@ -14,6 +17,7 @@ def first(ser, value):
     return ser.duplicated(value) == False
 
 
+# supported conditions
 mapping = {
     '>=': ge,
     '<=': le,
@@ -28,6 +32,13 @@ mapping = {
 
 
 class Compare:
+    """
+    To temporarily store comparison condition for filtering DataFrame.
+
+    See Also:
+          ~filter_by_condition
+    """
+
     def __init__(self, name=None):
         self.name = name
         self.op = None
@@ -101,10 +112,20 @@ class Compare:
         return self
 
 
-C = Compare()
+C = Compare()  # An instance of Compare()
 
 
-def filter_by_condition(df, *condition: Compare):
+def filter_by_condition(df: DataFrame, *condition: Compare) -> DataFrame:
+    """
+    简化版的 pipeline，仅用于等式和不等式筛选以及额外支持的 in/not_in 等功能
+    Args:
+        df: padnas.DataFrame instance
+        *condition: list of `~Compare` instance
+
+    Returns:
+        A DataFrame object filtered by provided conditions.
+
+    """
     filters = []
     remains = []
     drops = []

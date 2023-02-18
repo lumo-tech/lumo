@@ -65,7 +65,7 @@ def flatten_metric(df, *keys: str):
     return flatten_dict(df, 'metric', keys, prefix='m')
 
 
-def collect_table_rows(metric_root=None):
+def collect_table_rows(metric_root=None) -> pd.DataFrame:
     """Collect all table_row into a pandas.DataFrame"""
     res = []
     logger = Logger()
