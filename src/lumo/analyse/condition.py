@@ -1,5 +1,6 @@
-from operator import and_, gt, ge, le, lt, eq, ne
 from itertools import accumulate
+from operator import and_, gt, ge, le, lt, eq, ne
+
 from pandas import DataFrame
 
 __all__ = ['C', 'filter_by_condition']
