@@ -1,5 +1,5 @@
-import os
 import json
+import os
 
 __all__ = ['glob', 'global_config_path', 'local_config_path']
 
