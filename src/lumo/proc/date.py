@@ -38,6 +38,7 @@ def file_ctime2date(file, fmt='%y%m%d-%H%M%S') -> str:
 
 
 def timehash():
+    """return a hash string based on current time, accurate to nanoseconds."""
     import time
     time_ns = str(time.time())
     hl = hashlib.md5()

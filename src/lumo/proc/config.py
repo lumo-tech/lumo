@@ -1,6 +1,8 @@
 import os
 import json
 
+__all__ = ['glob', 'global_config_path', 'local_config_path']
+
 GLOBAL_DEFAULT = {
     'home': os.path.expanduser("~/.lumo/"),
     'cache_dir': os.path.expanduser("~/.cache/lumo"),
@@ -37,7 +39,7 @@ def get_config(path, default):
     return default
 
 
-def create_runtime_config():
+def get_runtime_config():
     glob_cfg = get_config(global_config_path(), GLOBAL_DEFAULT)
     local_cfg = get_config(local_config_path(), {})
     cfg = GLOBAL_DEFAULT
@@ -46,12 +48,11 @@ def create_runtime_config():
     return cfg
 
 
-def pretain_model_path(name):
-    pass
+# A dict object contains runtime configuration.
+glob = get_runtime_config()
 
-
-glob = create_runtime_config()
-
+# Common used paths
+# It's recommended to use functions in proc.path to get paths to ensure the availability.
 LIBHOME = glob.get("home")
 CACHE_ROOT = glob.get('cache_dir')
 EXP_ROOT = glob.get('exp_root', None)

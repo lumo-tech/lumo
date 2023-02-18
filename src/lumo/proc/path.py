@@ -11,6 +11,17 @@ def home():
 
 @cache
 def cache_dir():
+    """
+    Directory to store cache files, like datasets. Can be shared for everyone.
+
+    Returns:
+        An available path, default value is ~/.cache/.lumo,
+        if the path cannot be used due to permission denied,
+        `~/.lumo/cache` will be returned
+
+    Notes:
+
+    """
     try:
         os.makedirs(CACHE_ROOT, exist_ok=True)
         res = CACHE_ROOT
@@ -21,17 +32,8 @@ def cache_dir():
 
 
 @cache
-def dataset_cache_dir(name=None):
-    if name is None:
-        res = os.path.join(cache_dir(), 'datasets', '__default__')
-    else:
-        res = os.path.join(cache_dir(), 'datasets', name)
-    os.makedirs(res, exist_ok=True)
-    return res
-
-
-@cache
 def libhome():
+    """Library home to store configs. Default is `~/.lumo`"""
     if LIBHOME:
         return LIBHOME
     return os.path.join(home(), '.lumo')
@@ -39,6 +41,7 @@ def libhome():
 
 @cache
 def exproot():
+    """Experiment root to store multiple experiments, default is `~/.lumo/experiments`"""
     if EXP_ROOT:
         res = EXP_ROOT
     else:
@@ -49,6 +52,8 @@ def exproot():
 
 @cache
 def blobroot():
+    """Experiment root to store big files, default is `~/.lumo/blob`"""
+
     if BLOB_ROOT:
         res = BLOB_ROOT
     else:
@@ -59,7 +64,13 @@ def blobroot():
 
 @cache
 def metricroot():
-    """only used for table_row"""
+    """
+    Only used for storing table_row instance.
+
+    See Also:
+        `~lumo.core.disk.TableRow`
+
+    """
     if METRIC_ROOT:
         res = METRIC_ROOT
     else:
@@ -70,6 +81,13 @@ def metricroot():
 
 @cache
 def local_dir():
+    """
+    Project root, default is the parent directory of .git.
+    If this program is not a git project, the parent directory of the executed file will be returned.
+
+    Returns:
+
+    """
     from lumo.utils.repository import git_dir
     res = git_dir()
     if res is None:
