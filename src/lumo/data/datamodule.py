@@ -7,9 +7,14 @@ from .loader import DataLoaderType
 from .loader import DataLoaderSide
 
 
-class DataModule(metaclass=PropVar):
+class DataModule:
     def __init__(self, params: ParamsType = None):
+        self._prop = {}
         self.params = params
+
+    @property
+    def prop(self):
+        return self._prop
 
     @staticmethod
     def _parse_dataset(loader):
@@ -51,7 +56,7 @@ class DataModule(metaclass=PropVar):
         return res
 
     def __getitem__(self, key):
-        return self._prop.get(key, None)
+        return self.prop.get(key, None)
 
     @overload
     def regist_dataloader(self, train=None, test=None, val=None):
@@ -59,10 +64,10 @@ class DataModule(metaclass=PropVar):
 
     def regist_dataloader(self, **kwargs: dict):
         for k, v in kwargs.items():
-            self._prop[k] = v
+            self.prop[k] = v
 
     def regist_dataloader_with_stage(self, stage: TrainStage, dl: DataLoaderType):
-        self._prop[stage.value] = dl
+        self.prop[stage.value] = dl
 
     def idataloader(self, params: ParamsType = None, stage: TrainStage = None):
         pass

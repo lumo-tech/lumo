@@ -34,8 +34,9 @@ def wrap_result(metric: MetricType) -> Meter:
     return Meter()
 
 
-class Record(metaclass=PropVar):
+class Record:
     def __init__(self, window_size=500, **kwargs):
+        self._prop = {}
         self._prop.update(kwargs)
         self._cache = []
         self._agg = OrderedDict()  # type:Dict[str,AggItem]

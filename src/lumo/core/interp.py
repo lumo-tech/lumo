@@ -19,9 +19,10 @@ value.
 Except for the base `Schedule` class, some other subclasses of `Schedule`  which may be general used is provided, too. All can
  be easily understand by their names and plot curves.
 """
-from typing import List
+from typing import List, Any
 
 import numpy as np
+from omegaconf import DictKeyType
 
 from lumo.core import BaseParams
 from lumo.core.metaclasses import PropVar
@@ -59,6 +60,9 @@ class Interpolate(BaseParams):
 
     def __call__(self, cur):
         raise NotImplementedError()
+
+    def get(self, key: DictKeyType, default_value: Any = None) -> Any:
+        return self(key)
 
     def plot(self, num=1000, left=0, right=1000, show=True):
         """

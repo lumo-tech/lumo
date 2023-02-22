@@ -1,13 +1,8 @@
-import warnings
 from collections import OrderedDict
 from pprint import pformat
 from typing import NewType, Union
 
 from torch.utils.data import DataLoader
-
-from lumo.core.metaclasses import PropVar
-
-__all__ = ['DataLoader', 'LumoDataLoader', 'DataLoaderSide', 'DataLoaderType']
 
 
 class DataLoaderIterWrap:
