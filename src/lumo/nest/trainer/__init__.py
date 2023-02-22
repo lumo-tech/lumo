@@ -1,3 +1,0 @@
-"""
-Trainer mixin classes.
-"""
