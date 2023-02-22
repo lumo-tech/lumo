@@ -182,6 +182,11 @@ class BaseParams(DictConfig):
 
         return "{}.Space".format(self.__class__.__name__) + '(\n' + args_str + '\n)'
 
+    def copy(self):
+        copied = self.__class__()
+        copied.from_dict(super(BaseParams, self).copy())
+        return copied
+
     def arange(self, default, left=float("-inf"), right=float("inf")) -> Arange:
         """
         Make sure some value is into some range.
@@ -305,7 +310,7 @@ class BaseParams(DictConfig):
         return int(self.hash(), 16)
 
     def hash(self) -> str:
-        return hash(str(self))
+        return hash(self.to_dict())
 
     def iparams(self):
         pass

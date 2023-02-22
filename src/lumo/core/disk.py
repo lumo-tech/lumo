@@ -63,29 +63,29 @@ class TableRow:
 
     def update_metric(self, key, value, compare=None, flush=False):
         dic = self.metric
-        old = dic.setdefault(key, None)
+        older = dic.setdefault(key, None)
 
         update = False
-        if old is None or compare is None:
+        if older is None or compare is None:
             update = True
         else:
             if compare == 'max':
-                if old < value:
+                if older < value:
                     update = True
             elif compare == 'min':
-                if old > value:
+                if older > value:
                     update = True
             else:
                 assert False
 
         if update:
             dic[key] = value
-            old = value
+            older = value
 
         if flush:
             self.flush()
 
-        return {key: value}
+        return {key: older}
 
     @property
     def metric(self):
@@ -117,7 +117,7 @@ class TableRow:
         if flush:
             self.flush()
 
-        return {key: value, key2: value2}
+        return {key: old, key2: old2}
 
     def set_params(self, params: dict):
         self.value['params'] = params
@@ -134,3 +134,6 @@ class TableRow:
         self.value[key] = value
         if flush:
             self.flush()
+
+    def __getitem__(self, item):
+        return self.value[item]

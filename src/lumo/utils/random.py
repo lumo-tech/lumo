@@ -29,6 +29,8 @@ def fix_seed(seed=10, cuda=True):
 
     Notes:
         When use dataloader and its num_workers is bigger than one, the final results may can't be the same cased by multithread.
+
+        [2023.02.22] Currently (as MPS support is quite new) there is no way to set the seed for MPS directly.
     """
     random.seed(seed)
     np.random.seed(seed)

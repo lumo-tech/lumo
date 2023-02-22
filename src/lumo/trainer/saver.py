@@ -13,6 +13,12 @@ class state_dict_tuple:
         self.state_dict = state_dict
         self.meta_info = meta_info
 
+    def __getitem__(self, item):
+        if item == 0:
+            return self.state_dict
+        elif item == 1:
+            return self.meta_info
+        raise IndexError(item)
 
 class Saver:
     """

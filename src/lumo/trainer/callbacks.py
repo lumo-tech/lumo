@@ -36,9 +36,9 @@ class BaseCallback:
     Abstract base class used to build new callbacks.
 
     Callbacks are created to hook into the various stages of lumo's Trainer training, inference or data preparing.
-    You can hook any subclasses of `BaseCallback` in `lumo.kit.trainer.Trainer` class.
+    You can hook any subclasses of `BaseCallback` in `lumo.trainer.trainer.Trainer` class.
 
-    To create a custom callback class, subclass `lumo.kit.callbacks.BaseCallback`, and define the callback methods
+    To create a custom callback class, subclass `lumo.trainer.callbacks.BaseCallback`, and define the callback methods
     you want to do something before or after that.
 
     The callback method must be named like on_xxx_begin()/on_xxx_end(), where `xxx` is a function in trainer.

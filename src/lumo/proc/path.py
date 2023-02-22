@@ -1,8 +1,8 @@
 import os
 import sys
 from functools import cache
-
-from .config import LIBHOME, EXP_ROOT, CACHE_ROOT, BLOB_ROOT, METRIC_ROOT
+from .config import glob
+from .config import LIBHOME, EXP_ROOT, CACHE_ROOT, BLOB_ROOT
 
 
 def home():
@@ -71,6 +71,7 @@ def metricroot():
         `~lumo.core.disk.TableRow`
 
     """
+    METRIC_ROOT = glob.get('metric_root', None)
     if METRIC_ROOT:
         res = METRIC_ROOT
     else:

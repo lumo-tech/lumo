@@ -149,18 +149,27 @@ class Meter(metaclass=PropVar):
                 yield k, nd.item()
 
 
-class AvgItem:
+class ReduceItem:
     SLIDE_WINDOW_SIZE = 100
     EXP_WEIGHT = 0.75
 
-    def __init__(self, item, gb_method):
-        item_ = detach(item)
+    def __init__(self, item=None, gb_method=None):
         self.gb_method = gb_method  # groupby method
-        self.acc = [item_]
-        self.c = 1
+        self.acc = []
+        if item is not None:
+            self.acc.append(detach(item))
+        self.c = len(self.acc)
         self.cur = item
-        self.last = item_
-        self.offset = item_
+        if gb_method == 'max':
+            self.last = float('-inf')
+        elif gb_method == 'min':
+            self.last = float('inf')
+        else:
+            self.last = 0
+
+        self._res = self.last
+
+        self.offset = 0
         self.nd = to_ndarray(item)
         self.isint = 'int' in self.nd.dtype.name
         self.isnumber = (self.isint or 'float' in self.nd.dtype.name) and isinstance(item, (np.ndarray,
@@ -203,22 +212,24 @@ class AvgItem:
 
         avg = self.gb_method
         if self.isnumber:
-            self.offset = self.offset * AvgItem.EXP_WEIGHT + abs(item - self.last) * (1 - AvgItem.EXP_WEIGHT)
+            self.offset = self.offset * ReduceItem.EXP_WEIGHT + abs(item - self.last) * (1 - ReduceItem.EXP_WEIGHT)
 
         if avg == 'slide':
             self.acc.append(item)
-            if len(self.acc) > AvgItem.SLIDE_WINDOW_SIZE:
+            if len(self.acc) > ReduceItem.SLIDE_WINDOW_SIZE:
                 self.acc.pop(0)
             self.last = self.cur
         elif avg in {'mean', 'sum'}:
+            if len(self.acc) == 0:
+                self.acc.append(0)
             self.acc[0] = self.acc[0] + item
             self.c += 1
         elif avg == 'max':
-            self.last = max(self.cur, self.last)
+            self._res = max(self.cur, self._res)
         elif avg == 'min':
-            self.last = min(self.cur, self.last)
-        elif avg == 'last':
-            self.last = item
+            self._res = min(self.cur, self._res)
+
+        self.last = item
 
     @property
     def res(self):
@@ -229,6 +240,8 @@ class AvgItem:
             return self.acc[0] / self.c
         elif avg == 'sum':
             return self.acc[0]
-        elif avg in {'max', 'min', 'last'}:
+        elif avg in {'max', 'min'}:
+            return self._res
+        elif avg == 'last':
             return self.last
         return self.cur

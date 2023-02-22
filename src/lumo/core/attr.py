@@ -33,7 +33,7 @@ class Attr(OrderedDict):
 def _set_item(dic, keys: List[str], value):
     if len(keys) == 1:
         if isinstance(value, dict):
-            value = dic(value)
+            value = dic.update(value)
         OrderedDict.__setitem__(dic, keys[0], value)
     else:
         nex = Attr()

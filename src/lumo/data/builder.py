@@ -2,7 +2,7 @@ import copy
 import warnings
 from functools import partial
 from pprint import pformat
-
+from copy import copy as builtin_copy
 from typing import Callable, NewType, Dict, Any, Iterable, Sequence
 
 import numpy as np
@@ -166,10 +166,21 @@ class DatasetBuilder(Dataset):
         db._outkeys = copy.copy(self._outkeys)
         return db
 
-    def subset(self, indices: Sequence[int]):
-        self._prop['subindices'] = np.array(indices)
-        self._update_len()
-        return self
+    def subset(self, indices: Sequence[int], copy=False):
+        if copy:
+            builder = DatasetBuilder()
+            builder._prop = builtin_copy(self._prop)
+            builder._idx_keys = builtin_copy(self._idx_keys)
+            builder._data = builtin_copy(self._data)
+            builder._outs = builtin_copy(self._outs)
+            builder._transforms = builtin_copy(self._transforms)
+            builder._outkeys = builtin_copy(self._outkeys)
+            builder._iter_cache = builtin_copy(self._iter_cache)
+        else:
+            builder = self
+        builder._prop['subindices'] = np.array(indices)
+        builder._update_len()
+        return builder
 
     def scale_to_size(self, size: int):
         assert isinstance(size, int)
