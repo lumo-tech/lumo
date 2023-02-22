@@ -1,3 +1,0 @@
-import wandb
-
-wandb.log

@@ -107,14 +107,3 @@ class Forest:
             mem.add(key)
             for key in self.dic[key].link:
                 stack.append(key)
-
-
-if __name__ == '__main__':
-    dag = Forest()
-
-    dag.add_head('1', 1)
-    dag.add_link('1', '2', 2)
-    dag.add_tail('2', '3')
-    dag.add_tail('1', '4', 13)
-    for i in dag:
-        print(i)
