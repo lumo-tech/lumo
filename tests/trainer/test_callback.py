@@ -5,10 +5,9 @@ from torch import nn
 
 from torch.utils.data import DataLoader
 
-from lumo import Trainer, DataModule, Params, Meter
+from lumo import Trainer, DataModule, Params, Meter, TrainStage
 from lumo.trainer import callbacks
-from lumo import TrainerStage
-from lumo import ParamsType, DataModuleMix
+from lumo import ParamsType
 
 
 class TempCallback(callbacks.TrainCallback):
@@ -79,18 +78,15 @@ class CBTrainer(Trainer):
     def stop_train_epoch(self):
         super().stop_train_epoch()
 
-    def to_stage(self, stage: TrainerStage):
-        super().to_stage(stage)
-
     def to_device(self, item: Optional[Union[nn.Module, torch.Tensor, Sequence, Mapping]] = None,
                   device_args_kwargs=None):
         return super().to_device(item, device_args_kwargs)
 
-    def prepare_dataloader(self, stage: TrainerStage, dataloader=None):
+    def prepare_dataloader(self, stage: TrainStage, dataloader=None):
         return super().prepare_dataloader(stage, dataloader)
 
-    def train(self, dataloader: Union[DataLoader, DataModuleMix] = None):
-        return super().train(dataloader)
+    # def train(self, dataloader: Union[DataLoader, DataModuleMix] = None):
+    #     return super().train(dataloader)
 
     def train_epoch(self, dataloader: DataLoader):
         return super().train_epoch(dataloader)
@@ -128,4 +124,3 @@ class CBTrainer(Trainer):
 
 def test_callback():
     params = Params()
-

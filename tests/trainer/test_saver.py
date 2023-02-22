@@ -1,10 +1,11 @@
-from lumo import Saver
+from lumo.trainer.saver import Saver
 import time
 import shutil
+import tempfile
 
 
 def test_save_load():
-    save_root = './temp_saver'
+    save_root = tempfile.mkdtemp()
     saver = Saver(save_root)
     epoch = 20
     max_keep = 5
@@ -19,6 +20,7 @@ def test_save_load():
     assert len(saver.list_models()) == (epoch)
 
     state = saver.load_model(best_if_exist=True, with_meta=True)
+    print(state)
     assert state[0]['step'] == 5 and state[1]['meta_step'] == 5
 
     state = saver.load_model(2)

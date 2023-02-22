@@ -1,6 +1,6 @@
 import torch
 import torch.nn as nn
-from lumo.contrib.nn import contrastive_loss, sup_contrastive_loss, cluster_loss, masked_log_softmax
+from lumo.contrib.nn.loss import contrastive_loss, sup_contrastive_loss, cluster_loss, masked_log_softmax
 
 
 class SupConLoss(nn.Module):
