@@ -10,6 +10,7 @@ from joblib import hash
 from lumo.decorators.lazy_required import is_lib_available
 from lumo.proc.dependency import get_lock
 from lumo.proc.dist import is_main
+from lumo.proc.config import glob
 from lumo.utils import safe_io as io
 from lumo.utils.exithook import wrap_before
 from lumo.utils.fmt import strftime, indent_print
@@ -31,9 +32,13 @@ class ExpHook(BaseExpHook):
 
 
 class LastCmd(ExpHook):
+    configs = {'HOOK_LASTCMD_DIR': os.getcwd()}
+
     def on_start(self, exp: Experiment, *args, **kwargs):
         argv = exp.exec_argv
-        fn = f'run_{os.path.basename(argv[1])}.sh'
+        fn = os.path.join(
+            glob.get('HOOK_LASTCMD_DIR', self.configs['HOOK_LASTCMD_DIR']),
+            f'run_{os.path.basename(argv[1])}.sh')
 
         strings = OrderedDict.fromkeys([i.lstrip('#').strip() for i in io.load_text(fn).split('\n')])
 
@@ -122,7 +127,7 @@ class GitCommit(ExpHook):
         if not git_enable():
             exp.dump_info('git', {
                 'code': -1,
-                'msg': 'git disabled'
+                'msg': 'git not found'
             })
             return
 

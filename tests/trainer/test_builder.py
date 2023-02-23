@@ -30,6 +30,7 @@ def test_builder_base():
         assert False
     except:
         pass
+
     try:
         builder.add_input('xxs', source=range(1001))
         assert False

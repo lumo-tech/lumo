@@ -2,7 +2,6 @@ import os
 import sys
 from functools import cache
 from .config import glob
-from .config import LIBHOME, EXP_ROOT, CACHE_ROOT, BLOB_ROOT
 
 
 def home():
@@ -22,6 +21,7 @@ def cache_dir():
     Notes:
 
     """
+    CACHE_ROOT = glob.get('cache_dir', None)
     try:
         os.makedirs(CACHE_ROOT, exist_ok=True)
         res = CACHE_ROOT
@@ -34,6 +34,7 @@ def cache_dir():
 @cache
 def libhome():
     """Library home to store configs. Default is `~/.lumo`"""
+    LIBHOME = glob.get('home', None)
     if LIBHOME:
         return LIBHOME
     return os.path.join(home(), '.lumo')
@@ -42,10 +43,12 @@ def libhome():
 @cache
 def exproot():
     """Experiment root to store multiple experiments, default is `~/.lumo/experiments`"""
+    EXP_ROOT = glob.get('exp_root', None)
     if EXP_ROOT:
         res = EXP_ROOT
     else:
         res = os.path.join(libhome(), 'experiments')
+
     os.makedirs(res, exist_ok=True)
     return res
 
@@ -53,11 +56,12 @@ def exproot():
 @cache
 def blobroot():
     """Experiment root to store big files, default is `~/.lumo/blob`"""
-
+    BLOB_ROOT = glob.get('blob_root', None)
     if BLOB_ROOT:
         res = BLOB_ROOT
     else:
         res = os.path.join(libhome(), 'blob')
+
     os.makedirs(res, exist_ok=True)
     return res
 

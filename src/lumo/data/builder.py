@@ -254,8 +254,8 @@ class DatasetBuilder(Dataset):
                     self._prop['__len__'] = newsize
                     self._update_len()
                 elif size != newsize:
-                    warnings.warn(f'Source {name} has different length from '
-                                  f'other registed source.')
+                    raise ValueError(f'New added source `{name}` has different length from '
+                                     f'other registed source.(size {size} != newsize {newsize})')
 
             except (TypeError, NotImplementedError):
                 self._prop['sized'] = False

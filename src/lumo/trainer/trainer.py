@@ -17,7 +17,7 @@ from accelerate import DistributedDataParallelKwargs
 from torch import nn
 from torch.optim import Optimizer
 from torch.utils.data import DataLoader
-
+from lumo.proc import glob
 from lumo.core import ParamsType, TrainStage, Record, MetricType, Meter, Attr
 from lumo.core.disk import TableRow, Metrics
 from lumo.data import DataModule
@@ -147,6 +147,8 @@ class Trainer(_BaseTrainer):
         if self._logger is None:
             from lumo.utils.logger import set_global_logger
             self._logger = Logger()
+            self._logger.use_stdout = glob.get('TRAINER_LOGGER_STDIO', True)
+
             set_global_logger(self._logger)
             if self.params.get('debug', False):
                 self._logger.set_verbose(Logger.V_DEBUG)
@@ -154,6 +156,7 @@ class Trainer(_BaseTrainer):
             if self.is_main:
                 fn = self._logger.add_log_dir(self.exp.log_dir)
                 self.exp.dump_info('logger_args', {'log_dir': fn})
+
         return self._logger
 
     @property

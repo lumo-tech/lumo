@@ -50,11 +50,3 @@ def get_runtime_config():
 
 # A dict object contains runtime configuration.
 glob = get_runtime_config()
-
-# Common used paths
-# It's recommended to use functions in proc.path to get paths to ensure the availability.
-LIBHOME = glob.get("home")
-CACHE_ROOT = glob.get('cache_dir')
-EXP_ROOT = glob.get('exp_root', None)
-BLOB_ROOT = glob.get('blob_root', None)
-METRIC_ROOT = glob.get('metric_root', None)

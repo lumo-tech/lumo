@@ -13,33 +13,25 @@ def empty_train(*args, **kwargs):
     return args[0]
 
 
-import numpy as np
-
-np.random.rand()
-
-
 def EMA(model: Module, alpha=0.999, force_eval=False) -> Module:
     """
-    EMA(model: Module, alpha=0.999, force_eval=False)
-
-        An Exponential Moving Average(EMA) wrapper for nn.Module
-
-        Examples:
-        --------
+    An Exponential Moving Average(EMA) wrapper for nn.Module
+    Examples:
         >>> model = ...
         >>> ema_model = EMA(model,alpha=0.999)
-
+        >>> ...
+        >>> optim.step()
+        >>> ema_model.step()
+        >>> # or ema_model.step(0.99)
             ...
 
-            ema_model.step()
-            # or ema_model.step(0.99)
 
-        Args:
-            model:
-            alpha:
-            force_eval:
+    Args:
+        model:
+        alpha:
+        force_eval:
 
-        Returns:
+    Returns:
 
     """
     ema_model = deepcopy(model)

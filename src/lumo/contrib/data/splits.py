@@ -1,22 +1,5 @@
 from typing import List
 import numpy as np
-import torch
-from torch._utils import _accumulate
-from torch.utils.data import Dataset
-
-
-def sequence_split(lengths: List[int]) -> List[Dataset]:
-    """
-    对应于 torch.utils.data.dataset.random_split ，用于按照长度顺序切分数据集
-    Args:
-        lengths:
-
-    Returns:
-
-    """
-    indices = torch.arange(0, sum(lengths)).tolist()
-    return [indices[offset - length:offset] for offset, length in
-            zip(_accumulate(lengths), lengths)]
 
 
 def semi_split(labels, n_percls, val_size=10000, include_sup=True, repeat_sup=True, shuffle=True):
@@ -58,7 +41,7 @@ def train_val_split(target, val_size=10000, train_size=None):
     size = len(target)
     idx = np.arange(size)
     if isinstance(target, list):
-        from lumo.base_classes import llist
+        from lumo.core.list import llist
         target = llist(target)
 
     idx = np.arange(len(target))

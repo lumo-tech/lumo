@@ -5,14 +5,16 @@ import time
 import traceback
 from pathlib import Path
 from typing import Union
-from lumo.utils.logger import Logger
+
 from lumo.decorators.process import call_on_main_process_wrap
-from lumo.proc.path import blobroot, exproot, cache_dir, libhome
+from lumo.proc import glob
+from lumo.proc.dist import is_dist, is_main, local_rank
+from lumo.proc.path import blobroot, libhome
+from lumo.proc.path import exproot, local_dir
+from lumo.utils import safe_io as io
+from lumo.utils.fmt import can_be_filename
+from lumo.utils.logger import Logger
 from .base import ExpHook
-from ..proc.dist import is_dist, is_main, local_rank
-from ..proc.path import exproot, local_dir
-from ..utils import safe_io as io
-from ..utils.fmt import can_be_filename
 
 
 def checkdir(path: Union[Path, str]):
@@ -302,6 +304,7 @@ class Experiment:
         self.initial()
         self.set_prop('start', True)
         for hook in self._hooks.values():  # type: ExpHook
+
             hook.on_start(self)
         return self
 
@@ -380,6 +383,12 @@ class Experiment:
     @call_on_main_process_wrap
     def set_hook(self, hook: ExpHook):
         hook.regist(self)
+        if not glob.get(hook.config_name, True):
+            self.dump_info(hook.name, {
+                'code': -1,
+                'msg': f'{hook.name} disabled'
+            })
+            return self
         self.logger.info(f'Register {hook}.')
         self._hooks[hook.__class__.__name__] = hook
         self.add_tag(hook.__class__.__name__, 'hooks')

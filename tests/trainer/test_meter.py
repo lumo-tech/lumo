@@ -7,7 +7,7 @@ def test_ReduceItem():
     item = ReduceItem(0, 'slide')
     for i in range(200):
         item.update(i)
-    assert item.res == np.mean(range(200)[-ReduceItem.SLIDE_WINDOW_SIZE:], dtype=np.float).item()
+    assert item.res == np.mean(range(200)[-ReduceItem.SLIDE_WINDOW_SIZE:], dtype=float).item()
 
     item = ReduceItem([1, 2, 3], 'last')
     for i in range(4):

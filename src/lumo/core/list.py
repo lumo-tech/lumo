@@ -51,7 +51,7 @@ class llist(list):
                 else:
                     i = i.tolist()
             if isinstance(i, np.ndarray):
-                if i.dtype == np.bool:
+                if i.dtype == bool:
                     i = np.where(i)[0]
 
                 if len(i.shape) == 0:
