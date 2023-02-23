@@ -1,6 +1,6 @@
 import os
 import sys
-from functools import cache
+from lumo.utils.cache import cache
 from .config import glob
 
 
