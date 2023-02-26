@@ -234,8 +234,6 @@ class Cos(ABCContinuous):
         cos_ratio = 0.5 * (1 + np.cos(ratio * np.pi))
         return start * cos_ratio + end * (1 - cos_ratio)
 
-    def get(self, cur):
-        return self(cur)
 
 
 class Linear(ABCContinuous):
