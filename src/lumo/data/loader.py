@@ -44,11 +44,11 @@ class DataLoaderIterWrap:
 
 class LumoDataLoader(DataLoader):
 
-    def _wraooed_iter_(self):
+    def _wraped_iter_(self):
         return DataLoaderIterWrap(super().__iter__, len(self))
 
     def __iter__(self) -> DataLoaderIterWrap:
-        return self._wraooed_iter_()
+        return self._wraped_iter_()
 
 
 def summarize_loader(loader: DataLoader):
