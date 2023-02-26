@@ -16,3 +16,11 @@ def test_random():
     assert a != d
     assert (b != e).any()
     assert (c != f).any()
+
+    RndManager().shuffle(2)
+    a, b, c = random.randint(0, 1000), np.random.rand(10), torch.rand(10)
+    RndManager().shuffle(2)
+    d, e, f = random.randint(0, 1000), np.random.rand(10), torch.rand(10)
+    assert a == d
+    assert (b == e).any()
+    assert (c == f).any()

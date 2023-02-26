@@ -45,3 +45,14 @@ def test_builder_base():
     assert sub_builder[499]['xs1'] == 500
     assert sub_builder[499]['ys1'] == 499
     assert sub_builder[499]['xs2'] == 499
+
+    dic = sub_builder.inputs
+    assert 'xs' in dic
+    assert 'ys' in dic
+
+    dic = sub_builder.outputs
+    assert 'xs1' in dic
+    assert 'xs2' in dic
+    assert 'ys1' in dic
+
+    str(sub_builder)

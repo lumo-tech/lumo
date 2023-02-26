@@ -3,13 +3,14 @@ from typing import Union, Optional, Sequence, Mapping, Any
 import tempfile
 
 import torch
+from lumo.proc.path import cache_dir
 from torch import nn
 from torch.utils.data import DataLoader
 
 from lumo import ParamsType, TrainerParams
 from lumo import Trainer, DataModule, Meter, TrainStage, MetricType, Record, DatasetBuilder
 from lumo.data.loader import DataLoaderType
-from lumo.trainer import callbacks
+from lumo import callbacks
 from lumo.proc import glob
 
 
@@ -31,30 +32,14 @@ class MyParams(TrainerParams):
 
     def __init__(self):
         super().__init__()
-        self.epoch = 100
-
-
-class LifecycleCallback(callbacks.TrainCallback, callbacks.InitialCallback):
-
-    def __init__(self) -> None:
-        super().__init__()
-        self.c = 0
-        self.functions = set()
-
-    def on_begin(self, source: Trainer, func, params: ParamsType, *args, **kwargs):
-        super().on_begin(source, func, params, *args, **kwargs)
-        self.functions.add(func.__name__)
+        self.epoch = 2
 
 
 class CBTrainer(Trainer):
 
     def icallbacks(self, params: ParamsType):
         super().icallbacks(params)
-        lf = LifecycleCallback()
-        lf.hook(self)
-        self.lf = lf
-
-        callbacks.LoggerCallback().hook(self)
+        callbacks.SkipWhenParamsEq().hook(self)
 
     def imodels(self, params: ParamsType):
         super().imodels(params)
@@ -133,14 +118,14 @@ class MyDataModule(DataModule):
 
 
 def test_callback():
-    params = TrainerParams()
+    params = MyParams()
     params.epoch = 2
 
-    glob['exp_root'] = tempfile.mkdtemp()
-    glob['blob_root'] = tempfile.mkdtemp()
-    glob['metric_root'] = tempfile.mkdtemp()
+    glob['exp_root'] = tempfile.mkdtemp(dir=cache_dir())
+    glob['blob_root'] = tempfile.mkdtemp(dir=cache_dir())
+    glob['metric_root'] = tempfile.mkdtemp(dir=cache_dir())
     glob['HOOK_LOCKFILE'] = False
-    glob['HOOK_LASTCMD_DIR'] = tempfile.mkdtemp()
+    glob['HOOK_LASTCMD_DIR'] = tempfile.mkdtemp(dir=cache_dir())
     glob['HOOK_GITCOMMIT'] = False
     glob['HOOK_RECORDABORT'] = False
     glob['HOOK_DIARY'] = False
@@ -150,15 +135,20 @@ def test_callback():
     trainer.train()
     trainer.test()
     trainer.evaluate()
-    trainer.logger.info(trainer.lf.functions)
     trainer.exp.end()
 
-    # how to test writer?
-    _ = trainer.safe_writer
+    assert trainer.eidx == 1
 
-    if len(trainer.callback_function - trainer.lf.functions) != 0:
-        raise AssertionError(str(trainer.callback_function - trainer.lf.functions))
+    nparams = MyParams()
+    assert nparams.hash() == params.hash()
 
+    trainer = CBTrainer(nparams, dm=MyDataModule())
+    trainer.train()
+    assert trainer.eidx == 0
 
-if __name__ == '__main__':
-    test_callback()
+    n1params = MyParams()
+    n1params.epoch = 3
+    assert (n1params.hash() != nparams.hash())
+    trainer = CBTrainer(n1params, dm=MyDataModule())
+    trainer.train()
+    assert trainer.eidx == 2
