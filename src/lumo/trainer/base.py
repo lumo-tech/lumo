@@ -22,7 +22,6 @@ import six
 import torch
 from torch.optim.optimizer import Optimizer
 
-from .components import TrainerPropVar
 from .. import TrainStage
 
 
@@ -150,6 +149,7 @@ class _BaseTrainer:
             def _newfunc(*aargs, **kkwargs):
                 """执行前回调 on_begin() 、执行后回调 on_end()、执行异常则回调 on_exception() """
                 # on_begin
+                self._contexts.append(func.__name__)
                 for callback in call_set:
                     callback.on_begin(self, func, self.params, *aargs, **kkwargs)
                 try:
@@ -165,10 +165,12 @@ class _BaseTrainer:
 
                 for callback in call_set:
                     callback.on_end(self, func, self.params, _meter, *aargs, **kkwargs)
+                self._contexts.pop()
                 return _meter
 
             return _newfunc
 
+        self._contexts = [self.__class__.__name__]
         self.callbacks = []
 
         vars = dir(self)
@@ -221,7 +223,16 @@ class _BaseTrainer:
         self._state_dicts.setdefault(type_name, set()).add(name)
         self._rev_index[name] = type_name
 
-    # def __getattr__(self, name):
+    @property
+    def contexts(self):
+        return self._contexts
+
+    @property
+    def context(self):
+        return self._contexts[-1]
+
+        # def __getattr__(self, name):
+
     #     if name.startswith('_') or name.endswith('_'):
     #         # when callback is trainer itself, _hooked will be passed, and caused recursion
     #         # if some pretrained models need to be ignored in save/load stage, it can be named like 'some_' or '_some'

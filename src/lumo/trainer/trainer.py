@@ -1,4 +1,5 @@
 import bisect
+import os
 import sys
 import warnings
 from datetime import datetime
@@ -21,7 +22,7 @@ from lumo.proc import glob
 from lumo.core import ParamsType, TrainStage, Record, MetricType, Meter, Attr
 from lumo.core.disk import TableRow, Metrics
 from lumo.data import DataModule
-from lumo.data.accelerator import DataLoaderShard, DataLoaderDispatcher
+from ..contrib.accelerate.data_loader import DataLoaderDispatcher, DataLoaderShard
 from lumo.data.loader import DataLoaderType, DataLoaderSide
 from lumo.proc import dist
 from lumo.trainer.rnd import RndManager
@@ -54,9 +55,11 @@ class Trainer(_BaseTrainer):
     """
 
     callback_function = {
-        "save_keypoint", "save_checkpoint", "save_model", "load_state_dict",
-        'ioptims', 'imodels', 'train', 'test', 'evaluate', 'train_epoch', 'train_step',
-        'test_step', 'evaluate_step', 'process_loader', 'regist_dataloader'
+        # "save_checkpoint", "save_model", "load_state_dict",
+        'imodels',
+        'train', 'test', 'evaluate',
+        'train_epoch', 'train_step', 'test_step', 'evaluate_step',
+        'process_loader', 'regist_dataloader'
     }
 
     def __init__(self, params: ParamsType, dm: DataModule = None):
@@ -93,7 +96,7 @@ class Trainer(_BaseTrainer):
             self.accelerate.state.device = torch.device(device)
 
         if dist.is_main():
-            self.params.to_yaml(self.exp.test_file('params.yaml'))
+            self.params.to_yaml(self.exp.params_fn)
 
         self.set_global_steps(0)
         self.set_epoch_idx(0)
@@ -112,7 +115,7 @@ class Trainer(_BaseTrainer):
     @property
     def saver(self) -> Saver:
         if self._saver is None:
-            self._saver = Saver(self.exp.saver_dir)
+            self._saver = Saver(self.exp.state_dict_dir)
         return self._saver
 
     @property
@@ -134,13 +137,6 @@ class Trainer(_BaseTrainer):
     @property
     def world_size(self):
         return dist.world_size()
-
-    @property
-    def wandb(self):
-        import wandb
-        wandb.init(project=self.exp.exp_name, name=self.exp.test_name)
-        wandb.config = self.params.to_dict()
-        return wandb
 
     @property
     def logger(self):
@@ -347,6 +343,19 @@ class Trainer(_BaseTrainer):
 
         return loader
 
+    def save_state_dict(self, name='latest.pth', dirpath=None, only_main=True):
+        if not only_main and self.is_dist:
+            pre, ext = os.path.splitext(name)
+            name = f'{pre}-{self.local_rank}{ext}'
+        if dirpath is None:
+
+            fn = self.exp.state_dict_dir
+        else:
+            fn = os.path.join(dirpath, name)
+        torch.save(self.state_dict(), fn)
+        self.wait_for_everyone()
+        return fn
+
     def load_state_dict(self, state_dict: dict):
         _sub = {'models', 'optims', 'other'}
         _missing = []
@@ -403,7 +412,9 @@ class Trainer(_BaseTrainer):
             start=datetime.now()))
         self.database.set_params(self.params.to_dict())
         self.database.update('command', ' '.join(sys.argv))
-
+        params_hash = self.params.hash()
+        self.database.update('params_hash', params_hash)
+        self.exp.dump_string('params_hash', params_hash)
         self.icallbacks(self.params)
         self.set_property('initial.callbacks', True)
         self.imodels(self.params)

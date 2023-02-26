@@ -14,7 +14,7 @@ class TrainerExperiment(SimpleExperiment):
 
     @property
     def params_fn(self):
-        res = self.test_file('params.json')
+        res = self.test_file('params.yaml')
         return res
 
     @property
@@ -32,8 +32,8 @@ class TrainerExperiment(SimpleExperiment):
             return res
 
     @property
-    def saver_dir(self):
-        res = self.blob_dir('saver')
+    def state_dict_dir(self):
+        res = self.blob_dir('state_dict')
         return res
 
     def dump_train_info(self, epoch: int):
@@ -46,36 +46,36 @@ class ReimplementExperiment(TrainerExperiment):
     pass
 
 
-class TrainerPropVar(type):
-    def __new__(cls, name, bases, attrs: dict, **kwds):
-        for base in bases:
-            for key, value in base.__dict__.items():  # type:(str,Any)
-                if key.endswith("__"):
-                    continue
-                if isinstance(value, set):
-                    v = attrs.setdefault(key, set())
-                    v.update(value)
-                elif isinstance(value, dict):
-                    v = attrs.setdefault(key, dict())
-                    v.update(value)
-
-        clazz = type.__new__(cls, name, bases, dict(attrs))
-
-        make_dicts(clazz, [
-            '_prop',
-            '_cmp',
-            '_rev_index',
-            '_call_order',
-        ])
-
-        make_dict(clazz, '_state_dicts', {
-            'optims': set(),
-            'models': set(),
-            'others': set(),
-            'tensor.th': set(),
-            'tensor.np': set(),
-        })
-        return clazz
+# class TrainerPropVar(type):
+#     def __new__(cls, name, bases, attrs: dict, **kwds):
+#         for base in bases:
+#             for key, value in base.__dict__.items():  # type:(str,Any)
+#                 if key.endswith("__"):
+#                     continue
+#                 if isinstance(value, set):
+#                     v = attrs.setdefault(key, set())
+#                     v.update(value)
+#                 elif isinstance(value, dict):
+#                     v = attrs.setdefault(key, dict())
+#                     v.update(value)
+#
+#         clazz = type.__new__(cls, name, bases, dict(attrs))
+#
+#         make_dicts(clazz, [
+#             '_prop',
+#             '_cmp',
+#             '_rev_index',
+#             '_call_order',
+#         ])
+#
+#         make_dict(clazz, '_state_dicts', {
+#             'optims': set(),
+#             'models': set(),
+#             'others': set(),
+#             'tensor.th': set(),
+#             'tensor.np': set(),
+#         })
+#         return clazz
 
 
 class TrainerParams(Params):

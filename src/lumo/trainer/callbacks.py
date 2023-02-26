@@ -10,7 +10,7 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime
 from functools import wraps
 from typing import NewType, Any, Optional, Dict, Union
-
+from lumo.utils.memory_grab import DeviceMem
 from torch.utils.data import DataLoader
 
 from lumo.core import ParamsType, Meter, MetricType, Record, TrainStage, wrap_result
@@ -774,7 +774,7 @@ class RemoteCallback(InitialCallback, TrainCallback):
         self.submits = []
         self.executor = ThreadPoolExecutor(1)
 
-    def make_data(self, source, event_name, **experimentInfo):
+    def make_data(self, source, event_name, **info):
         return {
             'event': event_name,
             'identity': {
@@ -784,7 +784,7 @@ class RemoteCallback(InitialCallback, TrainCallback):
                 'pid': os.getpid(),
                 'ppid': os.getppid(),
             },
-            'experimentInfo': experimentInfo,
+            'info': info,
         }
 
     def request(self, data: dict):
@@ -795,7 +795,7 @@ class RemoteCallback(InitialCallback, TrainCallback):
         self.submits.append(task)
 
     def on_hooked(self, source: Trainer, params: ParamsType):
-        source.exp.dump_info('request', {
+        source.exp.dump_info('remote_callback', {
             'url': self.url,
         })
         data = self.make_data(source, 'on_hooked', **{
@@ -834,10 +834,11 @@ class RemoteCallback(InitialCallback, TrainCallback):
 
     def on_train_step_end(self, trainer: Trainer, func, params: ParamsType, metric: MetricType = None, *args,
                           **kwargs):
-        super().on_train_step_end(trainer, func, params, metric, *args, **kwargs)
-        metric = wrap_result(metric)
-        dict(metric.items())
-        self.request(self.make_data())
+        pass
+        # super().on_train_step_end(trainer, func, params, metric, *args, **kwargs)
+        # metric = wrap_result(metric)
+        # dict(metric.items())
+        # self.request(self.make_data())
 
     def on_test_begin(self, trainer: Trainer, func, params: ParamsType, *args, **kwargs):
         self.request(
@@ -854,3 +855,56 @@ class RemoteCallback(InitialCallback, TrainCallback):
                                'exception': ''.join(traceback.format_exception(type(e), e, e.__traceback__)),
                                'exception_type': type(e)
                            }))
+
+
+class CUDAMemoryRecord(TrainCallback):
+    """
+    Record CUDA GPU maximum memory used during training.
+
+    Results will be stored in two places:
+    - row_table.memory, see `RowTable` for details.
+    - experiment.max_memory, see `Experiment.dump_info` for details.
+    """
+
+    def on_hooked(self, source: Trainer, params: ParamsType):
+        super().on_hooked(source, params)
+        self.max_memory = 0
+        self.device = source.device
+        self.pid = os.getpid()
+        self.mem = DeviceMem()
+
+    def on_train_epoch_end(self, trainer: Trainer, func, params: ParamsType, record: Record, *args, **kwargs):
+        super().on_train_epoch_end(trainer, func, params, record, *args, **kwargs)
+        self.max_memory = max(self.max_memory, self.mem.get_pid_device_mem(self.pid, self.device))
+        trainer.database.update('memory', self.max_memory)
+        trainer.exp.dump_info('max_memory', self.max_memory)
+
+
+class SkipWhenParamsEq(TrainCallback, InitialCallback):
+
+    def on_hooked(self, source: Trainer, params: ParamsType):
+        super().on_hooked(source, params)
+        from dbrecord import PDict
+        from lumo.exp.finder import is_test_root
+        self.fn = source.exp.exp_file('params_key.sqlite')
+        olds = PDict(self.fn)
+
+        current = source.params.hash()
+        source.logger.info('current', current)
+
+        old = olds.get(current, None)
+        if isinstance(old, str) and is_test_root(old) and os.path.exists(old):
+            source.stop_train()
+            source.stop_train_epoch()
+            source.database.update('skiped', True, flush=True)
+            source.logger.info(
+                f'Find finished test with equal params ({current}) from {olds[current]}. '
+                f'To runStored in:\n    {self.fn}')
+
+    def on_train_end(self, trainer: Trainer, func, params: ParamsType, record: Record, *args, **kwargs):
+        super().on_train_end(trainer, func, params, record, *args, **kwargs)
+        from dbrecord import PDict
+        olds = PDict(self.fn)
+        olds[params.hash()] = trainer.exp.test_root
+        olds.flush()
+        trainer.logger.info(f'Save current params ({params.hash()}) to {self.fn}')
