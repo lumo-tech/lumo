@@ -1,7 +1,7 @@
 """
 
 """
-__version__ = "0.14.4"
+__version__ = "0.14.5"
 
 from .core import Params, ParamsType, MetricType, Meter, Record, TrainStage, BaseParams
 from .data import DataLoader, DataModule, DatasetBuilder, LumoDataLoader, CollateBase, DataLoaderSide
