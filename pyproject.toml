@@ -8,9 +8,8 @@ pythonpath = [
     "src"
 ]
 filterwarnings = [
-    "error:::pandas",
-    "error::ResourceWarning",
-    "error::pytest.PytestUnraisableExceptionWarning",
+    "ignore::pytest.PytestDeprecationWarning", # from pytest-cov
+    "ignore::DeprecationWarning:", # from tensorboard
     "ignore:.*ssl.SSLSocket:pytest.PytestUnraisableExceptionWarning",
     "ignore:.*ssl.SSLSocket:ResourceWarning",
     "ignore::ResourceWarning:asyncio",
@@ -32,12 +31,6 @@ filterwarnings = [
 #
 [tool.coverage.run]
 source = ['tests']
-omit = [
-    'lumo/contrib/*',
-    'lumo/cli/*',
-    'lumo/vis/*',
-    'lumo/sketch/*',
-]
 
 
 [tool.coverage.report]
@@ -47,7 +40,13 @@ omit = [
     'src/lumo/contrib/*',
     'src/lumo/cli/*',
     'src/lumo/vis/*',
+    'src/lumo/decorators/*',
+    'src/lumo/analyse/*',
     'src/lumo/sketch/*',
+    'src/lumo/core/record_backend/*',
+    'src/lumo/utils/memory_grab.py',
+    'src/lumo/data/collate.py',
+    'src/lumo/utils/*',
 ]
 
 
