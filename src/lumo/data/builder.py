@@ -157,25 +157,19 @@ class DatasetBuilder(Dataset):
         return self._prop.get('pseudo_repeat', None)
 
     def copy(self):
-        db = DatasetBuilder()
-        db._prop = copy.copy(self._prop)
-        db._idx_keys = copy.copy(self._idx_keys)
-        db._data = copy.copy(self._data)
-        db._outs = copy.deepcopy(self._outs)
-        db._transforms = copy.copy(self._transforms)
-        db._outkeys = copy.copy(self._outkeys)
-        return db
+        builder = DatasetBuilder()
+        builder._prop = builtin_copy(self._prop)
+        builder._idx_keys = builtin_copy(self._idx_keys)
+        builder._data = builtin_copy(self._data)
+        builder._outs = builtin_copy(self._outs)
+        builder._transforms = builtin_copy(self._transforms)
+        builder._outkeys = builtin_copy(self._outkeys)
+        builder._iter_cache = builtin_copy(self._iter_cache)
+        return builder
 
     def subset(self, indices: Sequence[int], copy=False):
         if copy:
-            builder = DatasetBuilder()
-            builder._prop = builtin_copy(self._prop)
-            builder._idx_keys = builtin_copy(self._idx_keys)
-            builder._data = builtin_copy(self._data)
-            builder._outs = builtin_copy(self._outs)
-            builder._transforms = builtin_copy(self._transforms)
-            builder._outkeys = builtin_copy(self._outkeys)
-            builder._iter_cache = builtin_copy(self._iter_cache)
+            builder = self.copy()
         else:
             builder = self
         builder._prop['subindices'] = np.array(indices)
@@ -240,9 +234,9 @@ class DatasetBuilder(Dataset):
         # source is sized can be itered
         # source can be itered not meant it is sizable.
         if self.subindices is not None:
-            return ValueError('subset() should be called after preparing all data source.')
+            raise ValueError('subset() should be called after preparing all data source.')
         if self.pseudo_repeat is not None or self.pseudo_length is not None:
-            return ValueError('scale_to_size() or repeat() should be called after preparing all data source.')
+            raise ValueError('scale_to_size() or repeat() should be called after preparing all data source.')
 
         if self._prop.get('sized', True):
             size = self._prop.get('__len__', None)
