@@ -1,5 +1,8 @@
 # lumo
 
+![Python-Test](https://github.com/pytorch-lumo/lumo/actions/workflows/python-test.yml/badge.svg)
+
+
 `lumo`：轻量、可扩展、功能解耦合的 Pytorch 实验框架。
 
 lumo 的设计理念：
