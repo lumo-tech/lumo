@@ -4,13 +4,12 @@ psutil
 decorator
 torch
 numpy
-accelerate
+accelerate>=0.16.0
 omegaconf
 tqdm
 rich
 gitPython
 PyYAML>3.13
-tensorboardX
 dbrecord
 packaging
 pandas
