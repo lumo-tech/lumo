@@ -4,7 +4,7 @@ psutil
 decorator
 torch
 numpy
-accelerate>=0.16.0
+accelerate
 omegaconf
 tqdm
 rich
@@ -14,3 +14,4 @@ dbrecord
 packaging
 pandas
 hydra-core
+tensorboard
