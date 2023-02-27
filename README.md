@@ -1,6 +1,8 @@
 # lumo
 
+[![PyPI version](https://badge.fury.io/py/lumo.svg)](https://badge.fury.io/py/lumo)
 ![Python-Test](https://github.com/pytorch-lumo/lumo/actions/workflows/python-test.yml/badge.svg)
+[![license](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://github.com/pytorch-lumo/lumo/blob/master/LICENSE)
 
 
 `lumo`：轻量、可扩展、功能解耦合的 Pytorch 实验框架。

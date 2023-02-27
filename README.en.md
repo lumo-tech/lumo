@@ -1,6 +1,8 @@
 # lumo
 
+[![PyPI version](https://badge.fury.io/py/lumo.svg)](https://badge.fury.io/py/lumo)
 ![Python-Test](https://github.com/pytorch-lumo/lumo/actions/workflows/python-test.yml/badge.svg)
+[![license](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://github.com/Lightning-AI/lightning/blob/master/LICENSE)
 
 `lumo` is a light-weight library to help construct your experiment code, record your experiment results, especially in the field of deep learning.
 
