@@ -1,7 +1,7 @@
 import json
 import os
 
-__all__ = ['glob', 'global_config_path', 'local_config_path']
+__all__ = ['debug_mode', 'glob', 'global_config_path', 'local_config_path']
 
 import tempfile
 from typing import overload
