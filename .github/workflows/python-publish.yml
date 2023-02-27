@@ -29,9 +29,8 @@ jobs:
         run: |
           echo "pypi_version=v$(python extract_version.py)" >> $GITHUB_OUTPUT
           echo "full_version=v$(python extract_version.py).$(date +'%Y%m%d')" >> $GITHUB_OUTPUT
-          echo "git_result=$(echo $(git tag -l "${{ steps.version.outputs.pypi_version }}*" | head -n 1))" >> $GITHUB_OUTPUT
+          echo "git_result=$(echo $(git tag -l "v$(python extract_version.py)*" | head -n 1))" >> $GITHUB_OUTPUT
       - run: |
-          echo $(git tag -l ${{ steps.version.outputs.full_version }})
           echo $(git tag -l "${{ steps.version.outputs.pypi_version }}*" | head -n 1)
           echo ${{ steps.version.outputs.git_result == '' }}
           echo ${{ steps.version.outputs.git_result }}
