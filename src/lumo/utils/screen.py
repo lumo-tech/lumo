@@ -25,6 +25,7 @@ def _is_jupyter() -> bool:  # pragma: no cover
     try:
         get_ipython  # type: ignore
     except NameError:
+        get_ipython = lambda: ()
         return False
     ipython = get_ipython()  # type: ignore
     shell = ipython.__class__.__name__
