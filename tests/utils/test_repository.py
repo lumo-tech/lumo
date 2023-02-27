@@ -42,8 +42,7 @@ def test_git():
 
     c_str = write('a.txt')
     # commited changes
-    # load from current working directory
-    c_hash = repository.git_commit(branch_name='main')
+    c_hash = repository.git_commit(repo, branch_name='main')
     d_hash = repository.git_commit(repo, branch_name='main')
     cc_hash = repository.git_commit(repo)
     assert c_hash == d_hash

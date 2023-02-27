@@ -161,9 +161,9 @@ class ReduceItem:
         self.c = len(self.acc)
         self.cur = item
         if gb_method == 'max':
-            self.last = float('-inf')
+            self.last = -1e12
         elif gb_method == 'min':
-            self.last = float('inf')
+            self.last = 1e12
         else:
             self.last = 0
 

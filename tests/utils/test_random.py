@@ -13,14 +13,14 @@ def test_device():
         d = torch.rand(10, device='cuda')
         assert (a == d).all()
 
-    if torch.has_mps:
-        # [2023.02.22] Currently (as MPS support is quite new) there is no way to set the seed for MPS directly.
-        # fix_seed(1)
-        # a = torch.rand(10, device='mps')
-        # fix_seed(1)
-        # d = torch.rand(10, device='mps')
-        # assert (a == d).all()
-        pass
+    # if torch.has_mps:
+    # [2023.02.22] Currently (as MPS support is quite new) there is no way to set the seed for MPS directly.
+    # fix_seed(1)
+    # a = torch.rand(10, device='mps')
+    # fix_seed(1)
+    # d = torch.rand(10, device='mps')
+    # assert (a == d).all()
+    pass
 
 
 def test_state():
