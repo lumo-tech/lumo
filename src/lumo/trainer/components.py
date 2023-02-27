@@ -1,7 +1,8 @@
+from typing import NewType
+
 import torch
 
 from lumo.core import Params
-from lumo.core.metaclasses import make_dicts, make_dict
 from lumo.exp import SimpleExperiment
 from .factory import OptimFactory, InterpFactory
 
@@ -15,6 +16,7 @@ class TrainerExperiment(SimpleExperiment):
     @property
     def params_fn(self):
         res = self.test_file('params.yaml')
+        self.dump_string('params.yaml', res)
         return res
 
     @property
@@ -44,38 +46,6 @@ class TrainerExperiment(SimpleExperiment):
 
 class ReimplementExperiment(TrainerExperiment):
     pass
-
-
-# class TrainerPropVar(type):
-#     def __new__(cls, name, bases, attrs: dict, **kwds):
-#         for base in bases:
-#             for key, value in base.__dict__.items():  # type:(str,Any)
-#                 if key.endswith("__"):
-#                     continue
-#                 if isinstance(value, set):
-#                     v = attrs.setdefault(key, set())
-#                     v.update(value)
-#                 elif isinstance(value, dict):
-#                     v = attrs.setdefault(key, dict())
-#                     v.update(value)
-#
-#         clazz = type.__new__(cls, name, bases, dict(attrs))
-#
-#         make_dicts(clazz, [
-#             '_prop',
-#             '_cmp',
-#             '_rev_index',
-#             '_call_order',
-#         ])
-#
-#         make_dict(clazz, '_state_dicts', {
-#             'optims': set(),
-#             'models': set(),
-#             'others': set(),
-#             'tensor.th': set(),
-#             'tensor.np': set(),
-#         })
-#         return clazz
 
 
 class TrainerParams(Params):

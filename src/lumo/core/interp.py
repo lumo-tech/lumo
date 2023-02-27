@@ -25,7 +25,6 @@ import numpy as np
 from omegaconf import DictKeyType
 
 from lumo.core import BaseParams
-from lumo.core.metaclasses import PropVar
 
 __all__ = ['Cos',
            'Linear',

@@ -7,10 +7,16 @@ from typing import Union
 
 import numpy as np
 import torch
+import time
+
+
+def int_time():
+    return int(str(time.time()).split(".")[-1])
 
 
 def hashseed(hashitem: Union[int, str]):
-    assert isinstance(hashitem, (int, str))
+    if not isinstance(hashitem, (int, str)):
+        raise AssertionError()
 
     if isinstance(hashitem, str):
         digest = hashlib.md5(hashitem.encode(encoding='utf-8')).digest()

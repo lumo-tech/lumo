@@ -22,7 +22,8 @@ from lumo.proc import glob
 from lumo.core import ParamsType, TrainStage, Record, MetricType, Meter, Attr
 from lumo.core.disk import TableRow, Metrics
 from lumo.data import DataModule
-from ..contrib.accelerate.data_loader import DataLoaderDispatcher, DataLoaderShard
+from accelerate.data_loader import DataLoaderDispatcher, DataLoaderShard
+# from ..contrib.accelerate.data_loader import DataLoaderDispatcher, DataLoaderShard
 from lumo.data.loader import DataLoaderType, DataLoaderSide
 from lumo.proc import dist
 from lumo.trainer.rnd import RndManager

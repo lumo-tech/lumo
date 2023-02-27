@@ -61,13 +61,15 @@ class Compare:
         return self
 
     def __ge__(self, other):
-        assert other is not None
+        if other is None:
+            raise AssertionError()
         self.value = other
         self.op = ">="
         return self
 
     def __le__(self, other):
-        assert other is not None
+        if other is None:
+            raise AssertionError()
         self.value = other
         self.op = "<="
         return self
@@ -83,7 +85,8 @@ class Compare:
         return self
 
     def __gt__(self, other):
-        assert other is not None
+        if other is None:
+            raise AssertionError()
         self.value = other
         self.op = ">"
         return self

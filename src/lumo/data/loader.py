@@ -5,50 +5,8 @@ from typing import NewType, Union
 from torch.utils.data import DataLoader
 
 
-class DataLoaderIterWrap:
-    def __init__(self, iter_fn, batch_count=None):
-        self.iter_fn = iter_fn
-        self.iter = iter_fn()
-        self.c = 0
-        self.batch_count = batch_count
-
-    def __iter__(self):
-        while True:
-            try:
-                yield next(self)
-            except StopIteration:
-                break
-
-    def __len__(self):
-        if self.batch_count is None:
-            return len(self.iter)
-        else:
-            return self.batch_count
-
-    def __next__(self):
-        if self.batch_count is not None:
-            if self.c >= self.batch_count:
-                raise StopIteration()
-        try:
-            batch = next(self.iter)
-        except StopIteration as e:
-            if self.batch_count is not None:
-                self.iter = self.iter_fn()
-                batch = next(self.iter)
-            else:
-                raise e
-
-        self.c += 1
-        return batch
-
-
 class LumoDataLoader(DataLoader):
-
-    def _wraped_iter_(self):
-        return DataLoaderIterWrap(super().__iter__, len(self))
-
-    def __iter__(self) -> DataLoaderIterWrap:
-        return self._wraped_iter_()
+    pass
 
 
 def summarize_loader(loader: DataLoader):

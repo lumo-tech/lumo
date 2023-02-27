@@ -8,7 +8,6 @@ def home():
     return os.path.expanduser("~")
 
 
-@cache
 def cache_dir():
     """
     Directory to store cache files, like datasets. Can be shared for everyone.
@@ -31,7 +30,6 @@ def cache_dir():
     return res
 
 
-@cache
 def libhome():
     """Library home to store configs. Default is `~/.lumo`"""
     LIBHOME = glob.get('home', None)
@@ -40,7 +38,6 @@ def libhome():
     return os.path.join(home(), '.lumo')
 
 
-@cache
 def exproot():
     """Experiment root to store multiple experiments, default is `~/.lumo/experiments`"""
     EXP_ROOT = glob.get('exp_root', None)
@@ -53,7 +50,6 @@ def exproot():
     return res
 
 
-@cache
 def blobroot():
     """Experiment root to store big files, default is `~/.lumo/blob`"""
     BLOB_ROOT = glob.get('blob_root', None)
@@ -66,7 +62,6 @@ def blobroot():
     return res
 
 
-@cache
 def metricroot():
     """
     Only used for storing table_row instance.
@@ -84,7 +79,6 @@ def metricroot():
     return res
 
 
-@cache
 def local_dir():
     """
     Project root, default is the parent directory of .git.

@@ -4,13 +4,10 @@ from accelerate.state import AcceleratorState
 from accelerate.utils import send_to_device
 
 from lumo import LumoDataLoader
-from lumo.data.loader import DataLoaderIterWrap
 
 
-class DataLoaderDispatcher(_DataLoaderDispatcher, LumoDataLoader):
-
-    def __iter__(self) -> DataLoaderIterWrap:
-        return super().__iter__()
+class DataLoaderDispatcher(_DataLoaderDispatcher):
+    pass
 
 
 class DataLoaderShard(_DataLoaderShard, LumoDataLoader):

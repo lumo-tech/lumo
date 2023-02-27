@@ -7,7 +7,9 @@ import torch
 
 
 def rotate_right_angle(x: torch.Tensor, w_dim: int = 2, h_dim: int = 3, degree: int = 90):
-    assert degree in {90, 270, 180}
+    if degree not in {90, 270, 180}:
+        raise AssertionError()
+
     if degree == 90:
         x = x.transpose(w_dim, h_dim)  # 90
     elif degree == 180:

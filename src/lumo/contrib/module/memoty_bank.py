@@ -26,8 +26,8 @@ class MemoryBank(nn.Module):
 
     @torch.no_grad()
     def push(self, name, value):
-        assert name in self.offsets
-        assert self[name].ndim == value.ndim
+        if name not in self.offsets or self[name].ndim != value.ndim:
+            raise AssertionError()
 
         value = value.detach()
         value = gather(value)

@@ -255,13 +255,9 @@ class BaseParams(DictConfig):
             argv = sys.argv
 
         def func(**kwargs):
-            if '_help' in kwargs:
+            if 'help' in kwargs:
                 print(self)
                 exit()
-                return
-
-            if '_json' in kwargs:
-                self.from_json(kwargs['_json'])
                 return
 
             for k, v in kwargs.items():
@@ -271,7 +267,7 @@ class BaseParams(DictConfig):
                 # self[k] = v
                 _set_item(self, k.split('.'), v)
 
-        fire.Fire(func)
+        fire.Fire(func, command=argv)
         return self
 
     def from_hydra(self, config_path, config_name):

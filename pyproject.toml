@@ -46,9 +46,34 @@ omit = [
     'src/lumo/core/record_backend/*',
     'src/lumo/utils/memory_grab.py',
     'src/lumo/data/collate.py',
-    'src/lumo/utils/*',
+    'src/lumo/utils/screen.py',
+    'src/lumo/utils/timer.py',
+    'src/lumo/utils/exithook.py',
+    'src/lumo/utils/filelock.py',
+    'src/lumo/utils/filelock2.py',
+    'src/lumo/utils/fmt.py',
+    'src/lumo/utils/hash.py',
+    'src/lumo/utils/logger.py',
+    'src/lumo/utils/cache.py',
+    'src/lumo/utils/ast.py',
+    'src/lumo/utils/memory_grab.py',
 ]
 
+exclude_lines = [
+    # Have to re-enable the standard pragma
+    "pragma: no cover",
+    # Don't complain about missing debug-only code:s
+    "def __repr__",
+    "if self.debug",
+    # Don't complain if tests don't hit defensive assertion code:
+    "raise AssertionError",
+    "raise NotImplementedError",
+    "AbstractMethodError",
+    # Don't complain if non-runnable code isn't run:
+    "if 0:",
+    "if __name__ == .__main__.:",
+    "if TYPE_CHECKING:",
+]
 
 [tool.coverage.html]
 directory = 'coverage_html_report'

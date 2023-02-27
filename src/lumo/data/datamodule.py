@@ -2,7 +2,7 @@ from typing import NoReturn, Union, overload, Optional
 
 from torch.utils.data import DataLoader
 
-from lumo.core import PropVar, ParamsType, TrainStage
+from lumo.core import TrainStage, ParamsType
 from .loader import DataLoaderType
 from .loader import DataLoaderSide
 

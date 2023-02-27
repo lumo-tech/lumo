@@ -42,6 +42,13 @@ def get_res():
     return res
 
 
+def test_argv():
+    params = get_res()
+    params.from_args(['--a', '1', '--d.c.d=2'])
+    assert params.a == 1
+    assert params.d.c.d == 2
+
+
 def test_dict():
     res = get_res()
     jsn = res.to_dict()

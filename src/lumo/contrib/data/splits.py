@@ -48,7 +48,8 @@ def train_val_split(target, val_size=10000, train_size=None):
     np.random.shuffle(idx)
 
     if train_size is not None:
-        assert size > val_size + train_size, "should less than {}, but {}".format(size, train_size + val_size)
+        if size > val_size + train_size:
+            raise AssertionError("should less than {}, but {}".format(size, train_size + val_size))
         return idx[val_size:val_size + train_size], idx[:val_size]
 
     return idx[val_size:], idx[:val_size]
