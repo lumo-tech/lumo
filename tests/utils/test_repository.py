@@ -3,7 +3,6 @@ import os
 import git
 
 from lumo.proc.config import debug_mode
-from lumo.utils.random import hashseed, int_time
 from lumo.utils import repository
 import random
 
@@ -29,21 +28,22 @@ def test_git():
     f_str = write('init.txt')
     repo.index.add(['init.txt'])
     repo.index.commit('initial commit')
+    main_branch = repo.active_branch.name
 
     repository.git_commit(repo)
     # untracked_files
     a_str = write('a.txt')
     a_hash = repository.git_commit(repo)
-    # uncommited chages
+    # uncommitted changes
     b_str = write('a.txt')
     # untracked_files
     bb_str = write('b.txt')
     b_hash = repository.git_commit(repo)
 
     c_str = write('a.txt')
-    # commited changes
-    c_hash = repository.git_commit(repo, branch_name='main')
-    d_hash = repository.git_commit(repo, branch_name='main')
+    # committed changes
+    c_hash = repository.git_commit(repo, branch_name=main_branch)
+    d_hash = repository.git_commit(repo, branch_name=main_branch)
     cc_hash = repository.git_commit(repo)
     assert c_hash == d_hash
     old_branch_name = repository.git_checkout(repo, a_hash)
@@ -63,8 +63,8 @@ def test_git():
     import tarfile
 
     exp = repository.git_archive(repo, b_hash)
-    zfile = exp.load_string('archive_fn')
-    file = tarfile.open(zfile, mode='r')
+    archived_fn = exp.load_string('archive_fn')
+    file = tarfile.open(archived_fn, mode='r')
     assert file.extractfile('a.txt').read().decode() == b_str
     assert file.extractfile('init.txt').read().decode() == f_str
 
