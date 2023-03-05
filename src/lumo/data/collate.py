@@ -1,5 +1,5 @@
 """
-
+collate.py provided some useful classes and functions to act as the collect_fn in dataloader
 """
 from typing import Any, Mapping, Sequence
 from lumo.core.params import ParamsType
@@ -9,6 +9,11 @@ from torch.utils.data._utils.collate import default_collate
 
 
 class CollateBase:
+    """
+    Base Collate Fn, a common abstract of collate_fn
+
+    DataLoader(collate_fn=YourCollateClass(...))
+    """
 
     @classmethod
     def from_collate(cls, collate_fn, params: ParamsType = None):

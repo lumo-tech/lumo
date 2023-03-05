@@ -8,6 +8,10 @@ from .loader import DataLoaderSide
 
 
 class DataModule:
+    """
+    Used in `Trainer` to easy access `DataLoader`s for different stage(train/test/eval/others).
+    """
+
     def __init__(self, params: ParamsType = None):
         self._prop = {}
         self.params = params
