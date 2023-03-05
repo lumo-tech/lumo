@@ -1,4 +1,5 @@
 import json
+import os.path
 import sys
 import textwrap
 from pprint import pformat
@@ -10,6 +11,7 @@ from pathlib import Path
 from omegaconf import DictConfig, OmegaConf, DictKeyType
 from omegaconf._utils import _ensure_container
 
+from .attr import safe_update_dict, set_item_iterative
 from .raises import BoundCheckError, NewParamWarning
 
 # arange_param = namedtuple('arange_param', ['default', 'left', 'right'], defaults=[None, float('-inf'), float('inf')])
@@ -234,20 +236,24 @@ class BaseParams(DictConfig):
         """
         return Choices(choices[0], choices)
 
+    def safe_update(self, dic, assert_type=True):
+        self.update(
+            safe_update_dict(self.to_dict(), dic, assert_type=assert_type)
+        )
+
     def from_dict(self, dic: dict):
-        for k, v in dic.items():
-            self[k] = v
+        self.safe_update(dic)
         return self
 
     def from_kwargs(self, **kwargs):
         return self.from_dict(kwargs)
 
     def from_json(self, file):
-        self.update(json.loads(Path(file).read_text()))
+        self.safe_update(json.loads(Path(file).read_text()), assert_type=True)
         return self
 
     def from_yaml(self, file):
-        self.update(OmegaConf.load(file))
+        self.safe_update(dict(OmegaConf.load(file)), assert_type=True)
         return self
 
     def from_args(self, argv: list = None):
@@ -260,12 +266,16 @@ class BaseParams(DictConfig):
                 exit()
                 return
 
+            config = kwargs.get('config')
+            if config is None:
+                config = kwargs.get('c')
+            if config is not None and isinstance(config, str) and os.path.exists(config):
+                self.from_yaml(config)
+
+            dic = {}
             for k, v in kwargs.items():
-                # try:
-                #     _get_item(self, k.split('.'))
-                # except:
-                # self[k] = v
-                _set_item(self, k.split('.'), v)
+                set_item_iterative(dic, k.split('.'), v)
+            self.safe_update(dic)
 
         fire.Fire(func, command=argv)
         return self
