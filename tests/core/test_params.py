@@ -1,3 +1,7 @@
+import json
+import tempfile
+from omegaconf import DictConfig
+
 from lumo.core.raises import BoundCheckError
 from lumo import BaseParams
 
@@ -47,6 +51,8 @@ def test_argv():
     params.from_args(['--a', '1', '--d.c.d=2'])
     assert params.a == 1
     assert params.d.c.d == 2
+    assert isinstance(params.kk, DictConfig)
+    assert isinstance(params.d.c, DictConfig)
 
 
 def test_dict():
@@ -54,6 +60,15 @@ def test_dict():
     jsn = res.to_dict()
     rres = BaseParams().from_dict(jsn)
     assert rres.hash() == res.hash()
+
+
+def test_json():
+    res = get_res()
+    fn = tempfile.mktemp()
+    with open(fn, 'w') as w:
+        json.dump({'c': {'a': 2}}, w)
+    res.from_json(fn)
+    assert res.c.a == 2
 
 
 def test_copy():

@@ -1,4 +1,4 @@
-from lumo.core.attr import Attr as attr
+from lumo.core.attr import Attr as attr, set_item_iterative, get_item_iterative
 import numpy as np
 import torch
 
@@ -28,5 +28,17 @@ def get_res():
 def test_replace():
     res = get_res()
     res.update(a=6, b=7)
+    res['c.a.b.e'] = 5
     assert res.a == 6
     assert res.b == 7
+    assert res['c.a.b.e'] == 5
+    assert isinstance(res['c.a.b'], dict)
+
+
+def test_get_set():
+    res = {}
+    set_item_iterative(res, ['a', 'b', 'c'], 4)
+    assert isinstance(res['a'], dict)
+    assert isinstance(res['a']['b'], dict)
+    assert res['a']['b']['c'] == 4
+    # set_item_iterative(res, '')
