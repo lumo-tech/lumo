@@ -72,8 +72,8 @@ trainer = PlusOne(params)
 builder = (
     DatasetBuilder().add_input('xs', range(-500, 500)).add_input('ys', range(-500, 500))
         .add_output('xs', 'xs').add_output('ys', 'ys')
-        .add_output_transform('xs', lambda x: torch.tensor([x]))
-        .add_output_transform('ys', lambda x: torch.tensor([x + 1]))
+        .set_output_transform('xs', lambda x: torch.tensor([x]))
+        .set_output_transform('ys', lambda x: torch.tensor([x + 1]))
         .random_sampler().chain()
 )
 
