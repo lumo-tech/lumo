@@ -27,12 +27,14 @@ def get_res():
 
 def test_replace():
     res = get_res()
-    res.update(a=6, b=7)
-    res['c.a.b.e'] = 5
+    res.update(a=6, b=[4, 5])
+    res['c.c.e.f'] = 5
     assert res.a == 6
-    assert res.b == 7
-    assert res['c.a.b.e'] == 5
-    assert isinstance(res['c.a.b'], dict)
+    assert res.b == [4, 5]
+    assert res['c.c.e.f'] == 5
+    assert res['c.a'] == 1
+    assert res['c.b'] == [5, 6, 7]
+    assert isinstance(res['c.c.e'], dict)
 
 
 def test_get_set():

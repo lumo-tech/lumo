@@ -25,8 +25,8 @@ def create_dataset_builder():
             .add_output(name='xs', outkey='xs1')
             .add_output(name='xs', outkey='xs2')
             .add_output(name='ys', outkey='ys1')
-            .add_output_transform('xs1', lambda x: x + 1)
-            .add_output_transform('ys1', lambda x: x - 1)
+            .set_output_transform('xs1', lambda x: x + 1)
+            .set_output_transform('ys1', lambda x: x - 1)
     )
     return builder
 
