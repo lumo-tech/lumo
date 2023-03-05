@@ -41,6 +41,10 @@ def strftime(fmt='%y-%m-%d-%H%M%S', dateobj: datetime = None):
     return datetime.now().strftime(fmt)
 
 
+def strptime(fmt='%y-%m-%d-%H%M%S', datestr: str = None):
+    return datetime.strptime(datestr, fmt)
+
+
 _invalid_fc = (
     r"[+?@#$&%*()=;|,<>: +"
     r"\^\-\/\t\b\[\]\"]+"
