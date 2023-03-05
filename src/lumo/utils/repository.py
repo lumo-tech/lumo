@@ -7,11 +7,14 @@ from functools import lru_cache
 
 import git
 from git import Repo, Commit
-import io
 from joblib import hash
 from .filelock2 import Lock
 
-LUMO_BRANCH = 'lumo_experiments'
+
+def dev_branch():
+    from lumo.proc.config import glob
+    return glob.get('dev_branch', 'lumo_experiments')
+
 
 _commits_map = {}
 
@@ -32,6 +35,8 @@ class branch:
         self.branch = branch
 
     def __enter__(self):
+        if self.branch == self.old_branch.name:
+            return
         if self.branch is None:
             return
 
@@ -45,6 +50,9 @@ class branch:
         return head
 
     def __exit__(self, exc_type, exc_val, exc_tb):
+        if self.branch == self.old_branch.name:
+            return
+
         if self.branch is None:
             return
         self.repo.head.set_reference(self.old_branch)
@@ -57,31 +65,24 @@ def check_have_commit(repo):
         repo.index.commit('initial commit')
 
 
-@lru_cache()
-def load_repo(dir='./'):
+def load_repo(root='./'):
     """
     Try to load git repository object of a directory.
     Args:
-        dir: str, a directory path, default is the current working dir.
+        root: str, a directory path, default is the current working dir.
         if dir is a repository dir, then a git.Repo object will be retured.
         if not, some you can type a path to init it, or type '!' to cancel init it.
 
     Returns:
         git.Repo object or None if dir not have git repository and cancel to init it.
     """
-    path = git_dir(dir)
+    path = git_dir(root)
     repo = Repo(path)
     check_have_commit(repo)
     return repo
 
 
-def add(repo=None):
-    if repo is None:
-        repo = load_repo()
-    return repo.git.add(all=True)
-
-
-def git_commit(repo=None, key=None, branch_name=LUMO_BRANCH, info: str = None, filter_files=None):
+def git_commit(repo=None, key=None, branch_name=None, info: str = None, filter_files=None):
     """
     ```
         cd <repo working dir>
@@ -103,6 +104,9 @@ def git_commit(repo=None, key=None, branch_name=LUMO_BRANCH, info: str = None, f
     Returns:
         git.Commit object, see gitpython for details.
     """
+    if branch_name is None:
+        branch_name = dev_branch()
+
     try:
         if repo is None:
             repo = load_repo()
@@ -110,23 +114,26 @@ def git_commit(repo=None, key=None, branch_name=LUMO_BRANCH, info: str = None, f
         if key is not None and key in _commits_map:
             return _commits_map[key]
 
-        if LUMO_BRANCH not in repo.branches:
-            repo.create_head(LUMO_BRANCH)
-            print(f'branch {LUMO_BRANCH} not found, will be created automatically.')
+        if branch_name not in repo.branches:
+            repo.create_head(branch_name)
+            print(f'branch {branch_name} not found, will be created automatically.')
 
-        exp_head_commit = repo.heads[LUMO_BRANCH].commit
-        diff = repo.active_branch.commit.diff(exp_head_commit)
+        diff_uncommit = repo.head.commit.diff()
+        exp_head_commit = repo.heads[branch_name].commit
+        diff_from_branches = repo.active_branch.commit.diff(exp_head_commit)
+        # print(diff_uncommit)
 
         if filter_files is not None:
-            diff = [i.a_path for i in diff if i.a_path in filter_files]
+            diff_from_branches = [i.a_path for i in diff_from_branches if i.a_path in filter_files]
 
-        if len(diff) == 0:
+        if len(diff_from_branches) == 0 and len(diff_uncommit) == 0 and len(repo.untracked_files) == 0:
             commit_ = exp_head_commit
         else:
             with branch(repo, branch_name):
                 change_file = []
                 change_file.extend(repo.untracked_files)
-                change_file.extend([i.a_path for i in repo.head.commit.diff(None)])
+                change_file.extend([i.a_path for i in diff_from_branches])
+                change_file.extend([i.a_path for i in diff_uncommit])
                 # print(change_file)
                 if filter_files is not None:
                     print('before filter', change_file)
@@ -147,22 +154,7 @@ def git_commit(repo=None, key=None, branch_name=LUMO_BRANCH, info: str = None, f
     return commit_
 
 
-def reset(repo=None, commit_hex=None, commit: Commit = None):
-    """
-    将工作目录中的文件恢复到某个commit
-    恢复快照的 git 流程:
-        git branch experiment
-        git add . & git commit -m ... // 保证文件最新，防止冲突报错，这一步由 Experiment() 代为完成
-        git checkout <commit-id> // 恢复文件到 <commit-id>
-        git checkout -b reset // 将当前状态附到新的临时分支 reset 上
-        git branch experiment // 切换回 experiment 分支
-        git add . & git commit -m ... // 将当前状态重新提交到最新
-            // 此时experiment 中最新的commit 为恢复的<commit-id>
-        git branch -D reset  // 删除临时分支
-        git branch master // 最终回到原来分支，保证除文件变动外git状态完好
-    Returns:
-        An Experiment represents this reset operation
-    """
+def git_checkout(repo=None, commit_hex=None, commit: Commit = None):
     if repo is None:
         repo = load_repo()
 
@@ -172,44 +164,41 @@ def reset(repo=None, commit_hex=None, commit: Commit = None):
     old_path = os.getcwd()
     os.chdir(commit.tree.abspath)
 
-    with branch(commit.repo, LUMO_BRANCH) as new_branch:
-        repo.git.checkout(commit.hexsha)
-        repo.git.checkout('-b', 'reset')
-        repo.head.reference = new_branch
-        _ = git_commit(repo, branch_name=repo.head.reference.name, info="Reset from {}".format(commit.hexsha))
-        repo.git.branch('-d', 'reset')
+    # with branch(commit.repo, LUMO_BRANCH) as new_branch:
+    repo.git.checkout('-b', commit.hexsha[:8], commit.hexsha)
 
     os.chdir(old_path)
-    return None
+    return commit.hexsha[:8]
 
 
-def archive(repo=None, commit_hex=None, commit: Commit = None, tgt=None):
+def git_archive(repo=None, commit_hex=None, commit: Commit = None):
     """
-    TODO
-    将某次 test 对应 commit 的文件打包，相关命令为
-        git archive -o <filename> <commit-hash>
+    git archive -o <filename> <commit-hash>
+
     Returns:
         An Experiment represents this archive operation
     """
+    from lumo.exp import Experiment
     if repo is None:
         repo = load_repo()
 
+    if commit is None and commit_hex is not None:
+        commit = repo.commit(commit_hex)
+
     old_path = os.getcwd()
     os.chdir(commit.tree.abspath)
-    # exp = Experiment('Archive')
+    exp = Experiment('GitArchive')
+    fn = exp.blob_file(f'{commit.hexsha[:8]}.tar')
 
-    # revert_path = checkpath(cache_dir(), 'archives', commit)
-    # revert_fn = os.path.join(revert_path, "code.zip")
+    exp.dump_info('git_archive', {'file': fn,
+                                  'test_name': exp.test_name,
+                                  'commit_hex': commit.hexsha[:8]})
+    exp.dump_string('archive_fn', fn)
+    with open(fn, 'wb') as w:
+        repo.archive(w, commit.hexsha)
 
-    # TODO 在code.zip目录下添加相关说明
-    # exp.add_plugin('archive', {'file': revert_fn,
-    #                            'test_name': self.name})
-    # with open(revert_fn, 'wb') as w:
-    #     repo.archive(w, commit)
-
-    # exp.end()
     os.chdir(old_path)
-    return None
+    return exp
 
 
 @lru_cache(1)
@@ -248,19 +237,9 @@ def git_dir(root='./'):
     else:
         return None
 
-
-def get_tree_from_commit(commit: Commit, tree=None):
-    if tree is None:
-        tree = commit.tree
-    yield tree.abspath, tree.blobs, tree.trees
-    for tree in tree.trees:
-        yield from get_tree_from_commit(commit, tree)
-
-
-def get_diff_tree_from_commits():
-    pass
-
-
-def get_file_of_commit(commit: Commit, file_name) -> bytes:
-    blob = commit.tree / file_name
-    return blob.data_stream.read()
+# def get_tree_from_commit(commit: Commit, tree=None):
+#     if tree is None:
+#         tree = commit.tree
+#     yield tree.abspath, tree.blobs, tree.trees
+#     for tree in tree.trees:
+#         yield from get_tree_from_commit(commit, tree)

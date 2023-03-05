@@ -15,6 +15,95 @@ DictTransform = NewType('DictTransform', Callable[[Dict[str, Any]], Any])
 
 
 class DatasetBuilder(Dataset):
+    """
+    A subclass of the Dataset class designed for quick and common dataset construction.
+
+    For instance, a simple CIFAR-10 Dataset in (x, y) format can be easily created using the following code:
+    ```python
+    from torchvision.datasets.cifar import CIFAR10
+    ds = CIFAR10(...)
+    x,y = ds[0]
+    ```
+    However, there may be requirements to modify the format, such as (x1, x2, y), due to tricks like cutmix or multiple argument transformers. In this case, we need to extend the CIFAR10 class as follows:
+    ```python
+    class MyCIFAR10(CIFAR10):
+        def __getitem__(self,index):
+            ...
+            return x1, x2, y
+    ```
+
+    If we have multiple format requirements, we can either add extra arguments to the MyCIFAR10 class or create more subclasses, but both methods are redundant.
+
+    Now, by using the DatasetBuilder, this process can be simplified to the utmost.
+
+    To begin, we need to prepare the data source/inputs for CIFAR-10, which includes images and targets. We can register these inputs using .add_input(source, name) as follows:
+
+    ```python
+    source = CIFAR10()
+    ds = (
+        DatasetBuilder()
+            .add_input('xs', source.data)
+            .add_input('ys', source.targets)
+        )
+    ```
+
+    Next, we define the outputs. If we want the output format to be (xs, ys), we can use the following code:
+    ```python
+    (ds
+        .add_output('xs','xs')
+        .add_output('ys','ys')
+    )
+    ```
+    The function `.add_output(source_name, output_name)` defines a data flow from input to output.
+    In `.add_output('xs', 'xs')`, the input is `source.data` named as 'xs', and the output is also named as 'xs'.
+    If we want to rename the output name to 'xs1', we can use .add_output('xs', 'xs1').
+
+    Now you can see the benefits of this approach. If you need an output format like `(xs1, xs2, ys)`, you just need to modify the code as follows:
+    ```python
+    (ds
+        .add_output('xs','xs1')
+        .add_output('xs','xs2')
+        .add_output('ys','ys')
+    )
+    ```
+
+    Besides, you can access the index of each data by `.add_idx('name')`.
+    ```
+    ds.add_idx('idx')
+    print(ds[0])
+    {'idx': 0, ...others...}
+    ```
+
+    Finally, we can use transforms. Each input and output can be passed a transform parameter during definition, such as:
+    ```python
+    ds.add_input('xs', xs, transform=default_loader)
+    ds.add_output('xs','xs1',transform=randargument)
+    ds.add_output('xs','xs2',transform=weak)
+    ```
+
+    The transform defined at the input stage will only be called once when there is a corresponding output. Each output has its own transform.
+    That is to say, the transform execution process defined by the above code will like:
+    ```python
+    x -> default_loader -> randargument -> xs1
+                       \-> weak -> xs2
+    ```
+
+    It's possible that you may be confused about the usage of output names. Commonly, the output types of `dataset[index]` are `list` or `dict`.
+    DatasetBuilder provides both types for everyone, and by default, the dict type is used. When defining outputs as `(xs1, xs2, ys)`, the output of `ds[index]` should be:
+    ```python
+    {'xs1': np.array, 'xs2': np.array, 'ys': 1}
+    ```
+
+    You can change the output type to list by calling `.chain()`:
+    ...python
+    ds.chain()
+    xs1,xs2,ys = ds[index]
+    ```
+
+
+
+    """
+
     def __init__(self):
         self._prop = {}
 
@@ -269,6 +358,18 @@ class DatasetBuilder(Dataset):
         return self
 
     def add_input(self, name: str, source, transform: SingleValueTransform = None):
+        """
+        Register a input source with the transform (if provided).
+        Args:
+            name: source name
+            source: source, should be a sized object.
+            transform:
+
+
+        Notes:
+            Iterable object without `__len__` method currently are not well-tested. Be careful to use them in DatasetBuilder.
+
+        """
         assert name not in self._data, f'Source name {name} duplicated.'
         self._check_source(name, source)
         self._data[name] = source
@@ -277,10 +378,20 @@ class DatasetBuilder(Dataset):
 
     def add_input_transform(self, name: str, transform: SingleValueTransform = None):
         assert name in self._data, f'Source {name} should be added.'
-        self._transforms[name] = transform
-        return self
+        warnings.warn('`add` may cause confusion, use set_input_transform ')
+        return self.set_input_transform(name, transform)
 
     def add_output(self, name: str, outkey: str, transform: SingleValueTransform = None):
+        """
+        Add a data flow from inputs[name] to outputs[outkey] with the transform (if provided).
+        Args:
+            name: source name of inputs
+            outkey: output name of output
+            transform: a callable function
+
+        Returns:
+
+        """
         assert name in self._data, f'Must have data source {name} first.'
 
         outkeys = self._outs.setdefault(name, list())
@@ -292,19 +403,39 @@ class DatasetBuilder(Dataset):
         return self
 
     def add_output_transform(self, outkey: str, transform: SingleValueTransform = None):
+        """
+        Add or **replace** transform of the output name.
+        Args:
+            outkey: output name.
+            transform: a callable function
+        """
         assert outkey in self._outkeys, f'Output key {outkey} should be added.'
-        self._transforms[f'::{outkey}'] = transform
-        return self
+        warnings.warn('add may cause confusion, use set_output_transform ')
+        return self.set_output_transform(outkey, transform)
 
     def add_global_transform(self, transform: DictTransform):
         self._transforms['::global::'] = transform
         return self
 
-    def set_input_transform(self, name, transform: SingleValueTransform):
+    def set_input_transform(self, name, transform: SingleValueTransform = None):
+        """
+        Add or **replace** transform of the input source {name}.
+        Args:
+            name: source name.
+            transform: a callable function
+
+        """
         self._transforms[name] = transform
         return self
 
-    def set_output_transform(self, outkey, transform: SingleValueTransform):
+    def set_output_transform(self, outkey, transform: SingleValueTransform = None):
+        """
+        Add or **replace** transform of the output {name}.
+        Args:
+            outkey: output name.
+            transform: a callable function
+
+        """
         self._transforms[f'::{outkey}'] = transform
         return self
 

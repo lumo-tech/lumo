@@ -1,4 +1,4 @@
-from lumo import DatasetBuilder
+from lumo import DatasetBuilder, DataLoaderSide
 
 
 def global_check(dic):
@@ -15,8 +15,8 @@ def create_dataset_builder():
             .add_output(name='xs', outkey='xs1')
             .add_output(name='xs', outkey='xs2')
             .add_output(name='ys', outkey='ys1')
-            .add_output_transform('xs1', lambda x: x + 1)
-            .add_output_transform('ys1', lambda x: x - 1)
+            .set_output_transform('xs1', lambda x: x + 1)
+            .set_output_transform('ys1', lambda x: x - 1)
             .add_global_transform(global_check)
     )
     return builder
@@ -56,3 +56,28 @@ def test_builder_base():
     assert 'ys1' in dic
 
     str(sub_builder)
+
+
+def test_side():
+    sup = create_dataset_builder()
+    un = create_dataset_builder()
+
+    dl = (
+        DataLoaderSide()
+            .add('sup', sup.DataLoader(batch_size=128, drop_last=True), cycle=True)
+            .add('un', un.DataLoader(batch_size=32, drop_last=True))
+            .zip()
+    )
+
+    assert len(dl) == len(un) // 32
+
+    for batch in dl:
+        assert isinstance(batch, dict)
+        sup, un = batch['sup'], batch['un']
+        assert sup
+
+        assert sup['xs1'].shape[0] == 128
+        assert 'xs1' in sup
+        assert 'xs2' in sup
+        assert 'ys1' in sup
+        assert un['xs1'].shape[0] == 32

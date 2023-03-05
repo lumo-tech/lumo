@@ -30,12 +30,12 @@ def _get_exp_name(exp_path: str):
 
 def list_all(exp_root=None) -> Dict[str, List[Experiment]]:
     return {
-        _get_exp_name(exp_path): retrieval_tests(exp_path)
+        _get_exp_name(exp_path): retrieval_tests_from_experiment(exp_path)
         for exp_path in list_experiment_paths(exp_root)
     }
 
 
-def retrieval_tests(exp_path) -> List[Experiment]:
+def retrieval_tests_from_experiment(exp_path) -> List[Experiment]:
     return [retrieval_experiment(os.path.join(exp_path, f)) for f in os.listdir(exp_path)]
 
 

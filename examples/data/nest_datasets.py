@@ -20,7 +20,7 @@ db = (
 class SameClass:
     def __init__(self, db: DatasetBuilder):
         self.db = db
-        ys = db.get_source('ys')
+        ys = db.inputs['ys']
         cls_num = len(set(ys.tolist()))
         pos_cls = []
         for i in range(cls_num):

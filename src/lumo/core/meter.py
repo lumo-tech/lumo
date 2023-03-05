@@ -10,11 +10,11 @@ import numpy as np
 import torch
 
 from lumo.utils.fmt import to_ndarray, detach, is_scalar
-from lumo.core import PropVar
 
 
-class Meter(metaclass=PropVar):
+class Meter:
     def __init__(self):
+        self._prop = {}
         self._rec = {}
         self._avg = {}
 
@@ -161,9 +161,9 @@ class ReduceItem:
         self.c = len(self.acc)
         self.cur = item
         if gb_method == 'max':
-            self.last = float('-inf')
+            self.last = -1e12
         elif gb_method == 'min':
-            self.last = float('inf')
+            self.last = 1e12
         else:
             self.last = 0
 

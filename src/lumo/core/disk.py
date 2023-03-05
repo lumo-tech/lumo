@@ -76,7 +76,7 @@ class TableRow:
                 if older > value:
                     update = True
             else:
-                assert False
+                raise NotImplementedError()
 
         if update:
             dic[key] = value
@@ -107,7 +107,7 @@ class TableRow:
                 if old > value:
                     update = True
             else:
-                assert False
+                raise NotImplementedError()
 
         if update:
             dic[key] = value

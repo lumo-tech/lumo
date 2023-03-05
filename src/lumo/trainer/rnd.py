@@ -27,9 +27,6 @@ class RndManager:
         """
         random.fix_seed(random.hashseed(seed))
 
-    def int_time(self):
-        return int(str(time.time()).split(".")[-1])
-
     def shuffle(self, seed=None):
         """
         打乱，一般用于复现试验的时候随机一个种子
@@ -41,6 +38,6 @@ class RndManager:
 
         """
         if seed is None:
-            random.fix_seed(self.int_time())
+            random.fix_seed(random.int_time())
         else:
             random.fix_seed(seed)

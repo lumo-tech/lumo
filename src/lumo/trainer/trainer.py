@@ -8,28 +8,31 @@ from typing import Union, Dict, Any, Optional, Sequence, Mapping, Callable
 
 import numpy as np
 import torch
-from lumo.contrib.accelerate import Accelerator
-from lumo.contrib.accelerate.utils import send_to_device
-# overwrite send_to_device to resolve https://github.com/pytorch/pytorch/issues/83015
-# from accelerate import Accelerator
-# from accelerate.utils import send_to_device
-
 from accelerate import DistributedDataParallelKwargs
+from accelerate.data_loader import DataLoaderDispatcher, DataLoaderShard
 from torch import nn
 from torch.optim import Optimizer
 from torch.utils.data import DataLoader
-from lumo.proc import glob
-from lumo.core import ParamsType, TrainStage, Record, MetricType, Meter, Attr
+
+from lumo.contrib.accelerate import Accelerator
+from lumo.contrib.accelerate.utils import send_to_device
+from lumo.core import TrainStage, Record, MetricType, Meter
 from lumo.core.disk import TableRow, Metrics
 from lumo.data import DataModule
-from ..contrib.accelerate.data_loader import DataLoaderDispatcher, DataLoaderShard
 from lumo.data.loader import DataLoaderType, DataLoaderSide
 from lumo.proc import dist
+from lumo.proc import glob
 from lumo.trainer.rnd import RndManager
 from lumo.utils.logger import Logger
+from lumo.utils.fmt import strftime
 from .base import _BaseTrainer
-from .components import TrainerExperiment
+from .components import TrainerExperiment, TrainerParams
 from .saver import Saver
+
+# overwrite send_to_device to resolve https://github.com/pytorch/pytorch/issues/83015
+# from accelerate import Accelerator
+# from accelerate.utils import send_to_device
+ParamsType = TrainerParams
 
 
 class Trainer(_BaseTrainer):
@@ -465,18 +468,28 @@ class Trainer(_BaseTrainer):
             params = self.params
 
         for eidx in range(params.epoch):
+            # update training progress
+            self.exp.dump_train_eidx(eidx, params.epoch)
             self.set_epoch_idx(eidx)
+
+            # train loop
             epoch_record = self.train_epoch(loader, params, limit_global_steps=limit_global_steps)
-            self.set_property('record', epoch_record)
-            self.set_property('record', epoch_record)
+
+            # self.set_property('record', epoch_record)
+
+            # early stop `train_toggle`
             if self.train_toggle:
                 self.set_property('early_stop', 'train toggle')
                 self.train_toggle = False
                 break
+
+            # early stop by `global_steps`
             if limit_global_steps is not None and self.global_steps >= limit_global_steps:
                 self.set_property('early_stop', f'meet limit_global_steps {limit_global_steps}')
                 break
 
+        # update when train finished
+        self.exp.end()
         self.database.update_dict(dict(end=datetime.now(), finished=True), flush=True)
         self.database.flush()
         return self._prop
@@ -711,7 +724,7 @@ class Trainer(_BaseTrainer):
         """
         self.accelerate.wait_for_everyone()
 
-    def save_model(self, is_best=False, meta_info: Union[str, dict, Attr] = None):
+    def save_model(self, is_best=False, meta_info: Union[str, dict] = None):
         info = self._build_trainer_meta_info(meta_info)
         val = self.saver.save_model(self.eidx, self.model_state_dict(),
                                     meta_info=info,
@@ -719,7 +732,7 @@ class Trainer(_BaseTrainer):
         self.wait_for_everyone()
         return val
 
-    def _build_trainer_meta_info(self, meta_info: Union[str, dict, Attr] = None):
+    def _build_trainer_meta_info(self, meta_info: Union[str, dict] = None):
         info = dict()
         info['eidx'] = self.eidx
         if meta_info is not None:

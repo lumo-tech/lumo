@@ -1,5 +1,9 @@
 from typing import Union, Optional, Sequence, Mapping, Any
 
+from lumo.proc.config import debug_mode
+from lumo.utils.repository import git_dir
+import os
+
 import tempfile
 
 import torch
@@ -21,8 +25,8 @@ def create_dataset_builder():
             .add_output(name='xs', outkey='xs1')
             .add_output(name='xs', outkey='xs2')
             .add_output(name='ys', outkey='ys1')
-            .add_output_transform('xs1', lambda x: x + 1)
-            .add_output_transform('ys1', lambda x: x - 1)
+            .set_output_transform('xs1', lambda x: x + 1)
+            .set_output_transform('ys1', lambda x: x - 1)
     )
     return builder
 
@@ -132,19 +136,11 @@ class MyDataModule(DataModule):
         self.regist_dataloader_with_stage(stage, dl)
 
 
-def test_callback():
+def test_trainer():
     params = TrainerParams()
     params.epoch = 2
 
-    glob['exp_root'] = tempfile.mkdtemp()
-    glob['blob_root'] = tempfile.mkdtemp()
-    glob['metric_root'] = tempfile.mkdtemp()
-    glob['HOOK_LOCKFILE'] = False
-    glob['HOOK_LASTCMD_DIR'] = tempfile.mkdtemp()
-    glob['HOOK_GITCOMMIT'] = False
-    glob['HOOK_RECORDABORT'] = False
-    glob['HOOK_DIARY'] = False
-    glob['HOOK_TIMEMONITOR'] = False
+    debug_mode()
     # glob['HOOK_FINALREPORT'] = False
     trainer = CBTrainer(params, dm=MyDataModule())
     trainer.train()
@@ -153,6 +149,12 @@ def test_callback():
     trainer.logger.info(trainer.lf.functions)
     trainer.exp.end()
 
+    # test trainer experiment
+    exp = trainer.exp
+    assert exp.exp_root == os.path.join(glob['exp_root'], trainer.generate_exp_name())
+    assert exp.lib_root == glob['home']
+    assert exp.blob_root == os.path.join(glob['blob_root'], trainer.generate_exp_name(), exp.test_name)
+    assert exp.project_root == git_dir()
     # how to test writer?
     _ = trainer.safe_writer
 
@@ -161,4 +163,4 @@ def test_callback():
 
 
 if __name__ == '__main__':
-    test_callback()
+    test_trainer()

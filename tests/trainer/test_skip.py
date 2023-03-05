@@ -3,6 +3,8 @@ from typing import Union, Optional, Sequence, Mapping, Any
 import tempfile
 
 import torch
+
+from lumo.proc.config import debug_mode
 from lumo.proc.path import cache_dir
 from torch import nn
 from torch.utils.data import DataLoader
@@ -22,8 +24,8 @@ def create_dataset_builder():
             .add_output(name='xs', outkey='xs1')
             .add_output(name='xs', outkey='xs2')
             .add_output(name='ys', outkey='ys1')
-            .add_output_transform('xs1', lambda x: x + 1)
-            .add_output_transform('ys1', lambda x: x - 1)
+            .set_output_transform('xs1', lambda x: x + 1)
+            .set_output_transform('ys1', lambda x: x - 1)
     )
     return builder
 
@@ -121,16 +123,7 @@ def test_callback():
     params = MyParams()
     params.epoch = 2
 
-    glob['exp_root'] = tempfile.mkdtemp(dir=cache_dir())
-    glob['blob_root'] = tempfile.mkdtemp(dir=cache_dir())
-    glob['metric_root'] = tempfile.mkdtemp(dir=cache_dir())
-    glob['HOOK_LOCKFILE'] = False
-    glob['HOOK_LASTCMD_DIR'] = tempfile.mkdtemp(dir=cache_dir())
-    glob['HOOK_GITCOMMIT'] = False
-    glob['HOOK_RECORDABORT'] = False
-    glob['HOOK_DIARY'] = False
-    glob['HOOK_TIMEMONITOR'] = False
-    # glob['HOOK_FINALREPORT'] = False
+    debug_mode()
     trainer = CBTrainer(params, dm=MyDataModule())
     trainer.train()
     trainer.test()

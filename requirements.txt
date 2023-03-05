@@ -10,8 +10,8 @@ tqdm
 rich
 gitPython
 PyYAML>3.13
-tensorboardX
 dbrecord
 packaging
 pandas
 hydra-core
+tensorboard

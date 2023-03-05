@@ -2,7 +2,6 @@ import warnings
 from numbers import Number
 
 from . import Attr
-from .metaclasses import PropVar
 from .meter import Meter
 import torch
 import numpy as np

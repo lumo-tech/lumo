@@ -1,180 +1,165 @@
 # lumo
 
-`lumo`：轻量、可扩展、功能解耦合的 Pytorch 实验框架。
+[![PyPI version](https://badge.fury.io/py/lumo.svg)](https://badge.fury.io/py/lumo)
+![Python-Test](https://github.com/pytorch-lumo/lumo/actions/workflows/python-test.yml/badge.svg)
+[![license](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://github.com/Lightning-AI/lightning/blob/master/LICENSE)
 
-lumo 的设计理念：
+`lumo` is a light-weight library to help construct your experiment code, record your experiment results, especially in the field of deep learning.
 
-- 模块解耦合：所有模块可以单独作为您现在使用的框架中的一个插件使用（而不像其他框架几乎耦合在一起）
-- 恰到好处的抽象：和模型相关的细节完全由使用者掌控，lumo 只封装了外部通用逻辑（而不像其他一些框架会代理模型初始化或损失迭代）
-- 覆盖整个生命周期：数据集构建、模型初始化、随机种子、训练/测试...，lumo 为所有步骤提供了功能包或流程简化
-- 极强的可扩展性：从单文件到包含多个领域多个方法的项目，lumo 都可以提供舒适的使用体验。已在两个领域有复现项目的最佳实践示例（见[Related Work](#Related Work)）。
 
-# 如何使用
+## Features
 
-## 安装
+`lumo` is designed for reducing difficulty of the frequent code modification in experiments and simplify the redundant code.
 
-从 pypi 或 github 主页安装最新的稳定版本：
+At present, `lumo` has these features:
+
+ - Simplest code for **Hyperparameter Configuration**、**Dataset Building**、**Module Checkpoint**、**Meter and Log**.
+ - Include Git support and random seed management. You can **reset** and **archive** and **reimplement your experiments** by using simple console command.
+ - Include a **deep learning experiment code templete**. You can add any experiments with linearly increasing code complexity by using it.
+ - The framework follows the design paradigm of **convention over configuration**, the more you follow the convention, the more the framework will do for you.
+
+> Better use Pycharm.
+
+See [document](https://sailist.github.io/lumo/) for details. 
+
+
+
+## Install
+```bash
+pip install lumo
+```
+
+or 
 
 ```bash
-pip install -U lumo
-pip install git+https://github.com/pytorch-lumo/lumo
+git clone https://github.com/sailist/lumo
+
+python setup.py install
 ```
 
+### test
 
-## 快速开始
+```
+python -m pytest # or python3 -m pytest
+```
 
-本节包含 lumo 最常用的几个子功能，帮助使用者快速利用这些功能减少已有项目中的冗余代码，这些功能包括：
+> Only a part of code have unit test.
 
-- 一些常用功能的更优替代，如 [Params](#参数控制)（arguments 的平替），[Logger](#变量&日志记录)（logging 的平替）
-- 一些训练过程中部份流程的优化，如 [Experiment](#路径管理&版本控制)（提供无重复的实验路径管理、基于 git 的版本控制），[DatasetBuilder](#数据集构建)（更快构建数据集），
 
-### 参数控制
+## Requirements
 
-`argparse` 的更优替代。`Params` 底层依托于 [omegaconf](https://github.com/omry/omegaconf) 和 [fire](https://github.com/google/python-fire)
-，只需要简单的配置，就可以从文件、命令行中读取参数。
+ - install lumo will automatically install three light other libraries: [fire](https://github.com/google/python-fire), [psutil](https://github.com/giampaolo/psutil), [joblib](https://github.com/joblib/joblib).
+ - lumo has mandatory dependencies on `pytorch`, `pandas` and `numpy`, you should manully install these before using lumo since they are usually common-used.
+ - lumo has an optional dependency on `GitPython` as a plugin to execute git command, you can run `pip install GitPython` to install it.
 
-直接基于 Params 类定义参数：
+```shell
+pip install pandas numpy GitPython
+```
+and then see [pytorch](https://pytorch.org/) to install torch. 
 
-```python
-# python main.py --epoch=30 --dataset=100
+
+
+## Introduction
+
+Unlike other pytorch tools, `lumo` mainly designed for research, there are two core idea of it:
+
+1. Reduce repetition of your code.
+2. Make all operations **recordable**, **resumable**, **analyzable**.
+
+
+Your can click [Tutorial](https://sailist.github.io/lumo/tutorial/) to learn the basic use of this framework. After that, you can view [Cookbook](https://sailist.github.io/lumo/cookbook/) to see some details of this library.
+
+A suggested learning order may be：
+
+ - Learn highly frequency used module: [Define hyperparameter(Params)](https://sailist.github.io/lumo/params)、[Record variable(Meter)](https://sailist.github.io/lumo/meter)、[Log(Logger)](/lumo/logger)、[Reshape your dataloader(DataBundler)](https://sailist.github.io/lumo/bundler) and their aggregation [Trainer](https://sailist.github.io/lumo/trainer).
+ - Learn how to manage/analyse your experiment by [Config](https://sailist.github.io/lumo/exp) and [Experiment](https://sailist.github.io/lumo/exp)
+ - Learn how to simple manage random seed by [RndManager](https://sailist.github.io/lumo/rnd) and to create your dataset elegantly by [DatasetBuilder](https://sailist.github.io/lumo/builder)
+
+After learning above contents, you can view [Cookbook](https://sailist.github.io/lumo/cookbook/) to learn the use of [tempelet code](https://sailist.github.io/lumo/structure) and other [details](https://sailist.github.io/lumo/details).
+
+You can also view another repository [lumo-implement](https://github.com/lumo/lumo-implement) to see a bigger example, it will continuously reimplement papers I interested by using the templete provided in `lumo`. 
+
+## Examples
+
+Before start, maybe you'd like to see some simple examples to learn what can `lumo` do.
+
+### Define hyperparameters
+By use `lumo.frame.Params`, you can define hyperparameters simply. See [Params](https://sailist.github.io/lumo/params) for details.
+```python 
 from lumo import Params
-
 params = Params()
-params.epoch = 20
-# 集成优化器参数，自带补全提示
-params.optim = params.OPTIM.create_optim('Adam', lr=0.0001, weight_decay=4e-5)
-# 数据集只能从 cifar10/cifar100 中选择，且默认为 cifar10，其他的选择会报错
-params.dataset = params.choice('cifar10', 'cifar100')
+params.batch_size = 128
+params.from_args() # from command args
 
-# 从命令行参数中更新
-params.from_args()
-print(params.epoch)  # -> 30
-print(params.dataset)  # -> cifar100
-
-# 保存到文件
-params.to_json('./config.json')
-params.to_yaml('./config.yaml')
-# 从文件中更新
-params.from_json('./config.json')
-params.from_yaml('./config.yaml')
+>>> python ap.py --optim.lr=0.001 --epoch=400 --dataset=cifar10 --k=12
 ```
+### Record variable
 
-也可以通过继承、多重继承来嵌套，组合参数。即使在命令行中输入了不存在的参数，Params 也会正常读取。 
-
-### 变量&日志记录
-
-`logging` 的更优替代。通过 Meter、Record 和 Logger，可以实现变量的记录和格式化输出。其中：
-
-- Meter 记录单次的值
-- Record 以一定规则归约 Meter 实例（如 mean、sum 等）
-- Logger 用于代替 logging，除常用的 info、warn 等方法外，还提供了 inline 方法，可以在屏幕能单行更新（实际中，屏幕打印时间远小于训练时间，因此单行更新带来的时间开销可以忽略不计）。
+By using `lumo.frame.Meter`, you can record variable and update its average value with as little code as possible. See [Meter](https://sailist.github.io/lumo/meter) for details.
 
 ```python
-import random
-import time
+from lumo import Meter,AvgMeter
 
-from lumo import Record, Meter, Logger
-
-log = Logger()
-
-record = Record()
-for idx in range(256):
+am = AvgMeter() # use for record average
+for j in range(500):
     meter = Meter()
-    meter.last.i = idx
-    meter.sum.acc = idx
-    meter.mean.loss = random.random()
+    meter.percent(meter.c_) # when print, format 'c' as a percentage
+    meter.a = 1
+    meter.b = "2"
+    meter.c = torch.rand(1)[0]
 
-    record.record(meter)
-    log.inline(record)  # 单行更新
-    time.sleep(0.5)
-    if idx % 50 == 0:
-        log.newline()
-        record.clear()
+    meter.loss = loss_fn(...)
+    meter.rand = torch.rand(2)
+    meter.d = [4] # you can record any type of variable
+    meter.e = {5: "6"}
 
-log.info(record)
+    am.update(meter) # Update current value in meter. Average value will be calculated automatic by declaration and the type of the variable.
+    print(am)
 ```
 
-### 路径管理&版本控制
 
-`Experiment` 主要提供路径管理，可以为每一次试验根据实验名、日期、次数等自动提供不一样的保存路径。此外，Experiment 还可以通过 hook
-提供如代码版本管理、元数据记录等功能。在实验中，可以使用其子类 `SimpleExperiment` 实现大部分需求。
+## Contribute
 
-```python
-from lumo import SimpleExperiment
-from lumo import Params
+`lumo` will be better in the future, but there are still some lack exists currently, including:
 
-pm = Params()
-pm.module = 'example'
-pm.from_args()
+ - **Lack of more detail guide** because of the lacking of developer's energy and time.
+ - **Lack more tests**. unit test only covers a part of the code. I hope I fixed all bugs during my using of it, but there is no guarantee of it. The compatibility is also unguaranteed. So, welcome to [issus](https://github.com/sailist/lumo/issues) it if you find it.
+ - **Lack of development experience**. So the version number may be confused.
 
-# 注册该次实验，实验名为 `pm.module`
-exp = SimpleExperiment(pm.module)
-# 实验开始，该方法会调用已注册的 ExpHooks，完成代码版本控制等功能。
-exp.start()
-
-# 小数据通过 `.test_file()` 获得路径
-fn = exp.test_file('params.json')
-pm.to_json(fn)
-
-# 大文件通过 `.blob_file()` 获得路径（这是约定，而不是强制，大文件也可以保存到 `.test_file()` 中）
-fn = exp.blob_file('checkpoint.pt')
-with open(fn, 'w') as w:
-    w.write('write big data in blob file')
-
-print(exp.test_root)
-print(exp.get_prop('git'))  # see git commit history
-exp.end()
-```
-
-### 数据集构建
-
-![DatasetBuilder](./images/DatasetBuilder.png)
-
-`DatasetBuilder` 是采用有向无环图思路设计的数据集构建类，该类提供了一个恰当的抽象逻辑，避免了在一个实验里定义多个重复 Datasets 类。
-
-`DatasetBuilder `将数据集的构件划分为输入-输出两阶段，同时提供 `.chain()`（序列格式）和`.zip()`（字典格式） 两种输出方式。
-
-```python
-from lumo import DatasetBuilder
-from torchvision.transforms import transforms
-import torch
-
-# Create a mnist-like dummy dataset
-db = (
-    DatasetBuilder()
-        .add_input("xs", torch.rand(500, 28, 28))
-        .add_input("ys", torch.randint(0, 10, (500,)))
-        .add_idx('id')
-        .add_output("xs", "xs1", transforms.RandomHorizontalFlip())
-        .add_output("xs", "xs2", )
-        .add_output("ys", "ys")
-)
-# Watch dataset structure
-print(db)
-# Builder(flow={'::idx::': ['id'], 'xs': ['xs1', 'xs2'], 'ys': ['ys']}, sized=True, size=500, iterable=True)
-
-print(db[0])
-# dict_keys(['id', 'xs1', 'xs2', 'ys'])
-```
-
-# 更多教程
-
-# Related Work
-
-- [image-classification](https://github.com/pytorch-lumo/image-classification): supervised/semi-supervised/self-supervised/noisy label learning on image-classfication
-  field. (suporrted datasets: CIFAR10/CIFAR100/STL-10/SVHN/ImageNet/tinyimagenet)
-- [emotion-recognition-in-conversation](https://github.com/pytorch-lumo/emotion-recognition-in-conversation):Multimodel emotional recognition on conversation. (suporrted datasets: IEMOCAP/MELD/MOSEI) 
+Thanks for all contribution.
 
 
-# Acknowledge
 
- 一个人维护一个库四年，背后的动力是我持续不断的使用，感谢 lumo 陪我见证我的学术生涯。lumo 确实不一定适合所有人的习惯，但一定最适合我自己。lumo 取自 lumos，这是哈利波特里魔法杖发光的咒语。torch 是火炬，ignite 是点燃，所以 lumo 也向往着发光发热，希望 lumo 给大家带来美好的使用体验。
+For file read/write and get/set, I designed
 
-# License 
+- [Params], to make runtime config get/set/load/dump easily,
+- [globs], a global/local/runtime environment variables manager.
+- [Saver], to help you save/load/manage your checkpoints/models in one class.
 
-Distributed under the GNU General Public License 3.0. See [LICENSE](./LICENSE) for more information.
+For data processing, I designed
 
-# Contact
+- [Builder], to hold nearly all dataset formats and special operations by one class,
 
- - [sailist@outlook.com](mailto:sailist@outlook.com)
+For managing experiments, I designed
+
+- [Experiment], which can
+    - make you build a suitable directory and file path in one place,
+    - make you record lightweight data, and
+    - help you make snapshot for your project code (based on git), which can make each result recoverable and
+      reproducible
+- [random manager], a cross-lib(random/numpy/pytorch) random seed manager
+
+For log and meter variables produced during experiment, I designed
+
+- [Meter] to meter every thing in appropriate format, and
+- [Logger] to log every thing in appropriate format.
+
+Finally, I designed [Trainer] to bundle all module above for deep learning experiment.
+
+
+As you can see, These modules covered most demandings on deeplearning 
+
+You can find what you want and click the link to quickly learn HOW TO USE it! All module is designed easy to use, it's
+my principles.
+
 
