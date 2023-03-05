@@ -171,7 +171,7 @@ class Experiment:
     def dump_progress(self, ratio: float, update_from=None):
         res = {'ratio': ratio}
         if update_from is None:
-            res['update_from'] = res
+            res['update_from'] = update_from
         self.dump_info('progress', res, append=True)
 
     def dump_info(self, key: str, info: dict, append=False, info_dir='info', set_prop=True):
