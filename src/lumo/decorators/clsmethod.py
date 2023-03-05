@@ -5,13 +5,18 @@ T = TypeVar('T', Callable, str)
 
 def clswrap(callable: T) -> T:
     """
-    带类型提示的 staticmethod()
+    A decorator for creating a staticmethod with type hints.
+
     Args:
-        callable:
+        callable: The function to be wrapped with a staticmethod.
 
     Returns:
+        A new staticmethod that calls the original function.
+
     Notes:
-        必须在类中用
+        This decorator should be used on a class method. It creates a new staticmethod that calls the original function,
+        allowing it to be called without an instance of the class. The `callable` argument should have type hints
+        for the parameters and return type. The resulting staticmethod will also have the same type hints.
     """
 
     @staticmethod
