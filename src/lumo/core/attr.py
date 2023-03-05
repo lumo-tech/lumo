@@ -30,8 +30,8 @@ class Attr(OrderedDict):
         return get_item_iterative(self, key.split('.'))
 
 
-def safe_update_dict(src: dict, update_from: dict, assert_type=True):
-    for ks, v in walk_dict(update_from):
+def safe_update_dict(src: dict, kwargs: dict, assert_type=True):
+    for ks, v in walk_dict(kwargs):
         try:
             old_v = get_item_iterative(src, ks)
             if old_v is None or isinstance(old_v, type(v)):
@@ -50,24 +50,28 @@ def walk_dict(dic: dict, root=None):
         root = []
     for k, v in dic.items():
         if isinstance(v, dict):
-            yield from walk_dict(v, [*root, k])
+            yield from walk_dict(v, [*root, *k.split('.')])
         else:
-            yield [*root, k], v
+            yield [*root, *k.split('.')], v
 
 
 def set_item_iterative(dic: dict, keys: List[str], value):
-    assert not isinstance(value, dict), 'all value should be flattened'
     if len(keys) == 1:
-        dict.__setitem__(dic, keys[0], value)
+        if isinstance(value, dict):
+            for ks, v in walk_dict(value):
+                set_item_iterative(dic, [*keys, *ks], v)
+        else:
+            dict.__setitem__(dic, keys[0], value)
     else:
         try:
             nex = dict.__getitem__(dic, keys[0])
             if not isinstance(nex, dict):
                 raise ValueError(keys[0], nex)
+            # dict.__setitem__(dic, keys[0], nex)
         except KeyError:
             nex = dict()
+            dict.__setitem__(dic, keys[0], nex)
 
-        dict.__setitem__(dic, keys[0], nex)
         set_item_iterative(nex, keys[1:], value)
 
 
