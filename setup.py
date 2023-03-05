@@ -30,8 +30,5 @@ if __name__ == '__main__':
         keywords='lumo',
         packages=find_packages('src'),
         entry_points={
-            'console_scripts': [
-                'lumo = lumo.cli.cli:main'
-            ]
         },
     )
