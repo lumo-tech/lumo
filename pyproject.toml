@@ -41,6 +41,7 @@ omit = [
     'src/lumo/cli/*',
     'src/lumo/vis/*',
     'src/lumo/decorators/*',
+    'src/lumo/exp/agent.py',
     'src/lumo/analyse/*',
     'src/lumo/sketch/*',
     'src/lumo/core/record_backend/*',
@@ -73,6 +74,12 @@ exclude_lines = [
     "if 0:",
     "if __name__ == .__main__.:",
     "if TYPE_CHECKING:",
+    # some tricky object that can not well tested.
+    "except ImportError",
+    "class RecordAbort",
+    "pass",
+    "def summary_experiment",
+    "def plot",
 ]
 
 [tool.coverage.html]
