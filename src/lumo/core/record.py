@@ -2,7 +2,7 @@ import warnings
 from numbers import Number
 
 from . import Attr
-from .meter import Meter
+from .meter import Meter, ReduceItem
 import torch
 import numpy as np
 from typing import NewType, Mapping, Union, Sequence, Dict
@@ -55,7 +55,7 @@ class Record:
         self._prop = {}
         self._prop.update(kwargs)
         self._cache = []
-        self._agg = OrderedDict()  # type:Dict[str,AggItem]
+        self._agg = OrderedDict()  # type:Dict[str,ReduceItem]
 
     def avg(self) -> Attr:
         """DEPRECATED: Computes the average value of the recorded metrics."""
@@ -99,7 +99,7 @@ class Record:
             stg = agg.get(k, 'last')
             item = self._agg.get(k, None)
             if item is None:
-                item = AggItem(stg)
+                item = ReduceItem(stg)
             item.update(v)
             self._agg[k] = item
 
@@ -111,68 +111,3 @@ class Record:
     def flush(self):
         """Clears the cache of recorded metrics."""
         self._cache.clear()
-
-
-class AggItem:
-    """
-    A class that aggregates a sequence of values according to a specified strategy.
-
-    Attributes:
-        stg (str): A string that specifies the strategy to be used for aggregation.
-        _last (int): The last value added to the aggregation.
-        acc (int): The accumulated value after aggregation.
-        c (int): The count of values added to the aggregation.
-    """
-
-    def __init__(self, stg):
-        self.stg = stg
-        self._last = 0
-        self.acc = 0
-        self.c = 0
-
-    @property
-    def res(self):
-        """
-        Computes the result of the aggregation.
-
-        Returns:
-            int: The result of the aggregation according to the specified strategy.
-        """
-        if self.stg == 'mean':
-            return self.acc / self.c
-
-        if self.stg in {'min', 'max', 'last'}:
-            return self.acc
-
-        if self.stg == 'sum':
-            return self.acc
-
-        return self.acc
-
-    @property
-    def last(self):
-        """
-        Returns the last value added to the aggregation by `update`.
-
-        Returns:
-            int: The last value added to the aggregation.
-        """
-        return self._last
-
-    def update(self, val):
-        """
-        Updates the aggregation with a new value.
-
-        Args:
-            val (int): The new value to add to the aggregation.
-        """
-        if self.stg == 'last':
-            self.acc = val
-        elif self.stg == 'min':
-            self.acc = min(self.acc, val)
-        elif self.stg == 'max':
-            self.acc = max(self.acc, val)
-        elif self.stg in {'mean', 'sum'}:
-            self.acc += val
-            self.c += 1
-        self._last = val

@@ -97,6 +97,8 @@ class CBTrainer(Trainer):
                     limit_global_steps=None) -> Record:
         assert self.context == 'train_epoch'
         assert self.contexts[-2] == 'train'
+        if params.get('raise_exp', False):
+            raise ValueError('raised by test')
         return super().train_epoch(loader, params, limit_step, limit_global_steps)
 
     def remove_callback(self, cur):

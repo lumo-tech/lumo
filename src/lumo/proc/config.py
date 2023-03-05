@@ -59,9 +59,9 @@ def debug_mode(base_dir=None, disable_git=True):
     glob['cache_dir'] = tempfile.mkdtemp(dir=base_dir)
     glob['blob_root'] = tempfile.mkdtemp(dir=base_dir)
     glob['metric_root'] = tempfile.mkdtemp(dir=base_dir)
-    glob['HOOK_LOCKFILE'] = False
+    # glob['HOOK_LOCKFILE'] = False
     glob['HOOK_LASTCMD_DIR'] = tempfile.mkdtemp(dir=base_dir)
-    glob['HOOK_RECORDABORT'] = False
+    # glob['HOOK_RECORDABORT'] = False
     glob['HOOK_TIMEMONITOR'] = False
 
     if disable_git:

@@ -58,12 +58,10 @@ def safe_update_dict(src: dict, kwargs: dict, assert_type=True):
             old_v = get_item_iterative(src, ks)
             if old_v is None or isinstance(old_v, type(v)):
                 set_item_iterative(src, ks, v)
-                # print(ks, v)
             else:
                 raise TypeError(ks, type(old_v), type(v))
         except KeyError:
             set_item_iterative(src, ks, v)
-            # print(ks, v)
     return src
 
 

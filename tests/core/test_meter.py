@@ -1,3 +1,5 @@
+import pytest
+
 from lumo.core.meter import ReduceItem
 
 

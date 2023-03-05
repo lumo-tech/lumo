@@ -20,6 +20,7 @@ class state_dict_tuple:
             return self.meta_info
         raise IndexError(item)
 
+
 class Saver:
     """
     Write state_dict into test dirs, record save log into <repo working dir>/.lumo/save.<exp_name>.log
@@ -86,13 +87,13 @@ class Saver:
         Returns:
             saved filepath, None if something went wrong.
         """
-        res = io.dump_state_dict(obj, fn)
-        if res and meta_info is not None:
+        io.dump_state_dict(obj, fn)
+        if meta_info is not None:
             if isinstance(meta_info, str):
                 meta_info = {'msg': meta_info}
             json_fn = f"{fn}.json"
             io.dump_json(meta_info, json_fn)
-        return res
+        return fn
 
     def load_state_dict(self, fn: str, with_meta=False, map_location='cpu') -> state_dict_tuple:
         """

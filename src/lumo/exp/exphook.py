@@ -55,10 +55,10 @@ class LastCmd(ExpHook):
         os.chmod(fn, st.st_mode | stat.S_IEXEC)
 
 
-class PathRecord(ExpHook):
-
-    def on_newpath(self, exp: Experiment, *args, **kwargs):
-        super().on_newpath(exp, *args, **kwargs)
+# class PathRecord(ExpHook):
+#
+#     def on_newpath(self, exp: Experiment, *args, **kwargs):
+#         super().on_newpath(exp, *args, **kwargs)
 
 
 class Diary(ExpHook):
@@ -98,7 +98,7 @@ class TimeMonitor(ExpHook):
         ]
         subprocess.Popen(' '.join(cmd),
                          stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True,
-                         start_new_session=True)
+                         start_new_session=True, cwd=os.getcwd(), env=os.environ)
 
     def on_start(self, exp: Experiment, *args, **kwargs):
         super().on_start(exp)
@@ -178,7 +178,8 @@ class GitCommit(ExpHook):
 class LockFile(ExpHook):
 
     def on_start(self, exp: Experiment, *args, **kwargs):
-        exp.dump_info('lock', get_lock('torch', 'numpy',
+        exp.dump_info('lock', get_lock('lumo',
+                                       'numpy',
                                        'joblib',
                                        'psutil',
                                        'decorator',

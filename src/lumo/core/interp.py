@@ -44,11 +44,6 @@ class Interpolate(BaseParams):
     ratio 变化为从 1 - 0
     """
 
-    def toggle_constant(self, toggle=True):
-        """fix the schedule as the first value"""
-        self.constant = toggle
-        return self
-
     @classmethod
     def interp(self, *args, **kwargs):
         raise NotImplementedError()
@@ -232,7 +227,6 @@ class Cos(ABCContinuous):
         ratio = cls.ratio(cur, left=left, right=right, constant=constant)
         cos_ratio = 0.5 * (1 + np.cos(ratio * np.pi))
         return start * cos_ratio + end * (1 - cos_ratio)
-
 
 
 class Linear(ABCContinuous):
