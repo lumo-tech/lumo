@@ -38,10 +38,13 @@ class TrainerExperiment(SimpleExperiment):
         res = self.blob_dir('state_dict')
         return res
 
-    def dump_train_info(self, epoch: int):
-        self.dump_info('trainer', {
-            'epoch': epoch
-        }, append=True)
+    def dump_train_eidx(self, eidx, epoch: int):
+        """
+        Args:
+            eidx: start from 0, end at `epoch-1`
+            epoch:
+        """
+        self.dump_progress((eidx + 1) / epoch, update_from='trainer')
 
 
 class ReimplementExperiment(TrainerExperiment):
