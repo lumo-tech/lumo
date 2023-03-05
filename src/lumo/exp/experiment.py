@@ -9,12 +9,13 @@ from typing import Union
 from lumo.decorators.process import call_on_main_process_wrap
 from lumo.proc import glob
 from lumo.proc.dist import is_dist, is_main, local_rank
-from lumo.proc.path import blobroot, libhome
+from lumo.proc.path import blobroot, libhome, progressroot
 from lumo.proc.path import exproot, local_dir
 from lumo.utils import safe_io as io
 from lumo.utils.fmt import can_be_filename
 from lumo.utils.logger import Logger
 from .base import ExpHook
+from ..proc.pid import pid_hash, runtime_pid_obj
 
 
 def checkdir(path: Union[Path, str]):
@@ -29,9 +30,19 @@ class Experiment:
     """
     (by default), the directory structure is as following:
     .lumo (libroot)
+        - progress
+            - ".{pid}" -> hash
+                if pid exists and hash(psutil.Process) == hash in file: is run
+                else: is closed
         - experiments # (exp_root) record information (e.g., .log, params files, etc.)
             - {experiment-name-1}
                 - {test-1}
+                    # infomation
+                    {
+                        progress
+                        pid_hash (for lumo.client monitor)
+                        other_info: git, file, version_lock, etc.
+                    }
                 - {test-2}
             - {experiment-name-2}
                 - {test-1}
@@ -148,9 +159,20 @@ class Experiment:
         return checkdir(val)
 
     @property
+    def progress_branch(self):
+        val = Path(progressroot())
+        return checkdir(val)
+
+    @property
     def test_branch(self):
         val = self.exp_branch.joinpath(self.test_name)
         return checkdir(val)
+
+    def dump_progress(self, ratio: float, update_from=None):
+        res = {'ratio': ratio}
+        if update_from is None:
+            res['update_from'] = res
+        self.dump_info('progress', res, append=True)
 
     def dump_info(self, key: str, info: dict, append=False, info_dir='info', set_prop=True):
         fn = self.test_file(f'{key}.json', info_dir)
@@ -250,6 +272,9 @@ class Experiment:
         parent = self.blob_branch.joinpath(*args)
         return checkdir(parent).joinpath(filename).as_posix()
 
+    def progress_file(self, filename):
+        return self.progress_branch.joinpath(filename).as_posix()
+
     def blob_dir(self, *args):
         """
 
@@ -289,6 +314,7 @@ class Experiment:
     @call_on_main_process_wrap
     def initial(self):
         self.add_tag(self.__class__.__name__, 'exp_type')
+        self.dump_progress(0)
         self.dump_info('execute', {
             'repo': self.project_root,
             'cwd': os.getcwd(),
@@ -296,6 +322,14 @@ class Experiment:
             'exec_bin': sys.executable,
             'exec_argv': sys.argv
         })
+        self.dump_info('pinfo', {
+            'pid': os.getpid(),
+            'hash': pid_hash(),
+            'obj': runtime_pid_obj(),
+        })
+
+        # register progress
+        io.dump_text(self.test_root, self.progress_file(f'{os.getpid()}'))
 
     @call_on_main_process_wrap
     def start(self):
@@ -304,7 +338,6 @@ class Experiment:
         self.initial()
         self.set_prop('start', True)
         for hook in self._hooks.values():  # type: ExpHook
-
             hook.on_start(self)
         return self
 
@@ -314,6 +347,7 @@ class Experiment:
             return
         if self.get_prop('end', False):
             return
+        self.dump_progress(1)
         self.set_prop('end', True)
         for hook in self._hooks.values():  # type: ExpHook
             hook.on_end(self, end_code=end_code, *args, **extra)
