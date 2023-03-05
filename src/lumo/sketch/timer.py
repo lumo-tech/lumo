@@ -6,22 +6,7 @@ import time
 import warnings
 from collections import OrderedDict
 
-from .fmt import strftime
-
-
-def format_second(sec: int) -> str:
-    """convert seconds from int to string"""
-    sec, ms = divmod(sec, 1)
-    if sec > 60:
-        min, sec = divmod(sec, 60)
-        if min > 60:
-            hour, min = divmod(min, 60)
-            fmt = "{}h{}m{}s".format(hour, min, int(sec))
-        else:
-            fmt = "{}m{}s".format(min, int(sec))
-    else:
-        fmt = "{}s".format(int(sec))
-    return fmt
+from lumo.utils.fmt import strftime
 
 
 class Timer:
