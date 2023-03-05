@@ -8,10 +8,19 @@ from functools import lru_cache
 import git
 from git import Repo, Commit
 from joblib import hash
-from .filelock2 import Lock
+from .filelock import Lock
 
 
 def dev_branch():
+    """
+    Returns the value of the 'dev_branch' key from the global configuration dictionary 'glob' in the 'lumo.proc.config' module.
+
+    If the key is not present in the dictionary, returns the default value of 'lumo_experiments'.
+
+    Returns:
+        str: The value of the 'dev_branch' key from the global configuration dictionary. By default is `lumo_experiments`.
+
+    """
     from lumo.proc.config import glob
     return glob.get('dev_branch', 'lumo_experiments')
 
@@ -21,10 +30,26 @@ _commits_map = {}
 
 class branch:
     """
-    用于配合上下文管理切换 git branch
+    A context manager class for switching git branches in a given repository.
 
-    with branch(repo, branch):
-        repo.index.commit('...')
+    Example usage:
+        with branch(repo, branch):
+            repo.index.commit('...')
+
+    Args:
+        repo (Repo): The repository object for which the branch will be switched.
+        branch (str): The name of the branch to switch to.
+
+
+    Notes:
+        This class provides a context manager that switches the current branch
+         to the given branch when entering the context and switches back to the original branch when exiting the context.
+
+        If the given branch does not exist in the repository, it will be created.
+
+        A lock is obtained on the repository to ensure that
+        only one instance of this class can switch branches at a time for a given repository.
+
     """
 
     def __init__(self, repo: Repo, branch: str):
@@ -60,6 +85,11 @@ class branch:
 
 
 def check_have_commit(repo):
+    """
+    Checks if the given repository has any commits.
+
+    If there are no commits, creates an initial commit that adds all files in the repository and has the message "initial commit".
+    """
     if len(repo.heads) == 0:
         repo.git.add('.')
         repo.index.commit('initial commit')

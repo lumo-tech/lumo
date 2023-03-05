@@ -10,10 +10,23 @@ from tqdm import tqdm
 
 
 def get_consolo_width():
+    """Returns the width of the current console window"""
     return shutil.get_terminal_size().columns - 1  # -1 for windows consolo
 
 
 def support_multiline():
+    """
+    Checks if the current environment supports multiline output in line.
+    Notes:
+        This function checks if the current environment supports multiline output.
+        It returns True if any of the following conditions are met:
+
+        - The `jupyter_core` module is available (implying that the code is being run in a Jupyter notebook or JupyterLab).
+        - The width of the console is reported as 0 by `shutil.get_terminal_size()`, which can occur in some non-standard environments or configurations.
+        - The `PYCHARM_HOSTED` environment variable is set, which indicates that the code is being run in PyCharm's integrated console.
+
+        If none of these conditions are met, the function returns False.
+    """
     if "jupyter_core" in sys.modules or shutil.get_terminal_size((0, 0)).columns == 0 or "PYCHARM_HOSTED" in os.environ:
         return True
     else:
@@ -163,6 +176,15 @@ class ScreenStr:
 
 
 class inlinetqdm(tqdm):
+    """
+    A subclass of `tqdm` that formats progress bar updates as a single line.
+
+    This subclass provides two additional methods:
+
+        - `full_str`: Returns a formatted string representing the full progress bar,
+         including the progress bar itself and any additional information (such as elapsed time or estimated remaining time).
+
+    """
 
     def full_str(self):
         return self.format_meter(**self.format_dict)

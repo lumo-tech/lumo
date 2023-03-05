@@ -17,28 +17,48 @@ load_nd = load_nd
 
 
 def dump_json(obj, fn):
+    """
+    Dumps the given object to a JSON file at the given file path.
+
+    Args:
+        obj: The object to be dumped to JSON.
+        fn (str): The file path to which the JSON data will be written.
+
+    Notes:
+        The JSON data will be written with an indentation of 2 spaces.
+    """
     with open(fn, 'w', encoding='utf-8') as w:
         json.dump(obj, w, indent=2)
 
 
 def dump_yaml(obj, fn):
+    """
+    Dumps the given object to a YAML file at the given file path.
+
+    Args:
+        obj: The object to be dumped to YAML.
+        fn (str): The file path to which the YAML data will be written.
+
+    Notes:
+        The YAML data will be written with default formatting options.
+    """
     import yaml
     with open(fn, 'w', encoding='utf-8') as w:
         yaml.safe_dump(obj, w)
-    return fn
 
 
 def dump_state_dict(obj, fn):
     torch.save(obj, fn)
-    return fn
 
 
 def load_json(fn):
+    """Loads JSON data from the given file path and returns the resulting object."""
     with open(fn, 'r', encoding='utf-8') as r:
         return json.load(r)
 
 
 def load_yaml(fn):
+    """Loads YAML data from the given file path and returns the resulting object."""
     import yaml
     with open(fn, 'r', encoding='utf-8') as r:
         return yaml.safe_load(r)
@@ -50,6 +70,7 @@ def load_state_dict(fn: str, map_location='cpu'):
 
 
 def load_text(fn):
+    """Loads text data from the given file path and returns it as a single string."""
     if not os.path.exists(fn):
         return ''
     with open(fn, 'r', encoding='utf-8') as r:
@@ -99,6 +120,22 @@ def load_pkl(file, *, fix_imports=True, encoding="ASCII", errors="strict"):
 
 @contextmanager
 def cached(fn):
+    """
+    A context manager that caches the output of a computation to a file.
+
+    Args:
+        fn (str): The file path to which the cached data will be written.
+
+    Yields:
+        str: The file path of the cache file.
+
+    Examples:
+
+        with cached('a.txt') as cache_fn:
+            with open(cache_fn, 'w') as w:
+                w.write('123')
+
+    """
     import shutil
     cache_fn = f'{fn}.lumo_cache'
     try:

@@ -11,10 +11,28 @@ import time
 
 
 def int_time():
+    """
+    Get the current time as an integer.
+
+    Returns:
+        int: The current time as an integer.
+    """
     return int(str(time.time()).split(".")[-1])
 
 
 def hashseed(hashitem: Union[int, str]):
+    """
+    Generate a hash seed from a given integer or string.
+
+    Args:
+        hashitem (Union[int, str]): The integer or string to generate the hash seed from.
+
+    Returns:
+        int: The hash seed.
+
+    Raises:
+        AssertionError: If the given `hashitem` is not an integer or a string.
+    """
     if not isinstance(hashitem, (int, str)):
         raise AssertionError()
 
@@ -52,6 +70,9 @@ def fix_seed(seed=10, cuda=True):
 
 
 def fix_cuda():
+    """
+    Set deterministic and reproducible configuration for CUDA.
+    """
     if torch.cuda.is_available():
         torch.backends.cudnn.benchmark = False
         torch.backends.cudnn.deterministic = True
@@ -59,6 +80,17 @@ def fix_cuda():
 
 
 def get_state(cuda=True):
+    """
+    Get the current state of the random number generators.
+
+    Args:
+        cuda (bool): Whether to get the CUDA state if PyTorch is using CUDA.
+
+    Returns:
+        dict: A dictionary containing the current states of the random number generators for
+        numpy, pytorch, pytorch.cuda, and python's built-in `random` module.
+
+    """
     return {
         "numpy": np.random.get_state(),
         "torch": torch.random.get_rng_state(),
@@ -69,12 +101,11 @@ def get_state(cuda=True):
 
 def set_state(state_dict, cuda=True):
     """
-    Set random state of built-in random, numpy, torch, torch.cuda
+    Set the random state for NumPy, PyTorch, PyTorch CUDA, and Python's built-in `random` module.
 
     Args:
-        state_dict: a dict got from `lumo.utils.random.get_state()`
-
-    Returns:
+        state_dict (dict): A dictionary containing the desired states of the random number generators for NumPy, PyTorch, PyTorch CUDA, and Python's built-in `random` module.
+        cuda (bool): Whether to set the CUDA state if PyTorch is using CUDA.
 
     """
     random.setstate(state_dict["random"])
