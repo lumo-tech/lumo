@@ -121,7 +121,6 @@ class GitCommit(ExpHook):
 
         from lumo.utils.repository import git_enable, git_commit, git_dir
         from lumo.utils.ast import analyse_module_dependency
-        from lumo.utils.hash import hash_iter
         import inspect
 
         if not git_enable():
@@ -149,7 +148,7 @@ class GitCommit(ExpHook):
                 except OSError:
                     pass
 
-        dep_hash = hash_iter(*dep_source)
+        dep_hash = hash(dep_source)
         commit_ = git_commit(key='lumo', info=exp.test_root, filter_files=filter_files)
 
         if commit_ is None:
