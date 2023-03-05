@@ -519,7 +519,7 @@ class EpochCheckpoint(TrainCallback):
 
     def on_train_epoch_end(self, trainer: Trainer, func, params: ParamsType, record: Optional[Record], *args,
                            **kwargs):
-        meter = record.avg()
+        meter = record.agg()
         if trainer.eidx % self.per_epoch == 0 and trainer.eidx > 0:
             trainer.save_checkpoint(meta_info=Meter.wrap_result(meter))
 
@@ -664,15 +664,15 @@ class RecordCallback(TrainCallback):
 
     def on_train_epoch_end(self, trainer: Trainer, func, params: ParamsType, record: Record, *args, **kwargs):
         super().on_train_epoch_end(trainer, func, params, record, *args, **kwargs)
-        self.log(record.avg(), step=trainer.global_steps, namespace='train.epoch')
+        self.log(record.agg(), step=trainer.global_steps, namespace='train.epoch')
 
     def on_test_end(self, trainer: Trainer, func, params: ParamsType, record: Record, *args, **kwargs):
         super().on_test_end(trainer, func, params, record, *args, **kwargs)
-        self.log(record.avg(), step=trainer.global_steps, namespace='test')
+        self.log(record.agg(), step=trainer.global_steps, namespace='test')
 
     def on_eval_end(self, trainer: Trainer, func, params: ParamsType, record: Record, *args, **kwargs):
         super().on_eval_end(trainer, func, params, record, *args, **kwargs)
-        self.log(record.avg(), step=trainer.global_steps, namespace='evaluate')
+        self.log(record.agg(), step=trainer.global_steps, namespace='evaluate')
 
 
 class WandbCallback(RecordCallback):
