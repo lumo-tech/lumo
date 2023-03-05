@@ -50,6 +50,18 @@ def exproot():
     return res
 
 
+def progressroot():
+    """Experiment root to store multiple experiments, default is `~/.lumo/experiments`"""
+    PROGRESS_ROOT = glob.get('progress_root', None)
+    if PROGRESS_ROOT:
+        res = PROGRESS_ROOT
+    else:
+        res = os.path.join(libhome(), 'progress')
+
+    os.makedirs(res, exist_ok=True)
+    return res
+
+
 def blobroot():
     """Experiment root to store big files, default is `~/.lumo/blob`"""
     BLOB_ROOT = glob.get('blob_root', None)

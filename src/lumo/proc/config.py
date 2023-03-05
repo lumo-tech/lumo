@@ -54,6 +54,7 @@ def get_runtime_config():
 
 def debug_mode(base_dir=None, disable_git=True):
     glob['exp_root'] = tempfile.mkdtemp(dir=base_dir)
+    glob['progress_root'] = tempfile.mkdtemp(dir=base_dir)
     glob['home'] = tempfile.mkdtemp(dir=base_dir)
     glob['cache_dir'] = tempfile.mkdtemp(dir=base_dir)
     glob['blob_root'] = tempfile.mkdtemp(dir=base_dir)
