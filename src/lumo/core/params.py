@@ -12,7 +12,7 @@ from omegaconf import DictConfig, OmegaConf, DictKeyType
 from omegaconf._utils import _ensure_container
 
 from .attr import safe_update_dict, set_item_iterative
-from .raises import BoundCheckError, NewParamWarning
+from .raises import BoundCheckError
 
 # arange_param = namedtuple('arange_param', ['default', 'left', 'right'], defaults=[None, float('-inf'), float('inf')])
 # choice_param = namedtuple('choice_param', ['default', 'choices'], defaults=[None, []])
@@ -21,6 +21,14 @@ __all__ = ['BaseParams', 'Params', 'ParamsType']
 
 
 class Arange:
+    """A class representing a range of numeric values with a default, left and right boundaries.
+
+    Attributes:
+        default: The default value of the range. Defaults to None.
+        left: The left boundary of the range. Defaults to positive infinity.
+        right: The right boundary of the range. Defaults to positive infinity.
+    """
+
     def __init__(self, default=None, left=float('inf'), right=float('inf')):
         self.default = default
         self.left = left
@@ -31,6 +39,13 @@ class Arange:
 
 
 class Choices:
+    """A class representing a list of choices with a default value.
+
+    Attributes:
+        default: The default value of the list. Defaults to None.
+        choices: A list of values representing the available choices. Defaults to an empty list.
+    """
+
     def __init__(self, default=None, choices=None):
         if choices is None:
             choices = []
@@ -39,31 +54,6 @@ class Choices:
 
     def __repr__(self):
         return f"Choice: [{self.default}], {self.choices}"
-
-
-def _get_item(dic, keys: List[str]):
-    if len(keys) == 1:
-        return DictConfig.__getitem__(dic, keys[0])
-    else:
-        nex = DictConfig.__getitem__(dic, keys[0])
-        if isinstance(nex, (dict, DictConfig)):
-            return _get_item(nex, keys[1:])
-        else:
-            raise KeyError(keys)
-
-
-def _set_item(dic, keys: List[str], value):
-    if len(keys) == 1:
-        if isinstance(value, dict):
-            value = dic(value)
-        DictConfig.__setitem__(dic, keys[0], value)
-    else:
-        try:
-            nex = _get_item(dic, keys[:1])
-        except KeyError:
-            nex = DictConfig({})
-            DictConfig.__setitem__(dic, keys[0], nex)
-        _set_item(nex, keys[1:], value)
 
 
 def _safe_repr(values: Any) -> str:
@@ -95,13 +85,15 @@ def _padding_mod(st: str, offset=7, mod=4):
 
 def safe_param_repr(values: List[tuple], level=1) -> str:
     """
+    Returns a string representation of a list of tuples containing parameter names and their values.
+    The resulting string can be safely included in a function signature or call, as it correctly formats the parameters.
 
     Args:
-        values:
-        level:
+        values: A list of tuples containing parameter names and their values.
+        level: An integer representing the level of indentation.
 
     Returns:
-
+        A string representation of the input parameters, formatted with correct indentation and line breaks.
     """
     res = [(f"{k}={_safe_repr(v)},", anno) for k, v, anno in values]
 
@@ -114,14 +106,10 @@ def safe_param_repr(values: List[tuple], level=1) -> str:
 class BaseParams(DictConfig):
     def __init__(self):
         super().__init__({}, flags={'no_deepcopy_set_nodes': True})
-        # self._set_flag('no_deepcopy_set_nodes', True)
         self.__dict__["_prop"] = {}
 
     def __setattr__(self, key: str, value: Any) -> None:
         if key != '_prop':
-            # if isinstance(value, BaseParams):
-            #     self._prop.setdefault('key_type', {})[key] = type(value)
-
             if isinstance(value, (Arange, Choices)):
                 res = self._prop.get('constrain', {})
                 res[key] = value
@@ -135,9 +123,6 @@ class BaseParams(DictConfig):
 
     def __setitem__(self, key: DictKeyType, value: Any) -> None:
         if key != '_prop':
-            # if isinstance(value, BaseParams):
-            #     self._prop.setdefault('key_type', {})[key] = type(value)
-
             if isinstance(value, (Arange, Choices)):
                 self._prop.setdefault('constrain', {})[key] = value
                 value = value.default
@@ -149,9 +134,6 @@ class BaseParams(DictConfig):
 
     def __getattr__(self, key: str) -> Any:
         res = super().__getattr__(key)
-        # key_type = self._prop.setdefault('key_type', {}).get(key, None)
-        # if key_type is not None:
-        #     res = key_type.from_kwargs(**res)
         return res
 
     def _check(self, name, value):
@@ -237,26 +219,81 @@ class BaseParams(DictConfig):
         return Choices(choices[0], choices)
 
     def safe_update(self, dic, assert_type=True):
+        """
+        Merge `dict` object into the config object, safely updating the values.
+
+        Args:
+            dic: `dict` object to update
+            assert_type: If True, enforce that the type of values in `dic` matches the current config.
+
+        Returns:
+            None
+        """
         self.update(
             safe_update_dict(self.to_dict(), dic, assert_type=assert_type)
         )
 
     def from_dict(self, dic: dict):
+        """
+        Update the config object from a dictionary.
+
+        Args:
+            dic: `dict` object to update
+
+        Returns:
+            updated `self` object
+        """
         self.safe_update(dic)
         return self
 
     def from_kwargs(self, **kwargs):
+        """
+        Update the config object from keyword arguments.
+
+        Args:
+            **kwargs: key-value pairs to update in the config object
+
+        Returns:
+            updated `self` object
+        """
         return self.from_dict(kwargs)
 
     def from_json(self, file):
+        """
+        Update the config object from a JSON file.
+
+        Args:
+            file: path to the JSON file
+
+        Returns:
+            updated `self` object
+        """
         self.safe_update(json.loads(Path(file).read_text()), assert_type=True)
         return self
 
     def from_yaml(self, file):
+        """
+        Update the config object from a YAML file.
+
+        Args:
+            file: path to the YAML file
+
+        Returns:
+            updated `self` object
+        """
         self.safe_update(dict(OmegaConf.load(file)), assert_type=True)
         return self
 
     def from_args(self, argv: list = None):
+        """
+        Update the config object from command line arguments.
+
+        Args:
+            argv: list of command line arguments (default: None)
+
+        Returns:
+            updated `self` object
+        """
         if argv is None:
             argv = sys.argv
 
@@ -292,17 +329,41 @@ class BaseParams(DictConfig):
         return self
 
     def to_dict(self):
+        """
+        Convert this configuration to a dictionary.
+
+        Returns:
+            dict: The configuration as a dictionary.
+        """
         cfg = _ensure_container(self)
         container = OmegaConf.to_container(cfg, resolve=False, enum_to_str=True)
         return container
 
     def to_json(self, file=None):
+        """
+        Convert this configuration to a JSON string.
+
+        Args:
+            file (str or Path, optional): If specified, the JSON string will be written to a file at the given path.
+
+        Returns:
+            str or None: The JSON string, or None if file is specified.
+        """
         info = json.dumps(self.to_dict(), ensure_ascii=False, indent=2)
         if file is None:
             return info
         return Path(file).write_text(info, encoding='utf-8')
 
     def to_yaml(self, file=None):
+        """
+        Convert this configuration to a YAML string.
+
+        Args:
+            file (str or Path, optional): If specified, the YAML string will be written to a file at the given path.
+
+        Returns:
+            str or None: The YAML string, or None if file is specified.
+        """
         info = OmegaConf.to_yaml(self)
         if file is None:
             return info
@@ -310,12 +371,33 @@ class BaseParams(DictConfig):
 
     @classmethod
     def Space(cls, **kwargs):
+        """
+        Create a configuration object from keyword arguments.
+
+        Args:
+            **kwargs: The configuration values.
+
+        Returns:
+            BaseParams: The new configuration object.
+        """
         return cls().from_dict(kwargs)
 
     def __hash__(self):
+        """
+        Calculate the hash value of this configuration.
+
+        Returns:
+            int: The hash value.
+        """
         return int(self.hash(), 16)
 
     def hash(self) -> str:
+        """
+        Calculate the hash value of this configuration.
+
+        Returns:
+            str: The hash value.
+        """
         return hash(self.to_dict())
 
     def iparams(self):
@@ -323,6 +405,15 @@ class BaseParams(DictConfig):
 
     @classmethod
     def init_from_kwargs(cls, **kwargs):
+        """
+        Create a configuration object from keyword arguments.
+
+        Args:
+            **kwargs: The configuration values.
+
+        Returns:
+            BaseParams: The new configuration object.
+        """
         return cls().from_dict(kwargs)
 
 

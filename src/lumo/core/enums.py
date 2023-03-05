@@ -2,6 +2,9 @@ import enum
 
 
 class TrainStage(enum.Enum):
+    """
+    Enumeration class representing different stages of training.
+    """
     default = 'default'
     train = 'train'
     test = 'test'
