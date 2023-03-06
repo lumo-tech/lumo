@@ -310,10 +310,12 @@ class Trainer(_BaseTrainer):
     def device(self):
         return self.accelerate.device
 
-    def _load_fun_state_dict(self, src: dict, tgt: dict):
-        for k, v in tgt.items():
-            if k in src:
-                v.load_state_dict(src[k])
+    def _load_fun_state_dict(self, src: dict):
+        for k, v in src.items():
+            if self._rev_index.get(k, None) is not None:
+                self[k].load_state_dict(v)
+            # if k in src:
+            #     v.load_state_dict(src[k])
 
     def regist_dataloader(self, dataloader: DataLoader, stage: TrainStage):
         self.datamodule.regist_dataloader_with_stage(stage, dataloader)
@@ -352,8 +354,7 @@ class Trainer(_BaseTrainer):
             pre, ext = os.path.splitext(name)
             name = f'{pre}-{self.local_rank}{ext}'
         if dirpath is None:
-
-            fn = self.exp.state_dict_dir
+            fn = os.path.join(self.exp.state_dict_dir, name)
         else:
             fn = os.path.join(dirpath, name)
         torch.save(self.state_dict(), fn)
@@ -366,9 +367,10 @@ class Trainer(_BaseTrainer):
 
         for k, v in state_dict.items():
             if k in _sub:
-                self._load_fun_state_dict(v, self._state_dicts[k])
+                self._load_fun_state_dict(v)
             else:
-                self._state_dicts[k] = v
+                for kk, vv in v.items():
+                    self[kk] = vv
         return
 
     def to_device(self, item: Optional[Union[nn.Module, torch.Tensor, Sequence, Mapping]] = None,
@@ -706,7 +708,7 @@ class Trainer(_BaseTrainer):
             'others': self.other_state_dict(wrap=False),
             'thtensor': self.torch_tensor,
             'nptensor': self.numpy_tensor,
-            'devices': self.devices,
+            # 'devices': self.devices,
         }
 
         return res
