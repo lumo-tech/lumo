@@ -1,7 +1,12 @@
 from lumo.proc import glob
 
 
-class ExpHook:
+class BaseExpHook:
+    """A base class of hook for experiments that can be registered with an experiment.
+
+    Please Use Exphook in exp.exphook for better typehint.
+
+    """
     name = None  # type: str
     configs = {}
 

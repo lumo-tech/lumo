@@ -15,10 +15,12 @@ from lumo.utils import safe_io as io
 from lumo.utils.exithook import wrap_before
 from lumo.utils.fmt import strftime, indent_print
 from . import Experiment
-from .base import ExpHook as BaseExpHook
+from .base import BaseExpHook as BaseExpHook
 
 
 class ExpHook(BaseExpHook):
+    """A base class of hook for experiments that can be registered with an experiment."""
+
     def regist(self, exp: Experiment):
         self.exp = exp
 
@@ -32,6 +34,11 @@ class ExpHook(BaseExpHook):
 
 
 class LastCmd(ExpHook):
+    """A hook to save the last command executed in an experiment.
+
+    This hook saves the last command executed in an experiment to a shell script file in a specified directory. The saved
+    file can be used to re-run the experiment with the same command.
+    """
     configs = {'HOOK_LASTCMD_DIR': os.getcwd()}
 
     def on_start(self, exp: Experiment, *args, **kwargs):
@@ -62,6 +69,8 @@ class LastCmd(ExpHook):
 
 
 class Diary(ExpHook):
+    """A hook for logging experiment information to a diary file."""
+
     def on_start(self, exp: Experiment, *args, **kwargs):
         super().on_start(exp, *args, **kwargs)
         with open(exp.root_file(f'{strftime("%y%m%d")}.log', 'diary'), 'a') as w:
@@ -69,6 +78,9 @@ class Diary(ExpHook):
 
 
 class RecordAbort(ExpHook):
+    """A hook to record and handle experiment aborts.
+    """
+
     def regist(self, exp: Experiment):
         super().regist(exp)
         wrap_before(self.exc_end)
@@ -176,21 +188,35 @@ class GitCommit(ExpHook):
 
 
 class LockFile(ExpHook):
+    """A class for locking dependencies for an experiment.
+    Locks the specified dependencies for the experiment and saves them to a file.
+    """
 
     def on_start(self, exp: Experiment, *args, **kwargs):
-        exp.dump_info('lock', get_lock('lumo',
-                                       'numpy',
-                                       'joblib',
-                                       'psutil',
-                                       'decorator',
-                                       'torch',
-                                       'numpy',
-                                       'accelerate',
-                                       'hydra',
-                                       'omegaconf', ))
+        basic = get_lock('lumo',
+                         'numpy',
+                         'joblib',
+                         'psutil',
+                         'decorator',
+                         'torch',
+                         'numpy',
+                         'accelerate',
+                         'hydra',
+                         'omegaconf', )
+        if basic['torch'] is not None:
+            import torch
+            if torch.cuda.is_available():
+                basic['torch.version.cuda'] = torch.version.cuda
+
+        exp.dump_info('lock', basic)
 
 
 class FinalReport(ExpHook):
+    """A class for generating a final report for an experiment.
+
+      Prints the experiment's properties, tags, paths, and execute command.
+      """
+
     def on_end(self, exp: Experiment, end_code=0, *args, **kwargs):
         # if end_code == 0:
         print('-----------------------------------')

@@ -14,7 +14,7 @@ from lumo.proc.path import exproot, local_dir
 from lumo.utils import safe_io as io
 from lumo.utils.fmt import can_be_filename
 from lumo.utils.logger import Logger
-from .base import ExpHook
+from .base import BaseExpHook
 from ..proc.pid import pid_hash, runtime_pid_obj
 
 
@@ -337,7 +337,7 @@ class Experiment:
             return
         self.initial()
         self.dump_info('start', True)
-        for hook in self._hooks.values():  # type: ExpHook
+        for hook in self._hooks.values():  # type: BaseExpHook
             hook.on_start(self)
         return self
 
@@ -349,7 +349,7 @@ class Experiment:
             return
         self.dump_progress(1)
         self.dump_info('end', True)
-        for hook in self._hooks.values():  # type: ExpHook
+        for hook in self._hooks.values():  # type: BaseExpHook
             hook.on_end(self, end_code=end_code, *args, **extra)
         return self
 
@@ -415,7 +415,7 @@ class Experiment:
         return set(self._prop.keys())
 
     @call_on_main_process_wrap
-    def set_hook(self, hook: ExpHook):
+    def set_hook(self, hook: BaseExpHook):
         hook.regist(self)
         if not glob.get(hook.config_name, True):
             self.dump_info(hook.name, {
