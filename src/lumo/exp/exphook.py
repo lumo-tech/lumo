@@ -84,29 +84,29 @@ class RecordAbort(ExpHook):
         )
 
 
-class TimeMonitor(ExpHook):
-    def _create_agent(self, exp: Experiment):
-        from lumo.exp import agent
-        cmd = [
-            sys.executable, '-m', agent.__spec__.name,
-            f"--state_key=state",
-            f"--pid={os.getpid()}",
-            f"--exp_name={exp.exp_name}",
-            f"--test_name={exp.test_name}",
-            f"--test_root={exp.test_root}",
-            # f"--params={sys.argv}" # TODO add sys.argv
-        ]
-        subprocess.Popen(' '.join(cmd),
-                         stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True,
-                         start_new_session=True, cwd=os.getcwd(), env=os.environ)
-
-    def on_start(self, exp: Experiment, *args, **kwargs):
-        super().on_start(exp)
-        self._create_agent(exp)
-        exp.dump_info('state', {
-            'start': strftime(),
-            'end': strftime()
-        })
+# class TimeMonitor(ExpHook):
+#     def _create_agent(self, exp: Experiment):
+#         from lumo.exp import agent
+#         cmd = [
+#             sys.executable, '-m', agent.__spec__.name,
+#             f"--state_key=state",
+#             f"--pid={os.getpid()}",
+#             f"--exp_name={exp.exp_name}",
+#             f"--test_name={exp.test_name}",
+#             f"--test_root={exp.test_root}",
+#             # f"--params={sys.argv}"
+#         ]
+#         subprocess.Popen(' '.join(cmd),
+#                          stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True,
+#                          start_new_session=True, cwd=os.getcwd(), env=os.environ)
+#
+#     def on_start(self, exp: Experiment, *args, **kwargs):
+#         super().on_start(exp)
+#         self._create_agent(exp)
+#         exp.dump_info('state', {
+#             'start': strftime(),
+#             'end': strftime()
+#         })
 
 
 class GitCommit(ExpHook):

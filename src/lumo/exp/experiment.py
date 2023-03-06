@@ -4,7 +4,7 @@ import sys
 import time
 import traceback
 from pathlib import Path
-from typing import Union
+from typing import Union, Any
 
 from lumo.decorators.process import call_on_main_process_wrap
 from lumo.proc import glob
@@ -169,12 +169,12 @@ class Experiment:
         return checkdir(val)
 
     def dump_progress(self, ratio: float, update_from=None):
-        res = {'ratio': ratio}
+        res = {'ratio': max(min(ratio, 1), 0)}
         if update_from is None:
             res['update_from'] = update_from
         self.dump_info('progress', res, append=True)
 
-    def dump_info(self, key: str, info: dict, append=False, info_dir='info', set_prop=True):
+    def dump_info(self, key: str, info: Any, append=False, info_dir='info', set_prop=True):
         fn = self.test_file(f'{key}.json', info_dir)
         if append:
             old_info = self.load_info(key, info_dir=info_dir)
@@ -336,7 +336,7 @@ class Experiment:
         if self.get_prop('start', False):
             return
         self.initial()
-        self.set_prop('start', True)
+        self.dump_info('start', True)
         for hook in self._hooks.values():  # type: ExpHook
             hook.on_start(self)
         return self
@@ -348,7 +348,7 @@ class Experiment:
         if self.get_prop('end', False):
             return
         self.dump_progress(1)
-        self.set_prop('end', True)
+        self.dump_info('end', True)
         for hook in self._hooks.values():  # type: ExpHook
             hook.on_end(self, end_code=end_code, *args, **extra)
         return self
@@ -475,5 +475,5 @@ class SimpleExperiment(Experiment):
         self.set_hook(exphook.GitCommit())
         self.set_hook(exphook.RecordAbort())
         self.set_hook(exphook.Diary())
-        self.set_hook(exphook.TimeMonitor())
+        # self.set_hook(exphook.TimeMonitor())
         self.set_hook(exphook.FinalReport())
