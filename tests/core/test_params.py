@@ -68,8 +68,20 @@ def test_json():
     fn = tempfile.mktemp()
     with open(fn, 'w') as w:
         json.dump({'c': {'a': 2}}, w)
+    res.c.a = 4
     res.from_json(fn)
     assert res.c.a == 2
+
+
+def test_yaml():
+    res = get_res()
+    fn = tempfile.mktemp('.yaml')
+    res.a = 3
+    res.to_yaml(fn)
+    res.from_args([f'--config={fn}', '--a=2'])
+    assert res.a == 2
+    res.from_args([f'--config={fn}'])
+    assert res.a == 3
 
 
 def test_copy():
