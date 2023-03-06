@@ -1,7 +1,7 @@
 """
 Returns information about the specified process or the current process, and computes its hash value.
 """
-from psutil import Process
+from psutil import Process, pid_exists
 from joblib import hash
 import os
 
@@ -21,11 +21,15 @@ def runtime_pid_obj(pid=None):
     """
     if pid is None:
         pid = os.getpid()
-    p = Process(pid)
-    obj = {
-        "pid": p.pid, "pname": p.name(), 'pstart': p.create_time(), 'argv': p.cmdline()
-    }
-    return obj
+
+    if pid_exists(pid):
+        p = Process(pid)
+        obj = {
+            "pid": p.pid, "pname": p.name(), 'pstart': p.create_time(), 'argv': p.cmdline()
+        }
+        return obj
+
+    return None
 
 
 def pid_hash(pid_obj=None):

@@ -451,6 +451,16 @@ class Experiment:
         return self
 
     @property
+    def is_alive(self):
+        pinfo = self.properties['pinfo']
+
+        hash_obj = runtime_pid_obj(pinfo['pid'])
+        if hash_obj is None:
+            return False
+
+        return pid_hash(hash_obj) == pinfo['hash']
+
+    @property
     def exec_argv(self):
         execute_info = self.get_prop('execute')
         try:
