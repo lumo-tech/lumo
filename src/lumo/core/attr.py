@@ -36,7 +36,7 @@ class Attr(OrderedDict):
         return get_item_iterative(self, key.split('.'))
 
 
-def safe_update_dict(src: dict, kwargs: dict, assert_type=True):
+def safe_update_dict(src: dict, kwargs: dict, assert_type=False):
     """
    Updates the source dictionary with the key-value pairs from the kwargs dictionary in a safe manner.
 
@@ -56,7 +56,7 @@ def safe_update_dict(src: dict, kwargs: dict, assert_type=True):
     for ks, v in walk_dict(kwargs):
         try:
             old_v = get_item_iterative(src, ks)
-            if old_v is None or isinstance(old_v, type(v)):
+            if old_v is None or isinstance(old_v, type(v)) or not assert_type:
                 set_item_iterative(src, ks, v)
             else:
                 raise TypeError(ks, type(old_v), type(v))

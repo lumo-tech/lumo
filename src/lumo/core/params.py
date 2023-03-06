@@ -307,7 +307,7 @@ class BaseParams(DictConfig):
         """
         return Choices(choices[0], choices)
 
-    def safe_update(self, dic, assert_type=True):
+    def safe_update(self, dic, assert_type=False):
         """
         Merge `dict` object into the config object, safely updating the values.
 
@@ -357,7 +357,7 @@ class BaseParams(DictConfig):
         Returns:
             updated `self` object
         """
-        self.safe_update(json.loads(Path(file).read_text()), assert_type=True)
+        self.safe_update(json.loads(Path(file).read_text()), assert_type=False)
         return self
 
     def from_yaml(self, file):
@@ -370,7 +370,7 @@ class BaseParams(DictConfig):
         Returns:
             updated `self` object
         """
-        self.safe_update(dict(OmegaConf.load(file)), assert_type=True)
+        self.safe_update(dict(OmegaConf.load(file)), assert_type=False)
         return self
 
     def from_args(self, argv: list = None):
@@ -386,7 +386,7 @@ class BaseParams(DictConfig):
         if argv is None:
             argv = sys.argv
 
-        def func(**kwargs):
+        def func(*args, **kwargs):
             if 'help' in kwargs:
                 print(self)
                 exit()
