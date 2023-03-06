@@ -214,7 +214,7 @@ class _BaseTrainer:
         elif callable(getattr(value, "state_dict", None)) and callable(getattr(value, "load_state_dict", None)):
             type_name = 'others'
         else:
-            super().__setattr__(name, value)
+            # super().__setattr__(name, value)
             return
 
         # if name in self.__dict__: TODO workaround multi-gpu error: Expected to mark a variable ready only once
