@@ -121,7 +121,8 @@ C = Compare()  # An instance of Compare()
 
 def filter_by_condition(df: DataFrame, *condition: Compare) -> DataFrame:
     """
-    简化版的 pipeline，仅用于等式和不等式筛选以及额外支持的 in/not_in 等功能
+    fdf = filter_by_condition(df,C['contition'] == True, C['c2'] > 1, ... )
+
     Args:
         df: padnas.DataFrame instance
         *condition: list of `~Compare` instance
