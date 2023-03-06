@@ -8,6 +8,24 @@ from lumo.core.params import BaseParams
 
 
 class InterpFactory:
+    """A factory class for creating instances of various interpolation classes.
+
+    This class provides convenient access to various interpolation classes that are defined in the `interp` module.
+
+    Attributes:
+        Cos (class): An interpolation class for cosine interpolation.
+        Linear (class): An interpolation class for linear interpolation.
+        Exp (class): An interpolation class for exponential interpolation.
+        Log (class): An interpolation class for logarithmic interpolation.
+        Constant (class): An interpolation class for constant interpolation.
+        PeriodCos (class): An interpolation class for periodic cosine interpolation.
+        PeriodHalfCos (class): An interpolation class for periodic half-cosine interpolation.
+        PeriodTriangle (class): An interpolation class for periodic triangle interpolation.
+        PeriodLinear (class): An interpolation class for periodic linear interpolation.
+        PowerDecay (class): An interpolation class for power-decay interpolation.
+        List (class): An interpolation class for list interpolation.
+
+    """
     Cos = interp.Cos
     Linear = interp.Linear
     Exp = interp.Exp
@@ -47,6 +65,22 @@ class OptimBuilder(BaseParams):
 
 
 class _OptimFactory:
+    """
+        A factory class that provides different optimization algorithms to be used during training.
+
+    Methods:
+        create_optim(name=None, **kwargs) -> OptimBuilder:
+            Creates an instance of OptimBuilder for a specified optimization algorithm.
+
+    Examples:
+        To create an instance of OptimBuilder for Adam optimizer with default values:
+        >>> optim_builder = OptimFactory.create_optim(name='Adam')
+
+        To create an instance of OptimBuilder for SGD optimizer with specific values:
+        >>> optim_builder = OptimFactory.create_optim(name='SGD', lr=0.01, momentum=0.9)
+
+    """
+
     @overload
     def create_optim(self, name='SGD', lr=None, momentum=0, dampening=0, weight_decay=0,
                      nesterov=False) -> OptimBuilder:

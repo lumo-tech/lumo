@@ -1,5 +1,3 @@
-from typing import NewType
-
 import torch
 
 from lumo.core import Params
@@ -8,6 +6,7 @@ from .factory import OptimFactory, InterpFactory
 
 
 class TrainerExperiment(SimpleExperiment):
+    """A class for helping manage an experiment by Trainer."""
 
     @property
     def log_dir(self):
@@ -40,18 +39,19 @@ class TrainerExperiment(SimpleExperiment):
 
     def dump_train_eidx(self, eidx, epoch: int):
         """
-        Args:
-            eidx: start from 0, end at `epoch-1`
-            epoch:
+        Dumps the progress of the trainer.
+
+         Args:
+            eidx (int): The index of the current epoch (starting from 0).
+            epoch (int): The total number of epochs to train for.
         """
         self.dump_progress((eidx + 1) / epoch, update_from='trainer')
 
 
-class ReimplementExperiment(TrainerExperiment):
-    pass
-
-
 class TrainerParams(Params):
+    """
+    A class to hold parameters for trainer.
+    """
     OPTIM = OptimFactory
     SCHE = INTERP = InterpFactory
 

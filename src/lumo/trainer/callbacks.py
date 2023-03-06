@@ -1,7 +1,6 @@
 """
 """
 import inspect
-import json
 import os
 import tempfile
 import time
@@ -10,13 +9,14 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime
 from functools import wraps
 from typing import NewType, Any, Optional, Dict, Union
-from lumo.utils.memory_grab import DeviceMem
+
 from torch.utils.data import DataLoader
 
 from lumo.core import Meter, MetricType, Record, TrainStage, wrap_result, ParamsType
 from lumo.data import DataModule
 from lumo.data.loader import summarize_loader, DataLoaderType
 from lumo.utils import fmt
+from lumo.utils.memory_grab import DeviceMem
 from lumo.utils.screen import inlinetqdm
 from .trainer import Trainer
 from ..proc.dist import world_size

@@ -24,7 +24,6 @@ from lumo.proc import dist
 from lumo.proc import glob
 from lumo.trainer.rnd import RndManager
 from lumo.utils.logger import Logger
-from lumo.utils.fmt import strftime
 from .base import _BaseTrainer
 from .components import TrainerExperiment, TrainerParams
 from .saver import Saver
