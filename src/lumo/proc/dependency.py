@@ -30,7 +30,6 @@ def get_lock(*others):
 
     """
     res = {}
-    res['lumo'] = lumo_version
     res.update({k: v for k, v in Version.__dict__.items() if not k.startswith('__')})
 
     for lib in others:
