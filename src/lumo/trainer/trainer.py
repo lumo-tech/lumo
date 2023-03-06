@@ -220,6 +220,7 @@ class Trainer(_BaseTrainer):
         res = SummaryWriter(**kwargs)
 
         def close(*args):
+            """close writer"""
             res.flush()
             res.close()
 
@@ -498,6 +499,7 @@ class Trainer(_BaseTrainer):
             return item
 
     def on_trainer_exception(self, func: Callable, exception: BaseException):
+        """Updates database with error information when an exception occurs during training."""
         self.database.update_dict(dict(end=datetime.now(),
                                        finished=False,
                                        error=str(exception),
@@ -731,13 +733,23 @@ class Trainer(_BaseTrainer):
         return self._prop.get('stage', TrainStage.default)
 
     def set_stage(self, val: TrainStage):
+        """
+        Sets the training stage to the given value.
+
+        Args:
+            val (TrainStage): The value to set the training stage to.
+        """
         self.set_property('stage', val)
 
     def add_callback(self, callback):
         """
-        添加一个回调函数，注意，不能添加重复的 callback，这不推荐，也没有必要。
-        :param callback:
-        :return:
+        Adds a callback function. Note that duplicate callbacks are not recommended and not necessary.
+
+        Args:
+            callback: The callback function to add.
+
+        Returns:
+            bool: True if the callback was added successfully, False otherwise.
         """
         msg = None
         cb_name = callback.__class__.__name__
@@ -767,10 +779,22 @@ class Trainer(_BaseTrainer):
         return True
 
     def remove_callback(self, cur):
+        """
+        Removes the given callback from the list of callbacks.
+
+        Args:
+            cur: The callback to remove.
+        """
         self.callbacks.remove(cur)
         pass
 
     def change_stage(self, stage: TrainStage):
+        """
+        Changes the training stage to the given value.
+
+        Args:
+            stage (TrainStage): The value to change the training stage to.
+        """
         if self.trainstage == stage:
             return
 
@@ -785,6 +809,15 @@ class Trainer(_BaseTrainer):
 
     @classmethod
     def select_loader(cls, dm=None):
+        """
+        Selects the appropriate loader based on the given data module.
+
+        Args:
+            dm (DataModule or DataLoader or DataLoaderSide, optional): The data module to use. Defaults to None.
+
+        Returns:
+            DataLoader or None: The appropriate loader based on the given data module, or None if dm is None.
+        """
         loader = None
         if dm:
             if isinstance(dm, DataModule):

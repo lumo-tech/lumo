@@ -48,6 +48,7 @@ def dump_yaml(obj, fn):
 
 
 def dump_state_dict(obj, fn):
+    """Saves a PyTorch state dictionary object to disk."""
     torch.save(obj, fn)
 
 
@@ -65,6 +66,7 @@ def load_yaml(fn):
 
 
 def load_state_dict(fn: str, map_location='cpu'):
+    """Loads a PyTorch model checkpoint from the specified file path and returns its state dictionary."""
     ckpt = torch.load(fn, map_location=map_location)
     return ckpt
 
@@ -76,8 +78,17 @@ def load_text(fn):
     with open(fn, 'r', encoding='utf-8') as r:
         return ''.join(r.readlines())
 
-
 def dump_text(string: str, fn, append=False):
+    """Write the given string to a file.
+
+    Args:
+        string (str): The string to write.
+        fn (str): The filename to write to.
+        append (bool, optional): If True, append the string to the file. Otherwise, overwrite the file. Defaults to False.
+
+    Returns:
+        str: The filename that was written to.
+    """
     mode = 'w'
     if append:
         mode = 'a'
@@ -87,6 +98,16 @@ def dump_text(string: str, fn, append=False):
 
 
 def safe_getattr(self, key, default=None):
+    """Get an attribute of an object safely.
+
+    Args:
+        self (object): The object to get the attribute from.
+        key (str): The name of the attribute to get.
+        default (object, optional): The value to return if the attribute does not exist. Defaults to None.
+
+    Returns:
+        object: The value of the attribute if it exists, otherwise the default value.
+    """
     try:
         return getattr(self, key, default)
     except:
@@ -94,6 +115,19 @@ def safe_getattr(self, key, default=None):
 
 
 def dump_pkl(obj, file, make_path=True, protocol=None, *, fix_imports=True):
+    """Save an object to a pickle file.
+
+    Args:
+        obj (object): The object to save.
+        file (str or FileIO): The filename or file object to save to.
+        make_path (bool, optional): If True and file is a filename, create the directory path if it does not exist. Defaults to True.
+        protocol (int, optional): The pickle protocol to use. Defaults to None.
+        fix_imports (bool, optional): Whether to fix Python 2 to 3 pickle incompatibilities. Defaults to True.
+
+    Raises:
+        NotImplementedError: If the file type is not supported.
+
+    """
     if isinstance(file, str):
         if make_path:
             os.makedirs(os.path.dirname(os.path.abspath(file)), exist_ok=True)
@@ -103,10 +137,25 @@ def dump_pkl(obj, file, make_path=True, protocol=None, *, fix_imports=True):
     elif isinstance(file, FileIO):
         _pickle.dump(obj, file, protocol=protocol, fix_imports=fix_imports)
     else:
-        raise NotImplementedError()
+        raise NotImplementedError("File type not supported.")
 
 
 def load_pkl(file, *, fix_imports=True, encoding="ASCII", errors="strict"):
+    """Load an object from a pickle file.
+
+    Args:
+        file (str or FileIO): The filename or file object to load from.
+        fix_imports (bool, optional): Whether to fix Python 2 to 3 pickle incompatibilities. Defaults to True.
+        encoding (str, optional): The character encoding to use. Defaults to "ASCII".
+        errors (str, optional): The error handling scheme to use. Defaults to "strict".
+
+    Returns:
+        object: The object that was loaded from the file.
+
+    Raises:
+        NotImplementedError: If the file type is not supported.
+
+    """
     if isinstance(file, str):
         file = open(file, 'rb')
         res = _pickle.load(file, fix_imports=fix_imports, encoding=encoding, errors=errors)
@@ -115,8 +164,7 @@ def load_pkl(file, *, fix_imports=True, encoding="ASCII", errors="strict"):
     elif isinstance(file, FileIO):
         return _pickle.load(file, fix_imports=fix_imports, encoding=encoding, errors=errors)
     else:
-        raise NotImplementedError()
-
+        raise NotImplementedError("File type not supported.")
 
 @contextmanager
 def cached(fn):

@@ -29,6 +29,12 @@ V_FATAL = 50
 
 
 def _get_print_func():
+    """
+    Returns the `rich.print` function if available, or the built-in `print` function if not.
+
+    Returns:
+        callable: The `rich.print` function if available, or the built-in `print` function if not.
+    """
     try:
         from rich import print
     except ImportError:
@@ -37,6 +43,12 @@ def _get_print_func():
 
 
 def get_global_logger():
+    """
+    Returns the global logger object, creating it if it does not exist.
+
+    Returns:
+        logging.Logger: The global logger object.
+    """
     global logger
     if logger is None:
         logger = Logger()
@@ -44,18 +56,39 @@ def get_global_logger():
 
 
 def set_global_logger(logger_):
+    """
+    Sets the global logger object to the specified logger instance.
+
+    Args:
+        logger_ (logging.Logger, optional): The logger instance to set as the global logger. If `None`,
+            a new logger instance will be created. Defaults to `None`.
+
+    Returns:
+        logging.Logger: The global logger object.
+    """
     global logger
     logger = logger_
     return logger
 
 
 def process_str():
+    """
+    Returns a string representing the current process, suitable for use in log messages or other output.
+
+    Returns:
+        str: A string representing the current process. If running in a distributed context (as determined
+            by `is_dist()`), the string will be of the form '[local_rank]', where 'local_rank' is the local
+            rank of the current process. Otherwise, an empty string will be returned.
+    """
     if is_dist():
         return f'[{local_rank()}]'
     return ''
 
 
 class Logger:
+    """A logger adapted for deep learning training experiments that can print output without a newline and
+    adds process index in distributed training.
+    """
     VERBOSE = 20
     VVV_DEBUG = VVV_DEBUG
     VV_DEBUG = VV_DEBUG
@@ -230,6 +263,24 @@ class Logger:
             self._print_func(*args, end=end, flush=True, file=file)
 
     def print_rich(self, *args, end='\n', file=sys.stdout):
+        """
+        Prints the specified arguments to the given file object, using rich formatting if available.
+
+        Args:
+            *args: The arguments to be printed.
+            end: The string to append at the end of the printed output (default: '\n').
+            file: The file object to which the output should be directed (default: sys.stdout).
+
+        Returns:
+            None
+
+        Raises:
+            N/A
+
+        Notes:
+            - If self.use_stdout is True and rich formatting is available, the output will be formatted using rich.
+            - If self.use_stdout is True and rich formatting is not available, the output will be printed using the default print function.
+        """
         if self.use_stdout:
             if self._try_rich:
                 print = _get_print_func()

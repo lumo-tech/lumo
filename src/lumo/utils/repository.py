@@ -8,6 +8,7 @@ from functools import lru_cache
 import git
 from git import Repo, Commit
 from joblib import hash
+
 from .filelock import Lock
 
 
@@ -184,23 +185,6 @@ def git_commit(repo=None, key=None, branch_name=None, info: str = None, filter_f
     return commit_
 
 
-def git_checkout(repo=None, commit_hex=None, commit: Commit = None):
-    if repo is None:
-        repo = load_repo()
-
-    if commit is None and commit_hex is not None:
-        commit = repo.commit(commit_hex)
-
-    old_path = os.getcwd()
-    os.chdir(commit.tree.abspath)
-
-    # with branch(commit.repo, LUMO_BRANCH) as new_branch:
-    repo.git.checkout('-b', commit.hexsha[:8], commit.hexsha)
-
-    os.chdir(old_path)
-    return commit.hexsha[:8]
-
-
 def git_archive(repo=None, commit_hex=None, commit: Commit = None):
     """
     git archive -o <filename> <commit-hash>
@@ -231,8 +215,49 @@ def git_archive(repo=None, commit_hex=None, commit: Commit = None):
     return exp
 
 
+def git_checkout(repo=None, commit_hex=None, commit: Commit = None):
+    """
+    Checkout a specific commit in a Git repository.
+
+    Args:
+        repo (git.Repo, optional): The Git repository to use. Defaults to None, in which case the repository is loaded using `load_repo()`.
+        commit_hex (str, optional): The hash of the commit to check out. Defaults to None.
+        commit (git.Commit, optional): The commit object to check out. Defaults to None.
+
+    Returns:
+        str: The abbreviated hash of the checked-out commit.
+
+    Raises:
+        git.InvalidGitRepositoryError: If the specified repository is invalid or not found.
+        git.BadName: If the specified branch name is invalid or not found.
+    """
+    if repo is None:
+        repo = load_repo()
+
+    if commit is None and commit_hex is not None:
+        commit = repo.commit(commit_hex)
+
+    old_path = os.getcwd()
+    os.chdir(commit.tree.abspath)
+
+    # with branch(commit.repo, LUMO_BRANCH) as new_branch:
+    repo.git.checkout('-b', commit.hexsha[:8], commit.hexsha)
+
+    os.chdir(old_path)
+    return commit.hexsha[:8]
+
+
 @lru_cache(1)
 def git_enable():
+    """
+    Check if Git is installed and a repository is present.
+
+    Returns:
+        bool: True if Git is installed and a repository is present, False otherwise.
+
+    Raises:
+        ImportError: If the `gitpython` library is not installed.
+    """
     try:
         import git
     except ImportError:

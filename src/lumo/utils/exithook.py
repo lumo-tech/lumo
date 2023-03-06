@@ -15,8 +15,10 @@ def wrap_after(func):
     old = sys.excepthook
 
     def outer(fun):
+        """wrap function"""
         @wraps(fun)
         def inner(*args, **kwargs):
+            """wrap function"""
             old(*args, **kwargs)
             fun(*args, **kwargs)
 
@@ -30,8 +32,10 @@ def wrap_before(func):
     old = sys.excepthook
 
     def outer(fun):
+        """wrap function"""
         @wraps(fun)
         def inner(*args, **kwargs):
+            """wrap function"""
             fun(*args, **kwargs)
             old(*args, **kwargs)
 
