@@ -393,7 +393,7 @@ class BaseParams(DictConfig):
             if config is None:
                 config = kwargs.get('c')
             if config is not None and isinstance(config, str) and os.path.exists(config):
-                if config.endswith('yaml'):
+                if config.endswith('yaml') or config.endswith('yml'):
                     self.from_yaml(config)
                 elif config.endswith('json'):
                     self.from_json(config)
