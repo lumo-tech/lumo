@@ -114,16 +114,16 @@ def set_item_iterative(dic: dict, keys: List[str], value):
             for ks, v in walk_dict(value):
                 set_item_iterative(dic, [*keys, *ks], v)
         else:
-            dict.__setitem__(dic, keys[0], value)
+            OrderedDict.__setitem__(dic, keys[0], value)
     else:
         try:
-            nex = dict.__getitem__(dic, keys[0])
+            nex = OrderedDict.__getitem__(dic, keys[0])
             if not isinstance(nex, dict):
                 raise ValueError(keys[0], nex)
             # dict.__setitem__(dic, keys[0], nex)
         except KeyError:
-            nex = {}
-            dict.__setitem__(dic, keys[0], nex)
+            nex = Attr()
+            OrderedDict.__setitem__(dic, keys[0], nex)
 
         set_item_iterative(nex, keys[1:], value)
 
@@ -144,9 +144,9 @@ def get_item_iterative(dic: dict, keys: List[str]):
 
     """
     if len(keys) == 1:
-        return dict.__getitem__(dic, keys[0])
+        return OrderedDict.__getitem__(dic, keys[0])
     else:
-        nex = dict.__getitem__(dic, keys[0])
+        nex = OrderedDict.__getitem__(dic, keys[0])
         if isinstance(nex, dict):
             return get_item_iterative(nex, keys[1:])
         else:

@@ -1,6 +1,7 @@
-from lumo.core.attr import Attr as attr, set_item_iterative, get_item_iterative
 import numpy as np
 import torch
+
+from lumo.core.attr import Attr as attr, set_item_iterative
 
 
 class NAttr(attr):
@@ -22,11 +23,18 @@ def get_res():
     res.e = torch.tensor([2, 3, 4]).float()
     res.f = np.array(2)
     res.g = np.array([2, 3, 4])
+
     return res
 
 
 def test_replace():
     res = get_res()
+    print(res)
+    assert (
+            str(res) == "Attr([('a', 1), ('nn', None), ('kk', Attr([('k', None)])), ('st', 'NAttr()'), "
+                        "('b', [2, 3, 4]), ('c', Attr([('a', 1), ('b', [5, 6, 7]), ('c', Attr([('d', [8, 9])]))])), "
+                        "('d', tensor(1.)), ('e', tensor([2., 3., 4.])), ('f', array(2)), ('g', array([2, 3, 4]))])"
+    )
     res.update(a=6, b=[4, 5])
     res['c.c.e.f'] = 5
     assert res.a == 6
