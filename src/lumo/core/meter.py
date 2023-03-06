@@ -15,16 +15,16 @@ from lumo.utils.fmt import to_ndarray, detach, is_scalar
 class Meter:
     def __init__(self):
         self._prop = {}
-        self._rec = {}
+        self._rec = OrderedDict()
         self._avg = {}
 
     def sorted(self) -> 'Meter':
         m = Meter()
-        m._rec = self._rec
-        m._avg = OrderedDict()
+
         m._prop = self._prop
         for k in sorted(self._avg.keys()):
             m._avg[k] = self._avg[k]
+            m._rec[k] = self._rec[k]
         return m
 
     def todict(self):
