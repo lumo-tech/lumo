@@ -266,7 +266,8 @@ class Trainer(_BaseTrainer):
 
     @property
     def devices(self) -> Dict[str, torch.device]:
-        return self._state_dicts['devices']
+        # return self._state_dicts['devices']
+        return {key: self[key] for key in self._state_dicts['devices']}
 
     @property
     def model_dict(self) -> Dict[str, nn.Module]:
@@ -705,6 +706,7 @@ class Trainer(_BaseTrainer):
             'others': self.other_state_dict(wrap=False),
             'thtensor': self.torch_tensor,
             'nptensor': self.numpy_tensor,
+            'devices': self.devices,
         }
 
         return res
