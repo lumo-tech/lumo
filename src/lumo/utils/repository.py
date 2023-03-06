@@ -155,7 +155,7 @@ def git_commit(repo=None, key=None, branch_name=None, info: str = None, filter_f
         # print(diff_uncommit)
 
         if filter_files is not None:
-            diff_from_branches = [i.a_path for i in diff_from_branches if i.a_path in filter_files]
+            diff_from_branches = [i for i in diff_from_branches if i.a_path in filter_files]
 
         if len(diff_from_branches) == 0 and len(diff_uncommit) == 0 and len(repo.untracked_files) == 0:
             commit_ = exp_head_commit
