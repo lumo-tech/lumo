@@ -46,7 +46,7 @@ def test_replace():
 
 
 def test_get_set():
-    res = {}
+    res = attr()
     set_item_iterative(res, ['a', 'b', 'c'], 4)
     assert isinstance(res['a'], dict)
     assert isinstance(res['a']['b'], dict)
