@@ -2,12 +2,12 @@ import json
 import os.path
 import sys
 import textwrap
+from pathlib import Path
 from pprint import pformat
 from typing import Any, List, NewType
 
 import fire
 from joblib import hash
-from pathlib import Path
 from omegaconf import DictConfig, OmegaConf, DictKeyType
 from omegaconf._utils import _ensure_container
 
@@ -57,21 +57,34 @@ class Choices:
 
 
 def _safe_repr(values: Any) -> str:
+    """Return a formatted string representation of the input values.
+
+    Args:
+        values: Any type of input values to be formatted.
+
+    Returns:
+        A string representation of the input values, formatted using `pprint`.
+
+    Raises:
+        None.
+    """
     return pformat(values)
 
 
 def _padding_mod(st: str, offset=7, mod=4):
-    """
-    123 \\
-    1   \\
-    12312341    \\
-    1231
+    """Pads a string with spaces to a length that is a multiple of a given modulus.
+
     Args:
-        strs:
-        mod:
+        st: The input string to pad.
+        offset: An integer specifying the minimum length of the output string. If the length of the input string is
+            less than this value, spaces will be added to the end of the string to make it the desired length.
+        mod: An integer specifying the modulus. The length of the output string will be a multiple of this value.
 
     Returns:
-
+        A string that is a multiple of the given modulus and has a length of at least `offset`. If the length of the
+        input string is less than `offset`, the output string will be padded with spaces to achieve the minimum length.
+        If the length of the input string is already a multiple of the given modulus, the output string will have the
+        same length as the input string.
     """
     size = len(st)
     if size < offset:
@@ -104,11 +117,29 @@ def safe_param_repr(values: List[tuple], level=1) -> str:
 
 
 class BaseParams(DictConfig):
+    """
+    A dictionary-like configuration object that supports parameter constraint validation.
+    """
+
     def __init__(self):
+        """
+        Initializes a new instance of the BaseParams class.
+        """
         super().__init__({}, flags={'no_deepcopy_set_nodes': True})
         self.__dict__["_prop"] = {}
 
     def __setattr__(self, key: str, value: Any) -> None:
+        """
+        Sets an attribute value for the specified key.
+
+        Args:
+            key (str): The key of the attribute.
+            value (Any): The value of the attribute.
+
+        Raises:
+            BoundCheckError: If the specified value is not within the specified bounds or choices.
+
+        """
         if key != '_prop':
             if isinstance(value, (Arange, Choices)):
                 res = self._prop.get('constrain', {})
@@ -122,6 +153,17 @@ class BaseParams(DictConfig):
         super().__setattr__(key, value)
 
     def __setitem__(self, key: DictKeyType, value: Any) -> None:
+        """
+        Sets a dictionary item value for the specified key.
+
+        Args:
+            key (DictKeyType): The key of the item.
+            value (Any): The value of the item.
+
+        Raises:
+            BoundCheckError: If the specified value is not within the specified bounds or choices.
+
+        """
         if key != '_prop':
             if isinstance(value, (Arange, Choices)):
                 self._prop.setdefault('constrain', {})[key] = value
@@ -133,10 +175,31 @@ class BaseParams(DictConfig):
         super().__setitem__(key, value)
 
     def __getattr__(self, key: str) -> Any:
+        """
+        Gets an attribute value for the specified key.
+
+        Args:
+            key (str): The key of the attribute.
+
+        Returns:
+            Any: The value of the attribute.
+
+        """
         res = super().__getattr__(key)
         return res
 
     def _check(self, name, value):
+        """
+        Checks if the specified parameter value is within the specified bounds or choices.
+
+        Args:
+            name (str): The name of the parameter.
+            value (Any): The value of the parameter.
+
+        Raises:
+            BoundCheckError: If the specified value is not within the specified bounds or choices.
+
+        """
         bound = self._prop['constrain'][name]
         if isinstance(bound, Arange) and not (bound.left <= value and value <= bound.right):
             raise BoundCheckError(
@@ -145,10 +208,29 @@ class BaseParams(DictConfig):
             raise BoundCheckError(f"value of param '{name}' should in values {bound.choices}, but got {value}")
 
     def __getitem__(self, key: DictKeyType) -> Any:
+        """
+        Gets a dictionary item value for the specified key.
+
+        Args:
+            key (DictKeyType): The key of the item.
+
+        Returns:
+            Any: The value of the item.
+
+        """
         return super().__getitem__(key)
 
     def __repr__(self):
+        """
+        Returns a string representation of the BaseParams object.
+
+        Returns:
+            str: A string representation of the BaseParams object.
+
+        """
+
         def _arg_to_str(k, v):
+            """to str"""
             res = self._prop.get('constrain', {}).get(k, None)
             if res is not None:
                 return f'{res}, {type(v).__name__}'
@@ -167,6 +249,13 @@ class BaseParams(DictConfig):
         return "{}.Space".format(self.__class__.__name__) + '(\n' + args_str + '\n)'
 
     def copy(self):
+        """
+        Returns a copy of the BaseParams object.
+
+        Returns:
+            BaseParams: A copy of the BaseParams object.
+
+        """
         copied = self.__class__()
         copied.from_dict(super(BaseParams, self).copy())
         return copied

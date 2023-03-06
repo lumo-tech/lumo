@@ -7,14 +7,17 @@ __all__ = ['C', 'filter_by_condition']
 
 
 def in_(ser, value):
+    """pandas operation"""
     return ser.apply(lambda x: x in value)
 
 
 def not_in_(ser, value):
+    """pandas operation"""
     return ser.apply(lambda x: x not in value)
 
 
 def first(ser, value):
+    """pandas operation"""
     return ser.duplicated(value) == False
 
 
@@ -101,16 +104,19 @@ class Compare:
         return f'{self.name} {self.op} {self.value}'
 
     def in_(self, lis):
+        """condition of `in` operation"""
         self.op = 'in'
         self.value = set(lis)
         return self
 
     def not_in_(self, lis):
+        """condition of `.duplicated(value) == False` operation"""
         self.op = 'notin'
         self.value = set(lis)
         return self
 
     def first(self, value):
+        """condition of `not in` operation"""
         self.op = 'first'
         self.value = value
         return self

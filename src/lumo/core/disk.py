@@ -1,12 +1,31 @@
 import os.path
+
 from dbrecord import PList
+
 from lumo.proc import path
 from lumo.utils import safe_io as IO
 
 
 class Metrics:
     """
-    Record metrics at multiple steps. Supported by dbrecord.
+    Records metrics at multiple steps and stages. The metrics are supported by dbrecord.
+
+    Args:
+        test_path (str): The path to the test directory.
+
+    Attributes:
+        fpath (str): The path to the metric board SQLite file.
+        disk (PList): The PList instance for accessing the metric board SQLite file.
+
+    Methods:
+        append(metric: dict, step: int, stage: str = 'train') -> None:
+            Adds the specified metric, step, and stage to the metric board SQLite file.
+            The metric is a dictionary object that contains the metric name as the key and the metric value as the value.
+            The stage is either 'train' or 'test', and it is set to 'train' by default.
+            This method calls the `flush` method to write the changes to disk.
+
+        flush() -> None:
+            Writes any changes to the metric board SQLite file to disk.
     """
 
     def __init__(self, test_path: str):
@@ -15,6 +34,17 @@ class Metrics:
         self.disk = PList(self.fpath)
 
     def append(self, metric: dict, step, stage='train'):
+        """
+        Adds the specified metric, step, and stage to the metric board SQLite file.
+
+        Args:
+            metric (dict): A dictionary object that contains the metric name as the key and the metric value as the value.
+            step (int): The step number.
+            stage (str, optional): The stage of the metric, either 'train' or 'test'. Defaults to 'train'.
+
+        Returns:
+            None
+        """
         self.disk.append({
             'metric': metric,
             'step': step,
@@ -23,6 +53,12 @@ class Metrics:
         self.disk.flush()
 
     def flush(self):
+        """
+        Writes any changes to the metric board SQLite file to disk.
+
+        Returns:
+            None
+        """
         self.disk.flush()
 
 

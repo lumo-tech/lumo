@@ -4,7 +4,7 @@ Used for recording data
 from collections import OrderedDict
 from collections.abc import ItemsView
 from numbers import Number
-from typing import Union, Iterator, Tuple, Mapping, Sequence
+from typing import Iterator, Tuple, Mapping
 
 import numpy as np
 import torch
@@ -13,12 +13,44 @@ from lumo.utils.fmt import to_ndarray, detach, is_scalar
 
 
 class Meter:
+    """
+    A class for recording and managing metrics.
+
+    Attributes:
+        _prop (dict): A dictionary to store properties of the meter.
+        _rec (OrderedDict): An ordered dictionary to record the metrics and their values.
+        _avg (dict): A dictionary to store the aggregation method for each metric.
+
+    Methods:
+        sorted() -> 'Meter': Returns a new meter with the metrics sorted by their names.
+        todict() -> OrderedDict: Returns the recorded metrics as an ordered dictionary.
+        update(dic: Mapping) -> 'Meter': Updates the meter with the given dictionary of metrics.
+        serialize() -> OrderedDict: Returns a dictionary representation of the meter.
+        items() -> ItemsView: Returns a view object containing the (metric, value) pairs.
+        keys() -> KeysView: Returns a view object containing the metric names.
+        scalar_items() -> Iterator[Tuple[str, Number]]: Returns an iterator over the (metric, value) pairs with scalar values.
+
+    Properties:
+        sum: Sets the aggregation method to 'sum'.
+        mean: Sets the aggregation method to 'mean'.
+        last: Sets the aggregation method to 'last'.
+        max: Sets the aggregation method to 'max'.
+        min: Sets the aggregation method to 'min'.
+        smean: Sets the aggregation method to 'smean'.
+    """
+
     def __init__(self):
         self._prop = {}
         self._rec = OrderedDict()
         self._avg = {}
 
     def sorted(self) -> 'Meter':
+        """
+         Returns a new meter with the metrics sorted by their names.
+
+         Returns:
+             A new meter with the metrics sorted by their names.
+         """
         m = Meter()
 
         m._prop = self._prop
@@ -28,6 +60,12 @@ class Meter:
         return m
 
     def todict(self):
+        """
+        Returns the recorded metrics as an ordered dictionary.
+
+        Returns:
+            An ordered dictionary containing the recorded metrics and their values.
+        """
         return self._rec
 
     @property
@@ -39,18 +77,50 @@ class Meter:
         self._prop['stage'] = value
 
     def __setattr__(self, key: str, value):
+        """
+        Sets the value of an attribute.
+
+        Args:
+            key (str): The name of the attribute.
+            value: The value to set the attribute to.
+        """
         if key.startswith('_'):
             super(Meter, self).__setattr__(key, value)
         else:
             self[key] = value
 
     def __getattr__(self, item):
+        """
+        Returns the value of a metric.
+
+        Args:
+            item: The name of the metric.
+
+        Returns:
+            The value of the metric.
+        """
         return self[item]
 
     def __getitem__(self, item):
+        """
+        Returns the value of a metric.
+
+        Args:
+            item: The name of the metric.
+
+        Returns:
+            The value of the metric.
+        """
         return self._rec[item]
 
     def __setitem__(self, key, value):
+        """
+        Sets the value of a metric.
+
+        Args:
+            key: The name of the metric.
+            value: The value to set the metric to.
+        """
         value = to_ndarray(value)
 
         stg = self._avg.get(key, None)
@@ -83,66 +153,156 @@ class Meter:
         self._stage = 'default'
 
     def __repr__(self):
+        """
+        Returns a string representation of the meter.
+
+        Returns:
+            A string representation of the meter.
+        """
         return ' | '.join([f'{k}: {v}' for k, v in self._rec.items()])
 
     def __iter__(self):
+        """
+        Returns an iterator over the metric names.
+
+        Returns:
+            An iterator over the metric names.
+        """
         yield from self.keys()
 
     @property
     def sum(self):
+        """
+        Sets the aggregation method to 'sum'.
+
+        Returns:
+            The meter itself.
+        """
         self._stage = 'sum'
         return self
 
     @property
     def mean(self):
+        """
+        Sets the aggregation method to 'mean'.
+
+        Returns:
+            The meter itself.
+        """
         self._stage = 'mean'
         return self
 
     @property
     def last(self):
+        """
+        Sets the aggregation method to 'last'.
+
+        Returns:
+            The meter itself.
+        """
         self._stage = 'last'
         return self
 
     @property
     def max(self):
+        """
+        Sets the aggregation method to 'max'.
+
+        Returns:
+            The meter itself.
+        """
         self._stage = 'max'
         return self
 
     @property
     def min(self):
+        """
+        Sets the aggregation method to 'min'.
+
+        Returns:
+            The meter itself.
+        """
         self._stage = 'min'
         return self
 
     @property
     def smean(self):
+        """
+        Sets the aggregation method to 'smean'.
+
+        Returns:
+            The meter itself.
+        """
         self._stage = 'smean'
         return self
 
     def update(self, dic: Mapping) -> 'Meter':
+        """
+        Updates the meter with the given dictionary of metrics.
+
+        Args:
+            dic (Mapping): A dictionary containing the metrics and their values.
+
+        Returns:
+            The meter itself.
+        """
         for k, v in dic.items():
             self[str(k)] = v
         return self
 
     def serialize(self) -> OrderedDict:
+        """
+        Returns a dictionary representation of the meter.
+
+        Returns:
+            An ordered dictionary containing the metrics and their string values.
+        """
         res = OrderedDict()
         for k, v in self.items():
             res[k] = f'{v}'
         return res
 
     def items(self) -> ItemsView:
+        """
+        Returns a view object containing the (metric, value) pairs.
+
+        Returns:
+            A view object containing the (metric, value) pairs.
+        """
         return self._rec.items()
 
     def keys(self):
+        """
+        Returns a view object containing the metric names.
+
+        Returns:
+            A view object containing the metric names.
+        """
         return self._rec.keys()
 
     @staticmethod
     def from_dict(dic: Mapping):
+        """
+        Returns a new meter with the given dictionary of metrics.
+
+        Args:
+            dic (Mapping): A dictionary containing the metrics and their values.
+
+        Returns:
+            A new meter with the given metrics and values.
+        """
         m = Meter()
         for k, v in dic.items():
             m[k] = v
         return m
 
     def scalar_items(self) -> Iterator[Tuple[str, Number]]:
+        """
+        Returns an iterator over the (metric, value) pairs with scalar values.
+
+        Returns:
+            An iterator over the (metric, value) pairs with scalar values.
+        """
         for k, v in self.items():
             nd = to_ndarray(v)
             if is_scalar(nd):
@@ -150,10 +310,46 @@ class Meter:
 
 
 class ReduceItem:
+    """Class that reduces a sequence of values to a single value according to a given method.
+
+    Attributes:
+        SLIDE_WINDOW_SIZE (int): The size of the sliding window used for averaging (default: 100).
+        EXP_WEIGHT (float): The exponential weight used for computing the sliding window offset (default: 0.75).
+
+    Args:
+        item (optional): The initial value (default: None).
+        gb_method (optional): The reduction method (default: None). Can be one of {'slide', 'mean', 'sum', 'max', 'min', 'last'}.
+
+    Raises:
+        AssertionError: If the reduction method is 'min' or 'max' and the input is not a scalar.
+
+    Methods:
+        __repr__(): Returns a string representation of the current reduction value.
+        __str__(): Returns the same string representation as __repr__().
+        update(item): Updates the reduction value with a new item.
+        res: Returns the current reduction value.
+
+    Examples:
+        >>> r = ReduceItem(gb_method='mean')
+        >>> r.update(2)
+        >>> r.update(3)
+        >>> r.res
+        2.5
+    """
     SLIDE_WINDOW_SIZE = 100
     EXP_WEIGHT = 0.75
 
     def __init__(self, item=None, gb_method=None):
+        """
+        Initializes a new ReduceItem instance.
+
+        Args:
+            item (optional): The initial value (default: None).
+            gb_method (optional): The reduction method (default: None). Can be one of {'slide', 'mean', 'sum', 'max', 'min', 'last'}.
+
+        Raises:
+            AssertionError: If the reduction method is 'min' or 'max' and the input is not a scalar.
+        """
         self.gb_method = gb_method  # groupby method
         self.acc = []
         if item is not None:
@@ -161,11 +357,11 @@ class ReduceItem:
         self.c = len(self.acc)
         self.cur = item
         if gb_method == 'max':
-            self.last = -1e12
+            self._last = -1e12
         elif gb_method == 'min':
-            self.last = 1e12
+            self._last = 1e12
         else:
-            self.last = 0
+            self._last = 0
 
         self._res = self.last
 
@@ -180,10 +376,10 @@ class ReduceItem:
 
     def __repr__(self):
         """
-        simpler but more time-comsuming method could be some math function, not in if-else branch, like
-            prec =  max(min(8, int(np.ceil(np.log10((1 / (self.offset + 1e-10)))))), 1)
-            fmt_str = f'{{:.{prec}f}}'
-            return fmt_str.format(res)
+        Returns a string representation of the current reduction value.
+
+        Returns:
+            str: The string representation of the current reduction value.
         """
         res = self.res
         if self.isscalar:
@@ -207,6 +403,7 @@ class ReduceItem:
     __str__ = __repr__
 
     def update(self, item):
+        """Updates the reduction value with a new item."""
         self.cur = item
         item = detach(item)
 
@@ -218,7 +415,7 @@ class ReduceItem:
             self.acc.append(item)
             if len(self.acc) > ReduceItem.SLIDE_WINDOW_SIZE:
                 self.acc.pop(0)
-            self.last = self.cur
+            self._last = self.cur
         elif avg in {'mean', 'sum'}:
             if len(self.acc) == 0:
                 self.acc.append(0)
@@ -229,10 +426,20 @@ class ReduceItem:
         elif avg == 'min':
             self._res = min(self.cur, self._res)
 
-        self.last = item
+        self._last = item
+
+    @property
+    def last(self):
+        return self._last
 
     @property
     def res(self):
+        """
+        Returns the current reduction value.
+
+        Returns:
+            float: The current reduction value.
+        """
         avg = self.gb_method
         if avg == 'slide':
             return np.mean(self.acc)
