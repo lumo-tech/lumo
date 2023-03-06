@@ -1,5 +1,7 @@
 from typing import Union, Optional, Sequence, Mapping, Any
 
+import numpy as np
+
 from lumo.proc.config import debug_mode
 from lumo.utils.repository import git_dir
 import os
@@ -143,13 +145,18 @@ def test_trainer():
     params.epoch = 2
 
     debug_mode()
+    dm = MyDataModule()
     # glob['HOOK_FINALREPORT'] = False
-    trainer = CBTrainer(params, dm=MyDataModule())
+    trainer = CBTrainer(params, dm=dm)
     trainer.train()
     trainer.test()
     trainer.evaluate()
     trainer.logger.info(trainer.lf.functions)
     trainer.exp.end()
+
+    assert dm.train_dataset == dm._parse_dataset(dm.train_dataloader)
+    assert dm.val_dataset == dm._parse_dataset(dm.val_dataloader)
+    assert dm.test_dataset == dm._parse_dataset(dm.test_dataloader)
 
     # test trainer experiment
     exp = trainer.exp
@@ -162,6 +169,37 @@ def test_trainer():
 
     if len(trainer.callback_function - trainer.lf.functions) != 0:
         raise AssertionError(str(trainer.callback_function - trainer.lf.functions))
+
+
+def test_trainer_state_dict():
+    trainer = Trainer(TrainerParams())
+    device_a = trainer.device_a = torch.device('cpu')
+    ndarray_a = trainer.ndarray_a = np.array([1, 2, 3])
+    tensor_a = trainer.tensor_a = torch.tensor([1, 2, 3])
+    module = trainer.module = nn.Linear(10, 10)
+    optim_a = trainer.optim_a = TrainerParams.OPTIM.create_optim('SGD', lr=0.9).build(trainer.module.parameters())
+
+    state_dict = trainer.state_dict()
+    # assert state_dict['devices']['device_a'] == trainer.device_a
+    assert state_dict['optims']['optim_a'] == trainer.optim_a.state_dict()
+    assert all([(i == j).all()
+                for i, j in zip(state_dict['models']['module'].values(), trainer.module.state_dict().values())])
+    assert (state_dict['thtensor']['tensor_a'] == trainer.tensor_a).all()
+    assert (state_dict['nptensor']['ndarray_a'] == trainer.ndarray_a).all()
+
+    fn = trainer.save_state_dict()
+    trainer.ndarray_a = np.array([3, 2, 1])
+    trainer.tensor_a = torch.tensor([3, 2, 1])
+    trainer.module = nn.Linear(10, 10)
+    trainer.optim_a = TrainerParams.OPTIM.create_optim('SGD', lr=0.9).build(trainer.module.parameters())
+
+
+    trainer.load_state_dict(torch.load(fn, map_location='cpu'))
+    assert state_dict['optims']['optim_a'] == optim_a.state_dict()
+    assert all([(i == j).all()
+                for i, j in zip(state_dict['models']['module'].values(), module.state_dict().values())])
+    assert (state_dict['thtensor']['tensor_a'] == tensor_a).all()
+    assert (state_dict['nptensor']['ndarray_a'] == ndarray_a).all()
 
 
 if __name__ == '__main__':

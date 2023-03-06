@@ -219,3 +219,5 @@ def test_contrastive_loss():
     cs = InstanceLoss(4, 0.7, 'cpu')
 
     assert (cs.forward(a, b) - contrastive_loss(a, b, temperature=0.7, inbatch_neg=True)) ** 2 < 1e-10
+
+    

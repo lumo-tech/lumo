@@ -1,4 +1,5 @@
 from lumo.core.interp import *
+import numpy as np
 from torch.optim.sgd import SGD
 from torch import nn
 from lumo import BaseParams
@@ -58,3 +59,74 @@ def test_scheduler_is_attr():
     assert abs(phcos.get(9.99) - 1) < 1e-5
     assert phcos.get(10) == 0
     assert phcos.get(15) == 0.5
+
+
+def test_period_linear():
+    start = 0
+    end = 10
+    period = 5
+    left = 0
+    constant = False
+    cur = 2
+
+    expected = 4.0
+    result = PeriodLinear.interp(cur, start, end, left, period, constant)
+    assert result == expected
+
+
+def test_power_decay():
+    start = 1
+    decay_steps = 5
+    decay_rate = 0.5
+    end = None
+    cur = 10
+
+    expected = 0.25
+    power_decay = PowerDecay(start, decay_steps, decay_rate, end)
+    result = power_decay(cur)
+    assert result == expected
+
+
+def test_power_decay2():
+    start = 1
+    schedules = [5, 10]
+    gammas = [0.5, 0.2]
+    cur = 12
+
+    expected = 0.1
+    power_decay2 = PowerDecay2(start, schedules, gammas)
+    result = power_decay2(cur)
+    assert result == expected
+
+
+# def test_ABCContinuous():
+#     # Test ABCContinuous class
+#     abc = ABCContinuous(start=1, end=2, left=0, right=10)
+#     assert abc(0) == 1
+#     assert abc(10) == 2
+#     assert abc(5) == abc.interp(5, start=1, end=2, left=0, right=10)
+
+
+def test_Exp():
+    # Test Exp class
+    exp = Exp(start=1, end=2, left=0, right=10)
+    assert np.isclose(exp(0), 1)
+    assert np.isclose(exp(10), 2)
+    assert np.isclose(exp(5), 1.078716025, rtol=1e-5)
+    assert np.isclose(exp(8), 1.366531851)
+    assert np.isclose(exp(9.5), 1.7784638857)
+
+
+def test_Log():
+    # Test Log class
+    log = Log(start=1, end=2, left=0, right=10)
+    assert np.isclose(log(0), 1)
+    assert np.isclose(log(10), 2)
+    assert np.isclose(log(5), 1.921283974)
+
+
+def test_Constant():
+    # Test Constant class
+    const = Constant(value=0.5)
+    assert const(0) == 0.5
+    assert const(10) == 0.5
