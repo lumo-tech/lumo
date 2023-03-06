@@ -1,22 +1,18 @@
-from typing import Union, Optional, Sequence, Mapping, Any
+import os
+from typing import Union, Optional, Sequence, Mapping
 
 import numpy as np
-
-from lumo.proc.config import debug_mode
-from lumo.utils.repository import git_dir
-import os
-
-import tempfile
-
 import torch
 from torch import nn
 from torch.utils.data import DataLoader
 
 from lumo import ParamsType, TrainerParams
-from lumo import Trainer, DataModule, Meter, TrainStage, MetricType, Record, DatasetBuilder
+from lumo import Trainer, DataModule, TrainStage, MetricType, Record, DatasetBuilder
 from lumo.data.loader import DataLoaderType
-from lumo.trainer import callbacks
 from lumo.proc import glob
+from lumo.proc.config import debug_mode
+from lumo.trainer import callbacks
+from lumo.utils.repository import git_dir
 
 
 def create_dataset_builder():
@@ -171,6 +167,16 @@ def test_trainer():
         raise AssertionError(str(trainer.callback_function - trainer.lf.functions))
 
 
+def test_trainer_params():
+    params = TrainerParams()
+    params.optim = params.OPTIM.create_optim('SGD', lr=0.9)
+    params.optim.lr = 3
+    print(type(params.optim))
+    print(params.optim)
+    module = nn.Linear(10, 10)
+    optim = params.optim.build(module.parameters())
+
+
 def test_trainer_state_dict():
     trainer = Trainer(TrainerParams())
     device_a = trainer.device_a = torch.device('cpu')
@@ -192,7 +198,6 @@ def test_trainer_state_dict():
     trainer.tensor_a = torch.tensor([3, 2, 1])
     trainer.module = nn.Linear(10, 10)
     trainer.optim_a = TrainerParams.OPTIM.create_optim('SGD', lr=0.9).build(trainer.module.parameters())
-
 
     trainer.load_state_dict(torch.load(fn, map_location='cpu'))
     assert state_dict['optims']['optim_a'] == optim_a.state_dict()

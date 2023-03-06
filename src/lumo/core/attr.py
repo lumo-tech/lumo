@@ -122,7 +122,7 @@ def set_item_iterative(dic: dict, keys: List[str], value):
                 raise ValueError(keys[0], nex)
             # dict.__setitem__(dic, keys[0], nex)
         except KeyError:
-            nex = dict()
+            nex = {}
             dict.__setitem__(dic, keys[0], nex)
 
         set_item_iterative(nex, keys[1:], value)
