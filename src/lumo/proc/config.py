@@ -4,7 +4,6 @@ import os
 __all__ = ['debug_mode', 'glob', 'global_config_path', 'local_config_path']
 
 import tempfile
-from typing import overload
 
 GLOBAL_DEFAULT = {
     'home': os.path.expanduser("~/.lumo/"),
@@ -14,10 +13,25 @@ GLOBAL_DEFAULT = {
 
 
 def global_config_path():
+    """
+    Returns the path to the global configuration file.
+
+    Returns:
+        str: The path to the global configuration file.
+
+    Notes:
+        The relative path of global config path should never change (~/.lumorc.json)
+    """
     return os.path.expanduser("~/.lumorc.json")
 
 
 def local_config_path():
+    """
+    Returns the path to the local configuration file.
+
+    Returns:
+        str: The path to the local configuration file, if found. Otherwise, None.
+    """
     from lumo.utils.repository import git_dir
     res = git_dir()
     if res:
@@ -26,6 +40,19 @@ def local_config_path():
 
 
 def get_config(path, default):
+    """
+    Reads the configuration file at the given path or creates it if it doesn't exist.
+
+    Args:
+        path (str): The path to the configuration file.
+        default (dict): The default configuration to use if the file doesn't exist.
+
+    Returns:
+        dict: The configuration read from the file or the default configuration if the file doesn't exist.
+
+    Raises:
+        Exception: If there was an error reading the configuration file.
+    """
     if path is None:
         return default
 
@@ -44,6 +71,12 @@ def get_config(path, default):
 
 
 def get_runtime_config():
+    """
+    Returns the runtime configuration by merging the global and local configurations.
+
+    Returns:
+        dict: The merged runtime configuration.
+    """
     glob_cfg = get_config(global_config_path(), GLOBAL_DEFAULT)
     local_cfg = get_config(local_config_path(), {})
     cfg = GLOBAL_DEFAULT
@@ -53,6 +86,15 @@ def get_runtime_config():
 
 
 def debug_mode(base_dir=None, disable_git=True):
+    """Sets up global variables for debugging mode.
+
+    Args:
+        base_dir (str, optional): The directory to create temporary directories in. Defaults to None.
+        disable_git (bool, optional): Whether to disable git hooks. Defaults to True.
+
+    Returns:
+        None
+    """
     glob['exp_root'] = tempfile.mkdtemp(dir=base_dir)
     glob['progress_root'] = tempfile.mkdtemp(dir=base_dir)
     glob['home'] = tempfile.mkdtemp(dir=base_dir)
