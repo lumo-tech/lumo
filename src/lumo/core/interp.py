@@ -36,6 +36,7 @@ __all__ = ['Cos',
            'PeriodTriangle',
            'PeriodLinear',
            'PowerDecay',
+           'PowerDecay2',
            'InterpolateList', ]
 
 
@@ -401,7 +402,7 @@ class PowerDecay2(Interpolate):
         return res
 
     def __call__(self, cur):
-        self.interp(cur, start=self.start, gammas=self.gammas, schedules=self.schedules)
+        return self.interp(cur, start=self.start, gammas=self.gammas, schedules=self.schedules)
 
 
 class InterpolateList(Interpolate):
