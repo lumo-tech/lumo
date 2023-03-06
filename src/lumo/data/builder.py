@@ -1,6 +1,7 @@
 import copy
 import warnings
 from functools import partial
+from itertools import cycle
 from pprint import pformat
 from copy import copy as builtin_copy
 from typing import Callable, NewType, Dict, Any, Iterable, Sequence
@@ -129,27 +130,49 @@ class DatasetBuilder(Dataset):
 
         for key, outkeys in self._outs.items():
             if key == '::idx::':
-                warnings.warn(f'iter does not support idx, will skip {outkeys}')
-                continue
+                source = enumerate(cycle(range(1)))
+            else:
+                source = self._data[key]
+            # for outkey in outkeys:
+            ipt_transform = self._transforms.get(key, None)
 
-            source = self._data[key]
-            for outkey in outkeys:
-                self._iter_cache[outkey] = iter(source)
+            self._iter_cache[key] = iter(source), ipt_transform
         return self
 
     def __next__(self):
         if len(self._iter_cache) == 0:
             raise StopIteration()
         try:
-            outputs = {k: next(v) for k, v in self._iter_cache.items()}
-            if self.mode != 'zip':
+            inputs_sample = {}
+            for (key, (ipt_iter, ipt_transform)) in (self._iter_cache.items()):
+                if key == '::idx::':
+                    ipt = next(ipt_iter)[0]
+                else:
+                    ipt = next(ipt_iter)
+                if ipt_transform is not None:
+                    ipt = ipt_transform(ipt)
+                inputs_sample[key] = ipt
+
+            outputs = {}
+            for key, outkeys in self._outs.items():
+                for outkey in outkeys:
+                    opt = inputs_sample[key]
+                    opt_transform = self._transforms.get(f'::{outkey}', None)
+                    if opt_transform is not None:
+                        opt = opt_transform(opt)
+                    outputs[outkey] = opt
+
+            if self.mode == 'chain':
                 outputs = [outputs[outkey] for outkey in self._outkeys]
+
             return outputs
         except StopIteration as e:
             self._iter_cache.clear()
             raise e
 
     def __getitem__(self, index):
+        if not self.sized:
+            raise TypeError('Source is not sizable. Use iterative method.')
 
         index = self.map_index(index)
 
@@ -373,7 +396,8 @@ class DatasetBuilder(Dataset):
         assert name not in self._data, f'Source name {name} duplicated.'
         self._check_source(name, source)
         self._data[name] = source
-        self._transforms[name] = transform
+        self.set_input_transform(name, transform)
+        # self._transforms[name] = transform
         return self
 
     def add_input_transform(self, name: str, transform: SingleValueTransform = None):
@@ -399,7 +423,8 @@ class DatasetBuilder(Dataset):
         outkeys.append(outkey)
         self._outkeys.append(outkey)
 
-        self._transforms[f'::{outkey}'] = transform
+        self.set_output_transform(outkey, transform)
+        # self._transforms[f'::{outkey}'] = transform
         return self
 
     def add_output_transform(self, outkey: str, transform: SingleValueTransform = None):
