@@ -45,7 +45,7 @@ class DataModule:
             return loader.dataset
         elif isinstance(loader, DataLoaderSide):
             return loader.dataset
-        return None
+        raise NotImplementedError(type(loader))
 
     @property
     def train_dataset(self):
@@ -96,7 +96,6 @@ class DataModule:
 
     @overload
     def regist_dataloader(self, train=None, test=None, val=None, **kwargs):
-
         """
         Registers the given dataloaders under the given keys.
 
@@ -106,7 +105,6 @@ class DataModule:
             val: A DataLoaderType object for the validation set.
             **kwargs: A DataLoaderType object for other stage
         """
-        ...
 
     def regist_dataloader(self, **kwargs: dict):
         for k, v in kwargs.items():
@@ -120,7 +118,7 @@ class DataModule:
             stage: A TrainStage object.
             dl: A DataLoaderType object.
         """
-        self.prop[stage.value] = dl
+        self.regist_dataloader(**{stage.value: dl})
 
     def idataloader(self, params: ParamsType = None, stage: TrainStage = None):
         """
