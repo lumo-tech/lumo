@@ -94,12 +94,13 @@ class Record:
         """Records a metric for the current step."""
         meter = wrap_result(metric)
         agg = meter._avg
-
+        # print(agg)
+        # print(meter)
         for k, v in meter.items():
             stg = agg.get(k, 'last')
             item = self._agg.get(k, None)
             if item is None:
-                item = ReduceItem(stg)
+                item = ReduceItem(gb_method=stg)
             item.update(v)
             self._agg[k] = item
 
