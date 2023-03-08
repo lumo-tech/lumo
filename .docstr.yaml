@@ -17,3 +17,5 @@ ignore_names_file: .*/test # regex
 ignore_patterns:
   callbacks:
     - ".*"
+  exphook:
+    - ".*"
