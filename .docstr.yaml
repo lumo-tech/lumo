@@ -15,9 +15,5 @@ ignore_names_file: .*/test # regex
 #fail_under: 90 # int
 #percentage_only: True # Boolean
 ignore_patterns:
-  .*:
-    - "on.*end"
-    - "on.*begin"
-    - "on.*begin"
-    - "on_first_exception"
-    - "on_hook.*"
+  callbacks:
+    - ".*"
