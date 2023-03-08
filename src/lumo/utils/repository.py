@@ -275,18 +275,19 @@ def git_enable():
 def git_dir(root='./'):
     """
     git repository directory
-    git rev-parse --git-dir
+    git rev-parse --show-toplevel
     Args:
         root:
     Returns:
 
+    The original command, `git rev-parse --git-dir`, can not find a right path when the repository is a submodule inside another repository.
     """
     if git_enable():
         from git import Git
         cur = os.getcwd()
         os.chdir(root)
-        res = Git().execute(['git', 'rev-parse', '--git-dir'])
-        res = os.path.abspath(os.path.dirname(res))
+        res = Git().execute(['git', 'rev-parse', '--show-toplevel'])
+        res = os.path.abspath(res)
         os.chdir(cur)
         return res
     else:
