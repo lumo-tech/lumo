@@ -1,1 +1,2 @@
-class BoundCheckError(BaseException): pass
+class BoundCheckError(BaseException):
+    """Exception raised when a bound check fails."""

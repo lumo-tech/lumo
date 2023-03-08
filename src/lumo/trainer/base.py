@@ -296,4 +296,5 @@ class _BaseTrainer:
         return "{}.{}".format(pre.lower(), exp_name.lower())
 
     def on_trainer_exception(self, func: Callable, exception: BaseException):
+        """Called when an exception occurs during training."""
         pass

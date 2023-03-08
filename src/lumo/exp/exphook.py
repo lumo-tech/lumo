@@ -194,15 +194,17 @@ class LockFile(ExpHook):
 
     def on_start(self, exp: Experiment, *args, **kwargs):
         basic = get_lock('lumo',
-                         'numpy',
                          'joblib',
+                         'fire',
                          'psutil',
-                         'decorator',
-                         'torch',
-                         'numpy',
                          'accelerate',
                          'hydra',
-                         'omegaconf', )
+                         'omegaconf',
+                         'decorator',
+
+                         'numpy',
+                         'torch',
+                         )
         if basic['torch'] is not None:
             import torch
             if torch.cuda.is_available():

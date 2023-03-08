@@ -39,6 +39,20 @@ def local_config_path():
     return None
 
 
+def local_public_config_path():
+    """
+    Returns the path to the local configuration file that can be shared and public.
+
+    Returns:
+        str: The path to the local configuration file, if found. Otherwise, None.
+    """
+    from lumo.utils.repository import git_dir
+    res = git_dir()
+    if res:
+        return os.path.join(res, ".lumorc.public.json")
+    return None
+
+
 def get_config(path, default):
     """
     Reads the configuration file at the given path or creates it if it doesn't exist.
@@ -77,11 +91,20 @@ def get_runtime_config():
     Returns:
         dict: The merged runtime configuration.
     """
-    glob_cfg = get_config(global_config_path(), GLOBAL_DEFAULT)
-    local_cfg = get_config(local_config_path(), {})
+    # default
     cfg = GLOBAL_DEFAULT
+
+    # global config (~/.lumorc.json)
+    glob_cfg = get_config(global_config_path(), GLOBAL_DEFAULT)
     cfg.update(glob_cfg)
+
+    # local private config ({repo}/.lumorc.json)
+    local_cfg = get_config(local_config_path(), {})
     cfg.update(local_cfg)
+
+    # local public config ({repo}/.lumorc.public.json)
+    local_public_cfg = get_config(local_public_config_path(), {})
+    cfg.update(local_public_cfg)
     return cfg
 
 

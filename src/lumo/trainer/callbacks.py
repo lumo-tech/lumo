@@ -342,6 +342,7 @@ class DebugCallback(BaseCallback):
 
 
 class LoggerCallback(TrainCallback, InitialCallback):
+    """A callback for logging the training process."""
     priority = 99999
 
     def __init__(self, step_frequence=3, break_in=1000):
@@ -385,13 +386,14 @@ class LoggerCallback(TrainCallback, InitialCallback):
                                       file=self.temp)
 
     def renew(self, stage):
-        """创建一个新的"""
+        """Renew when change stage(train/eval/test)"""
         self.cur_tqdm = inlinetqdm(total=self.stage[stage], position=0, leave=True,
                                    bar_format='{desc}{elapsed}<{remaining} ({percentage:3.0f}%){postfix}',
                                    file=self.temp)
         self.record = Record()
 
     def update(self, trainer: Trainer):
+        """Update"""
         self.c += 1
         self.cur_tqdm.update()
         if self.c % self.step == 0:
@@ -403,6 +405,7 @@ class LoggerCallback(TrainCallback, InitialCallback):
             # trainer.logger.newline()
 
     def flush(self, trainer: Trainer):
+        """Flush"""
         self.c = 0
         trainer.logger.inline(self.cur_tqdm)
         trainer.logger.newline()
@@ -447,6 +450,7 @@ class LoggerCallback(TrainCallback, InitialCallback):
     def format_train_epoch_time(self, n, total, elapsed, ncols=None, prefix='', ascii=False, unit='it',
                                 unit_scale=False, rate=None, bar_format=None, postfix=None,
                                 unit_divisor=1000, initial=0, colour=None, **extra_kwargs):
+        """Format"""
         elapsed_str = self.format_interval(elapsed)
         remaining = (total - n) / rate if rate and total else 0
         remaining_str = self.format_interval(remaining) if rate else '?'
@@ -506,61 +510,6 @@ class LoggerCallback(TrainCallback, InitialCallback):
         self.cur_tqdm.set_description_str(f"{trainer.idx + 1}/{self.stage[TrainStage.test]}, ", refresh=False)
         self.cur_tqdm.set_postfix_str(self.record.tostr(), refresh=False)
         self.update(trainer)
-
-
-class EpochCheckpoint(TrainCallback):
-    """
-    在 Trainer 训练过程中定时保存模型
-    """
-    only_main_process = True
-
-    def __init__(self, per_epoch=50):
-        self.per_epoch = per_epoch
-
-    def on_train_epoch_end(self, trainer: Trainer, func, params: ParamsType, record: Optional[Record], *args,
-                           **kwargs):
-        meter = record.agg()
-        if trainer.eidx % self.per_epoch == 0 and trainer.eidx > 0:
-            trainer.save_checkpoint(meta_info=Meter.wrap_result(meter))
-
-    def __repr__(self) -> str:
-        return self._repr_by_val("per_epoch")
-
-
-class GlobalStepCheckpoint(TrainCallback):
-    only_main_process = True
-
-    def __init__(self, per_step=2500):
-        self.per = per_step
-
-    def on_train_step_end(self, trainer: Trainer, func, params: ParamsType, metric: Meter, *args, **kwargs):
-        super().on_train_step_end(trainer, func, params, metric, *args, **kwargs)
-        if trainer.global_steps % self.per == 0 and trainer.global_steps > 0:
-            trainer.save_checkpoint(meta_info=Meter.wrap_result(metric))
-
-
-class KeyErrorSave(TrainCallback):
-    """
-    Callback to save checkpoints when you interrupt the program.
-    """
-    only_main_process = True
-    only_single_gpu = True
-    priority = -1
-
-    def __init__(self, wait_input=False):
-        self.wait_input = wait_input
-
-    def on_first_exception(self, source: Trainer, func, params: ParamsType, e: BaseException, *args, **kwargs):
-        if isinstance(e, KeyboardInterrupt):
-            source.logger.info("KeyErrorSave trigged, save checkpoint")
-            source.save_checkpoint({"mode": "KeyboardInterrupt"})
-
-            tp = "n"
-            if self.wait_input:
-                tp = input("continue train step? (y/other)")
-
-            if tp.lower() == "y":
-                return True
 
 
 class EMAUpdate(TrainCallback):

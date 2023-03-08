@@ -6,6 +6,7 @@ from torch.utils.data import DataLoader
 
 
 class LumoDataLoader(DataLoader):
+    """This module defines the LumoDataLoader class that inherits from the DataLoader class."""
     pass
 
 
@@ -92,18 +93,29 @@ class DataLoaderSide:
 
     @property
     def dataset(self):
+        """Returns a dictionary that maps the name of the DataLoader to its corresponding dataset."""
         return {k: v.dataset for k, v in self.source.items()}
 
     @property
     def source(self):
+        """Returns the _loaders dictionary."""
         return self._loaders
 
     def add(self, name, loader: DataLoader, cycle=False):
+        """
+        Adds a DataLoader instance to the _loaders dictionary.
+            Args:
+                name (str): The name of the DataLoader.
+                loader (DataLoader): The DataLoader instance to be added.
+                cycle (bool): A boolean indicating whether the DataLoader should be cycled. Defaults to False.
+
+        """
         self._loaders[name] = loader
         self._cycle[name] = cycle
         return self
 
     def copy(self):
+        """Returns a new DataLoaderSide instance with the same _loaders, _cycle, and _state attributes as the original."""
         loader = DataLoaderSide()
         loader._loaders = self._loaders
         loader._cycle = self._cycle
@@ -111,18 +123,26 @@ class DataLoaderSide:
         return loader
 
     def zip(self):
+        """Sets the _state attribute to 'zip', which means the batches are zipped together.
+        If _state is 'zip', the batches are returned as an ordered dictionary."""
         self._state = 'zip'
         return self
 
     def chain(self):
+        """
+        Sets the _state attribute to 'chain', which means the batches are concatenated.
+            If _state is 'chain', the batches are returned as a list.
+        """
         self._state = 'chain'
         return self
 
     def __len__(self):
+        """Returns the minimum length of all the DataLoaders that do not have the cycle flag set to True."""
         valid_keys = [k for k, cycle in self._cycle.items() if not cycle]
         return min([len(self._loaders[k]) for k in valid_keys])
 
     def __iter__(self):
+        """Returns an iterator that generates batches from the DataLoaders in the _loaders dictionary."""
         iters = {k: iter(v)
                  for k, v in self._loaders.items()}
         stop = None

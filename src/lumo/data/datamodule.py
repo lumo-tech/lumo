@@ -107,6 +107,15 @@ class DataModule:
         """
 
     def regist_dataloader(self, **kwargs: dict):
+        """
+        Registers the given dataloaders under the given keys.
+
+        Args:
+            train: A DataLoaderType object for the train set.
+            test: A DataLoaderType object for the test set.
+            val: A DataLoaderType object for the validation set.
+            **kwargs: A DataLoaderType object for other stage
+        """
         for k, v in kwargs.items():
             self.prop[k] = v
 

@@ -212,6 +212,12 @@ class DatasetBuilder(Dataset):
         return self._prop['__clen__']
 
     def _update_len(self):
+        """
+        Update the length of the dataset.
+
+        Returns:
+            res (int): The length of the dataset after updating.
+        """
         if not self.sized:
             self._prop['__clen__'] = None
             return
@@ -233,10 +239,22 @@ class DatasetBuilder(Dataset):
 
     @property
     def inputs(self):
+        """
+        Property getter for the input sources.
+
+        Returns:
+            self._data (dict): The input data.
+        """
         return self._data
 
     @property
     def outputs(self):
+        """
+        Property getter for the output data.
+
+        Returns:
+            mapping (dict): A mapping of output keys to their corresponding sources.
+        """
         mapping = {}
         for key, outkeys in self._outs.items():
             if key == '::idx::':
@@ -250,25 +268,61 @@ class DatasetBuilder(Dataset):
 
     @property
     def mode(self):
+        """
+        Property getter for the mode of the dataset.
+
+        Returns:
+            self._prop.get('mode', 'zip'): The mode of the dataset.
+        """
         return self._prop.get('mode', 'zip')
 
     @property
     def iterable(self):
+        """
+        Property getter for the iterability of the dataset.
+
+        Returns:
+            self._prop.get('iterable', False): Whether the dataset is iterable.
+        """
         return self._prop.get('iterable', False)
 
     @property
     def subindices(self):
+        """
+        Property getter for the sub-indices of the dataset.
+
+        Returns:
+            self._prop.get('subindices', None): The sub-indices of the dataset.
+        """
         return self._prop.get('subindices', None)
 
     @property
     def pseudo_length(self) -> int:
+        """
+        Property getter for the pseudo-length of the dataset.
+
+        Returns:
+            self._prop.get('pseudo_length', None): The pseudo-length of the dataset.
+        """
         return self._prop.get('pseudo_length', None)
 
     @property
     def pseudo_repeat(self) -> int:
+        """
+        Property getter for the pseudo-repeat of the dataset.
+
+        Returns:
+            self._prop.get('pseudo_repeat', None): The pseudo-repeat of the dataset.
+        """
         return self._prop.get('pseudo_repeat', None)
 
     def copy(self):
+        """
+        Create a copy of the dataset builder.
+
+        Returns:
+            builder (DatasetBuilder): a copy of the dataset builder.
+        """
         builder = DatasetBuilder()
         builder._prop = builtin_copy(self._prop)
         builder._idx_keys = builtin_copy(self._idx_keys)
@@ -280,6 +334,16 @@ class DatasetBuilder(Dataset):
         return builder
 
     def subset(self, indices: Sequence[int], copy=False):
+        """
+        Create a subset of the dataset builder by selecting indices.
+
+        Args:
+            indices (Sequence[int]): a sequence of indices to select.
+            copy (bool): whether to create a copy of the dataset builder or modify it in place.
+
+        Returns:
+            builder (DatasetBuilder): a new dataset builder containing only the selected indices.
+        """
         if copy:
             builder = self.copy()
         else:
@@ -289,6 +353,15 @@ class DatasetBuilder(Dataset):
         return builder
 
     def scale_to_size(self, size: int):
+        """
+        Scale the dataset builder to a certain size by repeating or randomly truncating the data.
+
+        Args:
+            size (int): the size to scale the dataset builder to.
+
+        Returns:
+            self (DatasetBuilder): the scaled dataset builder.
+        """
         assert isinstance(size, int)
         assert 'pseudo_repeat' not in self._prop
         assert 'pseudo_length' not in self._prop
@@ -298,6 +371,15 @@ class DatasetBuilder(Dataset):
         return self
 
     def repeat(self, multiple: int):
+        """
+        Repeat the dataset builder multiple times to increase its size.
+
+        Args:
+            multiple (int): the number of times to repeat the dataset builder.
+
+        Returns:
+            self (DatasetBuilder): the repeated dataset builder.
+        """
         assert isinstance(multiple, int)
         assert 'pseudo_length' not in self._prop
         assert 'pseudo_repeat' not in self._prop
@@ -308,12 +390,13 @@ class DatasetBuilder(Dataset):
 
     def map_index(self, index):
         """
-        Map the raw index to the final index for source data.
+        Map the raw index to the final index for the source data.
+
         Args:
-            index:
+            index: the raw index to map.
 
         Returns:
-
+            index (int): the final index for the source data.
         """
         if self.pseudo_length is not None or self.pseudo_repeat is not None:
             if self.subindices is not None:
@@ -328,21 +411,46 @@ class DatasetBuilder(Dataset):
 
     @property
     def sized(self):
+        """
+        Check if the dataset builder is sized.
+
+        Returns:
+            bool: True if the dataset builder is sized, False otherwise.
+        """
         return self._prop.get('sized', False)
 
     def chain(self):
+        """
+        Set the mode of the dataset builder to chain.
+
+        Returns:
+            self (DatasetBuilder): the dataset builder with the chain mode set.
+        """
         self._prop['mode'] = 'chain'
         return self
 
     def item(self):
+        """
+        Set the mode of the dataset builder to item.
+
+        Returns:
+            self (DatasetBuilder): the dataset builder with the item mode set.
+        """
         self._prop['mode'] = 'item'
         return self
 
     def zip(self):
+        """
+        Set the mode of the dataset builder to zip.
+
+        Returns:
+            self (DatasetBuilder): the dataset builder with the zip mode set.
+        """
         self._prop['mode'] = 'zip'
         return self
 
     def _check_source(self, name, source):
+        """Check the input source for validity and compatibility with the dataset builder."""
         # source is sized can be itered
         # source can be itered not meant it is sizable.
         if self.subindices is not None:
@@ -374,6 +482,15 @@ class DatasetBuilder(Dataset):
             raise TypeError(f'Source {name} must be an iterable or sized object, but got {type(source)}.')
 
     def add_idx(self, name):
+        """
+        Add an index pseudo source to the dataset builder.
+
+        Args:
+            name (str): the name of the index.
+
+        Returns:
+            self (DatasetBuilder): the dataset builder with the index added.
+        """
         outkeys = self._outs.setdefault(f"::idx::", [])
         assert name not in self._outkeys, f'Output key {name} duplicated.'
         outkeys.append(name)
@@ -382,12 +499,15 @@ class DatasetBuilder(Dataset):
 
     def add_input(self, name: str, source, transform: SingleValueTransform = None):
         """
-        Register a input source with the transform (if provided).
-        Args:
-            name: source name
-            source: source, should be a sized object.
-            transform:
+        Add an input source to the dataset builder.
 
+        Args:
+            name (str): the name of the input source.
+            source: the input source to add.
+            transform (SingleValueTransform): the transform to apply to the input source.
+
+        Returns:
+            self (DatasetBuilder): the dataset builder with the input source added.
 
         Notes:
             Iterable object without `__len__` method currently are not well-tested. Be careful to use them in DatasetBuilder.
@@ -401,20 +521,31 @@ class DatasetBuilder(Dataset):
         return self
 
     def add_input_transform(self, name: str, transform: SingleValueTransform = None):
+        """
+        Add a transform to an existing input source.
+
+        Args:
+            name (str): the name of the input source to add the transform to.
+            transform (SingleValueTransform): the transform to add.
+
+        Returns:
+            self (DatasetBuilder): the dataset builder with the transform added.
+        """
         assert name in self._data, f'Source {name} should be added.'
         warnings.warn('`add` may cause confusion, use set_input_transform ')
         return self.set_input_transform(name, transform)
 
     def add_output(self, name: str, outkey: str, transform: SingleValueTransform = None):
         """
-        Add a data flow from inputs[name] to outputs[outkey] with the transform (if provided).
+        Add an output flow from input source to the dataset builder.
+
         Args:
-            name: source name of inputs
-            outkey: output name of output
-            transform: a callable function
+            name (str): the name of the input source for the output.
+            outkey (str): the name of the output.
+            transform (SingleValueTransform): the transform to apply to the output.
 
         Returns:
-
+            self (DatasetBuilder): the dataset builder with the output added.
         """
         assert name in self._data, f'Must have data source {name} first.'
 
@@ -429,37 +560,56 @@ class DatasetBuilder(Dataset):
 
     def add_output_transform(self, outkey: str, transform: SingleValueTransform = None):
         """
-        Add or **replace** transform of the output name.
+        Add a transform to an existing output.
+
         Args:
-            outkey: output name.
-            transform: a callable function
+            outkey (str): the name of the output to add the transform to.
+            transform (SingleValueTransform): the transform to add.
+
+        Returns:
+            self (DatasetBuilder): the dataset builder with the transform added.
         """
         assert outkey in self._outkeys, f'Output key {outkey} should be added.'
         warnings.warn('add may cause confusion, use set_output_transform ')
         return self.set_output_transform(outkey, transform)
 
     def add_global_transform(self, transform: DictTransform):
+        """
+        Add a global transform to the dataset builder.
+
+        Args:
+            transform (DictTransform): the global transform to apply to the dataset.
+
+        Returns:
+            self (DatasetBuilder): the dataset builder with the global transform added.
+        """
         self._transforms['::global::'] = transform
         return self
 
     def set_input_transform(self, name, transform: SingleValueTransform = None):
         """
-        Add or **replace** transform of the input source {name}.
-        Args:
-            name: source name.
-            transform: a callable function
+        Set the transform for an input source.
 
+        Args:
+            name (str): the name of the input source to set the transform for.
+            transform (SingleValueTransform): the transform to set.
+
+        Returns:
+            self (DatasetBuilder): the dataset builder with the transform set.
         """
         self._transforms[name] = transform
         return self
 
     def set_output_transform(self, outkey, transform: SingleValueTransform = None):
         """
-        Add or **replace** transform of the output {name}.
-        Args:
-            outkey: output name.
-            transform: a callable function
+        Set the transform for an output.
 
+        Args:
+            outkey (str): the name of the output to set the transform for.
+            transform (SingleValueTransform): the transform to set.
+
+        Returns:
+            self (DatasetBuilder): the dataset builder with the transform set.
         """
         self._transforms[f'::{outkey}'] = transform
         return self
@@ -474,4 +624,6 @@ class DatasetBuilder(Dataset):
         return res
 
     def get_source(self, name):
-        return self._data[name]
+        """Get the input source with the given name."""
+        warnings.warn('Use inputs[name] instead.')
+        return self.inputs[name]

@@ -385,6 +385,7 @@ class BaseParams(DictConfig):
             argv = sys.argv
 
         def func(*args, **kwargs):
+            """function to process arg list"""
             if 'help' in kwargs:
                 print(self)
                 exit()
@@ -407,11 +408,13 @@ class BaseParams(DictConfig):
         return self
 
     def from_hydra(self, config_path, config_name):
+        """load from hydra config mode"""
         import hydra
         hydra.compose()
 
         @hydra.main(config_path=config_path, config_name=config_name)
         def inner(cfg):
+            """inner function"""
             return cfg
 
         self.update(inner())
@@ -490,6 +493,7 @@ class BaseParams(DictConfig):
         return hash(self.to_dict())
 
     def iparams(self):
+        """Initialization method, mostly used in Trainer"""
         pass
 
     @classmethod
@@ -507,6 +511,7 @@ class BaseParams(DictConfig):
 
 
 class Params(BaseParams):
+    """A class representing parameters"""
     pass
 
 

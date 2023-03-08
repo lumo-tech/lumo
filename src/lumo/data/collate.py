@@ -132,6 +132,7 @@ class IgnoreNoneCollate(CollateBase):
         return True
 
     def before_collate(self, sample_list):
+        """ before collate"""
         return list(filter(self._filter_none, sample_list))
 
 

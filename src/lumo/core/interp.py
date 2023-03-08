@@ -281,7 +281,15 @@ class ABCPeriod(Interpolate):
 
 
 class Cos(ABCContinuous):
-    """one cycle cosine functoin"""
+    """one cycle cosine functoin
+
+      end ->         ,---------
+                    /
+    start -> ______/
+                   ↑   ↑
+                 left right
+
+    """
 
     @classmethod
     def interp(cls, cur, start=0., end=1., left=0., right=1., *args, **kwargs):
@@ -301,7 +309,16 @@ class Cos(ABCContinuous):
 
 
 class Linear(ABCContinuous):
-    """linear schedule"""
+    """linear schedule
+
+            ^
+    end     |               .*
+            |          .*
+            |     .*
+            |.*
+    start   +----------------->
+            left            right
+    """
 
     @classmethod
     def interp(cls, cur, start=0., end=1., left=0., right=1., *args, **kwargs):
@@ -342,7 +359,20 @@ class Exp(ABCContinuous):
 
 
 class Log(ABCContinuous):
-    """quick to slow"""
+    """
+    quick to slow
+
+     end   |                              *
+           |                     *
+           |                *
+           |            *
+           |        *
+           |     *
+           |  *
+    start  |*
+           -------------------------------------------
+            left                         right
+    """
 
     @classmethod
     def interp(cls, cur, start=0., end=1., left=0., right=1., *args, **kwargs):
@@ -365,7 +395,14 @@ class Log(ABCContinuous):
 
 
 class Constant(ABCContinuous):
-    """A scheduler representing a constant value"""
+    """
+    A scheduler representing a constant value
+                |
+    constant    |--------------
+                |
+                |________________
+                  ... any ...
+    """
 
     def __init__(self, value=0.5, *args, **kwargs):
         super().__init__(start=value, end=value, left=0, right=1, *args, **kwargs)
@@ -375,6 +412,13 @@ class Constant(ABCContinuous):
 class PeriodCos(ABCPeriod):
     """
     periodic cosine schedule
+
+      end ->         ,-.     ,-.     ,-.     ,-.
+                    /   \   /   \   /   \   /   \
+    start -> ______/     \_/     \_/     \_/     \_________
+    ratio          0      1       2       3       .....
+                    \----|
+                    period
     """
 
     @classmethod
@@ -390,10 +434,18 @@ class PeriodCos(ABCPeriod):
 class PeriodHalfCos(ABCPeriod):
     """
     half periodic cosine schedule, period is (right-left)
+
+      end ->         ,-  ,-  ,-  ,-
+                    /   /   /   /
+    start -> ______/   /   /   /
+    ratio         0   1   2   3   ...
+                   \--|
+                  period
     """
 
     @classmethod
     def interp(cls, cur, start=0., end=1., left=0., period=1., *args, **kwargs):
+        """interp with period halfcos method"""
         constant = kwargs.get('constant', False)
         ratio = cls.ratio(cur, left=left, period=period, constant=constant)
         cos_ratio = 0.5 * (1 + np.cos(ratio * np.pi))
@@ -401,6 +453,17 @@ class PeriodHalfCos(ABCPeriod):
 
 
 class PeriodTriangle(ABCPeriod):
+    """
+    A interp class to simulate a periodic triangle waveform.
+
+
+   end         /\  /\  /\  /\
+   start      /  \/  \/  \/  \
+             0   1   2  3   4
+             \--|
+            period
+    """
+
     def __init__(self, start=0, end=1, left=0, left_period=1, right_period=1, *args, **kwargs):
         super().__init__(start=start, end=end, left=left,
                          period=(left_period + right_period),
@@ -428,6 +491,12 @@ class PeriodTriangle(ABCPeriod):
 class PeriodLinear(ABCPeriod):
     """
     sawtooth wave, like a period line schedule
+    end            /    /    /    /
+                 /    /    /    /
+    start      /    /    /    /
+              0    1    2    3     ....
+              \----|
+              period
     """
 
     @classmethod
@@ -458,6 +527,8 @@ class PowerDecay(Interpolate):
 
 
 class PowerDecay2(Interpolate):
+    """A class for implementing Power Decay Interpolation for a given schedule."""
+
     def __init__(self, start, schedules, gammas):
         super().__init__()
         self.start = start
@@ -485,6 +556,8 @@ class PowerDecay2(Interpolate):
 
 
 class InterpolateList(Interpolate):
+    """Concat different interpolation functions"""
+
     def __init__(self, schedules: List[Interpolate]):
         super().__init__()
         self.schedules = schedules
@@ -515,6 +588,7 @@ class InterpolateList(Interpolate):
         return '{}({})'.format(self.__class__.__name__, content)
 
     def plot(self, num=1000, left=None, right=None, show=True):
+        """plot"""
         if left is None:
             left = self.left
 
