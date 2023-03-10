@@ -471,7 +471,7 @@ class Experiment:
         @wraps(func)
         def inner(*args, **kwargs):
             fn = self.progress_file(f'{self.test_name}.heartbeat', 'hb', self.exp_name)
-            io.dump_text(strftime(), fn)
+            io.dump_text(self.test_root, fn)
             func(*args, **kwargs)
 
         return inner
@@ -893,6 +893,13 @@ class Experiment:
         # load metric
         self._metric = Metric(self.metrics_fn)
         return self
+
+    def dict(self):
+        return {
+            **self.properties,
+            'is_alive': self.is_alive,
+            'metrics': self.metric.value,
+        }
 
 
 class SimpleExperiment(Experiment):
