@@ -243,7 +243,7 @@ class Experiment:
             if is_dist():  # if train in distribute mode, subprocess will wait a few seconds to wait main process.
                 flag_fn = f'.{os.getppid()}'
                 if is_main():
-                    self._test_name = self._create_test_name()
+                    self._test_name = self._create_test_name(self.exp_root)
                     fn = self.exp_file(flag_fn)
                     with open(fn, 'w') as w:
                         w.write(self._test_name)
@@ -254,7 +254,7 @@ class Experiment:
                         with open(fn, 'r') as r:
                             self._test_name = r.readline().strip()
             else:
-                self._test_name = self._create_test_name()
+                self._test_name = self._create_test_name(self.exp_root)
 
         return self._test_name
 
@@ -479,7 +479,8 @@ class Experiment:
 
         return inner
 
-    def _create_test_name(self):
+    @classmethod
+    def _create_test_name(cls, exp_root):
         """
         Generates a unique test name based on the current date and time.
         regex pattern: [0-9]{6}.[0-9]{3}.[a-z0-9]{3}t
@@ -489,7 +490,7 @@ class Experiment:
         """
         from lumo.proc.date import timehash
         from ..utils.fmt import strftime
-        fs = os.listdir(self.exp_root)
+        fs = os.listdir(exp_root)
         date_str = strftime('%y%m%d')
         fs = [i for i in fs if i.startswith(date_str)]
         _test_name = f"{date_str}.{len(fs):03d}.{timehash()[-6:-4]}t"
@@ -758,7 +759,7 @@ class Experiment:
     def rerun(self, arg_list: List[str]):
         """rerun this test in another"""
         # self.properties['']
-        new_test_name = self._create_test_name()
+        new_test_name = self._create_test_name(self.exp_root)
         new_exp = Experiment(self.exp_name, root=self._root, test_name=new_test_name)
         self.dump_info('deprecated', {'rerun_at': new_exp.test_name})
         old_rerun_info = self.properties.get('rerun', None)
@@ -891,8 +892,7 @@ class Experiment:
 
         test_root = Path(path)
         root = test_root.parent.parent.parent.as_posix()
-        self = cls(test_root.parent.name, root=root)
-        self._test_name = test_root.name
+        self = cls(test_root.parent.name, root=root, test_name=test_root.name)
 
         # load prop
         for f in os.listdir(self.test_dir('info')):
