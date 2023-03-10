@@ -416,7 +416,7 @@ class Experiment:
         return self._metric
 
     @property
-    def note(self):
+    def note_fn(self):
         fn = self.test_file('note.md')
         if os.path.exists(fn):
             return io.load_text(fn)
@@ -589,6 +589,9 @@ class Experiment:
         if os.path.exists(fn):
             return io.load_text(fn)
         return ''
+
+    def dump_tags(self, *tags):
+        self.dump_info('tags', tags)
 
     def dump_note(self, note: str):
         fn = self.test_file('note.md')
