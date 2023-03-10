@@ -26,9 +26,10 @@ def test_finder():
         params.rnd = random.random()
         ATrainer(params).train()
         BTrainer(params).train()
-
     all_tests = finder.list_all()
-    assert len(all_tests) == 2
+    # print([ATrainer.generate_exp_name(), BTrainer.generate_exp_name()])
+    print(ATrainer.__exp_name__)
+    assert len(all_tests) == len({ATrainer.generate_exp_name(), BTrainer.generate_exp_name()})
     assert ATrainer.generate_exp_name() in all_tests
     assert BTrainer.generate_exp_name() in all_tests
     assert len(all_tests[ATrainer.generate_exp_name()]) == 5

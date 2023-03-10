@@ -64,6 +64,12 @@ class Trainer(_BaseTrainer):
         'process_loader', 'regist_dataloader'
     }
 
+    def __init_subclass__(cls, **kwargs):
+        super().__init_subclass__(**kwargs)
+        if cls.__name__ == 'Trainer':
+            raise TypeError(
+                f"Can't instantiate abstract class {cls.__name__} directly, please create a subclass of it.")
+
     def __init__(self, params: ParamsType, dm: DataModule = None):
         if dm is None:
             dm = DataModule(params)

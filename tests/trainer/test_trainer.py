@@ -177,8 +177,12 @@ def test_trainer_params():
     optim = params.optim.build(module.parameters())
 
 
+class MyTrainer(Trainer):
+    pass
+
+
 def test_trainer_state_dict():
-    trainer = Trainer(TrainerParams())
+    trainer = MyTrainer(TrainerParams())
     device_a = trainer.device_a = torch.device('cpu')
     ndarray_a = trainer.ndarray_a = np.array([1, 2, 3])
     tensor_a = trainer.tensor_a = torch.tensor([1, 2, 3])
