@@ -577,7 +577,10 @@ class Experiment:
         fn = self.test_file(f'{key}.json', info_dir)
         if not os.path.exists(fn):
             return {}
-        return io.load_json(fn)
+        try:
+            return io.load_json(fn)
+        except ValueError as e:
+            return {}
 
     def dump_note(self, note: str):
         fn = self.test_file('note.md')
