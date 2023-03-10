@@ -112,6 +112,8 @@ class Experiment:
 
         self._prop = {}
         self._prop['exp_name'] = exp_name
+        if test_name is None:
+            test_name = os.environ.get(Experiment.ENV_TEST_NAME_KEY, None)
         self._prop['test_name'] = test_name
         self._hooks = {}
 
@@ -261,8 +263,7 @@ class Experiment:
         """
         str: Gets the name of the current test being run.
         """
-        given_test_name = os.environ.get(Experiment.ENV_TEST_NAME_KEY, None)
-        return self._prop.get('test_name', given_test_name)
+        return self._prop.get('test_name')
 
     @_test_name.setter
     def _test_name(self, value):
@@ -770,7 +771,6 @@ class Experiment:
         command = ' '.join([old_exec['exec_bin'], old_exec['exec_file'], *old_exec['exec_argv'], *arg_list])
         env = os.environ.copy()
         env[Experiment.ENV_TEST_NAME_KEY] = new_exp.test_name
-        print(env)
         return run_command(command, cwd=old_exec['cwd'], env=env)
 
     @call_on_main_process_wrap
