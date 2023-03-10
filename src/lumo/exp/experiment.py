@@ -770,7 +770,7 @@ class Experiment:
         command = ' '.join([old_exec['exec_bin'], old_exec['exec_file'], *old_exec['exec_argv'], *arg_list])
         env = os.environ.copy()
         env[Experiment.ENV_TEST_NAME_KEY] = new_exp.test_name
-
+        print(env)
         return run_command(command, cwd=old_exec['cwd'], env=env)
 
     @call_on_main_process_wrap
