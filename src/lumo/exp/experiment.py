@@ -759,7 +759,7 @@ class Experiment:
         # self.properties['']
         new_test_name = self._create_test_name(self.exp_root)
         new_exp = Experiment(self.exp_name, root=self._root, test_name=new_test_name)
-        self.dump_info('deprecated', {'rerun_at': new_exp.test_name})
+        self.dump_info('deprecated', {'rerun_at': {new_exp.test_name: True}}, append=True)
         old_rerun_info = self.properties.get('rerun', None)
         count = 1
         if old_rerun_info is not None:
