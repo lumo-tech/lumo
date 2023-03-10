@@ -76,7 +76,7 @@ def progressroot():
     if PROGRESS_ROOT:
         res = PROGRESS_ROOT
     else:
-        res = os.path.join(libhome(), 'progress')
+        res = os.path.join(cache_dir(), 'progress')
 
     os.makedirs(res, exist_ok=True)
     return res
