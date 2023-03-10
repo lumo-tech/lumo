@@ -582,8 +582,15 @@ class Experiment:
         except ValueError as e:
             return {}
 
+    def load_note(self):
+        fn = self.test_file('note.md')
+        if os.path.exists(fn):
+            return io.load_text(fn)
+        return ''
+
     def dump_note(self, note: str):
         fn = self.test_file('note.md')
+        self.set_prop('note', note)
         io.dump_text(note, fn)
 
     def dump_string(self, key: str, info: str, append=False):
@@ -761,7 +768,8 @@ class Experiment:
         command = ' '.join([old_exec['exec_bin'], old_exec['exec_file'], *old_exec['exec_argv'], *arg_list])
         env = os.environ.copy()
         env[Experiment.ENV_TEST_NAME_KEY] = new_exp.test_name
-        return run_command(command, cwd=old_exec['cwd'])
+
+        return run_command(command, cwd=old_exec['cwd'], env=env)
 
     @call_on_main_process_wrap
     def initial(self):
@@ -892,6 +900,8 @@ class Experiment:
         for f in os.listdir(self.test_dir('text')):
             key = os.path.splitext(f)[0]
             self.set_prop(key, self.load_string(key))
+
+        self.set_prop('note', self.load_note())
 
         # load metric
         self._metric = Metric(self.metrics_fn)
