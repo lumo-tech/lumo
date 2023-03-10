@@ -39,14 +39,14 @@ def run_command(command, cwd=None, env=None):
             # Wait for output from the process
             rlist, _, _ = select.select([proc.stdout, proc.stderr], [], [], 0.1)
             for stream in rlist:
-                line = stream.readline().decode('utf-8').strip()
+                line = stream.readline().decode('utf-8')
                 if line:
                     print(line)
 
             # Read the remaining output
         for stream in [proc.stdout, proc.stderr]:
             while True:
-                line = stream.readline().decode('utf-8').strip()
+                line = stream.readline().decode('utf-8')
                 if not line:
                     break
                 print(line)
