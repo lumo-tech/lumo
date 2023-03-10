@@ -54,8 +54,12 @@ def dump_state_dict(obj, fn):
 
 def load_json(fn):
     """Loads JSON data from the given file path and returns the resulting object."""
-    with open(fn, 'r', encoding='utf-8') as r:
-        return json.load(r)
+    try:
+        with open(fn, 'r', encoding='utf-8') as r:
+            return json.load(r)
+    except json.JSONDecodeError as e:
+        e.msg = f'Error in file {fn}: {e.msg}'
+        raise e
 
 
 def load_yaml(fn):
@@ -77,6 +81,7 @@ def load_text(fn):
         return ''
     with open(fn, 'r', encoding='utf-8') as r:
         return ''.join(r.readlines())
+
 
 def dump_text(string: str, fn, append=False):
     """Write the given string to a file.
@@ -165,6 +170,7 @@ def load_pkl(file, *, fix_imports=True, encoding="ASCII", errors="strict"):
         return _pickle.load(file, fix_imports=fix_imports, encoding=encoding, errors=errors)
     else:
         raise NotImplementedError("File type not supported.")
+
 
 @contextmanager
 def cached(fn):
