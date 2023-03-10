@@ -1,3 +1,5 @@
+import os.path
+
 from lumo.core.disk import Metrics, TableRow
 import numpy as np
 import tempfile
@@ -5,15 +7,10 @@ from lumo.proc.config import glob
 from lumo.utils import safe_io as IO
 
 glob['metric_root'] = tempfile.mkdtemp()
-from lumo.utils.fmt import strftime
 
 
 def test_table_row():
-    row = TableRow('lumo-test', 'core', strftime())
-
-    # test update
-    row.update('a', 'b')
-    assert row['a'] == 'b'
+    row = TableRow(os.path.join(tempfile.mkdtemp(), 'lumo-test'))
 
     # test update_metric
     ## test max
@@ -38,6 +35,5 @@ def test_table_row():
     # test storage
     row.flush()
     storage = IO.load_pkl(row.fpath)
-    assert storage['a'] == row['a']
     assert storage['metric']['acc'] == row['metric']['acc']
     assert (storage['metric']['clsAcc'] == row['metric']['clsAcc']).all()

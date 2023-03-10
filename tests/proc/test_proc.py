@@ -25,7 +25,7 @@ def test_exproot():
 
 def test_progressroot():
     PROGRESS_ROOT = glob.get('progress_root', None)
-    expected = PROGRESS_ROOT or os.path.join(libhome(), 'progress')
+    expected = PROGRESS_ROOT or os.path.join(cache_dir(), 'progress')
     assert progressroot() == expected
 
 
