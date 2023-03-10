@@ -1,21 +1,28 @@
+"""
+Experiment 负责的内容
+ - 管理路径 PathHelper
+ - 记录信息 InfoIO 和度量 Metric
+ - 快照 snap 和复现 rerun
+"""
 import os
 import random
 import sys
 import time
 import traceback
 from pathlib import Path
-from typing import Union, Any
-
+from typing import Union, Any, List
+from functools import wraps
 from lumo.decorators.process import call_on_main_process_wrap
 from lumo.proc import glob
 from lumo.proc.dist import is_dist, is_main, local_rank
 from lumo.proc.path import blobroot, libhome, progressroot
 from lumo.proc.path import exproot, local_dir
 from lumo.utils import safe_io as io
-from lumo.utils.fmt import can_be_filename
+from lumo.utils.fmt import can_be_filename, strftime
 from lumo.utils.logger import Logger
 from .base import BaseExpHook
 from ..proc.pid import pid_hash, runtime_pid_obj
+from .metric import Metric
 
 
 def checkdir(path: Union[Path, str]):
@@ -49,12 +56,19 @@ class Experiment:
         - experiments # (exp_root) record information (e.g., .log, params files, etc.)
             - {experiment-name-1}
                 - {test-1}
-                    # infomation
-                    {
-                        progress
-                        pid_hash (for lumo.client monitor)
-                        other_info: git, file, version_lock, etc.
-                    }
+                    metric_board.sqlite (metrics in training ,powered by dbrecord)
+                    metric.pkl (final metrics)
+                    params.yaml (hyper parameter)
+                    note.md (manually note)
+                    l.0.2303062216.log (log file)
+                    text/
+                        exception.str
+                        ...
+                    info/
+                        *.json
+                        git.json
+                        execute.json
+                        lock.json
                 - {test-2}
             - {experiment-name-2}
                 - {test-1}
@@ -66,16 +80,20 @@ class Experiment:
             - {experiment-name-2}
                 - {test-1}
                 - {test-2}
-        - metric # (metric_root) record metrics (by trainer.database)
-            - {experiment-name-1}
-                - {test-1}
-                - {test-2}
-            - {experiment-name-2}
-                - {test-1}
-                - {test-2}
+    {lumo.cache_dir}
+        - progress # (metric_root) record metrics (by trainer.database)
+            - hb  # trigger for test information update
+                {experiment-name}
+                - {test-1} -> timestamp
+                - {test-2} -> timestamp
+            - pid # link to running process
+                - {pid1} -> test_root
+                - {pid2} -> test_root
     """
 
-    def __init__(self, exp_name: str, root=None):
+    ENV_TEST_NAME_KEY = 'LUMO_EXP_TEST_NAME'
+
+    def __init__(self, exp_name: str, root=None, test_name=None):
         """
         Initializes a new instance of the Experiment class.
 
@@ -94,12 +112,95 @@ class Experiment:
 
         self._prop = {}
         self._prop['exp_name'] = exp_name
+        self._prop['test_name'] = test_name
         self._hooks = {}
+
+        self._metric = Metric(self.metrics_fn)
+
+        # wrap
+        self._metric.dump_metrics = self._trigger_change(self._metric.dump_metrics)
+        self._metric.dump_metric = self._trigger_change(self._metric.dump_metric)
+        self.dump_string = self._trigger_change(self.dump_string)
+        self.dump_note = self._trigger_change(self.dump_note)
+        self.dump_info = self._trigger_change(self.dump_info)
+
         if root is None:
             root = libhome()
         self._root = Path(os.path.abspath(root))
         self.add_exit_hook(self.end)
         self.logger = Logger()
+
+    def __getitem__(self, item):
+        """
+        Gets a property of the experiment.
+
+        Args:
+            item (str): The name of the property to get.
+
+        Returns:
+            Any: The value of the property.
+        """
+        return self._prop[item]
+
+    def __setitem__(self, key, value):
+        """
+        Sets a property of the experiment.
+
+        Args:
+            key (str): The name of the property to set.
+            value (Any): The value to set the property to.
+        """
+        self._prop[key] = value
+
+    def __enter__(self):
+        """
+        Starts the experiment when the Experiment object is used as a context manager using the 'with' statement.
+
+        Returns:
+            Experiment: The Experiment object.
+        """
+        self.start()
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        """
+        Ends the experiment when the 'with' statement block exits.
+
+        Args:
+            exc_type (type): The type of the exception that occurred, if any.
+            exc_val (Exception): The exception object that was raised, if any.
+            exc_tb (traceback): The traceback object for the exception, if any.
+        """
+        extra = {}
+        if exc_type is not None:
+            exc_type = traceback.format_exception_only(exc_type, exc_val)[-1].strip()
+            extra['exc_type'] = exc_type
+            extra['end_info'] = str(exc_type)
+            extra['end_code'] = 1
+            extra['exc_stack'] = "".join(traceback.format_exception(exc_type, exc_val, exc_tb))
+        self.end(**extra)
+
+    def __repr__(self):
+        """
+        Returns a string representation of the Experiment object.
+
+        Returns:
+            str: A string representation of the Experiment object.
+        """
+        return f'{self.exp_name}->({self.test_name})'
+
+    def __str__(self):
+        """
+        Returns a string representation of the Experiment object.
+
+        Returns:
+            str: A string representation of the Experiment object.
+        """
+        return self.__repr__()
+
+    def _repr_html_(self):
+        """Return a html representation for a particular DataFrame."""
+        return self.__repr__()
 
     @property
     def exp_name(self):
@@ -107,23 +208,6 @@ class Experiment:
         str: Gets the name of the experiment.
         """
         return self._prop['exp_name']
-
-    @property
-    def _test_name(self):
-        """
-        str: Gets the name of the current test being run.
-        """
-        return self._prop.get('test_name', None)
-
-    @_test_name.setter
-    def _test_name(self, value):
-        """
-         Sets the name of the current test being run.
-
-         Args:
-             value (str): The name of the current test.
-        """
-        self._prop['test_name'] = value
 
     @property
     def test_name_with_dist(self):
@@ -170,21 +254,23 @@ class Experiment:
 
         return self._test_name
 
-    def _create_test_name(self):
+    @property
+    def _test_name(self):
         """
-        Generates a unique test name based on the current date and time.
-        regex pattern: [0-9]{6}.[0-9]{3}.[a-z0-9]{3}t
+        str: Gets the name of the current test being run.
+        """
+        given_test_name = os.environ.get(Experiment.ENV_TEST_NAME_KEY, None)
+        return self._prop.get('test_name', given_test_name)
 
-        Returns:
-            str: The generated test name.
+    @_test_name.setter
+    def _test_name(self, value):
         """
-        from lumo.proc.date import timehash
-        from ..utils.fmt import strftime
-        fs = os.listdir(self.exp_root)
-        date_str = strftime('%y%m%d')
-        fs = [i for i in fs if i.startswith(date_str)]
-        _test_name = f"{date_str}.{len(fs):03d}.{timehash()[-6:-4]}t"
-        return _test_name
+         Sets the name of the current test being run.
+
+         Args:
+             value (str): The name of the current test.
+        """
+        self._prop['test_name'] = value
 
     @property
     def root_branch(self):
@@ -233,83 +319,6 @@ class Experiment:
         val = self.exp_branch.joinpath(self.test_name)
         return checkdir(val)
 
-    def dump_progress(self, ratio: float, update_from=None):
-        """
-        Saves progress information about the experiment.
-
-        Args:
-            ratio (float): The progress ratio as a number between 0 and 1.
-            update_from: The process from which the progress update came from.
-        """
-        res = {'ratio': max(min(ratio, 1), 0)}
-        if update_from is None:
-            res['update_from'] = update_from
-        self.dump_info('progress', res, append=True)
-
-    def dump_info(self, key: str, info: Any, append=False, info_dir='info', set_prop=True):
-        """
-        Saves information about the experiment to a file.
-
-        Args:
-            key (str): The key under which the information will be stored.
-            info (Any): The information to store.
-            append (bool, optional): Whether to append to the file or overwrite it. Defaults to False.
-            info_dir (str, optional): The name of the directory where the file will be stored. Defaults to 'info'.
-            set_prop (bool, optional): Whether to set the experiment property with the same key to the saved information.
-                Defaults to True.
-        """
-        fn = self.test_file(f'{key}.json', info_dir)
-        if append:
-            old_info = self.load_info(key, info_dir=info_dir)
-            old_info.update(info)
-            info = old_info
-        if set_prop:
-            self.set_prop(key, info)
-        io.dump_json(info, fn)
-
-    def load_info(self, key: str, info_dir='info'):
-        """
-        Loads information about the experiment from a file.
-
-        Args:
-            key (str): The key under which the information is stored.
-            info_dir (str, optional): The name of the directory where the file is stored. Defaults to 'info'.
-
-        Returns:
-            Any: The information stored under the specified key.
-        """
-        fn = self.test_file(f'{key}.json', info_dir)
-        if not os.path.exists(fn):
-            return {}
-        return io.load_json(fn)
-
-    def dump_string(self, key: str, info: str):
-        """
-        Saves a string to a file.
-
-        Args:
-            key (str): The key under which the string will be stored.
-            info (str): The string to store.
-        """
-        fn = self.test_file(f'{key}.str', 'text')
-        io.dump_text(info, fn)
-        self.set_prop(key, info)
-
-    def load_string(self, key: str):
-        """
-        Loads a string from a file.
-
-        Args:
-            key (str): The key under which the string is stored.
-
-        Returns:
-            str: The string stored under the specified key.
-        """
-        fn = self.test_file(f'{key}.str', 'text')
-        if not os.path.exists(fn):
-            return ''
-        return io.load_text(fn)
-
     @property
     def tags(self):
         """
@@ -320,236 +329,6 @@ class Experiment:
             ptags = io.load_json(path.as_posix())  # type: dict
             tags.setdefault(path.suffixes[0].strip('.'), []).extend(ptags.keys())
         return tags
-
-    def add_tag(self, tag: str, name_space: str = 'default'):
-        """
-        Adds a tag to the experiment.
-        Args:
-            tag (str): The tag to add.
-            name_space (str, optional): The namespace under which to
-                add the tag. Defaults to 'default'.
-        """
-        self.dump_info(f'tag.{name_space}', {
-            tag: None
-        }, append=True, info_dir='tags', set_prop=False)
-
-    def exp_file(self, filename, *args):
-        """
-        Gets the path to a file in the experiment directory.
-
-        Args:
-            filename (str): The name of the file.
-            *args: Any additional subdirectory names to include in the file path.
-
-        Returns:
-            str: The path to the specified file.
-        """
-        parent = self.exp_branch.joinpath(*args)
-        return checkdir(parent).joinpath(filename).as_posix()
-
-    def test_file(self, filename, *args):
-        """
-        Gets the path to a file in the test directory.
-
-        Args:
-            filename (str): The name of the file.
-            *args: Any additional subdirectory names to include in the file path.
-
-        Returns:
-            str: The path to the specified file.
-        """
-        parent = self.test_branch.joinpath(*args)
-        return checkdir(parent).joinpath(filename).as_posix()
-
-    def exp_dir(self, *args):
-        """
-        Gets the path to a directory in the experiment directory.
-
-        Args:
-            *args: Any subdirectory names to include in the directory path.
-
-        Returns:
-            str: The path to the specified directory.
-        """
-        parent = self.exp_branch.joinpath(*args)
-        return checkdir(parent).as_posix()
-
-    def root_file(self, filename, *args):
-        """
-        Gets the path to a file in the library's root directory.
-
-        Args:
-            filename (str): The name of the file.
-            *args: Any additional subdirectory names to include in the file path.
-
-        Returns:
-            str: The path to the specified file.
-        """
-        parent = self.root_branch.joinpath(*args)
-        return checkdir(parent).joinpath(filename).as_posix()
-
-    def root_dir(self, *args):
-        """
-        Gets the path to a directory in the library's root directory.
-
-        Args:
-            *args: Any subdirectory names to include in the directory path.
-
-        Returns:
-            str: The path to the specified directory.
-        """
-        parent = self.root_branch.joinpath(*args)
-        return checkdir(parent).as_posix()
-
-    def test_dir(self, *args):
-        """
-        Gets the path to a directory in the test directory.
-
-        Args:
-            *args: Any subdirectory names to include in the directory path.
-
-        Returns:
-            str: The path to the specified directory.
-        """
-        parent = self.test_branch.joinpath(*args)
-        return checkdir(parent).as_posix()
-
-    def blob_file(self, filename, *args):
-        """
-        Gets the path to a file in the blob directory.
-
-        Args:
-            filename (str): The name of the file.
-            *args: Any additional subdirectory names to include in the file path.
-
-        Returns:
-            str: The path to the specified file.
-        """
-        parent = self.blob_branch.joinpath(*args)
-        return checkdir(parent).joinpath(filename).as_posix()
-
-    def progress_file(self, filename):
-        """
-        Gets the path to a file in the progress directory.
-
-        Args:
-            filename (str): The name of the file.
-
-        Returns:
-            str: The path to the specified file.
-        """
-        return self.progress_branch.joinpath(filename).as_posix()
-
-    def blob_dir(self, *args):
-        """
-        Gets the path to a directory in the blob directory.
-        Args:
-            *args: Any subdirectory names to include in the directory path.
-
-        Returns:
-            str: The path to the specified directory.
-        """
-        parent = self.blob_branch.joinpath(*args)
-        return checkdir(parent).as_posix()
-
-    def __enter__(self):
-        """
-        Starts the experiment when the Experiment object is used as a context manager using the 'with' statement.
-
-        Returns:
-            Experiment: The Experiment object.
-        """
-        self.start()
-        return self
-
-    def __exit__(self, exc_type, exc_val, exc_tb):
-        """
-        Ends the experiment when the 'with' statement block exits.
-
-        Args:
-            exc_type (type): The type of the exception that occurred, if any.
-            exc_val (Exception): The exception object that was raised, if any.
-            exc_tb (traceback): The traceback object for the exception, if any.
-        """
-        extra = {}
-        if exc_type is not None:
-            exc_type = traceback.format_exception_only(exc_type, exc_val)[-1].strip()
-            extra['exc_type'] = exc_type
-            extra['end_info'] = str(exc_type)
-            extra['end_code'] = 1
-            extra['exc_stack'] = "".join(traceback.format_exception(exc_type, exc_val, exc_tb))
-        self.end(**extra)
-
-    @call_on_main_process_wrap
-    def add_exit_hook(self, func):
-        """
-        Registers a function to be called when the program exits.
-
-        Args:
-            func (callable): The function to register.
-        """
-        import atexit
-        def exp_func():
-            """Function executed before process exit."""
-            func(self)
-
-        atexit.register(exp_func)
-
-    @call_on_main_process_wrap
-    def initial(self):
-        """
-        Initializes the experiment by setting up progress, information, and PID tracking.
-        """
-        self.add_tag(self.__class__.__name__, 'exp_type')
-        self.dump_progress(0)
-        self.dump_info('execute', {
-            'repo': self.project_root,
-            'cwd': os.getcwd(),
-            'exec_file': sys.argv[0],
-            'exec_bin': sys.executable,
-            'exec_argv': sys.argv
-        })
-        self.dump_info('pinfo', {
-            'pid': os.getpid(),
-            'hash': pid_hash(),
-            'obj': runtime_pid_obj(),
-        })
-
-        # register progress
-        io.dump_text(self.test_root, self.progress_file(f'{os.getpid()}'))
-
-    @call_on_main_process_wrap
-    def start(self):
-        """
-        Starts the experiment.
-        """
-        if self.get_prop('start', False):
-            return
-        self.initial()
-        self.dump_info('start', True)
-        for hook in self._hooks.values():  # type: BaseExpHook
-            hook.on_start(self)
-        return self
-
-    @call_on_main_process_wrap
-    def end(self, end_code=0, *args, **extra):
-        """
-        Ends the experiment.
-
-        Args:
-            end_code (int): The exit code to set for the experiment.
-            *args: Additional arguments to pass to the end hooks.
-            **extra: Additional keyword arguments to pass to the end hooks.
-        """
-        if not self.get_prop('start', False):
-            return
-        if self.get_prop('end', False):
-            return
-        self.dump_progress(1)
-        self.dump_info('end', True)
-        for hook in self._hooks.values():  # type: BaseExpHook
-            hook.on_end(self, end_code=end_code, *args, **extra)
-        return self
 
     @property
     def repo_name(self):
@@ -611,27 +390,107 @@ class Experiment:
         """
         return self.blob_branch.as_posix()
 
-    def __getitem__(self, item):
+    @property
+    def properties(self):
         """
-        Gets a property of the experiment.
-
-        Args:
-            item (str): The name of the property to get.
+        Gets a dictionary containing all properties of the experiment.
 
         Returns:
-            Any: The value of the property.
+            dict: A dictionary containing all properties of the experiment.
         """
-        return self._prop[item]
+        return self._prop
 
-    def __setitem__(self, key, value):
-        """
-        Sets a property of the experiment.
+    @property
+    def metrics_fn(self):
+        return self.test_file('metric.pkl')
 
-        Args:
-            key (str): The name of the property to set.
-            value (Any): The value to set the property to.
+    @property
+    def metric(self):
         """
-        self._prop[key] = value
+        Gets a dictionary containing all metrics of the experiment.
+
+        Returns:
+            Metric: A dictionary containing all metrics of the experiment.
+        """
+        return self._metric
+
+    @property
+    def note(self):
+        fn = self.test_file('note.md')
+        if os.path.exists(fn):
+            return io.load_text(fn)
+        return fn
+
+    @property
+    def paths(self) -> dict:
+        """
+        Gets a dictionary containing the paths to various directories associated with the experiment.
+
+        Returns:
+            dict: A dictionary containing the paths to various directories associated with the experiment.
+        """
+        return {
+            'root': self.root_branch.as_posix(),
+            'exp_root': self.exp_root,
+            'test_root': self.test_root,
+            'blob_root': self.blob_root,
+        }
+
+    @property
+    def is_alive(self):
+        """
+        Determines whether the process associated with the experiment is still running.
+
+        Returns:
+            bool: True if the process is still running, False otherwise.
+        """
+        pinfo = self.properties['pinfo']
+
+        hash_obj = runtime_pid_obj(pinfo['pid'])
+        if hash_obj is None:
+            return False
+
+        return pid_hash(hash_obj) == pinfo['hash']
+
+    @property
+    def exec_argv(self):
+        """
+        Gets the arguments used to execute the script associated with the experiment.
+
+        Returns:
+            List[str]: A list of arguments used to execute the script.
+        """
+        execute_info = self.properties.get('execute')
+        try:
+            return [os.path.basename(execute_info['exec_bin']), *execute_info['exec_argv']]
+        except:
+            return []
+
+    def _trigger_change(self, func):
+        #  test_root update some files
+        @wraps(func)
+        def inner(*args, **kwargs):
+            fn = self.progress_file(f'{self.test_name}.heartbeat', 'hb', self.exp_name)
+            io.dump_text(strftime(), fn)
+            func(*args, **kwargs)
+
+        return inner
+
+    def _create_test_name(self):
+        """
+        Generates a unique test name based on the current date and time.
+        regex pattern: [0-9]{6}.[0-9]{3}.[a-z0-9]{3}t
+
+        Returns:
+            str: The generated test name.
+        """
+        from lumo.proc.date import timehash
+        from ..utils.fmt import strftime
+        fs = os.listdir(self.exp_root)
+        date_str = strftime('%y%m%d')
+        fs = [i for i in fs if i.startswith(date_str)]
+        _test_name = f"{date_str}.{len(fs):03d}.{timehash()[-6:-4]}t"
+        return _test_name
 
     def get_prop(self, key, default=None):
         """
@@ -668,40 +527,299 @@ class Experiment:
         """
         self._prop[key] = value
 
-    @property
-    def properties(self):
+    def dump_progress(self, ratio: float, update_from=None):
         """
-        Gets a dictionary containing all properties of the experiment.
+        Saves progress information about the experiment.
+
+        Args:
+            ratio (float): The progress ratio as a number between 0 and 1.
+            update_from: The process from which the progress update came from.
+        """
+        res = {'ratio': max(min(ratio, 1), 0)}
+        if update_from is None:
+            res['update_from'] = update_from
+            res['last_edit_time'] = strftime()
+        self.dump_info('progress', res, append=True)
+
+    def dump_info(self, key: str, info: Any, append=False, info_dir='info', set_prop=True):
+        """
+        Saves information about the experiment to a file.
+
+        Args:
+            key (str): The key under which the information will be stored.
+            info (Any): The information to store.
+            append (bool, optional): Whether to append to the file or overwrite it. Defaults to False.
+            info_dir (str, optional): The name of the directory where the file will be stored. Defaults to 'info'.
+            set_prop (bool, optional): Whether to set the experiment property with the same key to the saved information.
+                Defaults to True.
+        """
+        fn = self.test_file(f'{key}.json', info_dir)
+        if append:
+            old_info = self.load_info(key, info_dir=info_dir)
+            old_info.update(info)
+            info = old_info
+        if set_prop:
+            self[key] = info
+            # self.set_prop(key, info)
+        io.dump_json(info, fn)
+
+    def load_info(self, key: str, info_dir='info'):
+        """
+        Loads information about the experiment from a file.
+
+        Args:
+            key (str): The key under which the information is stored.
+            info_dir (str, optional): The name of the directory where the file is stored. Defaults to 'info'.
 
         Returns:
-            dict: A dictionary containing all properties of the experiment.
+            Any: The information stored under the specified key.
         """
-        return self._prop
+        fn = self.test_file(f'{key}.json', info_dir)
+        if not os.path.exists(fn):
+            return {}
+        return io.load_json(fn)
 
-    @property
-    def paths(self) -> dict:
+    def dump_note(self, note: str):
+        fn = self.test_file('note.md')
+        io.dump_text(note, fn)
+
+    def dump_string(self, key: str, info: str, append=False):
         """
-        Gets a dictionary containing the paths to various directories associated with the experiment.
+        Saves a string to a file.
+
+        Args:
+            key (str): The key under which the string will be stored.
+            info (str): The string to store.
+        """
+        fn = self.test_file(f'{key}.str', 'text')
+        io.dump_text(info, fn, append=append)
+        if not append:
+            self.set_prop(key, info)
+
+    def load_string(self, key: str):
+        """
+        Loads a string from a file.
+
+        Args:
+            key (str): The key under which the string is stored.
 
         Returns:
-            dict: A dictionary containing the paths to various directories associated with the experiment.
+            str: The string stored under the specified key.
         """
-        return {
-            'root': self.root_branch.as_posix(),
-            'exp_root': self.exp_root,
-            'test_root': self.test_root,
-            'blob_root': self.blob_root,
-        }
+        fn = self.test_file(f'{key}.str', 'text')
+        if not os.path.exists(fn):
+            return ''
+        return io.load_text(fn)
 
-    @property
-    def enable_properties(self) -> set:
+    def dump_metric(self, key, value, cmp: str, flush=True, **kwargs):
+        return self.metric.dump_metric(key, value, cmp, flush, **kwargs)
+
+    def dump_metrics(self, dic: dict, cmp: str):
+        return self.metric.dump_metrics(dic, cmp)
+
+    def exp_dir(self, *args):
         """
-        Gets a set of the names of all properties that have been set for the experiment.
+        Gets the path to a directory in the experiment directory.
+
+        Args:
+            *args: Any subdirectory names to include in the directory path.
 
         Returns:
-            set: A set of the names of all properties that have been set for the experiment.
+            str: The path to the specified directory.
         """
-        return set(self._prop.keys())
+        parent = self.exp_branch.joinpath(*args)
+        return checkdir(parent).as_posix()
+
+    def exp_file(self, filename, *args):
+        """
+        Gets the path to a file in the experiment directory.
+
+        Args:
+            filename (str): The name of the file.
+            *args: Any additional subdirectory names to include in the file path.
+
+        Returns:
+            str: The path to the specified file.
+        """
+        parent = self.exp_branch.joinpath(*args)
+        return checkdir(parent).joinpath(filename).as_posix()
+
+    def test_dir(self, *args):
+        """
+        Gets the path to a directory in the test directory.
+
+        Args:
+            *args: Any subdirectory names to include in the directory path.
+
+        Returns:
+            str: The path to the specified directory.
+        """
+        parent = self.test_branch.joinpath(*args)
+        return checkdir(parent).as_posix()
+
+    def test_file(self, filename, *args):
+        """
+        Gets the path to a file in the test directory.
+
+        Args:
+            filename (str): The name of the file.
+            *args: Any additional subdirectory names to include in the file path.
+
+        Returns:
+            str: The path to the specified file.
+        """
+        parent = self.test_branch.joinpath(*args)
+        return checkdir(parent).joinpath(filename).as_posix()
+
+    def root_dir(self, *args):
+        """
+        Gets the path to a directory in the library's root directory.
+
+        Args:
+            *args: Any subdirectory names to include in the directory path.
+
+        Returns:
+            str: The path to the specified directory.
+        """
+        parent = self.root_branch.joinpath(*args)
+        return checkdir(parent).as_posix()
+
+    def root_file(self, filename, *args):
+        """
+        Gets the path to a file in the library's root directory.
+
+        Args:
+            filename (str): The name of the file.
+            *args: Any additional subdirectory names to include in the file path.
+
+        Returns:
+            str: The path to the specified file.
+        """
+        parent = self.root_branch.joinpath(*args)
+        return checkdir(parent).joinpath(filename).as_posix()
+
+    def blob_dir(self, *args):
+        """
+        Gets the path to a directory in the blob directory.
+        Args:
+            *args: Any subdirectory names to include in the directory path.
+
+        Returns:
+            str: The path to the specified directory.
+        """
+        parent = self.blob_branch.joinpath(*args)
+        return checkdir(parent).as_posix()
+
+    def blob_file(self, filename, *args):
+        """
+        Gets the path to a file in the blob directory.
+
+        Args:
+            filename (str): The name of the file.
+            *args: Any additional subdirectory names to include in the file path.
+
+        Returns:
+            str: The path to the specified file.
+        """
+        parent = self.blob_branch.joinpath(*args)
+        return checkdir(parent).joinpath(filename).as_posix()
+
+    def progress_file(self, filename, *args):
+        """
+        Gets the path to a file in the progress directory.
+
+        Args:
+            filename (str): The name of the file.
+
+        Returns:
+            str: The path to the specified file.
+        """
+        parent = self.progress_branch.joinpath(*args)
+        return checkdir(parent).joinpath(filename).as_posix()
+
+    @classmethod
+    @property
+    def Class(cls):
+        return cls
+
+    def rerun(self, arg_list: List[str]):
+        """rerun this test in another"""
+        # self.properties['']
+        new_test_name = self._create_test_name()
+        new_exp = Experiment(self.exp_name, root=self._root, test_name=new_test_name)
+        self.dump_info('deprecated', {'rerun_at': new_exp.test_name})
+        old_rerun_info = self.properties.get('rerun', None)
+        count = 1
+        if old_rerun_info is not None:
+            count += old_rerun_info['count']
+        new_exp.dump_info('rerun', {'from': self.test_name, 'repeat': count})
+        from lumo.utils.subprocess import run_command
+        old_exec = self.properties['execute']
+        command = ' '.join([old_exec['exec_bin'], old_exec['exec_file'], *old_exec['exec_argv'], *arg_list])
+        env = os.environ.copy()
+        env[Experiment.ENV_TEST_NAME_KEY] = new_exp.test_name
+        return run_command(command, cwd=old_exec['cwd'])
+
+    @call_on_main_process_wrap
+    def initial(self):
+        """
+        Initializes the experiment by setting up progress, information, and PID tracking.
+        """
+        self.dump_info('progress', {'start': strftime(), 'finished': False}, append=True)
+        self.dump_progress(0)
+        self.dump_info('execute', {
+            'repo': self.project_root,
+            'cwd': os.getcwd(),
+            'exec_file': sys.argv[0],
+            'exec_bin': sys.executable,
+            'exec_argv': sys.argv
+        })
+        self.dump_info('pinfo', {
+            'pid': os.getpid(),
+            'hash': pid_hash(),
+            'obj': runtime_pid_obj(),
+        })
+
+        # register progress
+        # register this process
+        io.dump_text(self.test_root, self.progress_file(f'{os.getpid()}', 'pid'))
+
+    @call_on_main_process_wrap
+    def start(self):
+        """
+        Starts the experiment.
+        """
+        if self.properties.get('start', False):
+            return
+        self.initial()
+        self.set_prop('start', True)
+        for hook in self._hooks.values():  # type: BaseExpHook
+            hook.on_start(self)
+        return self
+
+    @call_on_main_process_wrap
+    def end(self, end_code=0, *args, **extra):
+        """
+        Ends the experiment.
+
+        Args:
+            end_code (int): The exit code to set for the experiment.
+            *args: Additional arguments to pass to the end hooks.
+            **extra: Additional keyword arguments to pass to the end hooks.
+        """
+        if not self.is_alive:
+            return
+        if not self.properties.get('start', False):
+            return
+        if self.properties.get('end', False):
+            return
+        self.set_prop('end', True)
+        self.dump_progress(1)
+
+        self.dump_info('progress', {'end': strftime(), 'finished': end_code == 0}, append=True)
+        for hook in self._hooks.values():  # type: BaseExpHook
+            hook.on_end(self, end_code=end_code, *args, **extra)
+        return self
 
     @call_on_main_process_wrap
     def set_hook(self, hook: BaseExpHook):
@@ -711,29 +829,34 @@ class Experiment:
         Args:
             hook (BaseExpHook): The hook to register.
         """
-        hook.regist(self)
         if not glob.get(hook.config_name, True):
-            self.dump_info(hook.name, {
-                'code': -1,
-                'msg': f'{hook.name} disabled'
-            })
+            self.dump_info('hooks', {
+                hook.__class__.__name__: {'loaded': False, 'msg': 'disabled by config'}
+            }, append=True)
             return self
-        self.logger.info(f'Register {hook}.')
-        self._hooks[hook.__class__.__name__] = hook
-        self.add_tag(hook.__class__.__name__, 'hooks')
-        return self
+        else:
+            hook.regist(self)
+            self.dump_info('hooks', {
+                hook.__class__.__name__: {'loaded': True, 'msg': ''}
+            }, append=True)
+            self.logger.info(f'Register {hook}.')
+            self._hooks[hook.__class__.__name__] = hook
+            return self
 
-    def load_prop(self):
+    @call_on_main_process_wrap
+    def add_exit_hook(self, func):
         """
-        Loads all properties associated with the experiment from disk.
-        """
-        for f in os.listdir(self.test_dir('info')):
-            key = os.path.splitext(f)[0]
-            self.set_prop(key, self.load_info(key))
+        Registers a function to be called when the program exits.
 
-        for f in os.listdir(self.test_dir('text')):
-            key = os.path.splitext(f)[0]
-            self.set_prop(key, self.load_string(key))
+        Args:
+            func (callable): The function to register.
+        """
+        import atexit
+        def exp_func():
+            """Function executed before process exit."""
+            func(self)
+
+        atexit.register(exp_func)
 
     @classmethod
     def from_disk(cls, path):
@@ -757,56 +880,19 @@ class Experiment:
         root = test_root.parent.parent.parent.as_posix()
         self = cls(test_root.parent.name, root=root)
         self._test_name = test_root.name
-        self.load_prop()
+
+        # load prop
+        for f in os.listdir(self.test_dir('info')):
+            key = os.path.splitext(f)[0]
+            self.set_prop(key, self.load_info(key))
+
+        for f in os.listdir(self.test_dir('text')):
+            key = os.path.splitext(f)[0]
+            self.set_prop(key, self.load_string(key))
+
+        # load metric
+        self._metric = Metric(self.metrics_fn)
         return self
-
-    @property
-    def is_alive(self):
-        """
-        Determines whether the process associated with the experiment is still running.
-
-        Returns:
-            bool: True if the process is still running, False otherwise.
-        """
-        pinfo = self.properties['pinfo']
-
-        hash_obj = runtime_pid_obj(pinfo['pid'])
-        if hash_obj is None:
-            return False
-
-        return pid_hash(hash_obj) == pinfo['hash']
-
-    @property
-    def exec_argv(self):
-        """
-        Gets the arguments used to execute the script associated with the experiment.
-
-        Returns:
-            List[str]: A list of arguments used to execute the script.
-        """
-        execute_info = self.get_prop('execute')
-        try:
-            return [os.path.basename(execute_info['exec_bin']), *execute_info['exec_argv']]
-        except:
-            return []
-
-    def __repr__(self):
-        """
-        Returns a string representation of the Experiment object.
-
-        Returns:
-            str: A string representation of the Experiment object.
-        """
-        return f'{self.exp_name}->({self.test_name})'
-
-    def __str__(self):
-        """
-        Returns a string representation of the Experiment object.
-
-        Returns:
-            str: A string representation of the Experiment object.
-        """
-        return self.__repr__()
 
 
 class SimpleExperiment(Experiment):

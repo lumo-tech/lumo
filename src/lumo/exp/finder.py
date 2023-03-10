@@ -161,7 +161,7 @@ def retrieval_test_root(test_flag: str) -> str:
     return test_root
 
 
-def retrieval_experiment(test_name=None, test_root: str = None):
+def retrieval_experiment(test_name=None, test_root: str = None) -> Experiment:
     """
     Loads an Experiment object from disk for the given test name or test root.
 
