@@ -58,8 +58,7 @@ def load_json(fn):
         with open(fn, 'r', encoding='utf-8') as r:
             return json.load(r)
     except json.JSONDecodeError as e:
-        e.msg = f'Error in file {fn}: {e.msg}'
-        raise e
+        raise ValueError(f'Error in file {fn}') from e
 
 
 def load_yaml(fn):
