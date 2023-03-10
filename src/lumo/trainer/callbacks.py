@@ -10,6 +10,7 @@ from datetime import datetime
 from functools import wraps
 from typing import NewType, Any, Optional, Dict, Union
 
+import psutil
 from torch.utils.data import DataLoader
 
 from lumo.core import Meter, MetricType, Record, TrainStage, wrap_result, ParamsType
@@ -605,7 +606,7 @@ class RecordCallback(TrainCallback):
 
     def on_hooked(self, source: Trainer, params: ParamsType):
         super().on_hooked(source, params)
-        source.exp.set_prop('AutoRecord', self.__class__.__name__)
+        source.exp.dump_string('AutoRecord', self.__class__.__name__)
 
     def on_train_step_end(self, trainer: Trainer, func, params: ParamsType, metric: MetricType, *args, **kwargs):
         super().on_train_step_end(trainer, func, params, metric, *args, **kwargs)
@@ -806,7 +807,7 @@ class RemoteCallback(InitialCallback, TrainCallback):
                            }))
 
 
-class CUDAMemoryRecord(TrainCallback):
+class ResourceRecord(TrainCallback):
     """
     Record CUDA GPU maximum memory used during training.
 
@@ -817,16 +818,20 @@ class CUDAMemoryRecord(TrainCallback):
 
     def on_hooked(self, source: Trainer, params: ParamsType):
         super().on_hooked(source, params)
-        self.max_memory = 0
         self.device = source.device
         self.pid = os.getpid()
         self.mem = DeviceMem()
 
     def on_train_epoch_end(self, trainer: Trainer, func, params: ParamsType, record: Record, *args, **kwargs):
         super().on_train_epoch_end(trainer, func, params, record, *args, **kwargs)
-        self.max_memory = max(self.max_memory, self.mem.get_pid_device_mem(self.pid, self.device))
-        trainer.database.update('memory', self.max_memory)
-        trainer.exp.dump_info('max_memory', self.max_memory)
+        trainer.exp.dump_metric('CUDA_memory', self.mem.get_pid_device_mem(self.pid, self.device), cmp='max')
+
+        # 获取进程的内存信息
+        memory_info = psutil.Process(self.pid).memory_info()
+
+        # 打印内存信息
+        trainer.exp.dump_metric('CPU_memory_rss', memory_info.rss / 1024 / 1024)
+        trainer.exp.dump_metric('CPU_memory_vms', memory_info.vms / 1024 / 1024)
 
 
 class SkipWhenParamsEq(TrainCallback, InitialCallback):
@@ -845,7 +850,7 @@ class SkipWhenParamsEq(TrainCallback, InitialCallback):
         if isinstance(old, str) and is_test_root(old) and os.path.exists(old):
             source.stop_train()
             source.stop_train_epoch()
-            source.database.update('skiped', True, flush=True)
+            source.exp.dump_info('early_stop', True)
             source.logger.info(
                 f'Find finished test with equal params ({current}) from {olds[current]}. '
                 f'To runStored in:\n    {self.fn}')

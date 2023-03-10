@@ -79,10 +79,12 @@ class Trainer(_BaseTrainer):
         self.params.iparams()
         self.exp = TrainerExperiment(self.generate_exp_name())
 
-        self.database = TableRow(self.exp.project_name, self.exp.exp_name, self.exp.test_name_with_dist)
-        self.metric_board = Metrics(self.exp.test_root)
+        self._database = TableRow(self.exp.metrics_fn, persistent=self.is_main)
+        self.metric_board = Metrics(self.exp.test_root, persistent=self.is_main)
+        self.metric = self.exp.metric
+
         self.exp.dump_info('metric_board', self.metric_board.fpath)
-        self.exp.dump_info('table_row', self.database.fpath)
+        self.exp.dump_info('table_row', self._database.fpath)
         self.rnd = RndManager()
 
         self.train_epoch_toggle = False
@@ -104,7 +106,7 @@ class Trainer(_BaseTrainer):
         self.set_epoch_idx(0)
         self.set_idx(0)
         if params.get('debug', False):
-            self.exp.set_prop('debug', True)
+            self.exp.dump_info('debug', True)
 
     @property
     def metrics(self):
@@ -112,7 +114,12 @@ class Trainer(_BaseTrainer):
 
     @property
     def db(self):
-        return self.database
+        return self._database
+
+    @property
+    def database(self):
+        warnings.warn('TableRow is deprecated and will be removed soon, please use self.metric instead')
+        return self._database
 
     @property
     def saver(self) -> Saver:
@@ -500,11 +507,10 @@ class Trainer(_BaseTrainer):
 
     def on_trainer_exception(self, func: Callable, exception: BaseException):
         """Updates database with error information when an exception occurs during training."""
-        self.database.update_dict(dict(end=datetime.now(),
-                                       finished=False,
-                                       error=str(exception),
-                                       trainer_frame=str(func)),
-                                  flush=True)
+        self.exp.dump_info('exception', dict(end=datetime.now(),
+                                             finished=False,
+                                             error=str(exception),
+                                             trainer_frame=str(func)))
 
     @property
     def is_initialized(self):
@@ -526,22 +532,9 @@ class Trainer(_BaseTrainer):
             return
         self.exp.start()
 
-        commit_info = self.exp.get_prop('git')
-        commit_hex = None
-        if commit_info is not None and 'commit' in commit_info:
-            commit_hex = commit_info['commit']
-        self.database.update('commit_hex', commit_hex)
-        self.database.update_dict(dict(
-            test_name=self.exp.test_name,
-            exp_name=self.exp.exp_name,
-            project=self.exp.project_name,
-            path=self.exp.test_root,
-            start=datetime.now()))
-        self.database.set_params(self.params.to_dict())
-        self.database.update('command', ' '.join(sys.argv))
         params_hash = self.params.hash()
-        self.database.update('params_hash', params_hash)
         self.exp.dump_string('params_hash', params_hash)
+
         self.icallbacks(self.params)
         self.set_property('initial.callbacks', True)
         self.imodels(self.params)
@@ -631,8 +624,6 @@ class Trainer(_BaseTrainer):
 
         # update when train finished
         self.exp.end()
-        self.database.update_dict(dict(end=datetime.now(), finished=True), flush=True)
-        self.database.flush()
         return self._prop
 
     def train_epoch(self, loader: DataLoaderType, params: ParamsType = None,
@@ -673,10 +664,8 @@ class Trainer(_BaseTrainer):
             self._prop['global_steps'] += 1
             metric = self.train_step(batch, params)
             record.record(metric)
-            self.database.flush()
 
         record.flush()
-        self.database.update_dict(dict(eidx=self.eidx, end=datetime.now()))
         return record
 
     def set_property(self, key: str, value: any) -> None:
