@@ -896,6 +896,11 @@ class Experiment:
 
     def dict(self):
         return {
+            'path': {
+                'test_root': self.test_root,
+                'exp_root': self.exp_root,
+                'blob_root': self.blob_root,
+            },
             **self.properties,
             'is_alive': self.is_alive,
             'metrics': self.metric.value,
