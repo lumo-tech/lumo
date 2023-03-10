@@ -34,10 +34,10 @@ class Main():
             st.write(finder.format_experiment(exp))
         # with st.expander("Visualize Metrics"):
         if exp.has_prop('tensorboard_args'):
-            tb = exp.get_prop('tensorboard_args')
+            tb = exp.properties.get('tensorboard_args')
             metrics = parser.parse_fron_tensorboard(tb['log_dir'])
         elif exp.has_prop('logger_args'):
-            tb = exp.get_prop('logger_args')
+            tb = exp.properties.get('logger_args')
             metrics = parser.parse_from_log(tb['log_dir'])
         else:
             metrics = {}
@@ -52,10 +52,10 @@ class Main():
             k, v = metrics[i + 1]
             m.write(k)
             m.line_chart(np.array([vv.value for vv in v]))
-                # if i + 2 >= len(metrics):
-                #     break
-                # k, v = metrics[i + 2]
-                # r.line_chart({'k': np.array([vv.value for vv in v])})
+            # if i + 2 >= len(metrics):
+            #     break
+            # k, v = metrics[i + 2]
+            # r.line_chart({'k': np.array([vv.value for vv in v])})
 
     def select_head(self):
         left, right = st.columns([1, 3])

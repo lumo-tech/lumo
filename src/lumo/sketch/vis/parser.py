@@ -30,10 +30,10 @@ def find_metric_fron_test_root(test_root):
 
     exp = Experiment.from_disk(test_root)
     if exp.has_prop('tensorboard_args'):
-        tb = exp.get_prop('tensorboard_args')
+        tb = exp.properties.get('tensorboard_args')
         metrics = parse_fron_tensorboard(tb['log_dir'])
     elif exp.has_prop('logger_args'):
-        tb = exp.get_prop('logger_args')
+        tb = exp.properties.get('logger_args')
         metrics = parse_from_log(tb['log_dir'])
     else:
         fs = [i for i in os.listdir(exp.test_root)]
