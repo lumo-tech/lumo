@@ -132,8 +132,6 @@ class Experiment:
         self.add_exit_hook(self.end)
         self.logger = Logger()
 
-        print(os.environ)
-
     def __getitem__(self, item):
         """
         Gets a property of the experiment.
