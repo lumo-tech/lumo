@@ -5,7 +5,9 @@ import signal
 
 
 def run_command(command, cwd=None):
-    proc = subprocess.Popen(command, cwd=cwd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    proc = subprocess.Popen(command,
+                            cwd=cwd,
+                            shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     try:
         while proc.poll() is None:
             # Wait for output from the process
