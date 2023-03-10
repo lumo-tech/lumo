@@ -95,7 +95,7 @@ class Watcher:
         res = []
         for pid in os.listdir(self.pid_root):
             try:
-                test_root = IO.load_text(pid)
+                test_root = IO.load_text(os.path.join(self.pid_root, pid))
                 exp = Experiment.from_disk(test_root)
                 res.append(exp.dict())
             except:
