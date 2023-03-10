@@ -53,7 +53,17 @@ def dump_state_dict(obj, fn):
 
 
 def load_json(fn):
-    """Loads JSON data from the given file path and returns the resulting object."""
+    """
+    Loads JSON data from the given file path and returns the resulting object.
+
+    Args:
+        fn: file name
+
+    Returns:
+
+    Raises:
+        ValueError
+    """
     try:
         with open(fn, 'r', encoding='utf-8') as r:
             return json.load(r)
