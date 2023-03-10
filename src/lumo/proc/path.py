@@ -111,6 +111,16 @@ def metricroot():
     return res
 
 
+def dbroot():
+    DB_ROOT = glob.get('db_root', None)
+    if DB_ROOT:
+        res = DB_ROOT
+    else:
+        res = os.path.join(libhome(), 'database')
+    os.makedirs(res, exist_ok=True)
+    return res
+
+
 def local_dir():
     """
     Project root, default is the parent directory of .git.

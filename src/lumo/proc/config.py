@@ -119,11 +119,13 @@ def debug_mode(base_dir=None, disable_git=True):
         None
     """
     glob['exp_root'] = tempfile.mkdtemp(dir=base_dir)
+    glob['db_root'] = tempfile.mkdtemp(dir=base_dir)
     glob['progress_root'] = tempfile.mkdtemp(dir=base_dir)
+    glob['metric_root'] = tempfile.mkdtemp(dir=base_dir)
+
     glob['home'] = tempfile.mkdtemp(dir=base_dir)
     glob['cache_dir'] = tempfile.mkdtemp(dir=base_dir)
     glob['blob_root'] = tempfile.mkdtemp(dir=base_dir)
-    glob['metric_root'] = tempfile.mkdtemp(dir=base_dir)
     # glob['HOOK_LOCKFILE'] = False
     glob['HOOK_LASTCMD_DIR'] = tempfile.mkdtemp(dir=base_dir)
     # glob['HOOK_RECORDABORT'] = False
