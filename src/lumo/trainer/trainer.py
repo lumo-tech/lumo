@@ -101,6 +101,7 @@ class Trainer(_BaseTrainer):
 
         if dist.is_main():
             self.params.to_yaml(self.exp.params_fn)
+            self.exp.dump_info('params', self.params.to_dict())
 
         self.set_global_steps(0)
         self.set_epoch_idx(0)
