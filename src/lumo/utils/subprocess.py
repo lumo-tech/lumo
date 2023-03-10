@@ -41,7 +41,7 @@ def run_command(command, cwd=None, env=None):
             for stream in rlist:
                 line = stream.readline().decode('utf-8')
                 if line:
-                    print(line)
+                    print(line, end='')
 
             # Read the remaining output
         for stream in [proc.stdout, proc.stderr]:
@@ -49,7 +49,7 @@ def run_command(command, cwd=None, env=None):
                 line = stream.readline().decode('utf-8')
                 if not line:
                     break
-                print(line)
+                print(line, end='')
 
         # Get the return code of the process
         return_code = proc.wait()
