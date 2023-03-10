@@ -1,9 +1,11 @@
 import os.path
+import warnings
 
 from dbrecord import PList
 
 from lumo.proc import path
 from lumo.utils import safe_io as IO
+from lumo.decorators.deprecated import DeprecatedWarning
 
 
 class Metrics:
@@ -28,10 +30,11 @@ class Metrics:
             Writes any changes to the metric board SQLite file to disk.
     """
 
-    def __init__(self, test_path: str):
+    def __init__(self, test_path: str, persistent=True):
         os.makedirs(test_path, exist_ok=True)
         self.fpath = os.path.join(test_path, f'metric_board.sqlite')
         self.disk = PList(self.fpath)
+        self.persistent = persistent
 
     def append(self, metric: dict, step, stage='train'):
         """
@@ -59,7 +62,8 @@ class Metrics:
         Returns:
             None
         """
-        self.disk.flush()
+        if self.persistent:
+            self.disk.flush()
 
 
 class TableRow:
@@ -77,6 +81,7 @@ class TableRow:
     - fpath (str): path of the file that stores the serialized row.
     - key (str): unique identifier of the row.
     - value (dict): dictionary representing the row.
+    - persistent (bool): whether to store in disk.
 
     Methods:
     - __enter__(self): context manager method. Does nothing.
@@ -92,12 +97,12 @@ class TableRow:
     - __getitem__(self, item): returns the value of a key in the row.
     """
 
-    def __init__(self, table, partition, rowkey):
-        dirpath = os.path.join(path.metricroot(), table)
-        os.makedirs(dirpath, exist_ok=True)
-        self.fpath = os.path.join(dirpath, partition, f'{rowkey}.pkl')
-        self.key = rowkey
+    def __init__(self, fn, persistent=True):
+        os.makedirs(os.path.dirname(os.path.abspath(fn)), exist_ok=True)
+        self.fpath = fn
         self.value = {}
+        self.persistent = persistent
+
         # self.disk = PDict(self.fpath)
 
     def __enter__(self):
@@ -114,7 +119,8 @@ class TableRow:
 
     def flush(self):
         """Writes the value of the row to a file."""
-        IO.dump_pkl(self.value, self.fpath)
+        if self.persistent:
+            IO.dump_pkl(self.value, self.fpath)
 
     def update_metrics(self, dic: dict, compare=None, flush=False):
         """
@@ -227,45 +233,11 @@ class TableRow:
 
         return {key: old, key2: old2}
 
-    def set_params(self, params: dict):
-        """
-        Set the parameters dictionary of the row.
-
-        Args:
-            params (dict): The parameters dictionary to set.
-
-        Returns:
-            dict: The parameters dictionary set.
-        """
-        self.value['params'] = params
-        self.flush()
-
-    def update_dict(self, dic: dict, flush=False):
-        """
-        Update the row with a dictionary.
-
-        Args:
-            dic (dict): The dictionary to update the row with.
-            flush (bool, optional): Whether to flush to disk after updating. Default is False.
-        """
-        for k, v in dic.items():
-            self.update(k, v)
-        if flush:
-            self.flush()
-
-    def update(self, key, value, flush=True):
-        """
-        Update a key-value pair in the row.
-
-        Args:
-            key (str): The key of the metric to update.
-            value (float): The value to set the metric to.
-            flush (bool, optional): Whether to flush to disk after updating. Default is True.
-        """
-        self.value[key] = value
-        if flush:
-            self.flush()
-
     def __getitem__(self, item):
         """Get the value of a key in the row."""
         return self.value[item]
+
+
+DeprecatedWarning(TableRow, '0.15.0', '1.0.0',
+                  'This class is deprecated and will be remove in 1.0.0, '
+                  'Please use Experiment.metric to record your best metric.')
