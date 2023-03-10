@@ -4,9 +4,10 @@ import select
 import signal
 
 
-def run_command(command, cwd=None):
+def run_command(command, cwd=None, env=None):
     proc = subprocess.Popen(command,
                             cwd=cwd,
+                            env=env,
                             shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     try:
         while proc.poll() is None:
