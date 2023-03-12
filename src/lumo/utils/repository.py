@@ -202,7 +202,7 @@ def git_archive(repo=None, commit_hex=None, commit: Commit = None):
     old_path = os.getcwd()
     os.chdir(commit.tree.abspath)
     exp = Experiment('GitArchive')
-    fn = exp.blob_file(f'{commit.hexsha[:8]}.tar')
+    fn = exp.mk_bpath(f'{commit.hexsha[:8]}.tar')
 
     exp.dump_info('git_archive', {'file': fn,
                                   'test_name': exp.test_name,

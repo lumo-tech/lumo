@@ -10,11 +10,11 @@ class TrainerExperiment(SimpleExperiment):
 
     @property
     def log_dir(self):
-        return self.test_root
+        return self.info_dir
 
     @property
     def params_fn(self):
-        res = self.test_file('params.yaml')
+        res = self.mk_ipath('params.yaml')
         self.dump_string('params.yaml', res)
         return res
 
@@ -24,7 +24,7 @@ class TrainerExperiment(SimpleExperiment):
         if self.has_prop(key):
             return self.get_prop(key)
         else:
-            log_dir = self.test_dir('board')
+            log_dir = self.mk_ipath('board', is_dir=True)
             res = {
                 'filename_suffix': '.bd',
                 'log_dir': log_dir,
@@ -34,7 +34,7 @@ class TrainerExperiment(SimpleExperiment):
 
     @property
     def state_dict_dir(self):
-        res = self.blob_dir('state_dict')
+        res = self.mk_bpath('state_dict', is_dir=True)
         return res
 
     def dump_train_eidx(self, eidx, epoch: int):

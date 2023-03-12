@@ -2,7 +2,7 @@
 Format date/filename, check array shape, convert item from torch.Tensor to ndarray or scalar.
 """
 import textwrap
-from datetime import datetime
+from datetime import datetime, timedelta
 
 import numpy as np
 import torch
@@ -45,7 +45,7 @@ def strftime(fmt='%y-%m-%d-%H%M%S', dateobj: datetime = None):
     return datetime.now().strftime(fmt)
 
 
-def strptime(fmt='%y-%m-%d-%H%M%S', datestr: str = None):
+def strptime(datestr: str = None, fmt='%y-%m-%d-%H%M%S', ):
     """Convert a string to a datetime object using the specified format."""
     return datetime.strptime(datestr, fmt)
 
@@ -78,9 +78,17 @@ def format_second(sec: int) -> str:
         min, sec = divmod(sec, 60)
         if min > 60:
             hour, min = divmod(min, 60)
-            fmt = "{}h{}m{}s".format(hour, min, int(sec))
+            if hour > 24:
+                day, hour = divmod(hour, 24)
+                fmt = "{}d{}h{}m{}s".format(int(day), int(hour), int(min), int(sec))
+            else:
+                fmt = "{}h{}m{}s".format(int(hour), int(min), int(sec))
         else:
-            fmt = "{}m{}s".format(min, int(sec))
+            fmt = "{}m{}s".format(int(min), int(sec))
     else:
         fmt = "{}s".format(int(sec))
     return fmt
+
+
+def format_timedelta(td: timedelta):
+    return format_second(td.total_seconds())

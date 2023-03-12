@@ -18,7 +18,7 @@ def test_exp():
     for i in range(10):
         t = trainer()
         t.train()
-        print(t.exp.test_name)
+        print(t.exp.heartbeat_fn)
 
     w = Watcher()
     df = w.load()

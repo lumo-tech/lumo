@@ -13,7 +13,7 @@ from accelerate.data_loader import DataLoaderDispatcher, DataLoaderShard
 from torch import nn
 from torch.optim import Optimizer
 from torch.utils.data import DataLoader
-
+import json
 from lumo.contrib.accelerate import Accelerator
 from lumo.contrib.accelerate.utils import send_to_device
 from lumo.core import TrainStage, Record, MetricType, Meter
@@ -85,8 +85,8 @@ class Trainer(_BaseTrainer):
         self.params.iparams()
         self.exp = TrainerExperiment(self.generate_exp_name())
 
-        self._database = TableRow(self.exp.metrics_fn, persistent=self.is_main)
-        self.metric_board = Metrics(self.exp.test_root, persistent=self.is_main)
+        self._database = TableRow(self.exp.mk_ipath('metric.pkl'), persistent=self.is_main)
+        self.metric_board = Metrics(self.exp.mk_bpath('board.sqlite'), persistent=self.is_main)
         self.metric = self.exp.metric
 
         self.exp.dump_info('metric_board', self.metric_board.fpath)
@@ -1009,64 +1009,29 @@ class Trainer(_BaseTrainer):
         """
         self.accelerate.wait_for_everyone()
 
-    def save_model(self, is_best=False, meta_info: Union[str, dict] = None):
-        """
-        Saves the current model.
+    def save_best_model(self):
+        if self.is_main:
+            file = self.exp.mk_bpath('models', 'best_model.ckpt')
+            file_info = self.exp.mk_bpath('models', 'best_model.json')
+        else:
+            file = self.exp.mk_bpath('models', f'best_model-{self.local_rank}.ckpt')
+            file_info = self.exp.mk_bpath('models', f'best_model-{self.local_rank}.json')
+        torch.save(self.state_dict(), file)
 
-        Args:
-            is_best (bool, optional): Indicates whether the current model is the best one so far. Defaults to False.
-            meta_info (Union[str, dict], optional): Additional information to include in the saved model file. Can be a
-            string, a dictionary, or a Meter object. Defaults to None.
-
-        Returns:
-            str: The path to the saved model file.
-        """
-        info = self._build_trainer_meta_info(meta_info)
-        val = self.saver.save_model(self.eidx, self.model_state_dict(),
-                                    meta_info=info,
-                                    is_best=is_best)
+        with open(file_info, 'w') as w:
+            w.write(json.dumps({'global_steps': self.global_steps, 'metric': self.exp.metric.value}))
+        self.logger.info(f'saved best model at {file}')
         self.wait_for_everyone()
-        return val
 
-    def _build_trainer_meta_info(self, meta_info: Union[str, dict] = None):
-        """
-        Builds a dictionary containing metadata about the Trainer object.
-
-        Args:
-            meta_info (Union[str, dict], optional): Additional metadata to include in the dictionary. Can be a string, a
-            dictionary, or a Meter object. Defaults to None.
-
-        Returns:
-            dict: A dictionary containing metadata about the Trainer object.
-        """
-        info = dict()
-        info['eidx'] = self.eidx
-        if meta_info is not None:
-            if isinstance(meta_info, str):
-                info['msg'] = meta_info
-            if isinstance(meta_info, Meter):
-                meta_info = meta_info.serialize()
-            if isinstance(meta_info, dict):
-                info.update(meta_info)
-        return info
-
-    def save_checkpoint(self, max_keep=10, is_best=False, meta_info: Union[str, dict, Meter] = None):
-        """
-        Saves a checkpoint of the current state of the Trainer object.
-
-        Args:
-            max_keep (int, optional): The maximum number of checkpoints to keep. Defaults to 10.
-            is_best (bool, optional): Indicates whether the current checkpoint is the best one so far. Defaults to False.
-            meta_info (Union[str, dict, Meter], optional): Additional information to include in the saved checkpoint file.
-            Can be a string, a dictionary, or a Meter object. Defaults to None.
-
-        Returns:
-            str: The path to the saved checkpoint file.
-        """
-        info = self._build_trainer_meta_info(meta_info)
-        val = self.saver.save_checkpoint(self.eidx, self.state_dict(),
-                                         meta_info=info,
-                                         max_keep=max_keep,
-                                         is_best=is_best)
+    def save_last_model(self):
+        if self.is_main:
+            file = self.exp.mk_bpath('models', 'last_model.ckpt')
+            file_info = self.exp.mk_bpath('models', 'last_model.json')
+        else:
+            file = self.exp.mk_bpath('models', f'last_model-{self.local_rank}.ckpt')
+            file_info = self.exp.mk_bpath('models', f'last_model-{self.local_rank}.json')
+        torch.save(self.state_dict(), file)
+        with open(file_info, 'w') as w:
+            w.write(json.dumps({'global_steps': self.global_steps, 'metric': self.exp.metric.value}))
+        self.logger.info(f'saved last model at {file}')
         self.wait_for_everyone()
-        return val

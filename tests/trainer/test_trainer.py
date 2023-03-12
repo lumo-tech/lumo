@@ -156,9 +156,9 @@ def test_trainer():
 
     # test trainer experiment
     exp = trainer.exp
-    assert exp.exp_root == os.path.join(glob['exp_root'], trainer.generate_exp_name())
-    assert exp.lib_root == glob['home']
-    assert exp.blob_root == os.path.join(glob['blob_root'], trainer.generate_exp_name(), exp.test_name)
+    assert exp.exp_dir == os.path.join(glob['exp_root'], trainer.generate_exp_name())
+    assert exp.info_dir == os.path.join(glob['exp_root'], trainer.generate_exp_name(), exp.test_name)
+    assert exp.blob_dir == os.path.join(glob['blob_root'], trainer.generate_exp_name(), exp.test_name)
     assert exp.project_root == git_dir()
     # how to test writer?
     _ = trainer.safe_writer

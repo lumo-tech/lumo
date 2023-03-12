@@ -73,8 +73,8 @@ class Diary(ExpHook):
 
     def on_start(self, exp: Experiment, *args, **kwargs):
         super().on_start(exp, *args, **kwargs)
-        with open(exp.root_file(f'{strftime("%y%m%d")}.log', 'diary'), 'a') as w:
-            w.write(f'{strftime("%H:%M:%S")}, {exp.test_root}\n')
+        # with open(exp.root_file(f'{strftime("%y%m%d")}.log', 'diary'), 'a') as w:
+        #     w.write(f'{strftime("%H:%M:%S")}, {exp.test_root}\n')
 
 
 class RecordAbort(ExpHook):
@@ -161,7 +161,7 @@ class GitCommit(ExpHook):
                     pass
 
         dep_hash = hash(dep_source)
-        commit_ = git_commit(key='lumo', info=exp.test_root, filter_files=filter_files)
+        commit_ = git_commit(key='lumo', info=exp.info_dir, filter_files=filter_files)
 
         if commit_ is None:
             exp.dump_info('git', {
@@ -176,14 +176,13 @@ class GitCommit(ExpHook):
             'repo': exp.project_root,
             'dep_hash': dep_hash,
         })
-
-        file = exp.root_file(hash(exp.project_root), 'repos')
+        file = exp.mk_rpath('repos', hash(exp.project_root))
         exps = {}
         if os.path.exists(file):
             exps = io.load_json(file)
         res = exps.setdefault(exp.project_root, list())
-        if exp.exp_root not in res:
-            res.append(exp.exp_root)
+        if exp.exp_dir not in res:
+            res.append(exp.exp_dir)
         io.dump_json(exps, file)
 
 
@@ -226,10 +225,6 @@ class FinalReport(ExpHook):
 
         print('Properties:')
         indent_print(pformat(exp.properties))
-        print('Tags:')
-        indent_print(pformat(exp.tags))
-        print('Use paths:')
-        indent_print(pformat(exp.paths))
         print('Execute:')
         indent_print(' '.join(exp.exec_argv))
         print('-----------------------------------')
