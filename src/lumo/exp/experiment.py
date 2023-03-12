@@ -750,7 +750,11 @@ class Experiment:
         exp_dir = os.path.dirname(path)
 
         paths_fn = os.path.join(path, 'info', f'paths.json')
-        paths = io.load_json(paths_fn)
+        try:
+            paths = io.load_json(paths_fn)
+        except ValueError as e:
+            paths = {}
+
         self = cls(os.path.basename(exp_dir), test_name=os.path.basename(path), paths=paths)
 
         # load prop
