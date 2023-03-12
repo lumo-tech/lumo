@@ -1,7 +1,7 @@
 """
 
 """
-__version__ = "0.14.6"
+__version__ = "0.15.0"
 
 from .core import Params, ParamsType, MetricType, Meter, Record, TrainStage, BaseParams
 
