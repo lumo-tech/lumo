@@ -522,7 +522,7 @@ class EMAUpdate(TrainCallback):
      - name is started with 'ema'
     """
 
-    def on_train_step_end(self, trainer: Trainer, func, params: ParamsType, metric: MetricType, *args, **kwargs):
+    def on_train_step_end(self, trainer: Trainer, func, params: ParamsType, metric: MetricType = None, *args, **kwargs):
         super().on_train_step_end(trainer, func, params, metric, *args, **kwargs)
         for k, v in trainer.model_dict.items():
             if k.lower().startswith('ema'):
@@ -608,7 +608,7 @@ class RecordCallback(TrainCallback):
         super().on_hooked(source, params)
         source.exp.dump_string('AutoRecord', self.__class__.__name__)
 
-    def on_train_step_end(self, trainer: Trainer, func, params: ParamsType, metric: MetricType, *args, **kwargs):
+    def on_train_step_end(self, trainer: Trainer, func, params: ParamsType, metric: MetricType = None, *args, **kwargs):
         super().on_train_step_end(trainer, func, params, metric, *args, **kwargs)
         self.log(metric, step=trainer.global_steps, namespace='train.step')
 
@@ -616,48 +616,13 @@ class RecordCallback(TrainCallback):
         super().on_train_epoch_end(trainer, func, params, record, *args, **kwargs)
         self.log(record.agg(), step=trainer.global_steps, namespace='train.epoch')
 
-    def on_test_end(self, trainer: Trainer, func, params: ParamsType, record: Record, *args, **kwargs):
+    def on_test_end(self, trainer: Trainer, func, params: ParamsType, record: Record = None, *args, **kwargs):
         super().on_test_end(trainer, func, params, record, *args, **kwargs)
         self.log(record.agg(), step=trainer.global_steps, namespace='test')
 
-    def on_eval_end(self, trainer: Trainer, func, params: ParamsType, record: Record, *args, **kwargs):
+    def on_eval_end(self, trainer: Trainer, func, params: ParamsType, record: Record = None, *args, **kwargs):
         super().on_eval_end(trainer, func, params, record, *args, **kwargs)
         self.log(record.agg(), step=trainer.global_steps, namespace='evaluate')
-
-
-class WandbCallback(RecordCallback):
-    only_main_process = True
-
-    def __init__(self, metric_step=500) -> None:
-        super().__init__()
-        self.metric_step = metric_step
-        self.c = 0
-
-    def log(self, metrics: MetricType, step, namespace):
-        self.c += 1
-        if self.c % self.metric_step == 0:
-            metrics = {
-                f"{namespace}.{k}": v
-                for k, v in wrap_result(metrics).items()}
-            self._hooked.wandb.log(metrics, step=step)
-
-    def log_text(self, metrics: Dict, step: int, namespace: str):
-        wandb = self._hooked.wandb
-        metrics = {k: v for k, v in metrics.items()}
-        wandb.log(metrics, step=step)
-
-    def log_scalars(self, metrics: Dict, step: int, namespace: str):
-        wandb = self._hooked.wandb
-        metrics = {k: wandb.Html(v) for k, v in metrics.items()}
-        wandb.log(metrics, step=step)
-
-    def log_matrix(self, metrics: Dict, step: int, namespace: str):
-        wandb = self._hooked.wandb
-        metrics = {k: wandb.Image(v) for k, v in metrics.items()}
-        wandb.log(metrics, step=step)
-
-    def on_first_exception(self, source: Trainer, func, params: ParamsType, e: BaseException, *args, **kwargs):
-        super().on_first_exception(source, func, params, e, *args, **kwargs)
 
 
 class TensorBoardCallback(RecordCallback):
@@ -690,7 +655,8 @@ class StopByCode(TrainCallback):
     def __init__(self, step=100):
         self.step = step
 
-    def on_train_step_end(self, trainer: Trainer, func, params: ParamsType, metric: Meter, *args, **kwargs):
+    def on_train_step_end(self, trainer: Trainer, func, params: ParamsType, metric: MetricType = None, *args, **kwargs):
+        super().on_train_step_end(trainer, func, params, metric, *args, **kwargs)
         if trainer.global_steps % self.step == 0:
             if os.path.exists(trainer.exp.test_file('.stop')):
                 trainer.exp.add_tag('lumo.early_stop')
@@ -840,7 +806,7 @@ class SkipWhenParamsEq(TrainCallback, InitialCallback):
         super().on_hooked(source, params)
         from dbrecord import PDict
         from lumo.exp.finder import is_test_root
-        self.fn = source.exp.exp_file('params_key.sqlite')
+        self.fn = source.exp.mk_rpath('contrib', 'params_key.sqlite')
         olds = PDict(self.fn)
 
         current = source.params.hash()
@@ -859,6 +825,6 @@ class SkipWhenParamsEq(TrainCallback, InitialCallback):
         super().on_train_end(trainer, func, params, record, *args, **kwargs)
         from dbrecord import PDict
         olds = PDict(self.fn)
-        olds[params.hash()] = trainer.exp.test_root
+        olds[params.hash()] = trainer.exp.info_dir
         olds.flush()
         trainer.logger.info(f'Save current params ({params.hash()}) to {self.fn}')
