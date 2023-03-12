@@ -31,6 +31,8 @@ from .saver import Saver
 # overwrite send_to_device to resolve https://github.com/pytorch/pytorch/issues/83015
 # from accelerate import Accelerator
 # from accelerate.utils import send_to_device
+from ..utils.fmt import strftime
+
 ParamsType = TrainerParams
 
 
@@ -514,7 +516,7 @@ class Trainer(_BaseTrainer):
 
     def on_trainer_exception(self, func: Callable, exception: BaseException):
         """Updates database with error information when an exception occurs during training."""
-        self.exp.dump_info('exception', dict(end=datetime.now(),
+        self.exp.dump_info('exception', dict(end=strftime(),
                                              finished=False,
                                              error=str(exception),
                                              trainer_frame=str(func)))
