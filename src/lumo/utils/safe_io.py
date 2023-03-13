@@ -16,8 +16,8 @@ dump_nd = dump_nd
 load_nd = load_nd
 
 
-def filter_unserializable_values(self, d):
-    for key, value in list(d.items()):
+def filter_unserializable_values(dic):
+    for key, value in list(dic.items()):
         if isinstance(value, dict):
             filter_unserializable_values(value)
         elif isinstance(value, list):
@@ -27,9 +27,9 @@ def filter_unserializable_values(self, d):
                 elif not json.dumps(value[i], default=lambda x: None):
                     value[i] = None
         elif not json.dumps(value, default=lambda x: None):
-            d[key] = None
-    d = {key: value for key, value in d.items() if value is not None}
-    return d
+            dic[key] = None
+    dic = {key: value for key, value in dic.items() if value is not None}
+    return dic
 
 
 def dump_json(obj, fn):
