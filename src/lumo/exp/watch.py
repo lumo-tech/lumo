@@ -172,6 +172,7 @@ class Condition:
         Returns:
             A boolean mask of the given DataFrame based on the condition.
         """
+        import pandas as pd
         names = self.name.split('.')
         value = df
         for i in names:
@@ -224,7 +225,7 @@ class Watcher:
         """Diff & Update"""
         updates = {}
         if not os.path.exists(self.hb_root):
-            return pd.DataFrame()
+            return {}
         for root, dirs, fs in os.walk(self.hb_root):
             if root == self.hb_root:
                 continue
@@ -325,6 +326,7 @@ class Watcher:
                 except:
                     continue
         if with_pandas:
+            import pandas as pd
             return pd.DataFrame(res)
         else:
             return res
@@ -359,7 +361,7 @@ class Watcher:
         assert params_filter is None or isinstance(params_filter, list)
         assert metric_filter is None or isinstance(metric_filter, list)
 
-        from ipywidgets import widgets, interact, Label
+        from ipywidgets import widgets, interact
         from IPython.display import display
 
         def make_row(dic: dict):
