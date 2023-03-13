@@ -11,9 +11,9 @@ from pprint import pformat
 import os
 from typing import List, Dict, Any
 
+from lumo.exp.watch import is_test_root, is_test_name
 from lumo.proc.path import libhome, exproot, metricroot
 from lumo.utils.fmt import indent_print
-from lumo.utils import re
 
 from . import Experiment
 
@@ -110,33 +110,6 @@ def find_path_from_test_name(test_name: str) -> str:
                 if test_name in path:
                     return path.strip()
     return None
-
-
-def is_test_name(test_name: str) -> bool:
-    """
-    Determines if the specified string is a valid test name.
-
-    Args:
-        test_name: The string to check.
-
-    Returns:
-        True if the string is a valid test name, False otherwise.
-    """
-    return re.search(r'^\d{6}\.\d{3}\.[a-z\d]{2}t$', test_name) is not None
-
-
-def is_test_root(path: str) -> bool:
-    """
-    Determines if the specified path is a valid test root.
-
-    Args:
-        path: The path to check.
-
-    Returns:
-        True if the path is a valid test root, False otherwise.
-    """
-    test_name = os.path.basename(path.rstrip('/'))
-    return is_test_name(test_name)
 
 
 def retrieval_test_root(test_flag: str) -> str:

@@ -19,7 +19,9 @@ Watcher 可以在运行实验后在 jupyter 或者网页上展示正在运行和
 
 """
 import numbers
+import os
 import os.path
+import re
 from typing import List, Dict, overload
 from pprint import pformat
 import pandas as pd
@@ -214,14 +216,11 @@ class Watcher:
         self.hb_root = hb_root
         self.pid_root = pid_root
 
-    def load(self):
-        """
-        Loads the experiment information from heartbeat files and the experiment databases.
+    def retrieve(self, test_name=None):
+        raise NotImplementedError()
 
-        Returns:
-            A pandas DataFrame containing the experiment information sorted by experiment name and test name.
-        """
-        res = {}
+    def update(self):
+        """Diff & Update"""
         updates = {}
         if not os.path.exists(self.hb_root):
             return pd.DataFrame()
@@ -242,13 +241,35 @@ class Watcher:
 
         for exp_name, tests in updates.items():
             dic = PDict(os.path.join(self.db_root, f'{exp_name}.sqlite'))
-            for test_name, test_prop in dic.items():
-                res[test_name] = test_prop
 
             for test in tests:
                 dic[test['test_name']] = test
-                res[test['test_name']] = test
             dic.flush()
+        return updates
+
+    def load(self):
+        """
+        Loads the experiment information from heartbeat files and the experiment databases.
+
+        Returns:
+            A pandas DataFrame containing the experiment information sorted by experiment name and test name.
+        """
+        res = {}
+        updates = self.update()
+
+        for dic_fn in os.listdir(self.db_root):
+            if not dic_fn.endswith('sqlite'):
+                continue
+            dic = PDict(os.path.join(self.db_root, dic_fn))
+            exp_name = os.path.splitext(dic_fn)[0]
+
+            for test_name, test_prop in dic.items():
+                res[test_name] = test_prop
+
+            if exp_name in updates:
+                for test in updates[exp_name]:
+                    res[test['test_name']] = test
+                dic.flush()
 
         df = pd.DataFrame(res.values())
         df = df.sort_values(['exp_name', 'test_name'])
@@ -472,3 +493,30 @@ class Watcher:
                 grid,
 
             )
+
+
+def is_test_root(path: str) -> bool:
+    """
+    Determines if the specified path is a valid test root.
+
+    Args:
+        path: The path to check.
+
+    Returns:
+        True if the path is a valid test root, False otherwise.
+    """
+    test_name = os.path.basename(path.rstrip('/'))
+    return is_test_name(test_name)
+
+
+def is_test_name(test_name: str) -> bool:
+    """
+    Determines if the specified string is a valid test name.
+
+    Args:
+        test_name: The string to check.
+
+    Returns:
+        True if the string is a valid test name, False otherwise.
+    """
+    return re.search(r'^\d{6}\.\d{3}\.[a-z\d]{2}t$', test_name) is not None

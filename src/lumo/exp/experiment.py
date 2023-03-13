@@ -123,7 +123,6 @@ class Experiment:
         self.dump_note = self._trigger_change(self.dump_note)
         self.dump_info = self._trigger_change(self.dump_info)
 
-        self.add_exit_hook(self.end)
         self.logger = Logger()
 
     def __getitem__(self, item):
@@ -737,6 +736,7 @@ class Experiment:
         self.dump_progress(0)
         # register progress
         io.dump_text(self.info_dir, self.pid_fn)
+        self.add_exit_hook(self.end)
 
     @call_on_main_process_wrap
     def start(self):
@@ -848,7 +848,7 @@ class Experiment:
         Raises:
             ValueError: If the path is not a valid test root directory.
         """
-        from .finder import is_test_root
+        from lumo.exp.watch import is_test_root
         if not is_test_root(path):
             raise ValueError(f'{path} is not a valid test_root')
         path = os.path.abspath(path)
