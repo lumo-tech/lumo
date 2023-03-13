@@ -805,7 +805,7 @@ class SkipWhenParamsEq(TrainCallback, InitialCallback):
     def on_hooked(self, source: Trainer, params: ParamsType):
         super().on_hooked(source, params)
         from dbrecord import PDict
-        from lumo.exp.finder import is_test_root
+        from lumo.exp.watch import is_test_root
         self.fn = source.exp.mk_rpath('contrib', 'params_key.sqlite')
         olds = PDict(self.fn)
 
