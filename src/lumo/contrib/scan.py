@@ -33,7 +33,7 @@ def base_main(pm: ScanBaseParams, files: List[str], dics: List[dict]):
 
     base = ("sleep {sleep} ; " +
             sys.executable +
-            " {file}.py {kwargs} --device={device}{group} & \n"
+            " {file} {kwargs} --device={device}{group} & \n"
             )
 
     if not torch.cuda.is_available():
