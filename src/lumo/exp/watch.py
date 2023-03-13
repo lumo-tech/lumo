@@ -228,6 +228,12 @@ class Watcher:
                     exp = Experiment.from_disk(test_root)
                     if exp.is_alive == is_alive:
                         res.append(exp.dict())
+                    if not exp.is_alive and exp.properties['progress'].get('finished', None) is None:
+                        exp.dump_info('progress',
+                                      {
+                                          'end': strftime(), 'finished': True, 'end_code': -1,
+                                          'msg': 'ended by watcher'}
+                                      )
                 except:
                     continue
         return pd.DataFrame(res)
