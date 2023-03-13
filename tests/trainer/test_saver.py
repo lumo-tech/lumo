@@ -1,3 +1,5 @@
+import os
+
 from lumo.trainer.saver import Saver
 import time
 import shutil
@@ -17,10 +19,11 @@ def test_save_load():
         else:
             saver.save_checkpoint(i, {'step': i}, {'meta_step': i}, max_keep=max_keep, is_best=(i % 5) == 0)
 
+    print(os.listdir(save_root))
     assert len(saver.list_models()) == (epoch)
 
     state = saver.load_model(best_if_exist=True, with_meta=True)
-    print(state)
+    # print(state)
     assert state[0]['step'] == 5 and state[1]['meta_step'] == 5
 
     state = saver.load_model(2)

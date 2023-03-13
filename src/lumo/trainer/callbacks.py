@@ -1,7 +1,6 @@
 """
 """
 import inspect
-import json
 import os
 import tempfile
 import time
@@ -10,13 +9,15 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime
 from functools import wraps
 from typing import NewType, Any, Optional, Dict, Union
-from lumo.utils.memory_grab import DeviceMem
+
+import psutil
 from torch.utils.data import DataLoader
 
 from lumo.core import Meter, MetricType, Record, TrainStage, wrap_result, ParamsType
 from lumo.data import DataModule
 from lumo.data.loader import summarize_loader, DataLoaderType
 from lumo.utils import fmt
+from lumo.utils.memory_grab import DeviceMem
 from lumo.utils.screen import inlinetqdm
 from .trainer import Trainer
 from ..proc.dist import world_size
@@ -342,6 +343,7 @@ class DebugCallback(BaseCallback):
 
 
 class LoggerCallback(TrainCallback, InitialCallback):
+    """A callback for logging the training process."""
     priority = 99999
 
     def __init__(self, step_frequence=3, break_in=1000):
@@ -385,13 +387,14 @@ class LoggerCallback(TrainCallback, InitialCallback):
                                       file=self.temp)
 
     def renew(self, stage):
-        """创建一个新的"""
+        """Renew when change stage(train/eval/test)"""
         self.cur_tqdm = inlinetqdm(total=self.stage[stage], position=0, leave=True,
                                    bar_format='{desc}{elapsed}<{remaining} ({percentage:3.0f}%){postfix}',
                                    file=self.temp)
         self.record = Record()
 
     def update(self, trainer: Trainer):
+        """Update"""
         self.c += 1
         self.cur_tqdm.update()
         if self.c % self.step == 0:
@@ -399,10 +402,11 @@ class LoggerCallback(TrainCallback, InitialCallback):
 
         if self.c % self.breakin == 0 or (
                 TrainStage.train in self.stage and ((trainer.idx + 1) == self.stage[TrainStage.train])):
-            trainer.logger.info(self.cur_tqdm.full_str())
-            # trainer.logger.newline()
+            trainer.logger.inline(self.cur_tqdm.full_str())
+            trainer.logger.newline()
 
     def flush(self, trainer: Trainer):
+        """Flush"""
         self.c = 0
         trainer.logger.inline(self.cur_tqdm)
         trainer.logger.newline()
@@ -447,6 +451,7 @@ class LoggerCallback(TrainCallback, InitialCallback):
     def format_train_epoch_time(self, n, total, elapsed, ncols=None, prefix='', ascii=False, unit='it',
                                 unit_scale=False, rate=None, bar_format=None, postfix=None,
                                 unit_divisor=1000, initial=0, colour=None, **extra_kwargs):
+        """Format"""
         elapsed_str = self.format_interval(elapsed)
         remaining = (total - n) / rate if rate and total else 0
         remaining_str = self.format_interval(remaining) if rate else '?'
@@ -508,61 +513,6 @@ class LoggerCallback(TrainCallback, InitialCallback):
         self.update(trainer)
 
 
-class EpochCheckpoint(TrainCallback):
-    """
-    在 Trainer 训练过程中定时保存模型
-    """
-    only_main_process = True
-
-    def __init__(self, per_epoch=50):
-        self.per_epoch = per_epoch
-
-    def on_train_epoch_end(self, trainer: Trainer, func, params: ParamsType, record: Optional[Record], *args,
-                           **kwargs):
-        meter = record.avg()
-        if trainer.eidx % self.per_epoch == 0 and trainer.eidx > 0:
-            trainer.save_checkpoint(meta_info=Meter.wrap_result(meter))
-
-    def __repr__(self) -> str:
-        return self._repr_by_val("per_epoch")
-
-
-class GlobalStepCheckpoint(TrainCallback):
-    only_main_process = True
-
-    def __init__(self, per_step=2500):
-        self.per = per_step
-
-    def on_train_step_end(self, trainer: Trainer, func, params: ParamsType, metric: Meter, *args, **kwargs):
-        super().on_train_step_end(trainer, func, params, metric, *args, **kwargs)
-        if trainer.global_steps % self.per == 0 and trainer.global_steps > 0:
-            trainer.save_checkpoint(meta_info=Meter.wrap_result(metric))
-
-
-class KeyErrorSave(TrainCallback):
-    """
-    Callback to save checkpoints when you interrupt the program.
-    """
-    only_main_process = True
-    only_single_gpu = True
-    priority = -1
-
-    def __init__(self, wait_input=False):
-        self.wait_input = wait_input
-
-    def on_first_exception(self, source: Trainer, func, params: ParamsType, e: BaseException, *args, **kwargs):
-        if isinstance(e, KeyboardInterrupt):
-            source.logger.info("KeyErrorSave trigged, save checkpoint")
-            source.save_checkpoint({"mode": "KeyboardInterrupt"})
-
-            tp = "n"
-            if self.wait_input:
-                tp = input("continue train step? (y/other)")
-
-            if tp.lower() == "y":
-                return True
-
-
 class EMAUpdate(TrainCallback):
     """
     Callback to update EMA model every train step.
@@ -572,7 +522,7 @@ class EMAUpdate(TrainCallback):
      - name is started with 'ema'
     """
 
-    def on_train_step_end(self, trainer: Trainer, func, params: ParamsType, metric: MetricType, *args, **kwargs):
+    def on_train_step_end(self, trainer: Trainer, func, params: ParamsType, metric: MetricType = None, *args, **kwargs):
         super().on_train_step_end(trainer, func, params, metric, *args, **kwargs)
         for k, v in trainer.model_dict.items():
             if k.lower().startswith('ema'):
@@ -656,58 +606,23 @@ class RecordCallback(TrainCallback):
 
     def on_hooked(self, source: Trainer, params: ParamsType):
         super().on_hooked(source, params)
-        source.exp.set_prop('AutoRecord', self.__class__.__name__)
+        source.exp.dump_string('AutoRecord', self.__class__.__name__)
 
-    def on_train_step_end(self, trainer: Trainer, func, params: ParamsType, metric: MetricType, *args, **kwargs):
+    def on_train_step_end(self, trainer: Trainer, func, params: ParamsType, metric: MetricType = None, *args, **kwargs):
         super().on_train_step_end(trainer, func, params, metric, *args, **kwargs)
         self.log(metric, step=trainer.global_steps, namespace='train.step')
 
     def on_train_epoch_end(self, trainer: Trainer, func, params: ParamsType, record: Record, *args, **kwargs):
         super().on_train_epoch_end(trainer, func, params, record, *args, **kwargs)
-        self.log(record.avg(), step=trainer.global_steps, namespace='train.epoch')
+        self.log(record.agg(), step=trainer.global_steps, namespace='train.epoch')
 
-    def on_test_end(self, trainer: Trainer, func, params: ParamsType, record: Record, *args, **kwargs):
+    def on_test_end(self, trainer: Trainer, func, params: ParamsType, record: Record = None, *args, **kwargs):
         super().on_test_end(trainer, func, params, record, *args, **kwargs)
-        self.log(record.avg(), step=trainer.global_steps, namespace='test')
+        self.log(record.agg(), step=trainer.global_steps, namespace='test')
 
-    def on_eval_end(self, trainer: Trainer, func, params: ParamsType, record: Record, *args, **kwargs):
+    def on_eval_end(self, trainer: Trainer, func, params: ParamsType, record: Record = None, *args, **kwargs):
         super().on_eval_end(trainer, func, params, record, *args, **kwargs)
-        self.log(record.avg(), step=trainer.global_steps, namespace='evaluate')
-
-
-class WandbCallback(RecordCallback):
-    only_main_process = True
-
-    def __init__(self, metric_step=500) -> None:
-        super().__init__()
-        self.metric_step = metric_step
-        self.c = 0
-
-    def log(self, metrics: MetricType, step, namespace):
-        self.c += 1
-        if self.c % self.metric_step == 0:
-            metrics = {
-                f"{namespace}.{k}": v
-                for k, v in wrap_result(metrics).items()}
-            self._hooked.wandb.log(metrics, step=step)
-
-    def log_text(self, metrics: Dict, step: int, namespace: str):
-        wandb = self._hooked.wandb
-        metrics = {k: v for k, v in metrics.items()}
-        wandb.log(metrics, step=step)
-
-    def log_scalars(self, metrics: Dict, step: int, namespace: str):
-        wandb = self._hooked.wandb
-        metrics = {k: wandb.Html(v) for k, v in metrics.items()}
-        wandb.log(metrics, step=step)
-
-    def log_matrix(self, metrics: Dict, step: int, namespace: str):
-        wandb = self._hooked.wandb
-        metrics = {k: wandb.Image(v) for k, v in metrics.items()}
-        wandb.log(metrics, step=step)
-
-    def on_first_exception(self, source: Trainer, func, params: ParamsType, e: BaseException, *args, **kwargs):
-        super().on_first_exception(source, func, params, e, *args, **kwargs)
+        self.log(record.agg(), step=trainer.global_steps, namespace='evaluate')
 
 
 class TensorBoardCallback(RecordCallback):
@@ -740,7 +655,8 @@ class StopByCode(TrainCallback):
     def __init__(self, step=100):
         self.step = step
 
-    def on_train_step_end(self, trainer: Trainer, func, params: ParamsType, metric: Meter, *args, **kwargs):
+    def on_train_step_end(self, trainer: Trainer, func, params: ParamsType, metric: MetricType = None, *args, **kwargs):
+        super().on_train_step_end(trainer, func, params, metric, *args, **kwargs)
         if trainer.global_steps % self.step == 0:
             if os.path.exists(trainer.exp.test_file('.stop')):
                 trainer.exp.add_tag('lumo.early_stop')
@@ -857,7 +773,7 @@ class RemoteCallback(InitialCallback, TrainCallback):
                            }))
 
 
-class CUDAMemoryRecord(TrainCallback):
+class ResourceRecord(TrainCallback):
     """
     Record CUDA GPU maximum memory used during training.
 
@@ -868,16 +784,20 @@ class CUDAMemoryRecord(TrainCallback):
 
     def on_hooked(self, source: Trainer, params: ParamsType):
         super().on_hooked(source, params)
-        self.max_memory = 0
         self.device = source.device
         self.pid = os.getpid()
         self.mem = DeviceMem()
 
     def on_train_epoch_end(self, trainer: Trainer, func, params: ParamsType, record: Record, *args, **kwargs):
         super().on_train_epoch_end(trainer, func, params, record, *args, **kwargs)
-        self.max_memory = max(self.max_memory, self.mem.get_pid_device_mem(self.pid, self.device))
-        trainer.database.update('memory', self.max_memory)
-        trainer.exp.dump_info('max_memory', self.max_memory)
+        trainer.exp.dump_metric('CUDA_memory', self.mem.get_pid_device_mem(self.pid, self.device), cmp='max')
+
+        # 获取进程的内存信息
+        memory_info = psutil.Process(self.pid).memory_info()
+
+        # 打印内存信息
+        trainer.exp.dump_metric('CPU_memory_rss', memory_info.rss / 1024 / 1024)
+        trainer.exp.dump_metric('CPU_memory_vms', memory_info.vms / 1024 / 1024)
 
 
 class SkipWhenParamsEq(TrainCallback, InitialCallback):
@@ -886,7 +806,7 @@ class SkipWhenParamsEq(TrainCallback, InitialCallback):
         super().on_hooked(source, params)
         from dbrecord import PDict
         from lumo.exp.finder import is_test_root
-        self.fn = source.exp.exp_file('params_key.sqlite')
+        self.fn = source.exp.mk_rpath('contrib', 'params_key.sqlite')
         olds = PDict(self.fn)
 
         current = source.params.hash()
@@ -896,7 +816,7 @@ class SkipWhenParamsEq(TrainCallback, InitialCallback):
         if isinstance(old, str) and is_test_root(old) and os.path.exists(old):
             source.stop_train()
             source.stop_train_epoch()
-            source.database.update('skiped', True, flush=True)
+            source.exp.dump_info('early_stop', True)
             source.logger.info(
                 f'Find finished test with equal params ({current}) from {olds[current]}. '
                 f'To runStored in:\n    {self.fn}')
@@ -905,6 +825,6 @@ class SkipWhenParamsEq(TrainCallback, InitialCallback):
         super().on_train_end(trainer, func, params, record, *args, **kwargs)
         from dbrecord import PDict
         olds = PDict(self.fn)
-        olds[params.hash()] = trainer.exp.test_root
+        olds[params.hash()] = trainer.exp.info_dir
         olds.flush()
         trainer.logger.info(f'Save current params ({params.hash()}) to {self.fn}')

@@ -7,14 +7,17 @@ __all__ = ['C', 'filter_by_condition']
 
 
 def in_(ser, value):
+    """pandas operation"""
     return ser.apply(lambda x: x in value)
 
 
 def not_in_(ser, value):
+    """pandas operation"""
     return ser.apply(lambda x: x not in value)
 
 
 def first(ser, value):
+    """pandas operation"""
     return ser.duplicated(value) == False
 
 
@@ -101,16 +104,19 @@ class Compare:
         return f'{self.name} {self.op} {self.value}'
 
     def in_(self, lis):
+        """condition of `in` operation"""
         self.op = 'in'
         self.value = set(lis)
         return self
 
     def not_in_(self, lis):
+        """condition of `.duplicated(value) == False` operation"""
         self.op = 'notin'
         self.value = set(lis)
         return self
 
     def first(self, value):
+        """condition of `not in` operation"""
         self.op = 'first'
         self.value = value
         return self
@@ -121,7 +127,8 @@ C = Compare()  # An instance of Compare()
 
 def filter_by_condition(df: DataFrame, *condition: Compare) -> DataFrame:
     """
-    简化版的 pipeline，仅用于等式和不等式筛选以及额外支持的 in/not_in 等功能
+    fdf = filter_by_condition(df,C['contition'] == True, C['c2'] > 1, ... )
+
     Args:
         df: padnas.DataFrame instance
         *condition: list of `~Compare` instance

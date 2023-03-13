@@ -5,6 +5,16 @@ from .config import glob
 
 
 def home():
+    """
+    Returns the home directory of the current user.
+
+    This function returns the home directory of the current user, which is
+    different from the home directory of the library. If you need to access
+    the library home directory, use `libhome()` instead.
+
+    Returns:
+        str: The home directory of the current user.
+    """
     return os.path.expanduser("~")
 
 
@@ -31,7 +41,17 @@ def cache_dir():
 
 
 def libhome():
-    """Library home to store configs. Default is `~/.lumo`"""
+    """
+    Returns the library home directory.
+
+    This function returns the library home directory, which is used to store
+    configuration files. By default, the library home directory is `~/.lumo`.
+    If a custom home directory is set in the `home` global variable, that
+    directory will be returned instead.
+
+    Returns:
+        str: The library home directory.
+    """
     LIBHOME = glob.get('home', None)
     if LIBHOME:
         return LIBHOME
@@ -56,7 +76,7 @@ def progressroot():
     if PROGRESS_ROOT:
         res = PROGRESS_ROOT
     else:
-        res = os.path.join(libhome(), 'progress')
+        res = os.path.join(cache_dir(), 'progress')
 
     os.makedirs(res, exist_ok=True)
     return res
@@ -87,6 +107,16 @@ def metricroot():
         res = METRIC_ROOT
     else:
         res = os.path.join(libhome(), 'metrics')
+    os.makedirs(res, exist_ok=True)
+    return res
+
+
+def dbroot():
+    DB_ROOT = glob.get('db_root', None)
+    if DB_ROOT:
+        res = DB_ROOT
+    else:
+        res = os.path.join(libhome(), 'database')
     os.makedirs(res, exist_ok=True)
     return res
 

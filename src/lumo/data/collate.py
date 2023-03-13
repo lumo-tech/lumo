@@ -1,7 +1,12 @@
 """
+A module that provides classes and functions to act as the collect_fn in dataloader.
+
+Classes:
+    CollateBase: A base class for implementing collate functions.
+    IgnoreNoneCollate: A collate function that ignores None samples.
 
 """
-from typing import Any, Mapping, Sequence
+from typing import Mapping, Sequence
 from lumo.core.params import ParamsType
 import numpy as np
 import torch
@@ -9,9 +14,37 @@ from torch.utils.data._utils.collate import default_collate
 
 
 class CollateBase:
+    """
+    A base class for implementing collate functions.
+
+    Args:
+        params (ParamsType, optional): Parameters for the collate function. Defaults to None.
+
+    Attributes:
+        _collate_fn (callable): A function that combines a list of samples into a batch.
+        params (ParamsType): Parameters for the collate function.
+
+    Methods:
+        from_collate: Creates an instance of the class from a collate function.
+        __call__: Applies the collate function to a list of samples.
+        before_collate: A hook function called before the collate function is applied.
+        raw_collate: Applies the collate function to a list of samples without calling the `before_collate` and `after_collate` hook functions.
+        collate: Alias for `raw_collate`.
+        after_collate: A hook function called after the collate function is applied.
+    """
 
     @classmethod
     def from_collate(cls, collate_fn, params: ParamsType = None):
+        """
+        Creates an instance of the class from a collate function.
+
+        Args:
+            collate_fn (callable): A function that combines a list of samples into a batch.
+            params (ParamsType, optional): Parameters for the collate function. Defaults to None.
+
+        Returns:
+            CollateBase: An instance of the class.
+        """
         instance = cls(params)
         instance._collate_fn = collate_fn
         return instance
@@ -22,25 +55,72 @@ class CollateBase:
         self.params = params
 
     def __call__(self, *args, **kwargs):
+        """
+        Applies the collate function to a list of samples.
+
+        Args:
+            *args: A list of samples.
+            **kwargs: Additional keyword arguments.
+
+        Returns:
+            The batch of samples.
+        """
         res = self.before_collate(*args, **kwargs)
         res = self._collate_fn(res)
         res = self.after_collate(res)
         return res
 
     def before_collate(self, sample_list):
+        """
+        A hook function called before the collate function is applied.
+
+        Args:
+            sample_list (Sequence): A list of samples.
+
+        Returns:
+            Sequence: The modified list of samples.
+        """
         return sample_list
 
     def raw_collate(self, sample_list):
+        """
+        Applies the collate function to a list of samples without calling the `before_collate` and `after_collate` hook functions.
+
+        Args:
+            sample_list (Sequence): A list of samples.
+
+        Returns:
+            The batch of samples.
+        """
         return self._collate_fn(sample_list)
 
     def collate(self, sample_list):
+        """
+        Alias for `raw_collate`.
+
+        Args:
+            sample_list (Sequence): A list of samples.
+
+        Returns:
+            The batch of samples.
+        """
         return self._collate_fn(sample_list)
 
     def after_collate(self, batch):
+        """
+        A hook function called after the collate function is applied.
+
+        Args:
+            batch (Any): The batch of samples.
+
+        Returns:
+            Any: The modified batch of samples.
+        """
         return batch
 
 
 class IgnoreNoneCollate(CollateBase):
+    """A collate function that ignores `None` samples."""
 
     def _filter_none(self, item):
         if item is None:
@@ -52,11 +132,24 @@ class IgnoreNoneCollate(CollateBase):
         return True
 
     def before_collate(self, sample_list):
+        """ before collate"""
         return list(filter(self._filter_none, sample_list))
 
 
 def numpy_collate(batch):
-    r"""Puts each data field into a tensor with outer dimension batch size"""
+    """Collate function for numpy arrays.
+
+    Args:
+        batch (list): A list of numpy arrays or other python objects.
+
+    Returns:
+        numpy.ndarray or dict or list: Returns a collated numpy array, a dictionary of collated numpy arrays,
+        or a list of collated numpy arrays depending on the type of input elements.
+
+    Raises:
+        RuntimeError: If the elements in batch do not have consistent size.
+
+    """
 
     elem = batch[0]
     elem_type = type(elem)

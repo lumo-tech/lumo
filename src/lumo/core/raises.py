@@ -1,4 +1,2 @@
-class BoundCheckError(BaseException): pass
-
-
-class NewParamWarning(Warning): pass
+class BoundCheckError(BaseException):
+    """Exception raised when a bound check fails."""

@@ -41,6 +41,7 @@ omit = [
     'src/lumo/cli/*',
     'src/lumo/vis/*',
     'src/lumo/decorators/*',
+    'src/lumo/exp/agent.py',
     'src/lumo/analyse/*',
     'src/lumo/sketch/*',
     'src/lumo/core/record_backend/*',
@@ -73,6 +74,24 @@ exclude_lines = [
     "if 0:",
     "if __name__ == .__main__.:",
     "if TYPE_CHECKING:",
+    # some tricky object that can not well tested.
+    "except ImportError",
+    "pass",
+    "return None",
+    "break", #
+
+    # Hard to test
+    "class RecordAbort",
+    "class GitCommit",
+    "def summary_experiment",
+    "def plot",
+    "if torch.cuda.is_available()", # ignore cuda
+    "if is_dist():", # ignore distribution
+
+    # Deprecated method:
+    "def add_input_transform",
+    "def add_output_transform",
+    "raise StopIteration"
 ]
 
 [tool.coverage.html]

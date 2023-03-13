@@ -1,58 +1,35 @@
-import time
-
+from filelock import Timeout, FileLock
 import os
-import random
-
-from lumo.utils.exithook import wrap_before
 
 
 class Lock:
-    def __init__(self, name, sleep=1):
-        from lumo.proc.path import cache_dir
-        self.file = os.path.join(cache_dir(), f"LUMO_LOCK_{name}")
-        self.sleep = sleep
-        wrap_before(self.clear)
+    """
+    A class for obtaining and releasing file-based locks using FileLock.
 
-    def clear(self, *_, **__):
-        self.release()
+    Args:
+        name (str): The name of the lock.
+
+    Attributes:
+        fn (str): The file path of the lock file.
+        lock (FileLock): The FileLock object used for obtaining and releasing the lock.
+
+    Example:
+        lock = Lock('my_lock')
+        lock.abtain()
+        # critical section
+        lock.release()
+    """
+
+    def __init__(self, name):
+        """Initialize the lock file path and FileLock object"""
+        from lumo.proc.path import cache_dir
+        self.fn = os.path.join(cache_dir(), f"LUMO_LOCK_{name}")
+        self.lock = FileLock(self.fn)
 
     def abtain(self):
-        mulp = 1
-        while True:
-            mulp += 1
-            if mulp > 10:
-                raise TimeoutError(f'Can not abtain resource of {self.file}')
-
-            while os.path.exists(self.file):
-                time.sleep(random.randint(mulp, mulp ** 2))
-                mulp += 1
-                if mulp > 10:
-                    raise TimeoutError(f'Can not abtain resource of {self.file}')
-
-            while True:
-                flag = f'{os.getpid()}'
-                with open(self.file, 'w') as w:
-                    w.write(flag)
-
-                if os.path.exists(self.file):
-                    with open(self.file, 'r') as r:
-                        lock_flag = r.read()
-                        if flag == lock_flag:
-                            return True
-                        mulp += 1
-                        time.sleep(random.randint(mulp, mulp ** 2))
-                    if mulp > 10:
-                        raise TimeoutError(f'Can not abtain resource of {self.file}')
+        """Acquire the lock"""
+        self.lock.acquire()
 
     def release(self):
-        try:
-            os.remove(self.file)
-        except:
-            pass
-        return True
-
-    def __enter__(self):
-        self.abtain()
-
-    def __exit__(self, exc_type, exc_val, exc_tb):
-        self.release()
+        """Release the lock"""
+        self.lock.release()

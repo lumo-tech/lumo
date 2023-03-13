@@ -8,10 +8,20 @@ from functools import lru_cache
 import git
 from git import Repo, Commit
 from joblib import hash
-from .filelock2 import Lock
+
+from .filelock import Lock
 
 
 def dev_branch():
+    """
+    Returns the value of the 'dev_branch' key from the global configuration dictionary 'glob' in the 'lumo.proc.config' module.
+
+    If the key is not present in the dictionary, returns the default value of 'lumo_experiments'.
+
+    Returns:
+        str: The value of the 'dev_branch' key from the global configuration dictionary. By default is `lumo_experiments`.
+
+    """
     from lumo.proc.config import glob
     return glob.get('dev_branch', 'lumo_experiments')
 
@@ -21,10 +31,26 @@ _commits_map = {}
 
 class branch:
     """
-    用于配合上下文管理切换 git branch
+    A context manager class for switching git branches in a given repository.
 
-    with branch(repo, branch):
-        repo.index.commit('...')
+    Example usage:
+        with branch(repo, branch):
+            repo.index.commit('...')
+
+    Args:
+        repo (Repo): The repository object for which the branch will be switched.
+        branch (str): The name of the branch to switch to.
+
+
+    Notes:
+        This class provides a context manager that switches the current branch
+         to the given branch when entering the context and switches back to the original branch when exiting the context.
+
+        If the given branch does not exist in the repository, it will be created.
+
+        A lock is obtained on the repository to ensure that
+        only one instance of this class can switch branches at a time for a given repository.
+
     """
 
     def __init__(self, repo: Repo, branch: str):
@@ -60,6 +86,11 @@ class branch:
 
 
 def check_have_commit(repo):
+    """
+    Checks if the given repository has any commits.
+
+    If there are no commits, creates an initial commit that adds all files in the repository and has the message "initial commit".
+    """
     if len(repo.heads) == 0:
         repo.git.add('.')
         repo.index.commit('initial commit')
@@ -124,7 +155,7 @@ def git_commit(repo=None, key=None, branch_name=None, info: str = None, filter_f
         # print(diff_uncommit)
 
         if filter_files is not None:
-            diff_from_branches = [i.a_path for i in diff_from_branches if i.a_path in filter_files]
+            diff_from_branches = [i for i in diff_from_branches if i.a_path in filter_files]
 
         if len(diff_from_branches) == 0 and len(diff_uncommit) == 0 and len(repo.untracked_files) == 0:
             commit_ = exp_head_commit
@@ -154,23 +185,6 @@ def git_commit(repo=None, key=None, branch_name=None, info: str = None, filter_f
     return commit_
 
 
-def git_checkout(repo=None, commit_hex=None, commit: Commit = None):
-    if repo is None:
-        repo = load_repo()
-
-    if commit is None and commit_hex is not None:
-        commit = repo.commit(commit_hex)
-
-    old_path = os.getcwd()
-    os.chdir(commit.tree.abspath)
-
-    # with branch(commit.repo, LUMO_BRANCH) as new_branch:
-    repo.git.checkout('-b', commit.hexsha[:8], commit.hexsha)
-
-    os.chdir(old_path)
-    return commit.hexsha[:8]
-
-
 def git_archive(repo=None, commit_hex=None, commit: Commit = None):
     """
     git archive -o <filename> <commit-hash>
@@ -188,7 +202,7 @@ def git_archive(repo=None, commit_hex=None, commit: Commit = None):
     old_path = os.getcwd()
     os.chdir(commit.tree.abspath)
     exp = Experiment('GitArchive')
-    fn = exp.blob_file(f'{commit.hexsha[:8]}.tar')
+    fn = exp.mk_bpath(f'{commit.hexsha[:8]}.tar')
 
     exp.dump_info('git_archive', {'file': fn,
                                   'test_name': exp.test_name,
@@ -201,8 +215,49 @@ def git_archive(repo=None, commit_hex=None, commit: Commit = None):
     return exp
 
 
+def git_checkout(repo=None, commit_hex=None, commit: Commit = None):
+    """
+    Checkout a specific commit in a Git repository.
+
+    Args:
+        repo (git.Repo, optional): The Git repository to use. Defaults to None, in which case the repository is loaded using `load_repo()`.
+        commit_hex (str, optional): The hash of the commit to check out. Defaults to None.
+        commit (git.Commit, optional): The commit object to check out. Defaults to None.
+
+    Returns:
+        str: The abbreviated hash of the checked-out commit.
+
+    Raises:
+        git.InvalidGitRepositoryError: If the specified repository is invalid or not found.
+        git.BadName: If the specified branch name is invalid or not found.
+    """
+    if repo is None:
+        repo = load_repo()
+
+    if commit is None and commit_hex is not None:
+        commit = repo.commit(commit_hex)
+
+    old_path = os.getcwd()
+    os.chdir(commit.tree.abspath)
+
+    # with branch(commit.repo, LUMO_BRANCH) as new_branch:
+    repo.git.checkout('-b', commit.hexsha[:8], commit.hexsha)
+
+    os.chdir(old_path)
+    return commit.hexsha[:8]
+
+
 @lru_cache(1)
 def git_enable():
+    """
+    Check if Git is installed and a repository is present.
+
+    Returns:
+        bool: True if Git is installed and a repository is present, False otherwise.
+
+    Raises:
+        ImportError: If the `gitpython` library is not installed.
+    """
     try:
         import git
     except ImportError:
@@ -220,18 +275,19 @@ def git_enable():
 def git_dir(root='./'):
     """
     git repository directory
-    git rev-parse --git-dir
+    git rev-parse --show-toplevel
     Args:
         root:
     Returns:
 
+    The original command, `git rev-parse --git-dir`, can not find a right path when the repository is a submodule inside another repository.
     """
     if git_enable():
         from git import Git
         cur = os.getcwd()
         os.chdir(root)
-        res = Git().execute(['git', 'rev-parse', '--git-dir'])
-        res = os.path.abspath(os.path.dirname(res))
+        res = Git().execute(['git', 'rev-parse', '--show-toplevel'])
+        res = os.path.abspath(res)
         os.chdir(cur)
         return res
     else:

@@ -5,6 +5,16 @@ _lib_memory = set()
 
 
 def is_lib_available(lib):
+    """
+    Check if a library is available to be imported.
+
+    Args:
+        lib (str): The name of the library to check for.
+
+    Returns:
+        bool: True if the library is available, False otherwise.
+
+    """
     if lib in _lib_memory:
         return True
     res = imputil.find_spec(lib)
@@ -16,6 +26,10 @@ def is_lib_available(lib):
 
 
 def torch_required(func):
+    """
+    Wrap a function to raise an ImportError if PyTorch is not available.
+    """
+
     # Chose a different decorator name than in tests so it's clear they are not the same.
     @wraps(func)
     def wrapper(*args, **kwargs):
@@ -28,6 +42,10 @@ def torch_required(func):
 
 
 def lib_required(lib_name):
+    """
+    Wrap a function to raise an ImportError if a required library is not available.
+    """
+
     def outer(func):
         @wraps(func)
         def wrapper(*args, **kwargs):

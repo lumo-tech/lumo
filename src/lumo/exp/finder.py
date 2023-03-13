@@ -9,7 +9,7 @@ retrieval ->
 """
 from pprint import pformat
 import os
-from typing import List, Dict
+from typing import List, Dict, Any
 
 from lumo.proc.path import libhome, exproot, metricroot
 from lumo.utils.fmt import indent_print
@@ -18,32 +18,86 @@ from lumo.utils import re
 from . import Experiment
 
 
-def list_experiment_paths(exp_root=None):
+def list_experiment_paths(exp_root=None) -> List[str]:
+    """
+    Returns a list of experiment paths under exp_root directory.
+
+    Args:
+        exp_root: The root directory to search for experiments. Default is None, which uses the default experiment root directory.
+
+    Returns:
+        A list of experiment paths.
+    """
     if exp_root is None:
         exp_root = exproot()
     return [os.path.join(exp_root, i) for i in os.listdir(exp_root)]
 
 
-def _get_exp_name(exp_path: str):
+def _get_exp_name(exp_path: str) -> str:
+    """
+    Returns the name of the experiment directory.
+
+    Args:
+        exp_path: The path to the experiment directory.
+
+    Returns:
+        The name of the experiment directory.
+    """
     return os.path.basename(exp_path.rstrip('/'))
 
 
 def list_all(exp_root=None) -> Dict[str, List[Experiment]]:
+    """
+    Returns a dictionary of all experiments under exp_root directory.
+
+    Args:
+        exp_root: The root directory to search for experiments. Default is None, which uses the default experiment root directory.
+
+    Returns:
+        A dictionary of all experiments, where the keys are the names of the experiments and the values are lists of corresponding Experiment objects.
+    """
     return {
         _get_exp_name(exp_path): retrieval_tests_from_experiment(exp_path)
         for exp_path in list_experiment_paths(exp_root)
     }
 
 
-def retrieval_tests_from_experiment(exp_path) -> List[Experiment]:
+def retrieval_tests_from_experiment(exp_path: str) -> List[Experiment]:
+    """
+    Returns a list of Experiment objects found in the specified experiment directory.
+
+    Args:
+        exp_path: The path to the experiment directory.
+
+    Returns:
+        A list of Experiment objects.
+    """
     return [retrieval_experiment(os.path.join(exp_path, f)) for f in os.listdir(exp_path)]
 
 
-def list_test_names_from_experiment(experiment_name):
+def list_test_names_from_experiment(experiment_name: str) -> List[str]:
+    """
+    Returns a list of test names found in the specified experiment directory.
+
+    Args:
+        experiment_name: The name of the experiment directory.
+
+    Returns:
+        A list of test names.
+    """
     return os.listdir(os.path.join(exproot(), experiment_name))
 
 
-def find_path_from_test_name(test_name: str):
+def find_path_from_test_name(test_name: str) -> str:
+    """
+    Returns the path of the specified test name.
+
+    Args:
+        test_name: The name of the test.
+
+    Returns:
+        The path of the test, or None if not found.
+    """
     if not is_test_name(test_name):
         return None
 
@@ -58,21 +112,42 @@ def find_path_from_test_name(test_name: str):
     return None
 
 
-def is_test_name(test_name: str):
+def is_test_name(test_name: str) -> bool:
     """
-    ^[0-9]{6}.[0-9]{3}.[a-z0-9]{2}t$
+    Determines if the specified string is a valid test name.
+
+    Args:
+        test_name: The string to check.
+
+    Returns:
+        True if the string is a valid test name, False otherwise.
     """
     return re.search(r'^\d{6}\.\d{3}\.[a-z\d]{2}t$', test_name) is not None
 
 
-def is_test_root(path: str):
+def is_test_root(path: str) -> bool:
+    """
+    Determines if the specified path is a valid test root.
+
+    Args:
+        path: The path to check.
+
+    Returns:
+        True if the path is a valid test root, False otherwise.
+    """
     test_name = os.path.basename(path.rstrip('/'))
     return is_test_name(test_name)
 
 
-def retrieval_test_root(test_flag: str):
+def retrieval_test_root(test_flag: str) -> str:
     """
-    test_flag can be a name like `230214.037.62t` or path like `path/to/230214.037.62t`
+    Returns the test root directory for the specified test name or test root.
+
+    Args:
+        test_flag: The test name or test root.
+        like `230214.037.62t` or path like `path/to/230214.037.62t`
+    Returns:
+        The test root directory, or None if not found.
     """
     if is_test_name(test_flag):
         test_root = find_path_from_test_name(test_flag)
@@ -86,7 +161,21 @@ def retrieval_test_root(test_flag: str):
     return test_root
 
 
-def retrieval_experiment(test_name=None, test_root: str = None):
+def retrieval_experiment(test_name=None, test_root: str = None) -> Experiment:
+    """
+    Loads an Experiment object from disk for the given test name or test root.
+
+    Args:
+        test_name (str, optional): The name of the test to load. If not provided,
+            the test root directory must be provided instead. Defaults to None.
+        test_root (str, optional): The root directory of the test to load. If not
+            provided, the root directory is determined from the test name using
+            the retrieval_test_root function. Defaults to None.
+
+    Returns:
+        Optional[Experiment]: The loaded Experiment object, or None if the test
+        root cannot be determined or the Experiment cannot be loaded from disk.
+    """
     if test_root is None:
         test_root = retrieval_test_root(test_name)
     if test_root is None:
@@ -96,6 +185,13 @@ def retrieval_experiment(test_name=None, test_root: str = None):
 
 
 def summary_experiment(test_name: str = None, test_root: str = None):
+    """
+    Prints a summary of the experiment specified by test_name or test_root.
+
+    Args:
+        test_name: The name of the test.
+        test_root: The path to the test root directory.
+    """
     if test_root is None:
         if test_name is None:
             raise ValueError()
@@ -117,7 +213,16 @@ def summary_experiment(test_name: str = None, test_root: str = None):
     print('-----------------------------------')
 
 
-def format_experiment(exp: Experiment):
+def format_experiment(exp: Experiment) -> Dict[str, Any]:
+    """
+    Formats the Experiment object into a dictionary.
+
+    Args:
+        exp: An Experiment object.
+
+    Returns:
+        A dictionary of the Experiment properties, tags, paths, and execution arguments.
+    """
     return {
         'Properties': exp.properties,
         'tags': exp.tags,
@@ -126,7 +231,16 @@ def format_experiment(exp: Experiment):
     }
 
 
-def list_all_metrics(metric_root=None):
+def list_all_metrics(metric_root=None) -> Dict[str, List[str]]:
+    """
+    Returns a dictionary of all metrics found under metric_root directory.
+
+    Args:
+        metric_root: The root directory to search for metrics. Default is None, which uses the default metric root directory.
+
+    Returns:
+        A dictionary of all metrics, where the keys are the metric names and the values are lists of corresponding metric files.
+    """
     if metric_root is None:
         metric_root = metricroot()
 

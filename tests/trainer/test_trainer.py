@@ -1,20 +1,18 @@
-from typing import Union, Optional, Sequence, Mapping, Any
-
-from lumo.proc.config import debug_mode
-from lumo.utils.repository import git_dir
 import os
+from typing import Union, Optional, Sequence, Mapping
 
-import tempfile
-
+import numpy as np
 import torch
 from torch import nn
 from torch.utils.data import DataLoader
 
 from lumo import ParamsType, TrainerParams
-from lumo import Trainer, DataModule, Meter, TrainStage, MetricType, Record, DatasetBuilder
+from lumo import Trainer, DataModule, TrainStage, MetricType, Record, DatasetBuilder
 from lumo.data.loader import DataLoaderType
-from lumo.trainer import callbacks
 from lumo.proc import glob
+from lumo.proc.config import debug_mode
+from lumo.trainer import callbacks
+from lumo.utils.repository import git_dir
 
 
 def create_dataset_builder():
@@ -97,6 +95,8 @@ class CBTrainer(Trainer):
                     limit_global_steps=None) -> Record:
         assert self.context == 'train_epoch'
         assert self.contexts[-2] == 'train'
+        if params.get('raise_exp', False):
+            raise ValueError('raised by test')
         return super().train_epoch(loader, params, limit_step, limit_global_steps)
 
     def remove_callback(self, cur):
@@ -141,25 +141,74 @@ def test_trainer():
     params.epoch = 2
 
     debug_mode()
+    dm = MyDataModule()
     # glob['HOOK_FINALREPORT'] = False
-    trainer = CBTrainer(params, dm=MyDataModule())
+    trainer = CBTrainer(params, dm=dm)
     trainer.train()
     trainer.test()
     trainer.evaluate()
     trainer.logger.info(trainer.lf.functions)
     trainer.exp.end()
 
+    assert dm.train_dataset == dm._parse_dataset(dm.train_dataloader)
+    assert dm.val_dataset == dm._parse_dataset(dm.val_dataloader)
+    assert dm.test_dataset == dm._parse_dataset(dm.test_dataloader)
+
     # test trainer experiment
     exp = trainer.exp
-    assert exp.exp_root == os.path.join(glob['exp_root'], trainer.generate_exp_name())
-    assert exp.lib_root == glob['home']
-    assert exp.blob_root == os.path.join(glob['blob_root'], trainer.generate_exp_name(), exp.test_name)
+    assert exp.exp_dir == os.path.join(glob['exp_root'], trainer.generate_exp_name())
+    assert exp.info_dir == os.path.join(glob['exp_root'], trainer.generate_exp_name(), exp.test_name)
+    assert exp.blob_dir == os.path.join(glob['blob_root'], trainer.generate_exp_name(), exp.test_name)
     assert exp.project_root == git_dir()
     # how to test writer?
     _ = trainer.safe_writer
 
     if len(trainer.callback_function - trainer.lf.functions) != 0:
         raise AssertionError(str(trainer.callback_function - trainer.lf.functions))
+
+
+def test_trainer_params():
+    params = TrainerParams()
+    params.optim = params.OPTIM.create_optim('SGD', lr=0.9)
+    params.optim.lr = 3
+    print(type(params.optim))
+    print(params.optim)
+    module = nn.Linear(10, 10)
+    optim = params.optim.build(module.parameters())
+
+
+class MyTrainer(Trainer):
+    pass
+
+
+def test_trainer_state_dict():
+    trainer = MyTrainer(TrainerParams())
+    device_a = trainer.device_a = torch.device('cpu')
+    ndarray_a = trainer.ndarray_a = np.array([1, 2, 3])
+    tensor_a = trainer.tensor_a = torch.tensor([1, 2, 3])
+    module = trainer.module = nn.Linear(10, 10)
+    optim_a = trainer.optim_a = TrainerParams.OPTIM.create_optim('SGD', lr=0.9).build(trainer.module.parameters())
+
+    state_dict = trainer.state_dict()
+    # assert state_dict['devices']['device_a'] == trainer.device_a
+    assert state_dict['optims']['optim_a'] == trainer.optim_a.state_dict()
+    assert all([(i == j).all()
+                for i, j in zip(state_dict['models']['module'].values(), trainer.module.state_dict().values())])
+    assert (state_dict['thtensor']['tensor_a'] == trainer.tensor_a).all()
+    assert (state_dict['nptensor']['ndarray_a'] == trainer.ndarray_a).all()
+
+    fn = trainer.save_state_dict()
+    trainer.ndarray_a = np.array([3, 2, 1])
+    trainer.tensor_a = torch.tensor([3, 2, 1])
+    trainer.module = nn.Linear(10, 10)
+    trainer.optim_a = TrainerParams.OPTIM.create_optim('SGD', lr=0.9).build(trainer.module.parameters())
+
+    trainer.load_state_dict(torch.load(fn, map_location='cpu'))
+    assert state_dict['optims']['optim_a'] == optim_a.state_dict()
+    assert all([(i == j).all()
+                for i, j in zip(state_dict['models']['module'].values(), module.state_dict().values())])
+    assert (state_dict['thtensor']['tensor_a'] == tensor_a).all()
+    assert (state_dict['nptensor']['ndarray_a'] == ndarray_a).all()
 
 
 if __name__ == '__main__':

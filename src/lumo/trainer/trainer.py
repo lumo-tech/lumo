@@ -13,7 +13,7 @@ from accelerate.data_loader import DataLoaderDispatcher, DataLoaderShard
 from torch import nn
 from torch.optim import Optimizer
 from torch.utils.data import DataLoader
-
+import json
 from lumo.contrib.accelerate import Accelerator
 from lumo.contrib.accelerate.utils import send_to_device
 from lumo.core import TrainStage, Record, MetricType, Meter
@@ -24,7 +24,6 @@ from lumo.proc import dist
 from lumo.proc import glob
 from lumo.trainer.rnd import RndManager
 from lumo.utils.logger import Logger
-from lumo.utils.fmt import strftime
 from .base import _BaseTrainer
 from .components import TrainerExperiment, TrainerParams
 from .saver import Saver
@@ -32,6 +31,8 @@ from .saver import Saver
 # overwrite send_to_device to resolve https://github.com/pytorch/pytorch/issues/83015
 # from accelerate import Accelerator
 # from accelerate.utils import send_to_device
+from ..utils.fmt import strftime
+
 ParamsType = TrainerParams
 
 
@@ -65,6 +66,12 @@ class Trainer(_BaseTrainer):
         'process_loader', 'regist_dataloader'
     }
 
+    def __init_subclass__(cls, **kwargs):
+        super().__init_subclass__(**kwargs)
+        if cls.__name__ == 'Trainer':
+            raise TypeError(
+                f"Can't instantiate abstract class {cls.__name__} directly, please create a subclass of it.")
+
     def __init__(self, params: ParamsType, dm: DataModule = None):
         if dm is None:
             dm = DataModule(params)
@@ -80,10 +87,12 @@ class Trainer(_BaseTrainer):
         self.params.iparams()
         self.exp = TrainerExperiment(self.generate_exp_name())
 
-        self.database = TableRow(self.exp.project_name, self.exp.exp_name, self.exp.test_name_with_dist)
-        self.metric_board = Metrics(self.exp.test_root)
+        self._database = TableRow(self.exp.mk_ipath('metric.pkl'), persistent=self.is_main)
+        self.metric_board = Metrics(self.exp.mk_bpath('board.sqlite'), persistent=self.is_main)
+        self.metric = self.exp.metric
+
         self.exp.dump_info('metric_board', self.metric_board.fpath)
-        self.exp.dump_info('table_row', self.database.fpath)
+        self.exp.dump_info('table_row', self._database.fpath)
         self.rnd = RndManager()
 
         self.train_epoch_toggle = False
@@ -100,12 +109,13 @@ class Trainer(_BaseTrainer):
 
         if dist.is_main():
             self.params.to_yaml(self.exp.params_fn)
+            self.exp.dump_info('params', self.params.to_dict())
 
         self.set_global_steps(0)
         self.set_epoch_idx(0)
         self.set_idx(0)
         if params.get('debug', False):
-            self.exp.set_prop('debug', True)
+            self.exp.dump_info('debug', True)
 
     @property
     def metrics(self):
@@ -113,7 +123,12 @@ class Trainer(_BaseTrainer):
 
     @property
     def db(self):
-        return self.database
+        return self._database
+
+    @property
+    def database(self):
+        warnings.warn('TableRow is deprecated and will be removed soon, please use self.metric instead')
+        return self._database
 
     @property
     def saver(self) -> Saver:
@@ -221,6 +236,7 @@ class Trainer(_BaseTrainer):
         res = SummaryWriter(**kwargs)
 
         def close(*args):
+            """close writer"""
             res.flush()
             res.close()
 
@@ -257,73 +273,167 @@ class Trainer(_BaseTrainer):
 
     @property
     def global_steps(self) -> int:
-        # started from 0
+        """started from 0"""
         return self._prop['global_steps']
 
     @property
-    def trainer_state(self):
+    def trainer_state(self) -> Any:
+        """
+        Get the state of the Trainer object.
+
+        Returns:
+            Any: The state of the Trainer object.
+        """
         return self._prop
 
     @property
     def devices(self) -> Dict[str, torch.device]:
-        return self._state_dicts['devices']
+        """
+        Get the dictionary of devices used in the training session.
+
+        Returns:
+            Dict[str, torch.device]: A dictionary containing the devices used in the training session.
+        """
+        return {key: self[key] for key in self._state_dicts['devices']}
 
     @property
     def model_dict(self) -> Dict[str, nn.Module]:
-        return {key: self[key]
-                for key in self._state_dicts['models']}
+        """
+        Get the dictionary of model objects used in the training session.
+
+        Returns:
+            Dict[str, nn.Module]: A dictionary containing the model objects used in the training session.
+        """
+        return {key: self[key] for key in self._state_dicts['models']}
 
     @property
     def optim_dict(self) -> Dict[str, Optimizer]:
+        """
+        Get the dictionary of optimizer objects used in the training session.
+
+        Returns:
+            Dict[str, Optimizer]: A dictionary containing the optimizer objects used in the training session.
+        """
         return {key: self[key] for key in self._state_dicts['optims']}
 
     @property
     def torch_tensor(self) -> Dict[str, torch.Tensor]:
+        """
+        Get the dictionary of PyTorch tensor objects used in the training session.
+
+        Returns:
+            Dict[str, torch.Tensor]: A dictionary containing the PyTorch tensor objects used in the training session.
+        """
         return {key: self[key] for key in self._state_dicts['tensor.th']}
 
     @property
     def numpy_tensor(self) -> Dict[str, np.ndarray]:
+        """
+        Get the dictionary of NumPy array objects used in the training session.
+
+        Returns:
+            Dict[str, np.ndarray]: A dictionary containing the NumPy array objects used in the training session.
+        """
         return {key: self[key] for key in self._state_dicts['tensor.np']}
 
     @property
     def others(self) -> Dict[str, Any]:
+        """
+        A dictionary of additional attributes stored in the Trainer.
+
+        Returns:
+            Dict[str, Any]: The dictionary of additional attributes.
+        """
         return {key: self[key] for key in self._state_dicts['others']}
 
     @property
     def datamodule(self) -> DataModule:
+        """
+        Returns the DataModule associated with this Trainer.
+
+        Returns:
+            DataModule: The DataModule associated with this Trainer.
+        """
         return self.dm
 
     @property
     def train_dataloader(self) -> Optional[DataLoaderType]:
+        """
+        Returns the DataLoader for the training data.
+
+        Returns:
+            Optional[DataLoaderType]: The DataLoader for the training data, or None if it is not available.
+        """
         return self.datamodule['train']
 
     @property
     def test_dataloader(self) -> Optional[DataLoaderType]:
+        """
+        Returns the DataLoader for the test data.
+
+        Returns:
+            Optional[DataLoaderType]: The DataLoader for the test data, or None if it is not available.
+        """
         return self.datamodule['test']
 
     @property
     def val_dataloader(self) -> Optional[DataLoaderType]:
+        """
+        Returns the DataLoader for the validation data.
+
+        Returns:
+            Optional[DataLoaderType]: The DataLoader for the validation data, or None if it is not available.
+        """
         return self.datamodule['val']
 
     @property
     def device(self):
+        """
+        Returns the device used for training.
+
+        Returns:
+            The device used for training.
+        """
         return self.accelerate.device
 
-    def _load_fun_state_dict(self, src: dict, tgt: dict):
-        for k, v in tgt.items():
-            if k in src:
-                v.load_state_dict(src[k])
+    def _load_fun_state_dict(self, src: dict):
+        """
+        Loads state dicts into the Trainer's attributes.
+
+        Args:
+            src (dict): A dictionary of state dicts to be loaded.
+        """
+        for k, v in src.items():
+            if self._rev_index.get(k, None) is not None:
+                self[k].load_state_dict(v)
 
     def regist_dataloader(self, dataloader: DataLoader, stage: TrainStage):
+        """
+        Registers a dataloader with a given training stage to the current datamodule.
+
+        Args:
+            dataloader (DataLoader): The dataloader to be registered.
+            stage (TrainStage): The training stage to which the dataloader will be associated.
+
+        Returns:
+            None
+        """
         self.datamodule.regist_dataloader_with_stage(stage, dataloader)
 
     def process_loader(self, dm: Union[DataModule, DataLoader] = None, stage: TrainStage = TrainStage.train):
         """
-        automatically called before train()/test()/evaluate(), see __new__ function of Trainer
-        :param dm:
-        :param stage:
-        :return:
+        Prepares and registers a dataloader with the given training stage to the current datamodule.
+
+        Args:
+            dm (Union[DataModule, DataLoader], optional): The datamodule or dataloader to be processed. If not provided,
+            the current datamodule will be used if it exists.
+            stage (TrainStage, optional): The training stage to which the dataloader will be associated. Defaults to TrainStage.train.
+
+        Returns:
+            DataLoader: The prepared and registered dataloader.
+            None: If the dataloader cannot be prepared or registered.
         """
+
         assert stage is not None, '`stage` cannot be None'
         if dm is None and self.dm is not None:
             dm = self.dm
@@ -347,12 +457,24 @@ class Trainer(_BaseTrainer):
         return loader
 
     def save_state_dict(self, name='latest.pth', dirpath=None, only_main=True):
+        """
+        Saves the current state dictionary to a file.
+
+        Args:
+            name: The name of the file to save the state dictionary to. Defaults to 'latest.pth'.
+            dirpath: The directory path to save the state dictionary file to. If None, defaults to the state dictionary
+                directory of the Trainer's experiment.
+            only_main: If True, saves the state dictionary to a single file. If False and the Trainer is distributed,
+                saves the state dictionary to multiple files, one for each process.
+
+        Returns:
+            The path to the saved state dictionary file.
+        """
         if not only_main and self.is_dist:
             pre, ext = os.path.splitext(name)
             name = f'{pre}-{self.local_rank}{ext}'
         if dirpath is None:
-
-            fn = self.exp.state_dict_dir
+            fn = os.path.join(self.exp.state_dict_dir, name)
         else:
             fn = os.path.join(dirpath, name)
         torch.save(self.state_dict(), fn)
@@ -360,19 +482,27 @@ class Trainer(_BaseTrainer):
         return fn
 
     def load_state_dict(self, state_dict: dict):
+        """Load state dictionary from a given dictionary.
+        Args:
+            state_dict (dict): A dictionary containing the state dictionary to be loaded.
+
+        Returns:
+            None
+        """
         _sub = {'models', 'optims', 'other'}
         _missing = []
 
         for k, v in state_dict.items():
             if k in _sub:
-                self._load_fun_state_dict(v, self._state_dicts[k])
+                self._load_fun_state_dict(v)
             else:
-                self._state_dicts[k] = v
+                for kk, vv in v.items():
+                    self[kk] = vv
         return
 
     def to_device(self, item: Optional[Union[nn.Module, torch.Tensor, Sequence, Mapping]] = None,
                   device: torch.device = None):
-
+        """Recursively sends the elements in a nested list/tuple/dictionary of tensors to a given device."""
         if item is None:
             for k, v in list(self.model_dict.items()):
                 self[k] = self.accelerate.prepare(v)
@@ -385,39 +515,35 @@ class Trainer(_BaseTrainer):
             return item
 
     def on_trainer_exception(self, func: Callable, exception: BaseException):
-        self.database.update_dict(dict(end=datetime.now(),
-                                       finished=False,
-                                       error=str(exception),
-                                       trainer_frame=str(func)),
-                                  flush=True)
+        """Updates database with error information when an exception occurs during training."""
+        self.exp.dump_info('exception', dict(end=strftime(),
+                                             finished=False,
+                                             error=str(exception),
+                                             trainer_frame=str(func)))
 
     @property
     def is_initialized(self):
+        """Whether this Trainer is initialized."""
         if self._prop.get('initial', False):
             return True
         return False
 
     def initialize(self):
+        """
+        Initializes the Trainer object, update meta information in Experiment and TableRow.
+
+        If the Trainer object is already initialized, this method does nothing.
+
+        This function is auto called when start train()/test()/evaluate()
+        """
+
         if self.is_initialized:
             return
         self.exp.start()
 
-        commit_info = self.exp.get_prop('git')
-        commit_hex = None
-        if commit_info is not None and 'commit' in commit_info:
-            commit_hex = commit_info['commit']
-        self.database.update('commit_hex', commit_hex)
-        self.database.update_dict(dict(
-            test_name=self.exp.test_name,
-            exp_name=self.exp.exp_name,
-            project=self.exp.project_name,
-            path=self.exp.test_root,
-            start=datetime.now()))
-        self.database.set_params(self.params.to_dict())
-        self.database.update('command', ' '.join(sys.argv))
         params_hash = self.params.hash()
-        self.database.update('params_hash', params_hash)
         self.exp.dump_string('params_hash', params_hash)
+
         self.icallbacks(self.params)
         self.set_property('initial.callbacks', True)
         self.imodels(self.params)
@@ -425,10 +551,12 @@ class Trainer(_BaseTrainer):
         self.set_property('initial', True)
 
     def stop_train(self):
+        """Toggle to stop train."""
         self.train_toggle = True
         self.train_epoch_toggle = True
 
     def stop_train_epoch(self):
+        """Toggle to skip current train epoch."""
         self.train_epoch_toggle = True
 
     def prepare_dataloader(self, loader: DataLoaderType, stage: TrainStage = None):
@@ -456,6 +584,21 @@ class Trainer(_BaseTrainer):
         return loader
 
     def train(self, dm: Union[DataModule, DataLoaderType] = None, params: ParamsType = None, limit_global_steps=None):
+        """Trains the model using the specified data loader and parameters.
+
+        Args:
+            dm (Union[DataModule, DataLoaderType], optional): The data loader or data module to use for training.
+                Defaults to self.train_dataloader.
+            params (ParamsType, optional): The training parameters to use. Defaults to None.
+            limit_global_steps (int, optional): The maximum number of global steps to train for. Defaults to None.
+
+        Returns:
+            Dict[str, Any]: A dictionary of training results.
+
+        Raises:
+            ValueError: If no data loader is available for training.
+
+        """
         loader = self.select_loader(dm)
         if not loader:
             loader = self.train_dataloader
@@ -490,13 +633,23 @@ class Trainer(_BaseTrainer):
 
         # update when train finished
         self.exp.end()
-        self.database.update_dict(dict(end=datetime.now(), finished=True), flush=True)
-        self.database.flush()
         return self._prop
 
     def train_epoch(self, loader: DataLoaderType, params: ParamsType = None,
                     limit_step=None,
                     limit_global_steps=None) -> Record:
+        """Trains the model for one epoch using the specified data loader and parameters.
+
+        Args:
+            loader (DataLoaderType): The data loader to use for training.
+            params (ParamsType, optional): The training parameters to use. Defaults to None.
+            limit_step (int, optional): The maximum number of steps to train for. Defaults to None.
+            limit_global_steps (int, optional): The maximum number of global steps to train for. Defaults to None.
+
+        Returns:
+            Record: A record of training results for the epoch.
+
+        """
         stage = TrainStage.train
         self.change_stage(stage)
         record = self.create_record(stage=stage)
@@ -520,22 +673,57 @@ class Trainer(_BaseTrainer):
             self._prop['global_steps'] += 1
             metric = self.train_step(batch, params)
             record.record(metric)
-            self.database.flush()
 
         record.flush()
-        self.database.update_dict(dict(eidx=self.eidx, end=datetime.now()))
         return record
 
-    def set_property(self, key, value):
+    def set_property(self, key: str, value: any) -> None:
+        """
+        Sets a property with the given key to the given value.
+
+        Args:
+            key: A string representing the name of the property.
+            value: The value to assign to the property.
+
+        Returns:
+            None
+        """
         self._prop[key] = value
 
-    def set_global_steps(self, val):
+    def set_global_steps(self, val: int) -> None:
+        """
+        Sets the global step count to the given value.
+
+        Args:
+            val: An integer representing the global step count.
+
+        Returns:
+            None
+        """
         self.set_property('global_steps', val)
 
-    def set_epoch_idx(self, val):
+    def set_epoch_idx(self, val: int) -> None:
+        """
+        Sets the current epoch index to the given value.
+
+        Args:
+            val: An integer representing the current epoch index.
+
+        Returns:
+            None
+        """
         self.set_property('eidx', val)
 
-    def set_idx(self, val):
+    def set_idx(self, val: int) -> None:
+        """
+        Sets the current index to the given value.
+
+        Args:
+            val: An integer representing the current index.
+
+        Returns:
+            None
+        """
         self.set_property('idx', val)
 
     @property
@@ -543,13 +731,23 @@ class Trainer(_BaseTrainer):
         return self._prop.get('stage', TrainStage.default)
 
     def set_stage(self, val: TrainStage):
+        """
+        Sets the training stage to the given value.
+
+        Args:
+            val (TrainStage): The value to set the training stage to.
+        """
         self.set_property('stage', val)
 
     def add_callback(self, callback):
         """
-        添加一个回调函数，注意，不能添加重复的 callback，这不推荐，也没有必要。
-        :param callback:
-        :return:
+        Adds a callback function. Note that duplicate callbacks are not recommended and not necessary.
+
+        Args:
+            callback: The callback function to add.
+
+        Returns:
+            bool: True if the callback was added successfully, False otherwise.
         """
         msg = None
         cb_name = callback.__class__.__name__
@@ -579,10 +777,22 @@ class Trainer(_BaseTrainer):
         return True
 
     def remove_callback(self, cur):
+        """
+        Removes the given callback from the list of callbacks.
+
+        Args:
+            cur: The callback to remove.
+        """
         self.callbacks.remove(cur)
         pass
 
     def change_stage(self, stage: TrainStage):
+        """
+        Changes the training stage to the given value.
+
+        Args:
+            stage (TrainStage): The value to change the training stage to.
+        """
         if self.trainstage == stage:
             return
 
@@ -597,6 +807,15 @@ class Trainer(_BaseTrainer):
 
     @classmethod
     def select_loader(cls, dm=None):
+        """
+        Selects the appropriate loader based on the given data module.
+
+        Args:
+            dm (DataModule or DataLoader or DataLoaderSide, optional): The data module to use. Defaults to None.
+
+        Returns:
+            DataLoader or None: The appropriate loader based on the given data module, or None if dm is None.
+        """
         loader = None
         if dm:
             if isinstance(dm, DataModule):
@@ -608,6 +827,16 @@ class Trainer(_BaseTrainer):
         return loader
 
     def test(self, dm: Union[DataModule, DataLoader] = None, params: ParamsType = None, limit_step=None):
+        """
+        Tests the model on a given dataset and returns a `Record` object containing the evaluation results.
+
+        Args:
+            dm (Union[DataModule, DataLoader], optional): A `DataModule` or `DataLoader` object for the dataset to test on.
+            params (ParamsType, optional): A dictionary containing hyperparameters for the test.
+            limit_step (int, optional): An integer specifying the maximum number of batches to test on.
+        Returns:
+            A `Record` object containing the evaluation results.
+        """
         stage = TrainStage.test
         self.change_stage(stage)
 
@@ -635,6 +864,15 @@ class Trainer(_BaseTrainer):
         return record
 
     def evaluate(self, dm: Union[DataModule, DataLoader] = None, params: ParamsType = None, limit_step: int = None):
+        """
+        Evaluates the model on a given dataset and returns a `Record` object containing the evaluation results.
+        Args:
+            dm (Union[DataModule, DataLoader], optional): A `DataModule` or `DataLoader` object for the dataset to evaluate on.
+            params (ParamsType, optional): A dictionary containing hyperparameters for the evaluation.
+            limit_step (int, optional): An integer specifying the maximum number of batches to evaluate on.
+        Returns:
+            A `Record` object containing the evaluation results.
+        """
         stage = TrainStage.val
         self.change_stage(stage)
 
@@ -660,59 +898,108 @@ class Trainer(_BaseTrainer):
         return record
 
     def train_step(self, batch, params: ParamsType = None) -> MetricType:
+        """
+        Runs a single training step on a batch of data and returns a dictionary of training metrics.
+        Args:
+            batch: A batch of data to train on.
+            params (ParamsType, optional): A dictionary containing hyperparameters for the training step.
+        Returns:
+            A dictionary of training metrics.
+        """
         pass
 
     def test_step(self, batch, params: ParamsType = None) -> MetricType:
+        """
+        Runs a single testing step on a batch of data and returns a dictionary of evaluation metrics.
+        Args:
+            batch: A batch of data to test on.
+            params (ParamsType, optional): A dictionary containing hyperparameters for the testing step.
+        Returns:
+            A dictionary of evaluation metrics.
+        """
         pass
 
     def evaluate_step(self, batch, params: ParamsType = None) -> MetricType:
+        """
+        Runs a single evaluation step on a batch of data and returns a dictionary of evaluation metrics.
+        Args:
+            batch: A batch of data to evaluate on.
+            params (ParamsType, optional): A dictionary containing hyperparameters for the evaluation step.
+        Returns:
+            A dictionary of evaluation metrics.
+        """
         pass
 
     def imodels(self, params: ParamsType):
+        """Initialize model in here"""
         pass
 
     def icallbacks(self, params: ParamsType):
+        """Initialize callbacks in here"""
         pass
 
     def inference(self, batch):
+        """Perform inference on a batch of data."""
         raise NotImplementedError()
 
     def predict(self, batch):
+        """Make a prediction on a batch of data."""
         raise NotImplementedError()
 
     def optim_state_dict(self, wrap=True):
+        """Get a dictionary of the state of the optimizers."""
         res = {k: v.state_dict() for k, v in self.optim_dict.items()}
         if wrap:
             res = {'optim': res}
         return res
 
     def model_state_dict(self, wrap=True):
+        """Get a dictionary of the state of the models."""
         res = {k: self.accelerate.unwrap_model(v).state_dict() for k, v in self.model_dict.items()}
         if wrap:
             res = {'model': res}
         return res
 
     def other_state_dict(self, wrap=True):
+        """Get a dictionary of the state of the other objects."""
         res = {k: v.state_dict() for k, v in self.others.items()}
         if wrap:
             res = {'other': res}
         return res
 
     def state_dict(self):
+        """Get a dictionary of the state of the object."""
         res = {
             'optims': self.optim_state_dict(wrap=False),
             'models': self.model_state_dict(wrap=False),
             'others': self.other_state_dict(wrap=False),
             'thtensor': self.torch_tensor,
             'nptensor': self.numpy_tensor,
+            # 'devices': self.devices,
         }
 
         return res
 
     def Meter(self):
+        """
+        Returns a new instance of the Meter class.
+
+        Returns:
+            Meter: A new instance of the Meter class.
+        """
         return Meter()
 
     def create_record(self, stage: TrainStage = None):
+        """
+        Creates a new Record object with the specified TrainStage.
+
+        Args:
+            stage (TrainStage, optional): The TrainStage to use for the new Record object. If not provided, the TrainStage
+            from the Trainer object will be used.
+
+        Returns:
+            Record: A new Record object with the specified TrainStage.
+        """
         if stage is None:
             stage = self.trainstage
         record = Record(stage=stage)
@@ -720,35 +1007,33 @@ class Trainer(_BaseTrainer):
 
     def wait_for_everyone(self):
         """
-        making sure all processes have reached this point before continuing.
+        Will stop the execution of the current process until every other process has reached that point
         """
         self.accelerate.wait_for_everyone()
 
-    def save_model(self, is_best=False, meta_info: Union[str, dict] = None):
-        info = self._build_trainer_meta_info(meta_info)
-        val = self.saver.save_model(self.eidx, self.model_state_dict(),
-                                    meta_info=info,
-                                    is_best=is_best)
-        self.wait_for_everyone()
-        return val
+    def save_best_model(self):
+        if self.is_main:
+            file = self.exp.mk_bpath('models', 'best_model.ckpt')
+            file_info = self.exp.mk_bpath('models', 'best_model.json')
+        else:
+            file = self.exp.mk_bpath('models', f'best_model-{self.local_rank}.ckpt')
+            file_info = self.exp.mk_bpath('models', f'best_model-{self.local_rank}.json')
+        torch.save(self.state_dict(), file)
 
-    def _build_trainer_meta_info(self, meta_info: Union[str, dict] = None):
-        info = dict()
-        info['eidx'] = self.eidx
-        if meta_info is not None:
-            if isinstance(meta_info, str):
-                info['msg'] = meta_info
-            if isinstance(meta_info, Meter):
-                meta_info = meta_info.serialize()
-            if isinstance(meta_info, dict):
-                info.update(meta_info)
-        return info
-
-    def save_checkpoint(self, max_keep=10, is_best=False, meta_info: Union[str, dict, Meter] = None):
-        info = self._build_trainer_meta_info(meta_info)
-        val = self.saver.save_checkpoint(self.eidx, self.state_dict(),
-                                         meta_info=info,
-                                         max_keep=max_keep,
-                                         is_best=is_best)
+        with open(file_info, 'w') as w:
+            w.write(json.dumps({'global_steps': self.global_steps, 'metric': self.exp.metric.value}))
+        self.logger.info(f'saved best model at {file}')
         self.wait_for_everyone()
-        return val
+
+    def save_last_model(self):
+        if self.is_main:
+            file = self.exp.mk_bpath('models', 'last_model.ckpt')
+            file_info = self.exp.mk_bpath('models', 'last_model.json')
+        else:
+            file = self.exp.mk_bpath('models', f'last_model-{self.local_rank}.ckpt')
+            file_info = self.exp.mk_bpath('models', f'last_model-{self.local_rank}.json')
+        torch.save(self.state_dict(), file)
+        with open(file_info, 'w') as w:
+            w.write(json.dumps({'global_steps': self.global_steps, 'metric': self.exp.metric.value}))
+        self.logger.info(f'saved last model at {file}')
+        self.wait_for_everyone()

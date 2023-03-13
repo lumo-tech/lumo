@@ -68,14 +68,14 @@ def flatten_metric(df, *keys: str):
 
 def collect_table_rows(metric_root=None) -> pd.DataFrame:
     """Collect all table_row into a pandas.DataFrame"""
-    res = []
+    res = {}
     logger = Logger()
     exp_map = list_all_metrics(metric_root)
     for k, rows in exp_map.items():
         # append existing row metrics
         global_dic = PDict(os.path.join(metricroot(), f'{k}.dict.sqlite'))
-        for row in global_dic.values():
-            res.append(row)
+        for test_name, row in global_dic.items():
+            res[test_name] = row
 
         if len(rows) == 0:
             continue
@@ -94,10 +94,10 @@ def collect_table_rows(metric_root=None) -> pd.DataFrame:
                 continue
             global_dic[test_name] = row
             shutil.move(row_fn, os.path.join(os.path.dirname(row_fn), f'.{test_name}.pkl'))
-            res.append(row)
+            res[test_name] = row
         global_dic.flush()
 
-    return pd.DataFrame(res)
+    return pd.DataFrame(list(res.values()))
 
 
 def replac(df: pd.DataFrame):

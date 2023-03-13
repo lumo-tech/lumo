@@ -36,46 +36,55 @@ __all__ = ['Cos',
            'PeriodTriangle',
            'PeriodLinear',
            'PowerDecay',
+           'PowerDecay2',
            'InterpolateList', ]
 
 
 class Interpolate(BaseParams):
-    """
-    ratio 变化为从 1 - 0
-    """
-
-    def toggle_constant(self, toggle=True):
-        """fix the schedule as the first value"""
-        self.constant = toggle
-        return self
+    """A class for implementing interpolation schedule of a learning rate."""
 
     @classmethod
     def interp(self, *args, **kwargs):
+        """Interpolation method for the schedule. Must be implemented in a subclass."""
         raise NotImplementedError()
 
     def __repr__(self):
+        """Return a string representation of the schedule."""
         content = ', '.join(["{}={}".format(k, v) for k, v in self.items()])
         return "{}({})".format(self.__class__.__name__, content)
 
     def __call__(self, cur):
+        """Return the learning rate at the given step 'cur'."""
         raise NotImplementedError()
 
     def get(self, key: DictKeyType, default_value: Any = None) -> Any:
+        """
+        Return the value of the key from the schedule's dictionary, or default_value if the key is not present.
+
+        Args:
+            key: The key of the dictionary.
+            default_value: The default value to return if the key is not found.
+
+        Returns:
+            The value of the key, or default_value if the key is not found.
+        """
         return self(key)
 
     def plot(self, num=1000, left=0, right=1000, show=True):
         """
         Plot a curve of the schedule.
+
         Args:
-            num:
-            left:
-            right:
+            num: The number of points to plot the curve.
+            left: The starting point of the curve.
+            right: The ending point of the curve.
+            show: Whether to display the plot or not.
 
         Returns:
-            plt.plot
+            The plot object.
 
         Notes:
-            You may need to call `plt.show`() to show it.
+            You may need to call `plt.show()` to show the plot.
         """
         from matplotlib import pyplot as plt
 
@@ -90,21 +99,22 @@ class Interpolate(BaseParams):
 
     def scale(self, optimizer, cur):
         """
-        Scale the learning rate by current value. 'scale' means not apply the current schedule value directly to
-        the learning rate, but multiple the initial learning rate. You can use `schedule.apply()` to apply the schedule
-        value directly.
+        Scale the learning rate by the current value.
+
+        'Scale' means that the current schedule value will not be applied directly to the learning rate, but will be
+        multiplied by the initial learning rate. You can use `schedule.apply()` to apply the schedule value directly.
 
         Notes:
-        -------
-        When first apply scale function, a `_raw_lr` represent initial lr will be set in each param_group, then, the
-        learning rate(store in param_groups with key 'lr') will be calculated by `_raw_lr * schedule(cur)`.
+            When `scale()` is first called, an initial learning rate `_raw_lr` is stored in each `param_group`. Then,
+            the learning rate (stored in `param_groups` with the key 'lr') will be calculated as `_raw_lr *
+            schedule(cur)`.
 
         Args:
-            optimizer: A pytorch optimizer instance.
-            cur: current step of this schedule.
+            optimizer: A PyTorch optimizer instance.
+            cur: The current step of the schedule.
 
         Returns:
-            Current schedule value.
+            The current schedule value.
         """
         ratio = self(cur)
         for param_group in optimizer.param_groups:  # type:dict
@@ -115,14 +125,14 @@ class Interpolate(BaseParams):
 
     def apply(self, optimizer, cur):
         """
-        Apply the learning rate with current schedule value.
+        Apply the learning rate with the current schedule value.
 
         Args:
-            optimizer: A pytorch optimizer instance.
-            cur: current step of this schedule.
+            optimizer: A PyTorch optimizer instance.
+            cur: The current step of the schedule.
 
         Returns:
-
+            The new learning rate.
         """
         new_lr = self(cur)
         for param_group in optimizer.param_groups:  # type:dict
@@ -132,14 +142,44 @@ class Interpolate(BaseParams):
 
 
 class ABCContinuous(Interpolate):
+    """
+    Interpolates a continuous schedule for a value between a start and end point.
+
+    Args:
+        start (float): The starting value of the schedule.
+        end (float): The ending value of the schedule.
+        left (float): The left boundary of the range of values to interpolate over.
+        right (float): The right boundary of the range of values to interpolate over.
+        *args: Additional arguments to pass to the superclass constructor.
+        **kwargs: Additional keyword arguments to pass to the superclass constructor.
+
+    Attributes:
+        left (float): The left boundary of the range of values to interpolate over.
+        right (float): The right boundary of the range of values to interpolate over.
+        start (float): The starting value of the schedule.
+        end (float): The ending value of the schedule.
+        constant (bool): A flag indicating whether the schedule is constant.
+    """
 
     def __call__(self, cur):
+        """Returns the interpolated value of the schedule at a given point."""
         if self.constant:
             return self.start
         return self.interp(cur, start=self.start, end=self.end, left=self.left, right=self.right,
                            constant=self.constant)
 
     def __init__(self, start=1e-3, end=1e-6, left=0, right=80, *args, **kwargs):
+        """
+        Initializes an instance of ABCContinuous.
+
+        Args:
+            start (float): The starting value of the schedule.
+            end (float): The ending value of the schedule.
+            left (float): The left boundary of the range of values to interpolate over.
+            right (float): The right boundary of the range of values to interpolate over.
+            *args: Additional arguments to pass to the superclass constructor.
+            **kwargs: Additional keyword arguments to pass to the superclass constructor.
+        """
         super().__init__()
         self.left = left
         self.right = right
@@ -149,6 +189,7 @@ class ABCContinuous(Interpolate):
 
     @classmethod
     def ratio(cls, cur, left, right, constant=False):
+        """Returns the ratio of a given point between the left and right boundaries."""
         if constant:
             return 0
         return (cur - left) / (right - left)
@@ -159,6 +200,7 @@ class ABCContinuous(Interpolate):
         return cls.interp(cur=cur, start=start, end=end, left=left, right=right, *args, **kwargs)
 
     def plot(self, num=1000, left=None, right=None, show=True):
+        """Plots the interpolated schedule."""
         if left is None:
             left = self.left
 
@@ -173,10 +215,30 @@ class ABCContinuous(Interpolate):
 
 class ABCPeriod(Interpolate):
     """
-    period
+    A class for generating schedules with a repeating period.
+
+    Attributes:
+        left (float): The left boundary of the schedule.
+        period (float): The period of the schedule.
+        start (float): The start value of the schedule.
+        end (float): The end value of the schedule.
+        constant (bool): A flag indicating if the schedule is constant.
+
     """
 
     def __init__(self, start=0, end=1, left=0, period=1, *args, **kwargs):
+        """
+        Initializes an instance of the `ABCPeriod` class.
+
+        Args:
+            start (float): The start value of the schedule.
+            end (float): The end value of the schedule.
+            left (float): The left boundary of the schedule.
+            period (float): The period of the schedule.
+            *args: Additional positional arguments.
+            **kwargs: Additional keyword arguments.
+
+        """
         super().__init__()
         self.left = left
         self.period = period
@@ -186,6 +248,7 @@ class ABCPeriod(Interpolate):
 
     @classmethod
     def ratio(cls, cur, left, period, constant=False):
+        """Returns the ratio of time elapsed in the current period."""
         if constant:
             return 0
         if cur < left:
@@ -201,6 +264,7 @@ class ABCPeriod(Interpolate):
                           left=left, right=right, *args, **kwargs)
 
     def plot(self, num=1000, left=None, n_period=5, show=True):
+        """Plots the schedule between the specified boundaries."""
         if left is None:
             left = self.left
 
@@ -211,15 +275,25 @@ class ABCPeriod(Interpolate):
         return super().plot(num, left, right, show)
 
     def __call__(self, cur):
+        """Returns the current schedule value at the given time."""
         return self.interp(cur, start=self.start, end=self.end, left=self.left, period=self.period,
                            constant=self.constant)
 
 
 class Cos(ABCContinuous):
-    """one cycle cosine functoin"""
+    """one cycle cosine functoin
+
+      end ->         ,---------
+                    /
+    start -> ______/
+                   ↑   ↑
+                 left right
+
+    """
 
     @classmethod
     def interp(cls, cur, start=0., end=1., left=0., right=1., *args, **kwargs):
+        """Interpolation method for the schedule."""
         constant = kwargs.get('constant', False)
         if constant:
             return start
@@ -234,12 +308,21 @@ class Cos(ABCContinuous):
         return start * cos_ratio + end * (1 - cos_ratio)
 
 
-
 class Linear(ABCContinuous):
-    """linear schedule"""
+    """linear schedule
+
+            ^
+    end     |               .*
+            |          .*
+            |     .*
+            |.*
+    start   +----------------->
+            left            right
+    """
 
     @classmethod
     def interp(cls, cur, start=0., end=1., left=0., right=1., *args, **kwargs):
+        """Interpolation method for the schedule."""
         constant = kwargs.get('constant', False)
         if constant:
             return start
@@ -258,6 +341,7 @@ class Exp(ABCContinuous):
 
     @classmethod
     def interp(cls, cur, start=0., end=1., left=0., right=1., *args, **kwargs):
+        """Interpolation method for the schedule."""
         constant = kwargs.get('constant', False)
         if constant:
             return start
@@ -275,10 +359,24 @@ class Exp(ABCContinuous):
 
 
 class Log(ABCContinuous):
-    """quick to slow"""
+    """
+    quick to slow
+
+     end   |                              *
+           |                     *
+           |                *
+           |            *
+           |        *
+           |     *
+           |  *
+    start  |*
+           -------------------------------------------
+            left                         right
+    """
 
     @classmethod
     def interp(cls, cur, start=0., end=1., left=0., right=1., *args, **kwargs):
+        """Interpolation method for the schedule."""
         constant = kwargs.get('constant', False)
         if constant:
             return start
@@ -297,6 +395,15 @@ class Log(ABCContinuous):
 
 
 class Constant(ABCContinuous):
+    """
+    A scheduler representing a constant value
+                |
+    constant    |--------------
+                |
+                |________________
+                  ... any ...
+    """
+
     def __init__(self, value=0.5, *args, **kwargs):
         super().__init__(start=value, end=value, left=0, right=1, *args, **kwargs)
         self.constant = True
@@ -305,10 +412,18 @@ class Constant(ABCContinuous):
 class PeriodCos(ABCPeriod):
     """
     periodic cosine schedule
+
+      end ->         ,-.     ,-.     ,-.     ,-.
+                    /   \   /   \   /   \   /   \
+    start -> ______/     \_/     \_/     \_/     \_________
+    ratio          0      1       2       3       .....
+                    \----|
+                    period
     """
 
     @classmethod
     def interp(cls, cur, start=0., end=1., left=0., period=1., *args, **kwargs):
+        """Interpolation method for the schedule."""
         constant = kwargs.get('constant', False)
 
         ratio = cls.ratio(cur, left=left, period=period, constant=constant)
@@ -319,10 +434,18 @@ class PeriodCos(ABCPeriod):
 class PeriodHalfCos(ABCPeriod):
     """
     half periodic cosine schedule, period is (right-left)
+
+      end ->         ,-  ,-  ,-  ,-
+                    /   /   /   /
+    start -> ______/   /   /   /
+    ratio         0   1   2   3   ...
+                   \--|
+                  period
     """
 
     @classmethod
     def interp(cls, cur, start=0., end=1., left=0., period=1., *args, **kwargs):
+        """interp with period halfcos method"""
         constant = kwargs.get('constant', False)
         ratio = cls.ratio(cur, left=left, period=period, constant=constant)
         cos_ratio = 0.5 * (1 + np.cos(ratio * np.pi))
@@ -330,6 +453,17 @@ class PeriodHalfCos(ABCPeriod):
 
 
 class PeriodTriangle(ABCPeriod):
+    """
+    A interp class to simulate a periodic triangle waveform.
+
+
+   end         /\  /\  /\  /\
+   start      /  \/  \/  \/  \
+             0   1   2  3   4
+             \--|
+            period
+    """
+
     def __init__(self, start=0, end=1, left=0, left_period=1, right_period=1, *args, **kwargs):
         super().__init__(start=start, end=end, left=left,
                          period=(left_period + right_period),
@@ -340,6 +474,7 @@ class PeriodTriangle(ABCPeriod):
 
     @classmethod
     def interp(cls, cur, start=0., end=1., left=0., left_period=0., right_period=1., *args, **kwargs):
+        """Interpolation method for the schedule."""
         constant = kwargs.get('constant', False)
         ratio = cls.ratio(cur, left=left, period=(left_period + right_period), constant=constant)
 
@@ -356,10 +491,17 @@ class PeriodTriangle(ABCPeriod):
 class PeriodLinear(ABCPeriod):
     """
     sawtooth wave, like a period line schedule
+    end            /    /    /    /
+                 /    /    /    /
+    start      /    /    /    /
+              0    1    2    3     ....
+              \----|
+              period
     """
 
     @classmethod
     def interp(cls, cur, start=0., end=1., left=0., period=1., *args, **kwargs):
+        """Interpolation method for the schedule."""
         constant = kwargs.get('constant', False)
         ratio = cls.ratio(cur, left=left, period=period, constant=constant)
         return start * (1 - ratio) + end * ratio
@@ -385,6 +527,8 @@ class PowerDecay(Interpolate):
 
 
 class PowerDecay2(Interpolate):
+    """A class for implementing Power Decay Interpolation for a given schedule."""
+
     def __init__(self, start, schedules, gammas):
         super().__init__()
         self.start = start
@@ -393,6 +537,7 @@ class PowerDecay2(Interpolate):
 
     @classmethod
     def interp(cls, cur, start=0., gammas=None, schedules=None, *args, **kwargs):
+        """Interpolation method for the schedule."""
         if schedules is None:
             schedules = []
         if gammas is None:
@@ -407,10 +552,12 @@ class PowerDecay2(Interpolate):
         return res
 
     def __call__(self, cur):
-        self.interp(cur, start=self.start, gammas=self.gammas, schedules=self.schedules)
+        return self.interp(cur, start=self.start, gammas=self.gammas, schedules=self.schedules)
 
 
 class InterpolateList(Interpolate):
+    """Concat different interpolation functions"""
+
     def __init__(self, schedules: List[Interpolate]):
         super().__init__()
         self.schedules = schedules
@@ -441,6 +588,7 @@ class InterpolateList(Interpolate):
         return '{}({})'.format(self.__class__.__name__, content)
 
     def plot(self, num=1000, left=None, right=None, show=True):
+        """plot"""
         if left is None:
             left = self.left
 

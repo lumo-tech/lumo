@@ -1,15 +1,4 @@
 """
- - 提供主要的训练流
-    - 加载数据集 DataLoader
-    - train、test、eval
- - 提供对训练流的控制、回调
-    - callbacks
- - 提供对训练中间的状态保存
-    - metric: Meter
-    - checkpoints: Saver
-
-
-trainer = Trainer()
 """
 import inspect
 import os
@@ -26,6 +15,25 @@ from .. import TrainStage
 
 
 def _exit_hook_v0(exc_type, exc, tb, *args):
+    """Prints the traceback information when an unhandled exception occurs.
+
+    Args:
+        exc_type (type): The type of the exception.
+        exc (Exception): The instance of the exception.
+        tb (traceback): The traceback object containing the call stack.
+        *args: Additional arguments to be passed to the function.
+
+    Returns:
+        None
+
+    Raises:
+        None
+
+    This function is designed to be used as an exit hook with the `sys.excepthook` function.
+    It formats the traceback information and removes any lines related to the `_newfunc` function.
+    The resulting traceback is printed to the `sys.stderr` stream.
+
+    """
     import traceback
     res = traceback.format_exception(exc_type, exc, tb)
     res = [i for i in res if 'in _newfunc' not in i]
@@ -33,6 +41,25 @@ def _exit_hook_v0(exc_type, exc, tb, *args):
 
 
 def _exit_hook(exc_type, exc, tb, *args):
+    """Prints an error traceback and displays it using the rich library.
+
+    Args:
+        exc_type: Type of the exception that was raised.
+        exc: The exception instance that was raised.
+        tb: Traceback object that contains information about the exception.
+        *args: Optional additional arguments to be passed to _exit_hook_v0.
+
+    Returns:
+        None.
+
+    Raises:
+        Any exceptions that were not caught by _exit_hook_v0.
+
+    Examples:
+        # Call _exit_hook with an exception
+        >>> _exit_hook(TypeError, 'test error', traceback, arg1, arg2)
+
+    """
     from rich.console import Console
     console = Console()
     _exit_hook_v0(exc_type, exc, tb, *args)
@@ -54,40 +81,6 @@ def _exit_hook(exc_type, exc, tb, *args):
         console.print(traceback)
 
 
-def wrapper(self, func, _call_set: list):
-    """
-    对每个 Trainer 的 _call_backs 类变量中定义的函数尝试绑定回调
-    Args:
-        func:
-        _call_set:
-
-    Returns:
-
-    """
-
-    @wraps(func)
-    def _newfunc(*aargs, **kkwargs):
-        """执行前回调 on_begin() 、执行后回调 on_end()、执行异常则回调 on_exception() """
-        for callback in _call_set:
-            callback.on_begin(self, func, self.params, *aargs, **kkwargs)
-        try:
-            _meter = func(*aargs, **kkwargs)
-        except BaseException as e:
-            _handles = [callback.on_exception(self, func, self.params, e, *aargs, **kkwargs)
-                        for callback in _call_set]
-
-            if any(_handles):
-                return None
-            else:
-                raise e
-
-        for callback in _call_set:
-            callback.on_end(self, func, self.params, _meter, *aargs, **kkwargs)
-        return _meter
-
-    return _newfunc
-
-
 init_function = ['icallbacks', 'imodels']
 call_dependency = {
     'train': init_function,
@@ -95,6 +88,8 @@ call_dependency = {
 
 
 class _BaseTrainer:
+    """Base class for training neural network models.
+    """
     __exp_name__ = None
 
     callback_function = {}
@@ -122,8 +117,17 @@ class _BaseTrainer:
         replace(_exit_hook)
 
         def init_wrapper(func):
+            """
+            Wraps the train/test/eval functions to initialize in silence.
+
+            Notes:
+                Before calling the train/test/eval functions, the `trainer.initialize` method is called,
+                 and then the corresponding DataLoader for the stage is initialized through the `process_loader` method.
+            """
+
             @wraps(func)
             def inner(dm=None, params=None, *args, **kwargs):
+                """The inner function that wraps the train/test/eval function."""
                 init_fn = getattr(self, 'initialize', None)
                 if init_fn is not None:
                     init_fn()
@@ -136,18 +140,21 @@ class _BaseTrainer:
 
         def cb_wrapper(func, call_set: list):
             """
-            对每个 Trainer 的 _call_backs 类变量中定义的函数尝试绑定回调
+            Wraps the given function with callback functions.
+
             Args:
-                func:
-                call_set:
+                func (function): The function to wrap.
+                call_set (list): A list of callback functions.
 
             Returns:
-
+                A wrapped function.
             """
 
             @wraps(func)
             def _newfunc(*aargs, **kkwargs):
-                """执行前回调 on_begin() 、执行后回调 on_end()、执行异常则回调 on_exception() """
+                """
+                Executes the callback functions before and after the given function and on exception.
+                """
                 # on_begin
                 self._contexts.append(func.__name__)
                 for callback in call_set:
@@ -214,7 +221,7 @@ class _BaseTrainer:
         elif callable(getattr(value, "state_dict", None)) and callable(getattr(value, "load_state_dict", None)):
             type_name = 'others'
         else:
-            super().__setattr__(name, value)
+            # super().__setattr__(name, value)
             return
 
         # if name in self.__dict__: TODO workaround multi-gpu error: Expected to mark a variable ready only once
@@ -225,10 +232,14 @@ class _BaseTrainer:
 
     @property
     def contexts(self):
+        """Get the name stack of function call contexts.
+        The first is the name of the Trainer class
+        """
         return self._contexts
 
     @property
     def context(self):
+        """Get the name of the most recent function call context."""
         return self._contexts[-1]
 
         # def __getattr__(self, name):
@@ -245,11 +256,22 @@ class _BaseTrainer:
 
     @classmethod
     def dirname(cls):
+        """Get the directory name of the file where the class is defined.
+
+        Returns:
+            A string representing the directory name of the file where the class is defined.
+        """
         file = inspect.getfile(cls)
         return os.path.basename(os.path.dirname(file))
 
     @classmethod
     def filebasename(cls):
+        """Get the basename of the file where the class is defined.
+
+        Returns:
+            A string representing the basename of the file where the class is defined.
+            If an exception occurs, returns 'builtin'.
+        """
         try:
             file = inspect.getfile(cls)
             pre = os.path.splitext(os.path.basename(file))[0]
@@ -259,6 +281,12 @@ class _BaseTrainer:
 
     @classmethod
     def generate_exp_name(cls) -> str:
+        """Generate an experiment name based on the file basename and the class name.
+
+        Returns:
+            A string representing the experiment name, formatted as '<filebasename>.<classname>'.
+            If '__exp_name__' is defined, it is used instead of the default class name with 'trainer' replaced by 'exp'.
+        """
         pre = cls.filebasename()
 
         exp_name = cls.__exp_name__
@@ -268,4 +296,5 @@ class _BaseTrainer:
         return "{}.{}".format(pre.lower(), exp_name.lower())
 
     def on_trainer_exception(self, func: Callable, exception: BaseException):
+        """Called when an exception occurs during training."""
         pass

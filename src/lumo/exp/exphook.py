@@ -15,10 +15,12 @@ from lumo.utils import safe_io as io
 from lumo.utils.exithook import wrap_before
 from lumo.utils.fmt import strftime, indent_print
 from . import Experiment
-from .base import ExpHook as BaseExpHook
+from .base import BaseExpHook as BaseExpHook
 
 
 class ExpHook(BaseExpHook):
+    """A base class of hook for experiments that can be registered with an experiment."""
+
     def regist(self, exp: Experiment):
         self.exp = exp
 
@@ -32,6 +34,11 @@ class ExpHook(BaseExpHook):
 
 
 class LastCmd(ExpHook):
+    """A hook to save the last command executed in an experiment.
+
+    This hook saves the last command executed in an experiment to a shell script file in a specified directory. The saved
+    file can be used to re-run the experiment with the same command.
+    """
     configs = {'HOOK_LASTCMD_DIR': os.getcwd()}
 
     def on_start(self, exp: Experiment, *args, **kwargs):
@@ -55,20 +62,25 @@ class LastCmd(ExpHook):
         os.chmod(fn, st.st_mode | stat.S_IEXEC)
 
 
-class PathRecord(ExpHook):
-
-    def on_newpath(self, exp: Experiment, *args, **kwargs):
-        super().on_newpath(exp, *args, **kwargs)
+# class PathRecord(ExpHook):
+#
+#     def on_newpath(self, exp: Experiment, *args, **kwargs):
+#         super().on_newpath(exp, *args, **kwargs)
 
 
 class Diary(ExpHook):
+    """A hook for logging experiment information to a diary file."""
+
     def on_start(self, exp: Experiment, *args, **kwargs):
         super().on_start(exp, *args, **kwargs)
-        with open(exp.root_file(f'{strftime("%y%m%d")}.log', 'diary'), 'a') as w:
-            w.write(f'{strftime("%H:%M:%S")}, {exp.test_root}\n')
+        # with open(exp.root_file(f'{strftime("%y%m%d")}.log', 'diary'), 'a') as w:
+        #     w.write(f'{strftime("%H:%M:%S")}, {exp.test_root}\n')
 
 
 class RecordAbort(ExpHook):
+    """A hook to record and handle experiment aborts.
+    """
+
     def regist(self, exp: Experiment):
         super().regist(exp)
         wrap_before(self.exc_end)
@@ -84,29 +96,29 @@ class RecordAbort(ExpHook):
         )
 
 
-class TimeMonitor(ExpHook):
-    def _create_agent(self, exp: Experiment):
-        from lumo.exp import agent
-        cmd = [
-            sys.executable, '-m', agent.__spec__.name,
-            f"--state_key=state",
-            f"--pid={os.getpid()}",
-            f"--exp_name={exp.exp_name}",
-            f"--test_name={exp.test_name}",
-            f"--test_root={exp.test_root}",
-            # f"--params={sys.argv}" # TODO add sys.argv
-        ]
-        subprocess.Popen(' '.join(cmd),
-                         stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True,
-                         start_new_session=True)
-
-    def on_start(self, exp: Experiment, *args, **kwargs):
-        super().on_start(exp)
-        self._create_agent(exp)
-        exp.dump_info('state', {
-            'start': strftime(),
-            'end': strftime()
-        })
+# class TimeMonitor(ExpHook):
+#     def _create_agent(self, exp: Experiment):
+#         from lumo.exp import agent
+#         cmd = [
+#             sys.executable, '-m', agent.__spec__.name,
+#             f"--state_key=state",
+#             f"--pid={os.getpid()}",
+#             f"--exp_name={exp.exp_name}",
+#             f"--test_name={exp.test_name}",
+#             f"--test_root={exp.test_root}",
+#             # f"--params={sys.argv}"
+#         ]
+#         subprocess.Popen(' '.join(cmd),
+#                          stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True,
+#                          start_new_session=True, cwd=os.getcwd(), env=os.environ)
+#
+#     def on_start(self, exp: Experiment, *args, **kwargs):
+#         super().on_start(exp)
+#         self._create_agent(exp)
+#         exp.dump_info('state', {
+#             'start': strftime(),
+#             'end': strftime()
+#         })
 
 
 class GitCommit(ExpHook):
@@ -121,7 +133,6 @@ class GitCommit(ExpHook):
 
         from lumo.utils.repository import git_enable, git_commit, git_dir
         from lumo.utils.ast import analyse_module_dependency
-        from lumo.utils.hash import hash_iter
         import inspect
 
         if not git_enable():
@@ -149,8 +160,8 @@ class GitCommit(ExpHook):
                 except OSError:
                     pass
 
-        dep_hash = hash_iter(*dep_source)
-        commit_ = git_commit(key='lumo', info=exp.test_root, filter_files=filter_files)
+        dep_hash = hash(dep_source)
+        commit_ = git_commit(key='lumo', info=exp.info_dir, filter_files=filter_files)
 
         if commit_ is None:
             exp.dump_info('git', {
@@ -165,32 +176,48 @@ class GitCommit(ExpHook):
             'repo': exp.project_root,
             'dep_hash': dep_hash,
         })
-
-        file = exp.root_file(hash(exp.project_root), 'repos')
+        file = exp.mk_rpath('repos', hash(exp.project_root))
         exps = {}
         if os.path.exists(file):
             exps = io.load_json(file)
         res = exps.setdefault(exp.project_root, list())
-        if exp.exp_root not in res:
-            res.append(exp.exp_root)
+        if exp.exp_dir not in res:
+            res.append(exp.exp_dir)
         io.dump_json(exps, file)
 
 
 class LockFile(ExpHook):
+    """A class for locking dependencies for an experiment.
+    Locks the specified dependencies for the experiment and saves them to a file.
+    """
 
     def on_start(self, exp: Experiment, *args, **kwargs):
-        exp.dump_info('lock', get_lock('torch', 'numpy',
-                                       'joblib',
-                                       'psutil',
-                                       'decorator',
-                                       'torch',
-                                       'numpy',
-                                       'accelerate',
-                                       'hydra',
-                                       'omegaconf', ))
+        basic = get_lock('lumo',
+                         'joblib',
+                         'fire',
+                         'psutil',
+                         'accelerate',
+                         'hydra',
+                         'omegaconf',
+                         'decorator',
+
+                         'numpy',
+                         'torch',
+                         )
+        if basic['torch'] is not None:
+            import torch
+            if torch.cuda.is_available():
+                basic['torch.version.cuda'] = torch.version.cuda
+
+        exp.dump_info('lock', basic)
 
 
 class FinalReport(ExpHook):
+    """A class for generating a final report for an experiment.
+
+      Prints the experiment's properties, tags, paths, and execute command.
+      """
+
     def on_end(self, exp: Experiment, end_code=0, *args, **kwargs):
         # if end_code == 0:
         print('-----------------------------------')
@@ -198,10 +225,6 @@ class FinalReport(ExpHook):
 
         print('Properties:')
         indent_print(pformat(exp.properties))
-        print('Tags:')
-        indent_print(pformat(exp.tags))
-        print('Use paths:')
-        indent_print(pformat(exp.paths))
         print('Execute:')
         indent_print(' '.join(exp.exec_argv))
         print('-----------------------------------')

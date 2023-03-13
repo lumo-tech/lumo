@@ -1,0 +1,21 @@
+paths: ./src/lumo/
+badge: ./images # Path
+exclude:
+
+verbose: 3 # int (0-4)
+skip_magic: True # Boolean
+skip_file_doc: True # Boolean
+skip_property: True
+skip_init: True # Boolean
+#skip_class_def: True # Boolean
+skip_private: True # Boolean
+follow_links: True # Boolean
+accept_empty: True # Boolean
+ignore_names_file: .*/test # regex
+#fail_under: 90 # int
+#percentage_only: True # Boolean
+ignore_patterns:
+  callbacks:
+    - ".*"
+  exphook:
+    - ".*"

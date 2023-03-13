@@ -18,10 +18,10 @@ def add(x):
 
 db = (
     DatasetBuilder()
-    .add_input("xs", torch.arange(-2500, 2500, dtype=torch.float).unsqueeze(1))
-    .add_input("ys", torch.arange(-2500, 2500, dtype=torch.float), transform=add)
-    .add_output("xs", "xs")
-    .add_output("ys", "ys")
+        .add_input("xs", torch.arange(-2500, 2500, dtype=torch.float).unsqueeze(1))
+        .add_input("ys", torch.arange(-2500, 2500, dtype=torch.float), transform=add)
+        .add_output("xs", "xs")
+        .add_output("ys", "ys")
 )
 
 loader = db.DataLoader(batch_size=params.batch_size, shuffle=True)
@@ -50,12 +50,11 @@ for i in range(params.epoch):
         meter.mean.loss = loss
         meter.sum.c = 1
         record.record(meter)
-        logger.inline(record.avg())
+        logger.inline(record.agg())
     logger.newline()
 
 test_data = -torch.arange(1000, dtype=torch.float).unsqueeze(1)
 res = model(test_data)
-
 
 test_ys = test_data * 2
 print((res.long() - test_ys.long()).sum())
