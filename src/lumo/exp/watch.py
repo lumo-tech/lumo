@@ -295,7 +295,7 @@ class Watcher:
         else:
             return res
 
-    def progress(self, is_alive=True):
+    def progress(self, is_alive=True, with_pandas=True):
         """
         Returns a DataFrame of alive experiments.
 
@@ -323,7 +323,10 @@ class Watcher:
                                       )
                 except:
                     continue
-        return pd.DataFrame(res)
+        if with_pandas:
+            return pd.DataFrame(res)
+        else:
+            return res
 
     def interactive(self):
         """interactive, mark, label, note in ipython environment."""

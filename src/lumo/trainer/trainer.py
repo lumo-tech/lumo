@@ -22,6 +22,7 @@ from lumo.data import DataModule
 from lumo.data.loader import DataLoaderType, DataLoaderSide
 from lumo.proc import dist
 from lumo.proc import glob
+from lumo.utils import safe_io as IO
 from lumo.trainer.rnd import RndManager
 from lumo.utils.logger import Logger
 from .base import _BaseTrainer
@@ -1036,8 +1037,8 @@ class Trainer(_BaseTrainer):
 
         torch.save(self.state_dict(), file)
 
-        with open(file_info, 'w') as w:
-            w.write(json.dumps({'global_steps': self.global_steps, 'metric': self.exp.metric.value}))
+        res = {'global_steps': self.global_steps, 'metric': self.exp.metric.value}
+        IO.dump_json(IO.filter_unserializable_values(res), file_info)
 
         self.logger.info(f'saved best model at {file}')
         self.wait_for_everyone()
@@ -1067,8 +1068,8 @@ class Trainer(_BaseTrainer):
 
         torch.save(self.state_dict(), file)
 
-        with open(file_info, 'w') as w:
-            w.write(json.dumps({'global_steps': self.global_steps, 'metric': self.exp.metric.value}))
+        res = {'global_steps': self.global_steps, 'metric': self.exp.metric.value}
+        IO.dump_json(IO.filter_unserializable_values(res), file_info)
 
         self.logger.info(f'saved last model at {file}')
         self.wait_for_everyone()

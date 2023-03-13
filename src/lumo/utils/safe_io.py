@@ -16,6 +16,22 @@ dump_nd = dump_nd
 load_nd = load_nd
 
 
+def filter_unserializable_values(self, d):
+    for key, value in list(d.items()):
+        if isinstance(value, dict):
+            filter_unserializable_values(value)
+        elif isinstance(value, list):
+            for i in range(len(value)):
+                if isinstance(value[i], dict):
+                    filter_unserializable_values(value[i])
+                elif not json.dumps(value[i], default=lambda x: None):
+                    value[i] = None
+        elif not json.dumps(value, default=lambda x: None):
+            d[key] = None
+    d = {key: value for key, value in d.items() if value is not None}
+    return d
+
+
 def dump_json(obj, fn):
     """
     Dumps the given object to a JSON file at the given file path.

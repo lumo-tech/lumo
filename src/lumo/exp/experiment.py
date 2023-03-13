@@ -449,9 +449,9 @@ class Experiment:
             update_from: The process from which the progress update came from.
         """
         res = {'ratio': max(min(ratio, 1), 0)}
+        res['last_edit_time'] = strftime()
         if update_from is None:
             res['update_from'] = update_from
-            res['last_edit_time'] = strftime()
         self.dump_info('progress', res, append=True)
 
     def dump_info(self, key: str, info: Any, append=False):
