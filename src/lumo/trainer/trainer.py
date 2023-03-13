@@ -1012,28 +1012,63 @@ class Trainer(_BaseTrainer):
         self.accelerate.wait_for_everyone()
 
     def save_best_model(self):
+        """
+        Saves the best model checkpoint and metadata.
+
+        If the current process is the main process, saves the best model checkpoint as 'best_model.ckpt'
+        and its metadata as 'best_model.json'. If not, saves the checkpoint and metadata with the process rank
+        appended to the filename, e.g., 'best_model-<rank>.ckpt' and 'best_model-<rank>.json'.
+
+        The saved metadata includes the global training steps and the value of the experiment's best metric.
+
+        Args:
+            self: the Experiment object.
+
+        Returns:
+            None.
+        """
         if self.is_main:
             file = self.exp.mk_bpath('models', 'best_model.ckpt')
             file_info = self.exp.mk_bpath('models', 'best_model.json')
         else:
             file = self.exp.mk_bpath('models', f'best_model-{self.local_rank}.ckpt')
             file_info = self.exp.mk_bpath('models', f'best_model-{self.local_rank}.json')
+
         torch.save(self.state_dict(), file)
 
         with open(file_info, 'w') as w:
             w.write(json.dumps({'global_steps': self.global_steps, 'metric': self.exp.metric.value}))
+
         self.logger.info(f'saved best model at {file}')
         self.wait_for_everyone()
 
     def save_last_model(self):
+        """
+        Saves the last model checkpoint and metadata.
+
+        If the current process is the main process, saves the last model checkpoint as 'last_model.ckpt'
+        and its metadata as 'last_model.json'. If not, saves the checkpoint and metadata with the process rank
+        appended to the filename, e.g., 'last_model-<rank>.ckpt' and 'last_model-<rank>.json'.
+
+        The saved metadata includes the global training steps and the value of the experiment's best metric.
+
+        Args:
+            self: the Experiment object.
+
+        Returns:
+            None.
+        """
         if self.is_main:
             file = self.exp.mk_bpath('models', 'last_model.ckpt')
             file_info = self.exp.mk_bpath('models', 'last_model.json')
         else:
             file = self.exp.mk_bpath('models', f'last_model-{self.local_rank}.ckpt')
             file_info = self.exp.mk_bpath('models', f'last_model-{self.local_rank}.json')
+
         torch.save(self.state_dict(), file)
+
         with open(file_info, 'w') as w:
             w.write(json.dumps({'global_steps': self.global_steps, 'metric': self.exp.metric.value}))
+
         self.logger.info(f'saved last model at {file}')
         self.wait_for_everyone()
