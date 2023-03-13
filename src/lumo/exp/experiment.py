@@ -679,7 +679,7 @@ class Experiment:
         if end_code == 0:
             self.dump_progress(1)
 
-        self.dump_info('progress', {'end': strftime(), 'finished': end_code == 0}, append=True)
+        self.dump_info('progress', {'end': strftime(), 'finished': True, 'end_code': end_code}, append=True)
         for hook in self._hooks.values():  # type: BaseExpHook
             hook.on_end(self, end_code=end_code, *args, **extra)
         return self
