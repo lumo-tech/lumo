@@ -24,7 +24,7 @@ import os.path
 import re
 from typing import List, Dict, overload
 from pprint import pformat
-import pandas as pd
+
 from dbrecord import PDict
 from datetime import datetime
 from operator import gt, ge, le, lt, eq, ne
@@ -247,7 +247,7 @@ class Watcher:
             dic.flush()
         return updates
 
-    def load(self):
+    def load(self, with_pandas=True):
         """
         Loads the experiment information from heartbeat files and the experiment databases.
 
@@ -270,10 +270,13 @@ class Watcher:
                 for test in updates[exp_name]:
                     res[test['test_name']] = test
                 dic.flush()
-
-        df = pd.DataFrame(res.values())
-        df = df.sort_values(['exp_name', 'test_name'])
-        return df.reset_index(drop=True)
+        if with_pandas:
+            import pandas as pd
+            df = pd.DataFrame(res.values())
+            df = df.sort_values(['exp_name', 'test_name'])
+            return df.reset_index(drop=True)
+        else:
+            return res
 
     def progress(self, is_alive=True):
         """
