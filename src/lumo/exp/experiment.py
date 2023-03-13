@@ -382,6 +382,7 @@ class Experiment:
         # test_root update some files
         @wraps(func)
         def inner(*args, **kwargs):
+            """wrap function"""
             fn = self.heartbeat_fn
             io.dump_text(self.info_dir, fn)
             return func(*args, **kwargs)
@@ -616,7 +617,17 @@ class Experiment:
         os.makedirs(d, exist_ok=True)
         return d
 
-    def _mk_path(self, *path: str, is_dir) -> str:
+    def _mk_path(self, *path: str, is_dir: bool) -> str:
+        """
+        Helper method to create a directory path if it does not exist and return the path.
+
+        Args:
+            *path: tuple of path strings to be joined.
+            is_dir: boolean flag indicating whether the path is a directory.
+
+        Returns:
+            str: the full path created.
+        """
         path = os.path.join(*path)
         if is_dir:
             os.makedirs(path, exist_ok=True)
@@ -624,16 +635,56 @@ class Experiment:
             os.makedirs(os.path.dirname(path), exist_ok=True)
         return path
 
-    def mk_ipath(self, *path, is_dir=False):
+    def mk_ipath(self, *path: str, is_dir: bool = False) -> str:
+        """
+        Creates a directory path within the experiment's info directory.
+
+        Args:
+            *path: tuple of path strings to be joined.
+            is_dir: boolean flag indicating whether the path is a directory. Default is False.
+
+        Returns:
+            str: the full path created.
+        """
         return self._mk_path(self.info_dir, *path, is_dir=is_dir)
 
-    def mk_cpath(self, *path, is_dir=False):
+    def mk_cpath(self, *path: str, is_dir: bool = False) -> str:
+        """
+        Creates a directory path within the experiment's cache directory.
+
+        Args:
+            *path: tuple of path strings to be joined.
+            is_dir: boolean flag indicating whether the path is a directory. Default is False.
+
+        Returns:
+            str: the full path created.
+        """
         return self._mk_path(self.cache_dir, *path, is_dir=is_dir)
 
-    def mk_bpath(self, *path, is_dir=False):
+    def mk_bpath(self, *path: str, is_dir: bool = False) -> str:
+        """
+        Creates a directory path within the experiment's blob directory.
+
+        Args:
+            *path: tuple of path strings to be joined.
+            is_dir: boolean flag indicating whether the path is a directory. Default is False.
+
+        Returns:
+            str: the full path created.
+        """
         return self._mk_path(self.blob_dir, *path, is_dir=is_dir)
 
-    def mk_rpath(self, *path, is_dir=False):
+    def mk_rpath(self, *path: str, is_dir: bool = False) -> str:
+        """
+        Creates a directory path within the user's home directory.
+
+        Args:
+            *path: tuple of path strings to be joined.
+            is_dir: boolean flag indicating whether the path is a directory. Default is False.
+
+        Returns:
+            str: the full path created.
+        """
         return self._mk_path(libhome(), *path, is_dir=is_dir)
 
     @classmethod
@@ -765,6 +816,18 @@ class Experiment:
 
     @classmethod
     def from_cache(cls, dic: dict):
+        """
+        Creates an Experiment object from a cached dictionary.
+
+        The cached dictionary should have the same format as the one returned by the Experiment.to_cache() method.
+
+        Args:
+            cls: the Experiment class.
+            dic: a dictionary with the cached Experiment data.
+
+        Returns:
+            An Experiment object.
+        """
         paths = dic.pop('paths', {})
         _ = dic.pop('metrics')
         self = cls(exp_name=dic['exp_name'], test_name=dic['test_name'], paths=paths)
@@ -816,12 +879,14 @@ class Experiment:
         return self
 
     def cache(self):
+        """Cache information of current test."""
         return {
             **self.properties,
             'metrics': self.metric.value,
         }
 
     def dict(self):
+        """Get full information of current test, including dynamic status."""
         return {
             **self.properties,
             'is_alive': self.is_alive,

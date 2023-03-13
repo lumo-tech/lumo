@@ -74,6 +74,8 @@ mapping = {
 
 
 class Condition:
+    """Represents a condition to filter data based on a certain criteria."""
+
     def __init__(self, name: str = None, value=None, op=None):
         self.name = name
         self.value = value
@@ -130,18 +132,43 @@ class Condition:
         return f'C({self.name} {self.op} {self.value})'
 
     def in_(self, lis):
-        """condition of `in` operation"""
+        """
+        Sets the condition to evaluate if the value is in a given list.
+
+        Args:
+            lis (list): the list of values to compare against.
+
+        Returns:
+            The current instance of the Condition class with the comparison operator and value set.
+        """
         self.op = 'in'
         self.value = set(lis)
         return self
 
     def not_in_(self, lis):
-        """condition of `.duplicated(value) == False` operation"""
+        """
+        Sets the condition to evaluate if the value is not in a given list.
+
+        Args:
+            lis (list): the list of values to compare against.
+
+        Returns:
+            The current instance of the Condition class with the comparison operator and value set.
+        """
         self.op = 'notin'
         self.value = set(lis)
         return self
 
     def mask(self, df):
+        """
+        Returns a boolean mask of the given DataFrame based on the condition.
+
+        Args:
+            df (pd.DataFrame): the DataFrame to evaluate.
+
+        Returns:
+            A boolean mask of the given DataFrame based on the condition.
+        """
         names = self.name.split('.')
         value = df
         for i in names:
@@ -152,6 +179,7 @@ class Condition:
         return mapping[self.op](value, self.value)
 
     def apply(self, df):
+        """Returns a new DataFrame with only the rows that meet the condition."""
         return df[self.mask(df)]
 
 
@@ -159,10 +187,14 @@ C = Condition()
 
 
 class Watcher:
-    """List and watch experiments with time order
+    """
+    A class for listing and watching experiments with time order and caching test information in 'metrics/<experiment>.sqlite'.
 
-    Cache test_information in
-    metrics/<experiment>.sqlite
+    Attributes:
+        exp_root (str): The root directory to search for experiments.
+        hb_root (str): The root directory to search for heartbeat files.
+        pid_root (str): The root directory to search for PID files.
+        db_root (str): The root directory to store the experiment databases.
     """
 
     def __init__(self, exp_root=None, hb_root=None, pid_root=None, db_root=None):
@@ -183,6 +215,12 @@ class Watcher:
         self.pid_root = pid_root
 
     def load(self):
+        """
+        Loads the experiment information from heartbeat files and the experiment databases.
+
+        Returns:
+            A pandas DataFrame containing the experiment information sorted by experiment name and test name.
+        """
         res = {}
         updates = {}
         if not os.path.exists(self.hb_root):
@@ -217,7 +255,15 @@ class Watcher:
         return df.reset_index(drop=True)
 
     def progress(self, is_alive=True):
-        """return the alive process"""
+        """
+        Returns a DataFrame of alive experiments.
+
+        Args:
+            is_alive (bool): A boolean flag indicating whether to return only alive experiments.
+
+        Returns:
+            A pandas DataFrame containing the experiment information of alive experiments.
+        """
         res = []
         for root, dirs, fs in os.walk(self.pid_root):
             for f in fs:
@@ -264,6 +310,7 @@ class Watcher:
                params_filter: list = None,
                metric_filter: list = None
                ):
+        """Create a user interface in jupyter with ipywidget"""
         assert params_filter is None or isinstance(params_filter, list)
         assert metric_filter is None or isinstance(metric_filter, list)
 
@@ -271,12 +318,23 @@ class Watcher:
         from IPython.display import display
 
         def make_row(dic: dict):
+            """
+            Helper function for creating a row in the widgets grid.
+
+            Args:
+                dic (dict): The dictionary containing the experiment information.
+
+            Returns:
+                A list of ipywidgets objects for the row.
+            """
             exp = Experiment.from_cache(dic.copy())
 
             def on_note_update(sender):
+                """when note textarea update"""
                 exp.dump_note(sender['new'])
 
             def on_tag_update(sender):
+                """when tag component update"""
                 exp.dump_tags(*sender['new'])
 
             note_ui = widgets.Textarea(dic['note'])
@@ -319,6 +377,7 @@ class Watcher:
         end_filter = widgets.DatetimePicker()
 
         def status_filter(sender):
+            """when filter condition changed"""
             print(sender)
             make()
 
@@ -332,6 +391,7 @@ class Watcher:
                 start=widgets.DatetimePicker(),
                 end=widgets.DatetimePicker(),
         ):
+            """make widgets with filter condition."""
             if status == 'running':
                 df = self.progress()
             elif status == 'finished':
@@ -412,131 +472,3 @@ class Watcher:
                 grid,
 
             )
-
-            # return display(
-            #     widgets.HTML(styles['row-radio']),
-            #     widgets.HTML("""
-            #     <style>
-            #     .widget-box, .jupyter-widget-box {border: 1px solid !important;}
-            #     </style>
-            # """),
-            #     grid, clear=True)
-
-
-class ExperimentWidget:
-    @overload
-    def __init__(self, exp_name, test_name,
-                 progress: dict,
-                 params: dict, metrics: dict, note: str, tags: set, exp: Experiment):
-        pass
-
-    def __init__(self, **kwargs):
-        from ipywidgets import widgets
-        self.wid = widgets
-        self.exp = kwargs.pop('exp')  # type: Experiment
-        self._prop = kwargs
-
-        self._widgets = {
-            'exp_name': widgets.HTML(self._prop['exp_name']),
-            'test_name': widgets.HTML(self._prop['test_name']),
-            'metrics': widgets.VBox(
-                [widgets.HTML(f'{k}: {v}') for k, v in self._prop['metrics'].items() if
-                 isinstance(v, numbers.Number)]),
-        }
-
-        self._params_widgets = {}
-
-        note_ui = widgets.Textarea(self._prop['note'])
-
-        note_ui.continuous_update = False
-        note_ui.observe(self.on_note_update, names='value', type='change')
-        self._widgets['note'] = note_ui
-
-        tag_ui = widgets.TagsInput(value=list(self._prop['tags']))
-        self._widgets['tags'] = tag_ui
-        tag_ui.observe(self.on_tag_update, names='value', type='change')
-
-    def on_note_update(self, sender):
-        self.exp.dump_note(sender['new'])
-
-    def on_tag_update(self, sender):
-        self.exp.dump_tags(*sender['new'])
-
-    def set_key_params(self, keys: list):
-        self._params_widgets.clear()
-        for key in keys:
-            self._params_widgets[key] = self.wid.HTML(
-                f"""<code><b>{key}</b>: {pformat(self._prop['params'][key], width=10, indent=2, compact=True)}</code>""")
-
-    def sep(self):
-        return self.wid.Output(layout={'border': '1px solid black'})
-
-    def id_flag(self):
-        return self.wid.VBox([
-            self._widgets['exp_name'],
-            self._widgets['test_name'],
-        ])
-
-    def key_params(self):
-        return self.wid.VBox([
-            *self._params_widgets.values()
-        ])
-
-    def editable(self):
-        return self.wid.VBox([
-            self._widgets['note'],
-            self.sep(),
-            self._widgets['tags'],
-        ])
-
-    def time(self):
-        now = datetime.now()
-        start = strptime(datestr=self._prop['progress']['start'])
-        end = strptime(datestr=self._prop['progress']['start'])
-        return self.wid.VBox([
-            self.wid.HTML(f"""Start at: {format_timedelta(now - start)}"""),
-            self.wid.HTML(f"""End at: {format_timedelta(now - end)}"""),
-        ])
-
-    def widget_dict(self):
-        return {
-            'id_flag': self.id_flag(),
-            'time': self.time(),
-            'editable': self.editable(),
-            'params': self.key_params(),
-        }
-
-    def widget(self):
-        params = self.key_params()
-        params = [
-            self.sep(),
-            params,
-        ]
-
-        hbox = self.wid.HBox([
-            self.id_flag(),
-            self.time(),
-            self._widgets['metrics'],
-            self.editable(),
-            self.key_params(),
-        ])
-
-        return hbox
-
-    @classmethod
-    def from_experiment(cls, exp: Experiment):
-        tags = exp.properties.get('tags', [])
-        try:
-            tags = set(tags)
-        except:
-            tags = set()
-        return cls(
-            exp_name=exp.exp_name,
-            test_name=exp.test_name,
-            progress=exp.properties.get('progress', {}),
-            params=exp['params'],
-            metrics=exp.metric.value,
-            note=exp.properties.get('note', ''),
-            tags=tags,
-            exp=exp,
-        )
