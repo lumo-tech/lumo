@@ -367,12 +367,24 @@ class Experiment:
             return []
 
     def _trigger_change(self, func):
-        #  test_root update some files
+        """
+        Decorator function that updates the heartbeat file before executing the decorated function.
+
+        The heartbeat file indicates that a change has occurred in the experiment directory.
+
+        Args:
+            func: the function to be decorated.
+
+        Returns:
+            A decorated function.
+        """
+
+        # test_root update some files
         @wraps(func)
         def inner(*args, **kwargs):
             fn = self.heartbeat_fn
             io.dump_text(self.info_dir, fn)
-            func(*args, **kwargs)
+            return func(*args, **kwargs)
 
         return inner
 
@@ -479,15 +491,39 @@ class Experiment:
             return {}
 
     def load_note(self):
+        """
+        Loads the contents of the note file, if it exists.
+
+        Returns:
+            A string representing the contents of the note file, or an empty string if the file does not exist.
+        """
         fn = self.mk_ipath('note.md')
         if os.path.exists(fn):
             return io.load_text(fn)
         return ''
 
     def dump_tags(self, *tags):
+        """
+        Dumps the experiment's tags to the info file.
+
+        Args:
+            *tags: a variable-length argument list of tags to be added to the experiment.
+
+        Returns:
+            None.
+        """
         self.dump_info('tags', tags)
 
     def dump_note(self, note: str):
+        """
+        Dumps the contents of the note to the note file.
+
+        Args:
+            note: a string representing the contents of the note.
+
+        Returns:
+            None.
+        """
         fn = self.mk_ipath('note.md')
         self.set_prop('note', note)
         io.dump_text(note, fn)
@@ -521,9 +557,15 @@ class Experiment:
         return io.load_text(fn)
 
     def dump_metric(self, key, value, cmp: str, flush=True, **kwargs):
+        """
+        See Metric for details.
+        """
         return self.metric.dump_metric(key, value, cmp, flush, **kwargs)
 
     def dump_metrics(self, dic: dict, cmp: str):
+        """
+        See Metric for details.
+        """
         return self.metric.dump_metrics(dic, cmp)
 
     @property
