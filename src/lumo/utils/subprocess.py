@@ -5,6 +5,17 @@ import signal
 
 
 def run_command(command, cwd=None, env=None):
+    """
+    Executes a command in the shell and captures its standard output and standard error.
+
+    Args:
+        command: a string representing the command to execute in the shell.
+        cwd: a string representing the working directory to execute the command in. Default is None.
+        env: a dictionary representing the environment variables to set for the command. Default is None.
+
+    Returns:
+        The return code of the executed command.
+    """
     proc = subprocess.Popen(command,
                             cwd=cwd,
                             env=env,
