@@ -251,8 +251,14 @@ class Watcher:
         """
         Loads the experiment information from heartbeat files and the experiment databases.
 
+        Args:
+            with_pandas (bool, optional): whether to return the experiment information as a pandas DataFrame.
+                Defaults to True.
+
         Returns:
-            A pandas DataFrame containing the experiment information sorted by experiment name and test name.
+            If with_pandas is True, returns a pandas DataFrame containing the experiment information
+            sorted by experiment name and test name. Otherwise, returns a dictionary containing the
+            experiment information.
         """
         res = {}
         updates = self.update()
@@ -271,7 +277,12 @@ class Watcher:
                     res[test['test_name']] = test
                 dic.flush()
         if with_pandas:
-            import pandas as pd
+            try:
+                import pandas as pd
+            except ImportError as e:
+                print(
+                    'with_padnas=True requires pandas to be installed, use pip install pandas or call `.load(with_padnas=False)`')
+
             df = pd.DataFrame(res.values())
             df = df.sort_values(['exp_name', 'test_name'])
             return df.reset_index(drop=True)
