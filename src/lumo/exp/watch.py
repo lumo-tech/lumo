@@ -263,6 +263,9 @@ class Watcher:
         res = {}
         updates = self.update()
 
+        def valid_row(dic):
+            return isinstance(dic, dict) and 'test_name' in dic
+
         for dic_fn in os.listdir(self.db_root):
             if not dic_fn.endswith('sqlite'):
                 continue
@@ -270,12 +273,15 @@ class Watcher:
             exp_name = os.path.splitext(dic_fn)[0]
 
             for test_name, test_prop in dic.items():
-                res[test_name] = test_prop
+                if valid_row(test_prop):
+                    res[test_name] = test_prop
 
             if exp_name in updates:
                 for test in updates[exp_name]:
-                    res[test['test_name']] = test
+                    if valid_row(test):
+                        res[test['test_name']] = test
                 dic.flush()
+
         if with_pandas:
             try:
                 import pandas as pd
