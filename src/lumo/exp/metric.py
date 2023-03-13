@@ -45,14 +45,16 @@ class Metric:
             dic[key] = value
             for kk, vv in kwargs.items():
                 dic[kk] = vv
+        else:
+            value = older
 
         if flush:
             self.flush()
         return value
 
     def dump_metrics(self, dic: dict, cmp: str):
-        for k, v in dic.items():
-            self.dump_metric(k, v, cmp)
+        return {k: self.dump_metric(k, v, cmp)
+                for k, v in dic.items()}
 
     def flush(self):
         """Writes the value of the row to a file."""
