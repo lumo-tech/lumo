@@ -1068,7 +1068,7 @@ class Trainer(_BaseTrainer):
 
         torch.save(self.state_dict(), file)
 
-        res = {'global_steps': self.global_steps, 'metric': self.exp.metric.value}
+        res = {'global_steps': self.global_steps, 'metric': self.exp.metric.current}
         IO.dump_json(IO.filter_unserializable_values(res), file_info)
 
         self.logger.info(f'saved last model at {file}')

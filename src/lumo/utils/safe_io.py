@@ -26,7 +26,7 @@ def filter_unserializable_values(dic):
                     filter_unserializable_values(value[i])
                 elif not json.dumps(value[i], default=lambda x: None):
                     value[i] = None
-        elif not json.dumps(value, default=lambda x: None):
+        elif json.dumps(value, default=lambda x: None) == 'null':
             dic[key] = None
     dic = {key: value for key, value in dic.items() if value is not None}
     return dic

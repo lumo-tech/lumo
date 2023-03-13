@@ -27,9 +27,15 @@ class Metric:
         os.makedirs(os.path.dirname(os.path.abspath(metric_fn)), exist_ok=True)
         self.fn = metric_fn
         self._metric = {}
+        self._last = {}
         if os.path.exists(metric_fn):
             self._metric = IO.load_pkl(metric_fn)
+
         self.persistent = persistent
+
+    @property
+    def current(self):
+        return self._last
 
     @property
     def value(self):
@@ -63,7 +69,7 @@ class Metric:
         Raises:
             NotImplementedError: If cmp is not 'max' or 'min'.
         """
-        dic = self.value
+        dic = self._metric
         older = dic.setdefault(key, None)
 
         update = False
@@ -85,6 +91,10 @@ class Metric:
                 dic[kk] = vv
         else:
             value = older
+
+        self._last[key] = value
+        for kk, vv in kwargs.items():
+            self._last[kk] = vv
 
         if flush:
             self.flush()
