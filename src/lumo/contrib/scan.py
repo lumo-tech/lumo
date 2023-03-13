@@ -29,7 +29,7 @@ def base_main(pm: ScanBaseParams, files: List[str], dics: List[dict]):
     assert isinstance(pm, ScanBaseParams)
     log = Logger()
     log.use_stdout = False
-    log.add_log_dir(f'./log_{pm.group_code}')
+    log.add_log_dir(f'./log_{pm.group}')
 
     base = ("sleep {sleep} ; " +
             sys.executable +
@@ -57,8 +57,8 @@ def base_main(pm: ScanBaseParams, files: List[str], dics: List[dict]):
             print('wait', flush=True)
             device = next(gpus)
 
-        if pm.group_code is not None:
-            group = f" --group={pm.group_code} "
+        if pm.group is not None:
+            group = f" --group={pm.group} "
         else:
             group = ''
 
