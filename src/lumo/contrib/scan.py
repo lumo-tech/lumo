@@ -17,7 +17,7 @@ class ScanBaseParams(Params):
     def __init__(self):
         super().__init__()
         self.gpus = None
-        self.group_code = None
+        self.group = None
         self.interval = 5  # sleep interval between two tests
 
 
