@@ -6,6 +6,7 @@ from datetime import datetime, timedelta
 
 import numpy as np
 import torch
+from lumo.proc.tz import timezone
 
 from . import re
 
@@ -42,7 +43,7 @@ def strftime(fmt='%y-%m-%d-%H%M%S', dateobj: datetime = None):
     """get current date with formatted"""
     if dateobj is not None:
         return dateobj.strftime(fmt)
-    return datetime.now().strftime(fmt)
+    return datetime.now(timezone()).strftime(fmt)
 
 
 def strptime(datestr: str = None, fmt='%y-%m-%d-%H%M%S', ):

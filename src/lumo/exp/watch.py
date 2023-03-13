@@ -33,6 +33,7 @@ from lumo.proc.path import progressroot, exproot, dbroot, cache_dir
 from .experiment import Experiment
 from lumo.utils import safe_io as IO
 from lumo.utils.fmt import format_timedelta, strptime, strftime
+from lumo.proc.tz import timezone
 
 PID_ROOT = os.path.join(progressroot(), 'pid')
 HB_ROOT = os.path.join(progressroot(), 'hb')
@@ -394,7 +395,7 @@ class Watcher:
             tag_ui = widgets.TagsInput(value=tags)
             tag_ui.observe(on_tag_update, names='value', type='change')
 
-            now = datetime.now()
+            now = datetime.now(timezone())
             start = strptime(datestr=dic['progress']['start'])
             end = strptime(datestr=dic['progress']['last_edit_time'])
 

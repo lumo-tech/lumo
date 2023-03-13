@@ -9,7 +9,7 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime
 from functools import wraps
 from typing import NewType, Any, Optional, Dict, Union
-
+from lumo.proc.tz import timezone
 import psutil
 from torch.utils.data import DataLoader
 
@@ -707,7 +707,7 @@ class RemoteCallback(InitialCallback, TrainCallback):
         task = self.executor.submit(self.req.post, self.url, json={'data': data,
                                                                    'type': 'timeevent',
                                                                    'from': 'lumo.RemoteCallback',
-                                                                   'datetime': datetime.now().isoformat()})
+                                                                   'datetime': datetime.now(timezone()).isoformat()})
         self.submits.append(task)
 
     def on_hooked(self, source: Trainer, params: ParamsType):
