@@ -697,10 +697,10 @@ class Experiment:
         new_test_name = self._create_test_name(self.exp_dir)
         new_exp = Experiment(self.exp_name, test_name=new_test_name)
         self.dump_info('deprecated', {'rerun_at': {new_exp.test_name: True}}, append=True)
-        old_rerun_info = self.properties.get('rerun', None)
+        old_rerun_info = self.properties.get('rerun', {})
         count = 1
-        if old_rerun_info is not None:
-            count += old_rerun_info['count']
+        if isinstance(old_rerun_info, dict):
+            count += old_rerun_info.get('repeat', 0)
         new_exp.dump_info('rerun', {'from': self.test_name, 'repeat': count})
         from lumo.utils.subprocess import run_command
         old_exec = self.properties['execute']
