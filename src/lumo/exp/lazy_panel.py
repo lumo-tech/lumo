@@ -151,7 +151,7 @@ def make_experiment_tabular(df: pd.DataFrame):
             'color': color,
         }
 
-    df['progress_'] = df['progress']
+    # df['progress_'] = df['progress']
     df['progress'] = df['progress'].apply(reformat_progress)
 
     # ratio = 1
@@ -160,6 +160,7 @@ def make_experiment_tabular(df: pd.DataFrame):
     columns = set(df.columns) - {'git', 'paths', 'pinfo',
                                  'execute', 'lock', 'params.yaml',
                                  'params_hash', 'table_row', 'hooks', 'logger_args',
+                                 'agent', 'trainer', 'progress_',
                                  'metric_board'}
     top_columns = [
         'exp_name', 'test_name',
