@@ -41,7 +41,7 @@ def note(test_name, description):
     print(f"Adding note '{description}' to {test_name}")
 
 
-def server(port=8080):
+def board(port=11606, address=None, open=True):
     """
 
     Args:
@@ -50,6 +50,9 @@ def server(port=8080):
     Returns:
 
     """
+    from lumo import Watcher
+    w = Watcher()
+    w.panel().show(port=port, address=address, open=open)
     print(f"Starting server on port {port}")
 
 
@@ -57,5 +60,5 @@ def main():
     fire.Fire({
         'rerun': rerun,
         'note': note,
-        'server': server,
+        'board': board,
     })
