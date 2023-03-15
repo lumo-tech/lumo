@@ -157,13 +157,21 @@ def make_experiment_tabular(df: pd.DataFrame):
     # ratio = 1
     # ratio < 1, no-end-code ->
 
-    df = df[[
+    columns = set(df.columns) - {'git', 'paths', 'pinfo',
+                                 'execute', 'lock', 'params.yaml',
+                                 'params_hash', 'table_row', 'hooks', 'logger_args',
+                                 'metric_board'}
+    top_columns = [
         'exp_name', 'test_name',
         'progress',
         'exception',
         'params', 'metrics',
         'note', 'tags',
-    ]]
+    ]
+
+    columns = columns - set(top_columns)
+
+    df = df[top_columns + list(columns)]
 
     def on_cell_change(e: TableEditEvent):
         nonlocal df
@@ -177,10 +185,7 @@ def make_experiment_tabular(df: pd.DataFrame):
     df_widget = pn.widgets.Tabulator(
         df,
         groupby=['exp_name'],
-        hidden_columns=['git', 'paths', 'pinfo',
-                        'execute', 'lock', 'params.yaml',
-                        'params_hash', 'table_row', 'hooks', 'logger_args',
-                        'metric_board'],
+        # hidden_columns=[],
         pagination='local',
         formatters=tabulator_formatters,
         editors=tabulator_editors,
