@@ -1,5 +1,5 @@
 from typing import Callable
-
+from functools import wraps
 from lumo.proc.dist import is_main
 
 
@@ -18,6 +18,7 @@ def call_on_main_process_wrap(func) -> Callable:
 
     """
 
+    @wraps(func)
     def inner(*args, **kwargs):
         if is_main():
             return func(*args, **kwargs)
