@@ -115,7 +115,7 @@ def make_experiment_tabular(df: pd.DataFrame, reload_fn):
     else:
         df['exception'].fillna({})
     if 'tags' not in df.columns:
-        df['tags'] = []
+        df['tags'] = np.empty((len(df.index), 0)).tolist()
 
     def reformat_progress(dic):
         ratio = dic.get('ratio', 0)
