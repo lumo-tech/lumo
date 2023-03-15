@@ -204,7 +204,7 @@ class Watcher:
 
     def __init__(self, exp_root=None, hb_root=None, pid_root=None, db_root=None):
         if exp_root is None:
-            exp_root = os.path.join(exproot(), 'hb')
+            exp_root = exproot()
 
         if hb_root is None:
             hb_root = os.path.join(cache_dir(), 'heartbeat')
