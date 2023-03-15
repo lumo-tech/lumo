@@ -78,7 +78,52 @@ mapping = {
 
 
 class Condition:
-    """Represents a condition to filter data based on a certain criteria."""
+    """
+    Represents a condition to filter data based on a certain criteria.
+
+    row filter:
+    ```
+    from lumo import C
+    import pandas as pd
+
+    # create a sample DataFrame
+    data = {'name': ['Alice', 'Bob', 'Charlie', 'David', 'Emily'],
+            'age': [25, 30, 35, 40, 45],
+            'city': ['New York', 'Los Angeles', 'Chicago', 'Houston', 'Miami']}
+    df = pd.DataFrame(data)
+
+    # create and apply the condition to filter the DataFrame
+    filtered_df = (C['age'] >= 35).apply(df)
+
+    # print the filtered DataFrame
+    print(filtered_df)
+    ```
+
+    column edit:
+    ```
+    (C+{'city.index':'cindex'}).apply(df).columns
+    # Index(['name', 'age', 'city', 'cindex'], dtype='object')
+
+    (-C['city']).apply(df).columns
+    # Index(['name', 'age'], dtype='object')
+
+    (C-['city']).apply(df).columns
+    (C-'city').apply(df).columns
+    # Index(['name', 'age'], dtype='object')
+
+    (C-['city','name']).apply(df).columns
+    # Index(['age'], dtype='object')
+    ```
+
+    pipeline:
+    ```
+    C.pipe(df,[
+        (C['age']>35),
+        C+{'city.index':'cindex'},
+        C-['city','name']
+    ])
+    ```
+    """
 
     def __init__(self, name: str = None, value=None, op=None):
         self.name = name
@@ -91,8 +136,32 @@ class Condition:
     def __getitem__(self, item):
         return Condition(item)
 
+    def __add__(self, other):
+        self.op = 'add_column'
+        self.value = {}
+        self.op
+        if isinstance(other, str):
+            self.value[other] = other
+        elif isinstance(other, dict):
+            self.value.update(other)
+        else:
+            raise NotImplementedError()
+        return self
+
+    def __sub__(self, other):
+        self.name = None
+        self.op = 'drop_column'
+        self.value = {}
+        if isinstance(other, str):
+            self.value.update({other: None})
+        elif isinstance(other, (list, set, dict)):
+            self.value.update({k: None for k in other})
+        else:
+            raise NotImplementedError()
+        return self
+
     def __neg__(self):
-        self.drop = True
+        self.op = 'drop_column'
         return self
 
     def __ge__(self, other):
@@ -180,12 +249,46 @@ class Condition:
             if isinstance(value, pd.DataFrame):
                 value = value[i]
             else:
-                value = df.apply(lambda x: x[i])
+                value = value.apply(lambda x: x[i])
         return mapping[self.op](value, self.value)
+
+    def capply(self, df):
+        import pandas as pd
+        df = df.reset_index(drop=True)
+        if self.op == 'drop_column':
+            if isinstance(self.name, str):
+                var = [self.name]
+            elif isinstance(self.value, str):
+                var = [self.value]
+            else:
+                var = list(self.value)
+            df = df.drop(var, axis=1)
+        else:
+            assert isinstance(self.value, dict)
+            for name, aim in self.value.items():
+                names = name.split('.')
+                value = df
+                for i in names:
+                    if isinstance(value, pd.DataFrame):
+                        value = value[i]
+                    else:
+                        value = value.apply(lambda x: x[i])
+                df[aim] = value
+        return df
 
     def apply(self, df):
         """Returns a new DataFrame with only the rows that meet the condition."""
-        return df[self.mask(df)]
+        if not self.op.endswith('column'):
+            return df[self.mask(df)].reset_index(drop=True)
+        else:
+            return self.capply(df)
+
+    def pipe(self, df, conditions: List['Condition']):
+        """Applies a list of conditions to a DataFrame using the pipe method."""
+        filtered_df = df
+        for condition in conditions:
+            filtered_df = condition.apply(filtered_df)  # .reset_index(drop=True)
+        return filtered_df
 
 
 C = Condition()
