@@ -34,6 +34,7 @@ from .experiment import Experiment
 from lumo.utils import safe_io as IO
 from lumo.utils.fmt import format_timedelta, strptime, strftime
 from lumo.proc.tz import timezone
+from lumo.proc import glob
 
 PID_ROOT = os.path.join(progressroot(), 'pid')
 HB_ROOT = os.path.join(progressroot(), 'hb')
@@ -240,6 +241,8 @@ class Watcher:
                         raise e
                     except:
                         continue
+                    finally:
+                        os.remove(hb_file)
 
         for exp_name, tests in updates.items():
             dic = PDict(os.path.join(self.db_root, f'{exp_name}.sqlite'))
@@ -297,7 +300,7 @@ class Watcher:
         else:
             return res
 
-    def progress(self, is_alive=True, with_pandas=True):
+    def progress(self, with_pandas=True):
         """
         Returns a DataFrame of alive experiments.
 
@@ -313,16 +316,23 @@ class Watcher:
                 if not f.endswith('.pid'):
                     continue
                 try:
-                    test_root = IO.load_text(os.path.join(root, f))
+                    pid_f = os.path.join(root, f)
+                    test_root = IO.load_text(pid_f)
                     exp = Experiment.from_disk(test_root)
-                    if exp.is_alive == is_alive:
+
+                    if exp.is_alive:
                         res.append(exp.dict())
-                    if not exp.is_alive and exp.properties['progress'].get('finished', None) is None:
+                    elif exp.properties['progress'].get('finished', None) is None:
+                        if (datetime.timestamp(datetime.now()) - os.stat(pid_f).st_mtime) < glob.get(
+                                'ALIVE_SECONDS', 1800):
+                            res.append(exp.dict())
+                    else:
                         exp.dump_info('progress',
                                       {
-                                          'end': strftime(), 'finished': True, 'end_code': -1,
+                                          'end': strftime(), 'finished': True, 'end_code': -10,
                                           'msg': 'ended by watcher'}
                                       )
+                        os.remove(pid_f)
                 except:
                     continue
         if with_pandas:
@@ -338,17 +348,6 @@ class Watcher:
     def server(self):
         """simple server which make you note your experiments"""
         pass
-
-    def list_all(self, exp_root=None, limit=100) -> Dict[str, List[Experiment]]:
-        """
-        Returns a dictionary of all experiments under exp_root directory.
-
-        Args:
-            exp_root: The root directory to search for experiments. Default is None, which uses the default experiment root directory.
-
-        Returns:
-            A dictionary of all experiments, where the keys are the names of the experiments and the values are lists of corresponding Experiment objects.
-        """
 
     def widget(self,
                is_finished: bool = None,

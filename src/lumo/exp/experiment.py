@@ -122,6 +122,7 @@ class Experiment:
         self.dump_string = self._trigger_change(self.dump_string)
         self.dump_note = self._trigger_change(self.dump_note)
         self.dump_info = self._trigger_change(self.dump_info)
+        self.trigger = self._trigger_change(self.trigger)
 
         self.logger = Logger()
 
@@ -365,6 +366,9 @@ class Experiment:
         except:
             return []
 
+    def trigger(self):
+        pass
+
     def _trigger_change(self, func):
         """
         Decorator function that updates the heartbeat file before executing the decorated function.
@@ -384,6 +388,7 @@ class Experiment:
             """wrap function"""
             fn = self.heartbeat_fn
             io.dump_text(self.info_dir, fn)
+            io.dump_text(self.info_dir, self.pid_fn)
             return func(*args, **kwargs)
 
         return inner
@@ -731,11 +736,13 @@ class Experiment:
             'obj': runtime_pid_obj(),
         })
 
+        self.dump_tags([])
+
         # register start
         self.dump_info('progress', {'start': strftime(), 'finished': False}, append=True)
         self.dump_progress(0)
         # register progress
-        io.dump_text(self.info_dir, self.pid_fn)
+
         self.add_exit_hook(self.end)
 
     @call_on_main_process_wrap
@@ -746,7 +753,6 @@ class Experiment:
         if self.properties.get('progress', None) is not None:
             return
         self.initial()
-        self.set_prop('start', True)
         for hook in self._hooks.values():  # type: BaseExpHook
             hook.on_start(self)
         return self
@@ -761,14 +767,11 @@ class Experiment:
             *args: Additional arguments to pass to the end hooks.
             **extra: Additional keyword arguments to pass to the end hooks.
         """
-        if not self.is_alive:
-            return
         if not self.properties.get('progress', None) is None:
             return
         if self.properties['progress'].get('end', False):
             return
 
-        self.set_prop('end', True)
         if end_code == 0:
             self.dump_progress(1)
 

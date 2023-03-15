@@ -404,6 +404,7 @@ class LoggerCallback(TrainCallback, InitialCallback):
                 TrainStage.train in self.stage and ((trainer.idx + 1) == self.stage[TrainStage.train])):
             trainer.logger.inline(self.cur_tqdm.full_str())
             trainer.logger.newline()
+            trainer.exp.trigger()
 
     def flush(self, trainer: Trainer):
         """Flush"""

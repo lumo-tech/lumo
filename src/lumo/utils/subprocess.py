@@ -4,7 +4,16 @@ import select
 import signal
 
 
-def run_command(command, cwd=None, env=None):
+def consume(p: subprocess.Popen):
+    for stream in [p.stdout, p.stderr]:
+        while True:
+            line = stream.readline().decode('utf-8')
+            if not line:
+                break
+            print(line, end='')
+
+
+def run_command(command, cwd=None, env=None, non_block=False):
     """
     Executes a command in the shell and captures its standard output and standard error.
 
@@ -20,6 +29,9 @@ def run_command(command, cwd=None, env=None):
                             cwd=cwd,
                             env=env,
                             shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    if non_block:
+        return proc
+
     try:
         while proc.poll() is None:
             # Wait for output from the process
