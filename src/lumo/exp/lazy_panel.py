@@ -142,7 +142,7 @@ def make_experiment_tabular(df: pd.DataFrame):
             color = 'green'
         elif end_code == 0:
             color = 'green'
-        elif end_code > 0:
+        elif end_code > 0 or end_code < 0:
             color = 'red'
             if ratio == 0:
                 ratio = 0.01
