@@ -1,7 +1,9 @@
 try:
     import panel as pn
 except ImportError as e:
-    raise ImportError('') from e
+    raise ImportError('The experiment panel is supported by panel, '
+                      'you should use it by `pip install panel` first.') from e
+
 from typing import Any
 
 from bokeh.core.property.primitive import String
@@ -66,21 +68,16 @@ class ExceptionFormatter:
 </details>"""
 
 
-long_text = HTMLTemplateFormatter(template=
-                                  """
-                     <details
-                        style = "overflow: visible;" >
-                     <summary > < % value['exception_type'] % > < / summary >
-                     < p
-                     style = 'display: inherit;white-space: break-spaces;word-wrap: normal;word-break: break-all;' >
-                     < %-  exception_content % >
-                     < / p >
-                     < / details >
-                     """)
+progress_formatter = HTMLTemplateFormatter(
+    template="""
+    <div style="min-height: 1.5em; width: <%-  value.ratio %>; background-color: <%-  value.color %>;" ></div>
+    """
+)
 
 tabulator_formatters = {
     'metrics': DictFormatter(column_name='metrics'),
-    'progress': DictFormatter(column_name='progress'),
+    'progress_': DictFormatter(column_name='progress'),
+    'progress': progress_formatter,
     'params': DictFormatter(column_name='params'),
     'exception': HTMLTemplateFormatter(template=ExceptionFormatter.base_template),
 }
@@ -91,10 +88,9 @@ tabulator_editors = {
     'params': None,
     'metrics': None,
     'progress': None,
+    'progress_': None,
     'exception': None,
     'str': {'type': 'list', 'valuesLookup': True},
-    # 'note': TextEditor(),
-    # 'tags': StringEditor(),
 }
 
 
@@ -119,9 +115,34 @@ def make_experiment_tabular(df: pd.DataFrame, reload_fn):
     else:
         df['exception'].fillna({})
 
-    # process progress
-    ratio = df['progress'].apply(lambda x: x.get('ratio', 0))
-    end_code = df['progress'].apply(lambda x: x.get('end_code', None))
+    def reformat_progress(dic):
+        ratio = dic.get('ratio', 0)
+        end_code = dic.get('end_code', None)
+
+        # normal end ->  end_code == 0 -> green
+        # interrupt by exception ->  end_code > 0 -> red
+        # running -> end_code is None -> blue
+        # killed without any signal ( in 5 minute ) ->  end_code is None -> blue
+        # killed and dumped by watcher ->  end_code == -10 -> red
+
+        if end_code is None:
+            color = 'blue'
+        elif ratio == 1:
+            color = 'green'
+        elif end_code == 0:
+            color = 'green'
+        elif end_code > 0:
+            color = 'red'
+            if ratio == 0:
+                ratio = 0.01
+
+        return {
+            'ratio': f'{ratio:2%}',
+            'color': color,
+        }
+
+    df['progress_'] = df['progress']
+    df['progress'] = df['progress'].apply(reformat_progress)
 
     # ratio = 1
     # ratio < 1, no-end-code ->
@@ -158,6 +179,7 @@ def make_experiment_tabular(df: pd.DataFrame, reload_fn):
         show_index=False,
         configuration={
             'clipboard': True,
+            'tooltip': True,
             # 'rowHeight': 100,
             # 'columnDefaults': {
             #     'headerSort': False,

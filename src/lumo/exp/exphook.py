@@ -91,13 +91,11 @@ class RecordAbort(ExpHook):
         res = [i for i in res if 'in _newfunc' not in i]
 
         self.exp.dump_info('exception', {
-            'exception_type': traceback.format_exception_only(exc_type, exc_val)[-1].strip(),
+            'exception_type': exc_type.__name__,
             'exception_content': "".join(res)
         })
 
-        self.exp.end(
-            end_code=1
-        )
+        self.exp.end(end_code=1)
 
 
 # class TimeMonitor(ExpHook):

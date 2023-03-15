@@ -133,7 +133,7 @@ class Condition:
         return self
 
     def __repr__(self):
-        return f'C({self.name} {self.op} {self.value})'
+        return f'C({self.name}, {self.value}, {self.op})'
 
     def in_(self, lis):
         """
@@ -239,7 +239,8 @@ class Watcher:
                         updates.setdefault(exp.exp_name, []).append(exp.cache())
                     except KeyboardInterrupt as e:
                         raise e
-                    except:
+                    except Exception as e:
+                        print(e)
                         continue
                     finally:
                         os.remove(hb_file)
@@ -304,9 +305,6 @@ class Watcher:
         """
         Returns a DataFrame of alive experiments.
 
-        Args:
-            is_alive (bool): A boolean flag indicating whether to return only alive experiments.
-
         Returns:
             A pandas DataFrame containing the experiment information of alive experiments.
         """
@@ -322,14 +320,14 @@ class Watcher:
 
                     if exp.is_alive:
                         res.append(exp.dict())
-                    elif exp.properties['progress'].get('finished', None) is None:
+                    elif exp.properties['progress'].get('end_code', None) is None:
                         if (datetime.timestamp(datetime.now()) - os.stat(pid_f).st_mtime) < glob.get(
-                                'ALIVE_SECONDS', 1800):
+                                'ALIVE_SECONDS', 60 * 5):  # powered by exp/agent.py
                             res.append(exp.dict())
                     else:
                         exp.dump_info('progress',
                                       {
-                                          'end': strftime(), 'finished': True, 'end_code': -10,
+                                          'end': strftime(), 'end_code': -10,
                                           'msg': 'ended by watcher'}
                                       )
                         os.remove(pid_f)
@@ -349,175 +347,10 @@ class Watcher:
         """simple server which make you note your experiments"""
         pass
 
-    def widget(self,
-               is_finished: bool = None,
-               is_alive: bool = None,
-               time_filter: list = None,
-               params_filter: list = None,
-               metric_filter: list = None
-               ):
-        """Create a user interface in jupyter with ipywidget"""
-        assert params_filter is None or isinstance(params_filter, list)
-        assert metric_filter is None or isinstance(metric_filter, list)
-
-        from ipywidgets import widgets, interact
-        from IPython.display import display
-
-        def make_row(dic: dict):
-            """
-            Helper function for creating a row in the widgets grid.
-
-            Args:
-                dic (dict): The dictionary containing the experiment information.
-
-            Returns:
-                A list of ipywidgets objects for the row.
-            """
-            exp = Experiment.from_cache(dic.copy())
-
-            def on_note_update(sender):
-                """when note textarea update"""
-                exp.dump_note(sender['new'])
-
-            def on_tag_update(sender):
-                """when tag component update"""
-                exp.dump_tags(*sender['new'])
-
-            note_ui = widgets.Textarea(dic['note'])
-
-            note_ui.continuous_update = False
-            note_ui.observe(on_note_update, names='value', type='change')
-
-            tags = dic.get('tags', [])
-            try:
-                tags = list(tags)
-            except:
-                tags = []
-            tag_ui = widgets.TagsInput(value=tags)
-            tag_ui.observe(on_tag_update, names='value', type='change')
-
-            now = datetime.now(timezone())
-            start = strptime(datestr=dic['progress']['start'])
-            end = strptime(datestr=dic['progress']['last_edit_time'])
-
-            human = widgets.VBox([
-
-            ])
-            return [
-                widgets.Label(dic['exp_name']),
-                widgets.Label(dic['test_name']),
-                widgets.Label(f"""{strftime('%y-%m-%d %H:%M:%S', dateobj=start)}"""),
-                widgets.Label(f"""{strftime('%y-%m-%d %H:%M:%S', dateobj=end)}"""),
-                widgets.HTML('\n'.join([
-                    f'{k}: {v}'
-                    for k, v in dic['metrics'].items()
-                    if isinstance(v, numbers.Number)
-                ])),
-                widgets.HBox([note_ui,
-                              tag_ui, ])
-
-            ]
-
-        test_status = widgets.RadioButtons(options=['full', 'running', 'failed', 'succeed', 'finished'])
-        start_filter = widgets.DatetimePicker()
-        end_filter = widgets.DatetimePicker()
-
-        def status_filter(sender):
-            """when filter condition changed"""
-            print(sender)
-            make()
-
-        test_status.observe(status_filter, names='value', type='change')
-
-        # display()
-
-        @interact
-        def make(
-                status=widgets.RadioButtons(options=['full', 'running', 'failed', 'succeed', 'finished']),
-                start=widgets.DatetimePicker(),
-                end=widgets.DatetimePicker(),
-        ):
-            """make widgets with filter condition."""
-            if status == 'running':
-                df = self.progress()
-            elif status == 'finished':
-                df = self.progress(is_alive=False)
-            else:
-                df = self.load()
-                if status == 'succeed':
-                    df = df[df['progress'].apply(lambda x: x['finished'])]
-                elif status == 'failed':
-                    df = df[df['exception'].isna() == False]
-
-            if start:
-                df = df.pipe(
-                    lambda x: x[x['progress'].apply(lambda y: strptime(datestr=y['start'])) > start]
-                )
-            if end:
-                df = df.pipe(
-                    lambda x: x[x['progress'].apply(lambda y: strptime(datestr=y['end'])) < end]
-                )
-
-            if params_filter is not None:
-                df_params = df['params']
-                masks = None
-                for condition in params_filter:
-                    mask = condition.mask(df_params)
-                    if masks is None:
-                        masks = mask
-                    else:
-                        masks *= mask
-                df = df[masks]
-
-            if metric_filter is not None:
-                df_params = df['metrics']
-                masks = None
-                for condition in metric_filter:
-                    mask = condition.mask(df_params)
-                    if masks is None:
-                        masks = mask
-                    else:
-                        masks *= mask
-                df = df[masks]
-
-            exps = df.to_dict(orient='records')
-            # grid = widgets.GridspecLayout(len(exps) + 1, 7)
-
-            children = [
-                widgets.Label('exp_name'),
-                widgets.Label('test_name'),
-                widgets.Label('start'),
-                widgets.Label('end'),
-                widgets.Label('metrics'),
-                widgets.Label('note & tags'),
-            ]
-            # grid[0, 0] = widgets.Label('Meta')
-            # grid[0, 1] = widgets.Label('Metrics')
-            # grid[0, 2] = widgets.Label('Notes')
-            for i, exp in enumerate(exps, start=1):
-                row = make_row(exp)
-                children.extend(row)
-                # display(widgets.HBox(row))
-                # for j, item in enumerate(row):
-                #     grid[i, j] = item
-
-            grid = widgets.GridBox(children=children,
-
-                                   layout=widgets.Layout(
-                                       width='100%',
-                                       grid_template_columns=' '.join(['auto'] * 5) + ' auto',
-                                       # grid_template_rows='80px auto 80px',
-                                       grid_gap='5px 10px')
-                                   )
-            display(
-                widgets.HTML("""
-                <style>
-                .widget-gridbox div:nth-of-type(even) {background-color: #f2f2f2 !important;}
-                </style>
-                """),
-                grid,
-
-            )
+    def panel(self):
+        from .lazy_panel import make_experiment_tabular
+        widget = make_experiment_tabular(self.load(), self.load)
+        return widget.servable()
 
 
 def is_test_root(path: str) -> bool:

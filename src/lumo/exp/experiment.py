@@ -19,6 +19,7 @@ from lumo.proc.path import exproot, local_dir
 from lumo.utils import safe_io as io
 from lumo.utils.fmt import can_be_filename, strftime
 from lumo.utils.logger import Logger
+from lumo.utils.subprocess import run_command
 from .base import BaseExpHook
 from ..proc.pid import pid_hash, runtime_pid_obj
 from .metric import Metric
@@ -91,7 +92,7 @@ class Experiment:
 
     ENV_TEST_NAME_KEY = 'LUMO_EXP_TEST_NAME'
 
-    def __init__(self, exp_name: str, test_name=None, paths=None):
+    def __init__(self, exp_name: str = None, test_name=None, paths=None, info_dir=None):
         """
         Initializes a new instance of the Experiment class.
 
@@ -106,17 +107,24 @@ class Experiment:
             raise ValueError(f'Experiment name should be a ligal filename(bettor only contain letter or underline),'
                              f'but got {exp_name}.')
 
-        self._prop = {}
-        self._prop['exp_name'] = exp_name
-        if test_name is None:
-            test_name = os.environ.get(Experiment.ENV_TEST_NAME_KEY, None)
-        self._prop['test_name'] = test_name
-        if paths is None:
-            paths = {}
-        self._prop['paths'] = paths
+        if info_dir is not None:
+            exp = self.__class__.from_disk(info_dir=info_dir)
+            self._prop = exp._prop
+            self._hooks = exp._hooks
+            self._metric = exp._metric
+        else:
+            assert exp_name is not None
+            self._prop = {'exp_name': exp_name}
+            if test_name is None:
+                test_name = os.environ.get(Experiment.ENV_TEST_NAME_KEY, None)
+            self._prop['test_name'] = test_name
+            if paths is None:
+                paths = {}
+            self._prop['paths'] = paths
+            self._prop['note'] = ''
 
-        self._hooks = {}
-        self._metric = None
+            self._hooks = {}
+            self._metric = None
 
         # wrap
         self.dump_string = self._trigger_change(self.dump_string)
@@ -183,7 +191,7 @@ class Experiment:
         Returns:
             str: A string representation of the Experiment object.
         """
-        return f'{self.exp_name}->({self.test_name})'
+        return f'{self.__class__.__name__}(info_dir={self.info_dir})'
 
     def __str__(self):
         """
@@ -192,7 +200,7 @@ class Experiment:
         Returns:
             str: A string representation of the Experiment object.
         """
-        return self.__repr__()
+        return f'{self.__class__.__name__}(info_dir={self.info_dir})'
 
     def _repr_html_(self):
         """Return a html representation for a particular DataFrame."""
@@ -739,9 +747,10 @@ class Experiment:
         self.dump_tags([])
 
         # register start
-        self.dump_info('progress', {'start': strftime(), 'finished': False}, append=True)
+        self.dump_info('progress', {'start': strftime()}, append=True)
         self.dump_progress(0)
         # register progress
+        self.proc = run_command(f'python3 -m lumo.exp.agent --info_dir={self.info_dir}', non_block=True)
 
         self.add_exit_hook(self.end)
 
@@ -767,7 +776,7 @@ class Experiment:
             *args: Additional arguments to pass to the end hooks.
             **extra: Additional keyword arguments to pass to the end hooks.
         """
-        if not self.properties.get('progress', None) is None:
+        if self.properties.get('progress', None) is None:
             return
         if self.properties['progress'].get('end', False):
             return
@@ -775,9 +784,11 @@ class Experiment:
         if end_code == 0:
             self.dump_progress(1)
 
-        self.dump_info('progress', {'end': strftime(), 'finished': True, 'end_code': end_code}, append=True)
+        self.dump_info('progress', {'end': strftime(), 'end_code': end_code}, append=True)
         for hook in self._hooks.values():  # type: BaseExpHook
             hook.on_end(self, end_code=end_code, *args, **extra)
+
+        self.proc.terminate()
         return self
 
     @call_on_main_process_wrap
@@ -813,7 +824,7 @@ class Experiment:
         import atexit
         def exp_func():
             """Function executed before process exit."""
-            func(self)
+            func()
 
         atexit.register(exp_func)
 
@@ -838,12 +849,12 @@ class Experiment:
         return self
 
     @classmethod
-    def from_disk(cls, path):
+    def from_disk(cls, info_dir):
         """
         Creates an Experiment object from a test root directory on disk.
 
         Args:
-            path (str): The path to the test root directory.
+            info_dir (str): The path to the test root directory.
 
         Returns:
             Experiment: An Experiment object created from the test root directory.
@@ -852,12 +863,12 @@ class Experiment:
             ValueError: If the path is not a valid test root directory.
         """
         from lumo.exp.watch import is_test_root
-        if not is_test_root(path):
-            raise ValueError(f'{path} is not a valid test_root')
-        path = os.path.abspath(path)
-        exp_dir = os.path.dirname(path)
+        if not is_test_root(info_dir):
+            raise ValueError(f'{info_dir} is not a valid test_root')
+        info_dir = os.path.abspath(info_dir)
+        exp_dir = os.path.dirname(info_dir)
 
-        paths_fn = os.path.join(path, 'info', f'paths.json')
+        paths_fn = os.path.join(info_dir, 'info', f'paths.json')
         if os.path.exists(paths_fn):
             try:
                 paths = io.load_json(paths_fn)
@@ -866,7 +877,7 @@ class Experiment:
         else:
             paths = {}
 
-        self = cls(os.path.basename(exp_dir), test_name=os.path.basename(path), paths=paths)
+        self = cls(os.path.basename(exp_dir), test_name=os.path.basename(info_dir), paths=paths)
 
         # load prop
         for f in os.listdir(self.mk_ipath('info', is_dir=True)):
@@ -903,8 +914,8 @@ class SimpleExperiment(Experiment):
     execute before and after the experiment.
     """
 
-    def __init__(self, exp_name: str, root=None):
-        super().__init__(exp_name, root)
+    def __init__(self, exp_name: str = None, test_name=None, paths=None, info_dir=None):
+        super().__init__(exp_name, test_name, paths, info_dir)
         from . import exphook
         self.set_hook(exphook.LastCmd())
         self.set_hook(exphook.LockFile())
