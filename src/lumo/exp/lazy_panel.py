@@ -26,10 +26,13 @@ css = '''
   overflow: visible !important;
   vertical-align: top;
   min-height: 20px;
+  height: fit-content !important;
 }
+
 .bk {
  height: fit-content !important;
 }
+
 .tabulator .tabulator-col-resize-handle {
  height: fit-content !important;
 
