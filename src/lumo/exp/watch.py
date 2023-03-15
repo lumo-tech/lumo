@@ -364,17 +364,15 @@ class Watcher:
         else:
             return res
 
-    def interactive(self):
-        """interactive, mark, label, note in ipython environment."""
-        pass
-
     def server(self):
         """simple server which make you note your experiments"""
         pass
 
-    def panel(self):
+    def panel(self, df=None):
         from .lazy_panel import make_experiment_tabular
-        widget = make_experiment_tabular(self.load(), self.load)
+        if df is None:
+            df = self.load()
+        widget = make_experiment_tabular(df)
         return widget
 
 

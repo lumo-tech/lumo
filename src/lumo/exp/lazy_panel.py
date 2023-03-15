@@ -97,7 +97,7 @@ tabulator_editors = {
 }
 
 
-def make_experiment_tabular(df: pd.DataFrame, reload_fn):
+def make_experiment_tabular(df: pd.DataFrame):
     """
     {'start': '23-03-14-224651',
      'finished': False,
@@ -107,7 +107,6 @@ def make_experiment_tabular(df: pd.DataFrame, reload_fn):
 
     Args:
         df:
-        reload_fn:
 
     Returns:
 
@@ -174,8 +173,6 @@ def make_experiment_tabular(df: pd.DataFrame, reload_fn):
         else:
             tags = [i.strip() for i in e.value.split(',')]
             Experiment.from_cache(df.iloc[e.row].to_dict()).dump_tags(tags)
-
-        df = reload_fn()
 
     df_widget = pn.widgets.Tabulator(
         df,
