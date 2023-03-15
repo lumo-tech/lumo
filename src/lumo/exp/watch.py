@@ -253,6 +253,31 @@ class Watcher:
             dic.flush()
         return updates
 
+    def fullupdate(self):
+        updates = {}
+        for root, dirs, fs in os.walk(self.exp_root):
+            for f in dirs:
+                if is_test_name(f):
+                    info_dir = os.path.join(root, f)
+                    try:
+                        exp = Experiment.from_disk(info_dir)
+                        updates.setdefault(exp.exp_name, []).append(exp.cache())
+                    except KeyboardInterrupt as e:
+                        raise e
+                    except Exception as e:
+                        print(e)
+                        continue
+
+        for exp_name, tests in updates.items():
+            dic = PDict(os.path.join(self.db_root, f'{exp_name}.sqlite'))
+            dic.clear()
+
+            for test in tests:
+                dic[test['test_name']] = test
+            dic.flush()
+
+        return updates
+
     def load(self, with_pandas=True):
         """
         Loads the experiment information from heartbeat files and the experiment databases.
