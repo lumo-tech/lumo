@@ -15,7 +15,6 @@ class TrainerExperiment(SimpleExperiment):
     @property
     def params_fn(self):
         res = self.mk_ipath('params.yaml')
-        self.dump_string('params.yaml', res)
         return res
 
     @property

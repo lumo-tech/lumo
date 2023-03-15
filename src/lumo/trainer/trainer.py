@@ -4,6 +4,7 @@ import sys
 import warnings
 from datetime import datetime
 from functools import lru_cache
+from pprint import pformat
 from typing import Union, Dict, Any, Optional, Sequence, Mapping, Callable
 
 import numpy as np
@@ -32,7 +33,7 @@ from .saver import Saver
 # overwrite send_to_device to resolve https://github.com/pytorch/pytorch/issues/83015
 # from accelerate import Accelerator
 # from accelerate.utils import send_to_device
-from ..utils.fmt import strftime
+from ..utils.fmt import strftime, indent_print
 
 ParamsType = TrainerParams
 
@@ -86,14 +87,13 @@ class Trainer(_BaseTrainer):
         self._saver = None
 
         self.params.iparams()
-        self.exp = TrainerExperiment(self.generate_exp_name())
+        self.exp = TrainerExperiment(exp_name=self.generate_exp_name())
 
         self._database = TableRow(self.exp.mk_ipath('metric.pkl'), persistent=self.is_main)
         self.metric_board = Metrics(self.exp.mk_bpath('board.sqlite'), persistent=self.is_main)
         self.metric = self.exp.metric
 
-        self.exp.dump_info('metric_board', self.metric_board.fpath)
-        self.exp.dump_info('table_row', self._database.fpath)
+        # self.exp.dump_info('table_row', self._database.fpath)
         self.rnd = RndManager()
 
         self.train_epoch_toggle = False
@@ -110,6 +110,14 @@ class Trainer(_BaseTrainer):
 
         if dist.is_main():
             self.params.to_yaml(self.exp.params_fn)
+            params_hash = self.params.hash()
+            self.exp.dump_info('trainer', {
+                'params_meta': {
+                    'fn': self.exp.params_fn,
+                    'hash': params_hash
+                },
+                'board_fn': self.metric_board.fpath
+            }, append=True)
             self.exp.dump_info('params', self.params.to_dict())
 
         self.set_global_steps(0)
@@ -170,7 +178,9 @@ class Trainer(_BaseTrainer):
                 self._logger.debug('Enable debug log.')
             if self.is_main:
                 fn = self._logger.add_log_dir(self.exp.log_dir)
-                self.exp.dump_info('logger_args', {'log_dir': fn})
+                self.exp.dump_info('trainer', {
+                    'logger_fn': fn
+                }, append=True)
 
         return self._logger
 
@@ -517,10 +527,10 @@ class Trainer(_BaseTrainer):
 
     def on_trainer_exception(self, func: Callable, exception: BaseException):
         """Updates database with error information when an exception occurs during training."""
-        self.exp.dump_info('exception', dict(end=strftime(),
-                                             finished=False,
-                                             error=str(exception),
-                                             trainer_frame=str(func)))
+        # self.exp.dump_info('exception', dict(end=strftime(),
+        #                                      finished=False,
+        #                                      error=str(exception),
+        #                                      trainer_frame=str(func)), append=True)
 
     @property
     def is_initialized(self):
@@ -542,14 +552,14 @@ class Trainer(_BaseTrainer):
             return
         self.exp.start()
 
-        params_hash = self.params.hash()
-        self.exp.dump_string('params_hash', params_hash)
-
         self.icallbacks(self.params)
         self.set_property('initial.callbacks', True)
         self.imodels(self.params)
         self.set_property('initial.model', True)
         self.set_property('initial', True)
+
+        self.logger.info('Use Experiment')
+        self.logger.info(self.exp)
 
     def stop_train(self):
         """Toggle to stop train."""
@@ -613,7 +623,6 @@ class Trainer(_BaseTrainer):
 
         for eidx in range(params.epoch):
             # update training progress
-            self.exp.dump_train_eidx(eidx, params.epoch)
             self.set_epoch_idx(eidx)
 
             # train loop
@@ -632,7 +641,8 @@ class Trainer(_BaseTrainer):
                 self.set_property('early_stop', f'meet limit_global_steps {limit_global_steps}')
                 break
 
-        # update when train finished
+            self.exp.dump_train_eidx(eidx, params.epoch)
+
         self.exp.end()
         return self._prop
 
