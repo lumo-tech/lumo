@@ -28,7 +28,7 @@ css = '''
   min-height: 20px;
 }
 .bk {
-
+ 
 }
 .tabulator .tabulator-col-resize-handle {
  height: fit-content !important;
@@ -157,6 +157,7 @@ def make_experiment_tabular(df: pd.DataFrame, reload_fn):
 
     def on_cell_change(e: TableEditEvent):
         nonlocal df
+
         if e.column == 'note':
             Experiment.from_cache(df.iloc[e.row].to_dict()).dump_note(e.value)
         else:
@@ -187,5 +188,24 @@ def make_experiment_tabular(df: pd.DataFrame, reload_fn):
         }
     )
 
+    # def on_cell_click(e):
+    #     nonlocal enable_update
+    #     if e.column in {'note', 'tags'}:
+    #         enable_update = False
+
+    # enable_update = True
+    # df_widget.on_click(on_cell_click)
     df_widget.on_edit(on_cell_change)
+    #
+    # def update_time():
+    #     if enable_update:
+    #         time_now = dt.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    #         time_component.object = f"<p>{time_now}</p>"
+    #
+    # time_component = pn.pane.HTML("current time is")
+    # pn.state.onload(update_time)
+    # pn.state.add_periodic_callback(update_time, 1000)  # 每1000毫秒执行一次更新时间的操作
+    #
+    # widget = pn.Column(time_component, df_widget)  # .servable()
+
     return df_widget

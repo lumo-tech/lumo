@@ -103,10 +103,6 @@ class Experiment:
         Raises:
             ValueError: If the experiment name is not a legal filename.
         """
-        if not can_be_filename(exp_name):
-            raise ValueError(f'Experiment name should be a ligal filename(bettor only contain letter or underline),'
-                             f'but got {exp_name}.')
-
         if info_dir is not None:
             exp = self.__class__.from_disk(info_dir=info_dir)
             self._prop = exp._prop
@@ -114,6 +110,9 @@ class Experiment:
             self._metric = exp._metric
         else:
             assert exp_name is not None
+            if not can_be_filename(exp_name):
+                raise ValueError(f'Experiment name should be a ligal filename(bettor only contain letter or underline),'
+                                 f'but got {exp_name}.')
             self._prop = {'exp_name': exp_name}
             if test_name is None:
                 test_name = os.environ.get(Experiment.ENV_TEST_NAME_KEY, None)
@@ -191,7 +190,7 @@ class Experiment:
         Returns:
             str: A string representation of the Experiment object.
         """
-        return f'{self.__class__.__name__}(info_dir={self.info_dir})'
+        return f'{self.__class__.__name__}(info_dir="{self.info_dir})"'
 
     def __str__(self):
         """
@@ -744,7 +743,7 @@ class Experiment:
             'obj': runtime_pid_obj(),
         })
 
-        self.dump_tags([])
+        self.dump_tags()
 
         # register start
         self.dump_info('progress', {'start': strftime()}, append=True)

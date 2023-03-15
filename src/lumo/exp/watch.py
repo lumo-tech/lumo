@@ -350,7 +350,7 @@ class Watcher:
     def panel(self):
         from .lazy_panel import make_experiment_tabular
         widget = make_experiment_tabular(self.load(), self.load)
-        return widget.servable()
+        return widget
 
 
 def is_test_root(path: str) -> bool:
