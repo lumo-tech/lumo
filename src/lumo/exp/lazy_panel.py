@@ -28,7 +28,7 @@ css = '''
   min-height: 20px;
 }
 .bk {
- 
+ height: fit-content !important;
 }
 .tabulator .tabulator-col-resize-handle {
  height: fit-content !important;
