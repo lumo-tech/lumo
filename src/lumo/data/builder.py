@@ -117,7 +117,7 @@ class DatasetBuilder(Dataset):
 
         self._iter_cache = {}
 
-    def __repr__(self):
+    def __str__(self):
 
         if self.sized:
             return f'Builder(flow={pformat(self._outs)}, sized={self.sized}, size={len(self)}, iterable={self.iterable})'
