@@ -118,6 +118,12 @@ def make_experiment_tabular(df: pd.DataFrame, reload_fn):
         df['tags'] = np.empty((len(df.index), 0)).tolist()
 
     def reformat_progress(dic):
+        if not isinstance(dic, dict):
+            return {
+                'ratio': '100%',
+                'color': 'yellow',
+            }
+
         ratio = dic.get('ratio', 0)
         end_code = dic.get('end_code', None)
 
