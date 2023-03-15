@@ -111,6 +111,7 @@ def make_experiment_tabular(df: pd.DataFrame):
     Returns:
 
     """
+    df = df.reset_index(drop=True)
     # process exception
     if 'exception' not in df.columns:
         df['exception'] = {}
