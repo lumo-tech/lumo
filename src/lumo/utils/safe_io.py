@@ -43,8 +43,11 @@ def dump_json(obj, fn):
     Notes:
         The JSON data will be written with an indentation of 2 spaces.
     """
-    with open(fn, 'w', encoding='utf-8') as w:
-        json.dump(obj, w, indent=2)
+    try:
+        with open(fn, 'w', encoding='utf-8') as w:
+            json.dump(obj, w, indent=2)
+    except TypeError as e:
+        raise TypeError(str(obj)) from e
 
 
 def dump_yaml(obj, fn):
