@@ -75,3 +75,13 @@ def is_main():
 
     """
     return local_rank() <= 0
+
+
+def gather(tensor):
+    if dist.is_initialized():
+        if tensor.ndim == 0:
+            tensor = tensor.clone()[None]
+        output_tensors = [tensor.clone() for _ in range(torch.distributed.get_world_size())]
+        torch.distributed.all_gather(output_tensors, tensor)
+        return torch.cat(output_tensors, dim=0)
+    return tensor

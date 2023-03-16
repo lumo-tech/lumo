@@ -1,6 +1,7 @@
 from torch import distributed
-from lumo.proc.dist import is_dist
+from lumo.proc.dist import is_dist, gather
 import torch.distributed
+
 from torch import nn
 import torch
 
@@ -26,9 +27,9 @@ class StorageBank(nn.Module):
     @torch.no_grad()
     def scatter(self, name, value, index):
         value = value.detach()
-        value = distributed.gather(value)
+        value = gather(value)
         if isinstance(index, torch.Tensor):
-            index = distributed.gather(index)
+            index = gather(index)
         self[name][index] = value
 
 
@@ -61,7 +62,7 @@ class MemoryBank(nn.Module):
             raise AssertionError()
 
         value = value.detach()
-        value = distributed.gather(value)
+        value = gather(value)
         ptr = self.offsets[name]
         k = self.sizes[name]
         batch_size = value.shape[0]
@@ -80,9 +81,9 @@ def batch_shuffle_ddp(x):
     """
     if not is_dist():
         return x, torch.arange(len(x))
-    # distributed.gather from all gpus
+    # gather from all gpus
     batch_size_this = x.shape[0]
-    x_gather = distributed.gather(x)
+    x_gather = gather(x)
     batch_size_all = x_gather.shape[0]
 
     num_gpus = batch_size_all // batch_size_this
@@ -111,9 +112,9 @@ def batch_unshuffle_ddp(x, idx_unshuffle):
     """
     if not is_dist():
         return x
-    # distributed.gather from all gpus
+    # gather from all gpus
     batch_size_this = x.shape[0]
-    x_gather = distributed.gather(x)
+    x_gather = gather(x)
     batch_size_all = x_gather.shape[0]
 
     num_gpus = batch_size_all // batch_size_this

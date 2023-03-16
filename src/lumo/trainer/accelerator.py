@@ -4,6 +4,7 @@ import torch
 from torch import distributed
 from torch.utils.data import DataLoader
 from lumo.data.loader import DataLoaderSide
+from lumo.proc.dist import gather
 
 
 class Accelerator:
@@ -47,11 +48,7 @@ class Accelerator:
         torch.distributed.barrier()
 
     def gather(self, tensor: torch.Tensor):
-        if tensor.ndim == 0:
-            tensor = tensor.clone()[None]
-        output_tensors = [tensor.clone() for _ in range(torch.distributed.get_world_size())]
-        distributed.all_gather(output_tensors, tensor)
-        return torch.cat(output_tensors, dim=0)
+        return gather(tensor)
 
     def backward(self, loss: torch.Tensor, **kwargs):
         loss.backward(**kwargs)
