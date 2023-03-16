@@ -9,11 +9,10 @@ def test_ReduceItem():
         item.update(i)
     assert item.res == np.mean(range(200)[-ReduceItem.SLIDE_WINDOW_SIZE:], dtype=float).item()
 
-    item = ReduceItem([1, 2, 3], 'last')
+    item = ReduceItem(3, 'last')
     for i in range(4):
-        res = [j for j in range(i)]
-        item.update(res)
-        assert item.res == res
+        item.update(i)
+        assert item.res == i
 
     rand = [np.random.rand(4) for i in range(4)]
     avg = ReduceItem(rand[0], 'sum')
@@ -63,4 +62,13 @@ def test_avgmeter():
 
 
 def test_meter():
-    pass
+    from lumo import Meter, Record
+    import numpy as np
+    rnd = np.random.rand(1000)
+    r = Record()
+    m = Meter()
+    m.mean.rnd = rnd[:500]
+    r.record(m)
+    m.mean.rnd = rnd[500:]
+    r.record(m)
+    assert np.isclose(r.agg()['rnd'], rnd.mean())
