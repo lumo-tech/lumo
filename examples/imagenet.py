@@ -192,7 +192,7 @@ class LargeTrainer(Trainer):
     def train_step(self, batch, params: ParamsType = None) -> MetricType:
         super().train_step(batch, params)
         m = Meter()
-        eval_xs, xs, ys = batch['xs0'], batch['xs1'], batch['ys']
+        xs, ys = batch['xs'], batch['ys']
         logits = self.model(xs)
 
         Lall = F.cross_entropy(logits, ys)
@@ -205,8 +205,7 @@ class LargeTrainer(Trainer):
 
         with torch.no_grad():
             m.mean.Lall = Lall
-            eval_logits = self.model(eval_xs)
-            m.mean.Ax = torch.eq(eval_logits.argmax(dim=-1), ys).float().mean()
+            m.mean.Ax = torch.eq(logits.argmax(dim=-1), ys).float().mean()
             m.last.lr = cur_lr
         return m
 
