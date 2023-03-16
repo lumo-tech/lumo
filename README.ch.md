@@ -2,184 +2,151 @@
 
 [![PyPI version](https://badge.fury.io/py/lumo.svg)](https://badge.fury.io/py/lumo)
 ![Python-Test](https://github.com/pytorch-lumo/lumo/actions/workflows/python-test.yml/badge.svg)
-[![license](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://github.com/pytorch-lumo/lumo/blob/master/LICENSE)
+[![license](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://github.com/Lightning-AI/lightning/blob/master/LICENSE)
+![Python-doc](./images/docstr_coverage_badge.svg)
 
+`lumo` 是一个精简高效的库，简化了实验所需的所有组件的管理，并特别关注增强深度学习实践者的体验。
 
-`lumo`：轻量、可扩展、功能解耦合的 Pytorch 实验框架。
+- 实验管理：: 为每次运行分配唯一路径，区分不同类型的文件并存储；并通过 git 管理代码快照。
+- 参数管理：基于 fire 提供比 argparser 更便捷的参数管理
+- 运行时配置：提供多级作用域下的配置管理
+- 可视化：基于 [Panel](https://panel.holoviz.org/index.html) 提供可交互的 jupyter 实验管理面板
+- 为深度学习提供额外的优化
+    - 训练：基于 Trainer 提供可任意扩展的训练逻辑简化，并提供完善的回调逻辑
+    - 优化器：参数与优化器构建一体化
+    - 数据: 数据集构建流程抽象、组合多个 DataLoader、...
+    - 分布式训练：同样支持多种训练加速框架，统一抽象，方便随时切换
+- 更多工具类...
 
-lumo 的设计理念：
+# :book: 目录
 
-- 模块解耦合：所有模块可以单独作为您现在使用的框架中的一个插件使用（而不像其他框架几乎耦合在一起）
-- 恰到好处的抽象：和模型相关的细节完全由使用者掌控，lumo 只封装了外部通用逻辑（而不像其他一些框架会代理模型初始化或损失迭代）
-- 覆盖整个生命周期：数据集构建、模型初始化、随机种子、训练/测试...，lumo 为所有步骤提供了功能包或流程简化
-- 极强的可扩展性：从单文件到包含多个领域多个方法的项目，lumo 都可以提供舒适的使用体验。已在两个领域有复现项目的最佳实践示例（见[Related Work](#Related Work)）。
+- [安装](#安装)
+- [快速开始](#快速开始)
 
-# 如何使用
+# :cloud: 安装
 
-## 安装
-
-从 pypi 或 github 主页安装最新的稳定版本：
+安装已发布的通过了所有测试的版本
 
 ```bash
 pip install -U lumo
+```
+
+或从 dev1 分支安装最新版本：
+
+```bash
 pip install git+https://github.com/pytorch-lumo/lumo
 ```
 
+实验面板依赖于 panel，需要额外安装：
 
-## 快速开始
-
-本节包含 lumo 最常用的几个子功能，帮助使用者快速利用这些功能减少已有项目中的冗余代码，这些功能包括：
-
-- 一些常用功能的更优替代，如 [Params](#参数控制)（arguments 的平替），[Logger](#变量&日志记录)（logging 的平替）
-- 一些训练过程中部份流程的优化，如 [Experiment](#路径管理&版本控制)（提供无重复的实验路径管理、基于 git 的版本控制），[DatasetBuilder](#数据集构建)（更快构建数据集），
-
-### 参数控制
-
-`argparse` 的更优替代。`Params` 底层依托于 [omegaconf](https://github.com/omry/omegaconf) 和 [fire](https://github.com/google/python-fire)
-，只需要简单的配置，就可以从文件、命令行中读取参数。
-
-直接基于 Params 类定义参数：
-
-```python
-# python main.py --epoch=30 --dataset=100
-from lumo import Params
-
-params = Params()
-params.epoch = 20
-# 集成优化器参数，自带补全提示
-params.optim = params.OPTIM.create_optim('Adam', lr=0.0001, weight_decay=4e-5)
-# 数据集只能从 cifar10/cifar100 中选择，且默认为 cifar10，其他的选择会报错
-params.dataset = params.choice('cifar10', 'cifar100')
-
-# 从命令行参数中更新
-params.from_args()
-print(params.epoch)  # -> 30
-print(params.dataset)  # -> cifar100
-
-# 保存到文件
-params.to_json('./config.json')
-params.to_yaml('./config.yaml')
-# 从文件中更新
-params.from_json('./config.json')
-params.from_yaml('./config.yaml')
+```
+pip install panel
 ```
 
-也可以通过继承、多重继承来嵌套，组合参数。即使在命令行中输入了不存在的参数，Params 也会正常读取。 
+# :book: 快速开始
 
-### 变量&日志记录
+以下是两个经典场景：
 
-`logging` 的更优替代。通过 Meter、Record 和 Logger，可以实现变量的记录和格式化输出。其中：
+## :small_orange_diamond: 已有项目嵌入
 
-- Meter 记录单次的值
-- Record 以一定规则归约 Meter 实例（如 mean、sum 等）
-- Logger 用于代替 logging，除常用的 info、warn 等方法外，还提供了 inline 方法，可以在屏幕能单行更新（实际中，屏幕打印时间远小于训练时间，因此单行更新带来的时间开销可以忽略不计）。
+对已有项目，可以通过以下方式快速嵌入
 
 ```python
 import random
-import time
+from lumo import SimpleExperiment, Params, Logger, Meter, Record
 
-from lumo import Record, Meter, Logger
+logger = Logger()
+# 定义及使用，无需转换
+exp = SimpleExperiment(exp_name='my_exp_a')  # 为每种实验手动定义唯一名称
+exp.start()
+logger.add_log_dir(exp.mk_ipath())
 
-log = Logger()
+# 替换基于 argparse 等的参数定义方法
+params = Params()
+params.dataset = params.choice('cifar10', 'cifar100')
+params.alpha = params.arange(default=1, left=0, right=10)
+params.from_args()  # python3 train.py --dataset=cifar100 --alpha=0.2
+print(params.to_dict())  # {"dataset": "cifar100", "alpha": 0.2}
+
+# 记录实验参数
+exp.dump_info('params', params.to_dict())
+print(exp.test_name)  # 为每次实验自动分配唯一名称
+
+# 基于命名空间提供本次实验的唯一路径
+# 元数据和二进制大文件分离，方便清理
+params.to_yaml(exp.mk_ipath('params.yaml'))
+
+for i in range(10):
+    # 记录实验指标
+    max_acc = exp.dump_metric('Acc', random.random(), cmp='max')
+    logger.info(f'Max acc {max_acc}')
+
+    # 存储大文件/二进制文件（如模型权重）
+    ckpt_fn = exp.mk_bpath('checkpoints', f'model_{i}.ckpt')
+    ...  # 保存代码 given ckpt_fn
 
 record = Record()
-for idx in range(256):
-    meter = Meter()
-    meter.last.i = idx
-    meter.sum.acc = idx
-    meter.mean.loss = random.random()
+for batch in range(10):
+    m = Meter()
+    m.mean.Lall = random.random()
+    m.last.lr = batch
+    record.record(m)
+    logger.info(record)
 
-    record.record(meter)
-    log.inline(record)  # 单行更新
-    time.sleep(0.5)
-    if idx % 50 == 0:
-        log.newline()
-        record.clear()
-
-log.info(record)
-```
-
-### 路径管理&版本控制
-
-`Experiment` 主要提供路径管理，可以为每一次试验根据实验名、日期、次数等自动提供不一样的保存路径。此外，Experiment 还可以通过 hook
-提供如代码版本管理、元数据记录等功能。在实验中，可以使用其子类 `SimpleExperiment` 实现大部分需求。
-
-```python
-from lumo import SimpleExperiment
-from lumo import Params
-
-pm = Params()
-pm.module = 'example'
-pm.from_args()
-
-# 注册该次实验，实验名为 `pm.module`
-exp = SimpleExperiment(pm.module)
-# 实验开始，该方法会调用已注册的 ExpHooks，完成代码版本控制等功能。
-exp.start()
-
-# 小数据通过 `.test_file()` 获得路径
-fn = exp.test_file('params.json')
-pm.to_json(fn)
-
-# 大文件通过 `.blob_file()` 获得路径（这是约定，而不是强制，大文件也可以保存到 `.test_file()` 中）
-fn = exp.blob_file('checkpoint.pt')
-with open(fn, 'w') as w:
-    w.write('write big data in blob file')
-
-print(exp.test_root)
-print(exp.get_prop('git'))  # see git commit history
+# 主动结束实验，补充元信息。也可以在进程结束后由 hook 自动结束，支持针对异常的记录
 exp.end()
 ```
 
-### 数据集构建
+## :small_orange_diamond: 从零开始
 
-![DatasetBuilder](./images/DatasetBuilder.png)
+如果从新开始一个深度学习实验，那么可以使用 lumo 全方位的加速代码的构建，下面提供了多个不同规模下使用 lumo 训练的示例：
 
-`DatasetBuilder` 是采用有向无环图思路设计的数据集构建类，该类提供了一个恰当的抽象逻辑，避免了在一个实验里定义多个重复 Datasets 类。
+单文件：
 
-`DatasetBuilder `将数据集的构件划分为输入-输出两阶段，同时提供 `.chain()`（序列格式）和`.zip()`（字典格式） 两种输出方式。
+| 示例                                     | CoLab | 代码行数 |
+|----------------------------------------|-------|------|
+| [MNIST 示例](./examples/mnist.py)        |       | 118  |
+| [MocoV2 训练 CIFAR10](./examples/moco.py) || 284   |
+| [多卡训练 ImageNet]()                      |||
+
+实验项目：
+
+| 项目                     | 说明                       |
+|------------------------|--------------------------|
+| [image-classification] | 集成了全监督、半监督、自监督的多个论文的复现代码 |
+| [emotion-recognition]  | 集成了情感分类、多模态情感分类的多个论文的复现代码 |
+
+## :small_orange_diamond: 可视化界面
+
+在 jupyter 中：
 
 ```python
-from lumo import DatasetBuilder
-from torchvision.transforms import transforms
-import torch
+from lumo import Watcher
 
-# Create a mnist-like dummy dataset
-db = (
-    DatasetBuilder()
-        .add_input("xs", torch.rand(500, 28, 28))
-        .add_input("ys", torch.randint(0, 10, (500,)))
-        .add_idx('id')
-        .add_output("xs", "xs1", transforms.RandomHorizontalFlip())
-        .add_output("xs", "xs2", )
-        .add_output("ys", "ys")
-)
-# Watch dataset structure
-print(db)
-# Builder(flow={'::idx::': ['id'], 'xs': ['xs1', 'xs2'], 'ys': ['ys']}, sized=True, size=500, iterable=True)
-
-print(db[0])
-# dict_keys(['id', 'xs1', 'xs2', 'ys'])
+w = Watcher()
+df = w.load()
+widget = w.panel(df)
+widget.servable()
 ```
 
-# 更多教程
+![Panel](./images/panel-example.png)
 
-# Related Work
+将按手动条件过滤后的实验筛选出来：
+![Panel](./images/panel-example2.png)
 
-- [image-classification](https://github.com/pytorch-lumo/image-classification): supervised/semi-supervised/self-supervised/noisy label learning on image-classfication
-  field. (suporrted datasets: CIFAR10/CIFAR100/STL-10/SVHN/ImageNet/tinyimagenet)
-- [emotion-recognition-in-conversation](https://github.com/pytorch-lumo/emotion-recognition-in-conversation):Multimodel emotional recognition on conversation. (suporrted datasets: IEMOCAP/MELD/MOSEI) 
+可以直接使用命令行打开页面查看当前所有实验：
 
+```
+lumo board [--port, --address, --open]
+```
 
-# Acknowledge
+# More
 
- 一个人维护一个库四年，背后的动力是我持续不断的使用，感谢 lumo 陪我见证我的学术生涯。lumo 确实不一定适合所有人的习惯，但一定最适合我自己。lumo 取自 lumos，这是哈利波特里魔法杖发光的咒语。torch 是火炬，ignite 是点燃，所以 lumo 也向往着发光发热，希望 lumo 给大家带来美好的使用体验。
+# :pencil: Acknowledge
 
-# License 
+从 2020 年维护至今。感谢 lumo 陪我见证我的学术生涯。
 
-Distributed under the GNU General Public License 3.0. See [LICENSE](./LICENSE) for more information.
+# :scroll: License
 
-# Contact
-
- - [sailist@outlook.com](mailto:sailist@outlook.com)
+采用 [GNU General Public License 3.0 协议](./LICENSE)。
 
