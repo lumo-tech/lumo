@@ -353,6 +353,7 @@ class LoggerCallback(TrainCallback, InitialCallback):
         self.step = step_frequence
         file = tempfile.TemporaryFile('w')
         self.temp = file
+        self.cur_tqdm = None
 
     def on_imodels_end(self, trainer: Trainer, func, params: ParamsType, result: Any, *args, **kwargs):
         super().on_imodels_end(trainer, func, params, result, *args, **kwargs)
@@ -409,8 +410,9 @@ class LoggerCallback(TrainCallback, InitialCallback):
     def flush(self, trainer: Trainer):
         """Flush"""
         self.c = 0
-        trainer.logger.inline(self.cur_tqdm)
-        trainer.logger.newline()
+        if self.cur_tqdm is not None:
+            trainer.logger.inline(self.cur_tqdm)
+            trainer.logger.newline()
 
     def on_train_epoch_begin(self, trainer: Trainer, func, params: ParamsType, *args, **kwargs):
         super().on_train_epoch_begin(trainer, func, params, *args, **kwargs)

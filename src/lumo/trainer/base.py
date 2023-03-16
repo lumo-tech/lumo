@@ -134,7 +134,7 @@ class _BaseTrainer:
                 process_loader = getattr(self, 'process_loader', None)
                 if process_loader is not None:
                     process_loader(dm, TrainStage.create_from_str(func.__name__))
-                func(*args, **kwargs)
+                func(dm, params, *args, **kwargs)
 
             return inner
 

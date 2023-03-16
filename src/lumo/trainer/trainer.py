@@ -610,6 +610,8 @@ class Trainer(_BaseTrainer):
             ValueError: If no data loader is available for training.
 
         """
+        self.change_stage(TrainStage.train)
+
         loader = self.select_loader(dm)
         if not loader:
             loader = self.train_dataloader
@@ -816,8 +818,7 @@ class Trainer(_BaseTrainer):
             else:
                 v.eval()
 
-    @classmethod
-    def select_loader(cls, dm=None):
+    def select_loader(self, dm=None, stage=None):
         """
         Selects the appropriate loader based on the given data module.
 
@@ -830,7 +831,8 @@ class Trainer(_BaseTrainer):
         loader = None
         if dm:
             if isinstance(dm, DataModule):
-                loader = dm.train_dataloader
+                loader = dm.get_loader_with_stage(stage=self.trainstage)
+                # loader = dm.train_dataloader
             elif isinstance(dm, DataLoader) or isinstance(dm, DataLoaderSide):
                 loader = dm
             else:
