@@ -1,3 +1,5 @@
+[中文](./README.ch.md)
+
 # lumo
 
 [![PyPI version](https://badge.fury.io/py/lumo.svg)](https://badge.fury.io/py/lumo)
@@ -5,162 +7,149 @@
 [![license](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://github.com/Lightning-AI/lightning/blob/master/LICENSE)
 ![Python-doc](./images/docstr_coverage_badge.svg)
 
-`lumo` is a light-weight library to help construct your experiment code, record your experiment results, especially in the field of deep learning.
+`lumo` is a streamlined and efficient library that simplifies the management of all components required for experiments
+and focuses on enhancing the experience of deep learning practitioners.
 
+- **Experiment Management:** Allocates a unique path for each run, distinguishes and stores files for different types of
+  experiments, and manages code snapshots via Git.
+- **Parameter Management:** Provides more convenient parameter management than argparser based on fire.
+- **Runtime Configuration:** Provides configuration management under multi-level scopes.
+- **Visualization:** Provides an interactive Jupyter experiment management panel based
+  on [Panel](https://panel.holoviz.org/index.html).
+- Additional optimization for deep learning:
+    - **Training:** Provides easily extendable training logic based on Trainer and provides comprehensive callback logic.
+    - **Optimizer:** Integrated parameter and optimizer construction.
+    - **Data:** Abstraction of dataset construction process, combination of multiple DataLoaders, etc.
+    - **Distributed Training:** Also supports multiple training acceleration frameworks, unified abstraction, and easy
+      switching at any time.
+- More utilities...
 
-## Features
+# :book: Table of Contents
 
-`lumo` is designed for reducing difficulty of the frequent code modification in experiments and simplify the redundant code.
+- [Installation](#installation)
+- [Quick Start](#quick-start)
 
-At present, `lumo` has these features:
+# :cloud: Installation
 
- - Simplest code for **Hyperparameter Configuration**、**Dataset Building**、**Module Checkpoint**、**Meter and Log**.
- - Include Git support and random seed management. You can **reset** and **archive** and **reimplement your experiments** by using simple console command.
- - Include a **deep learning experiment code templete**. You can add any experiments with linearly increasing code complexity by using it.
- - The framework follows the design paradigm of **convention over configuration**, the more you follow the convention, the more the framework will do for you.
+Install the published and tested version:
 
-> Better use Pycharm.
-
-See [document](https://sailist.github.io/lumo/) for details. 
-
-
-
-## Install
 ```bash
-pip install lumo
+pip install -U lumo
 ```
 
-or 
+Or install the latest version from the dev1 branch:
 
 ```bash
-git clone https://github.com/sailist/lumo
-
-python setup.py install
+pip install git+https://github.com/pytorch-lumo/lumo@dev1
 ```
 
-### test
+The experiment panel depends on Panel, which needs to be installed separately:
 
 ```
-python -m pytest # or python3 -m pytest
+pip install panel
 ```
 
-> Only a part of code have unit test.
+# :book: Quick Start
 
+Here are two classic scenarios:
 
-## Requirements
+## :small_orange_diamond: Embedding into Existing Projects
 
- - install lumo will automatically install three light other libraries: [fire](https://github.com/google/python-fire), [psutil](https://github.com/giampaolo/psutil), [joblib](https://github.com/joblib/joblib).
- - lumo has mandatory dependencies on `pytorch`, `pandas` and `numpy`, you should manully install these before using lumo since they are usually common-used.
- - lumo has an optional dependency on `GitPython` as a plugin to execute git command, you can run `pip install GitPython` to install it.
+For existing projects, you can quickly embed Lumo by following these steps:
 
-```shell
-pip install pandas numpy GitPython
-```
-and then see [pytorch](https://pytorch.org/) to install torch. 
-
-
-
-## Introduction
-
-Unlike other pytorch tools, `lumo` mainly designed for research, there are two core idea of it:
-
-1. Reduce repetition of your code.
-2. Make all operations **recordable**, **resumable**, **analyzable**.
-
-
-Your can click [Tutorial](https://sailist.github.io/lumo/tutorial/) to learn the basic use of this framework. After that, you can view [Cookbook](https://sailist.github.io/lumo/cookbook/) to see some details of this library.
-
-A suggested learning order may be：
-
- - Learn highly frequency used module: [Define hyperparameter(Params)](https://sailist.github.io/lumo/params)、[Record variable(Meter)](https://sailist.github.io/lumo/meter)、[Log(Logger)](/lumo/logger)、[Reshape your dataloader(DataBundler)](https://sailist.github.io/lumo/bundler) and their aggregation [Trainer](https://sailist.github.io/lumo/trainer).
- - Learn how to manage/analyse your experiment by [Config](https://sailist.github.io/lumo/exp) and [Experiment](https://sailist.github.io/lumo/exp)
- - Learn how to simple manage random seed by [RndManager](https://sailist.github.io/lumo/rnd) and to create your dataset elegantly by [DatasetBuilder](https://sailist.github.io/lumo/builder)
-
-After learning above contents, you can view [Cookbook](https://sailist.github.io/lumo/cookbook/) to learn the use of [tempelet code](https://sailist.github.io/lumo/structure) and other [details](https://sailist.github.io/lumo/details).
-
-You can also view another repository [lumo-implement](https://github.com/lumo/lumo-implement) to see a bigger example, it will continuously reimplement papers I interested by using the templete provided in `lumo`. 
-
-## Examples
-
-Before start, maybe you'd like to see some simple examples to learn what can `lumo` do.
-
-### Define hyperparameters
-By use `lumo.frame.Params`, you can define hyperparameters simply. See [Params](https://sailist.github.io/lumo/params) for details.
-```python 
-from lumo import Params
-params = Params()
-params.batch_size = 128
-params.from_args() # from command args
-
->>> python ap.py --optim.lr=0.001 --epoch=400 --dataset=cifar10 --k=12
-```
-### Record variable
-
-By using `lumo.frame.Meter`, you can record variable and update its average value with as little code as possible. See [Meter](https://sailist.github.io/lumo/meter) for details.
+- Import Lumo and initialize Logger and Experiment:
 
 ```python
-from lumo import Meter,AvgMeter
+import random
+from lumo import SimpleExperiment, Params, Logger, Meter, Record
 
-am = AvgMeter() # use for record average
-for j in range(500):
-    meter = Meter()
-    meter.percent(meter.c_) # when print, format 'c' as a percentage
-    meter.a = 1
-    meter.b = "2"
-    meter.c = torch.rand(1)[0]
-
-    meter.loss = loss_fn(...)
-    meter.rand = torch.rand(2)
-    meter.d = [4] # you can record any type of variable
-    meter.e = {5: "6"}
-
-    am.update(meter) # Update current value in meter. Average value will be calculated automatic by declaration and the type of the variable.
-    print(am)
+logger = Logger()
+exp = SimpleExperiment(exp_name='my_exp_a')
+exp.start()
+logger.add_log_dir(exp.mk_ipath())
 ```
 
+- Initialize parameters:
 
-## Contribute
+```python
+params = Params()
+params.dataset = params.choice('cifar10', 'cifar100')
+params.alpha = params.arange(default=1, left=0, right=10)
+params.from_args()  # python3 train.py --dataset=cifar100 --alpha=0.2
+print(params.to_dict())  # {"dataset": "cifar100", "alpha": 0.2}
+```
 
-`lumo` will be better in the future, but there are still some lack exists currently, including:
+- Record parameters and store information during training:
 
- - **Lack of more detail guide** because of the lacking of developer's energy and time.
- - **Lack more tests**. unit test only covers a part of the code. I hope I fixed all bugs during my using of it, but there is no guarantee of it. The compatibility is also unguaranteed. So, welcome to [issus](https://github.com/sailist/lumo/issues) it if you find it.
- - **Lack of development experience**. So the version number may be confused.
+```python
+exp.dump_info('params', params.to_dict())
+print(exp.test_name)
 
-Thanks for all contribution.
+params.to_yaml(exp.mk_ipath('params.yaml'))
+
+for i in range(10):
+    max_acc = exp.dump_metric('Acc', random.random(), cmp='max')
+    logger.info(f'Max acc {max_acc}')
+
+    ckpt_fn = exp.mk_bpath('checkpoints', f'model_{i}.ckpt')
+    ...  # save code given ckpt_fn
+
+record = Record()
+for batch in range(10):
+    m = Meter()
+    m.mean.Lall = random.random()
+    m.last.lr = batch
+    record.record(m)
+    logger.info(record)
+
+exp.end()
+```
+
+## :small_orange_diamond: Building from Scratch
+
+If you want to start a new deep learning experiment from scratch, you can use Lumo to accelerate your code development.
+Below are examples of Lumo training at different scales:
+
+one-fine training:
+
+| Example                                     | CoLab | Lines of Code |
+|---------------------------------------------|-------|---------------|
+| [MNIST example](./examples/mnist.py)        |       | 118           |
+| [MocoV2 trains CIFAR10](./examples/moco.py) || 284   |
+| [Multi-GPU training ImageNet]()             |||
+
+Experimental project:
+
+| Project                                                                                                       | Description                            |
+|-----------------------------------------------------------------------------------------------------------|-------------------------------|
+| [image-classification](https://github.com/pytorch-lumo/image-classification)                              | Reproducible code for multiple papers with full supervision, semi-supervision, and self-supervision      |
+| [emotion-recognition-in-coversation](https://github.com/pytorch-lumo/emotion-recognition-in-conversation) | Reproducible code for multiple papers on dialogue emotion classification and multimodal dialogue emotion classification |
 
 
+## :small_orange_diamond: Visual Interface
 
-For file read/write and get/set, I designed
+In jupyter:
 
-- [Params], to make runtime config get/set/load/dump easily,
-- [globs], a global/local/runtime environment variables manager.
-- [Saver], to help you save/load/manage your checkpoints/models in one class.
+```python
+from lumo import Watcher
 
-For data processing, I designed
+w = Watcher()
+df = w.load()
+widget = w.panel(df)
+widget.servable()
+```
 
-- [Builder], to hold nearly all dataset formats and special operations by one class,
+![Panel](./images/panel-example.png)
 
-For managing experiments, I designed
+Manually filtered experiments for visualization:
+![Panel](./images/panel-example2.png)
 
-- [Experiment], which can
-    - make you build a suitable directory and file path in one place,
-    - make you record lightweight data, and
-    - help you make snapshot for your project code (based on git), which can make each result recoverable and
-      reproducible
-- [random manager], a cross-lib(random/numpy/pytorch) random seed manager
+You can directly use the command line:
 
-For log and meter variables produced during experiment, I designed
+```
+lumo board [--port, --address, --open]
+```
 
-- [Meter] to meter every thing in appropriate format, and
-- [Logger] to log every thing in appropriate format.
+# :scroll: License
 
-Finally, I designed [Trainer] to bundle all module above for deep learning experiment.
-
-
-As you can see, These modules covered most demandings on deeplearning 
-
-You can find what you want and click the link to quickly learn HOW TO USE it! All module is designed easy to use, it's
-my principles.
-
-
+Distributed under the GNU General Public License 3.0. See [LICENSE](./LICENSE) for more information.
