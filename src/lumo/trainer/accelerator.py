@@ -53,6 +53,9 @@ class Accelerator:
         distributed.all_gather(output_tensors, tensor)
         return torch.cat(output_tensors, dim=0)
 
+    def backward(self, loss: torch.Tensor, **kwargs):
+        loss.backward(**kwargs)
+
 
 class HugAccelerator(Accelerator):
 
@@ -94,6 +97,9 @@ class HugAccelerator(Accelerator):
     def gather(self, tensor):
         return self._backbone.gather(tensor)
 
+    def backward(self, loss: torch.Tensor, **kwargs):
+        self._backbone.backward(loss, **kwargs)
+
 
 register = {
 
@@ -104,6 +110,6 @@ register = {
 }
 
 
-def get_accelerator(name: str, **kwargs):
+def get_accelerator(name: str, **kwargs) -> Accelerator:
     assert name in register, ', '.join(register.keys())
     return register[name](**kwargs)
