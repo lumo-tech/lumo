@@ -105,5 +105,5 @@ register = {
 
 
 def get_accelerator(name: str, **kwargs):
-    assert name not in register, ', '.join(register.keys())
+    assert name in register, ', '.join(register.keys())
     return register[name](**kwargs)
