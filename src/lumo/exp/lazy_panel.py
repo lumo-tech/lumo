@@ -98,8 +98,8 @@ tabulator_editors = {
     'progress': None,
     'progress_': None,
     'exception': None,
-    'note': {'type': 'list', 'valuesLookup': True},
-    'tags': {'type': 'list', 'valuesLookup': True},
+    # 'note': {'type': 'list', 'valuesLookup': True},
+    # 'tags': {'type': 'list', 'valuesLookup': True},
 }
 
 
