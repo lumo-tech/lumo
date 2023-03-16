@@ -1,22 +1,16 @@
 import bisect
 import os
-import sys
 import warnings
-from datetime import datetime
 from functools import lru_cache
-from pprint import pformat
 from typing import Union, Dict, Any, Optional, Sequence, Mapping, Callable
 
 import numpy as np
 import torch
-from accelerate import DistributedDataParallelKwargs
-from accelerate.data_loader import DataLoaderDispatcher, DataLoaderShard
+from .accelerator import get_accelerator
 from torch import nn
 from torch.optim import Optimizer
 from torch.utils.data import DataLoader
-import json
-from lumo.contrib.accelerate import Accelerator
-from lumo.contrib.accelerate.utils import send_to_device
+from lumo.utils.device import send_to_device
 from lumo.core import TrainStage, Record, MetricType, Meter
 from lumo.core.disk import TableRow, Metrics
 from lumo.data import DataModule
@@ -29,11 +23,6 @@ from lumo.utils.logger import Logger
 from .base import _BaseTrainer
 from .components import TrainerExperiment, TrainerParams
 from .saver import Saver
-
-# overwrite send_to_device to resolve https://github.com/pytorch/pytorch/issues/83015
-# from accelerate import Accelerator
-# from accelerate.utils import send_to_device
-from ..utils.fmt import strftime, indent_print
 
 ParamsType = TrainerParams
 
@@ -74,7 +63,7 @@ class Trainer(_BaseTrainer):
             raise TypeError(
                 f"Can't instantiate abstract class {cls.__name__} directly, please create a subclass of it.")
 
-    def __init__(self, params: ParamsType, dm: DataModule = None):
+    def __init__(self, params: ParamsType, dm: DataModule = None, accelerator='accelerator'):
         if dm is None:
             dm = DataModule(params)
         else:
@@ -100,13 +89,12 @@ class Trainer(_BaseTrainer):
         self.train_toggle = False
 
         device = params.get('device', None) if not self.is_dist else None
+        # self.accelerate = Accelerator(kwargs_handlers=[
+        #     DistributedDataParallelKwargs(find_unused_parameters=params.get('find_unused_parameters', False))
+        # ])
+        self.accelerate = get_accelerator(accelerator)
 
-        self.accelerate = Accelerator(kwargs_handlers=[
-            DistributedDataParallelKwargs(find_unused_parameters=params.get('find_unused_parameters', False))
-        ])
-
-        if self.accelerate.state.distributed_type == self.accelerate.state.distributed_type.NO:
-            self.accelerate.state.device = torch.device(device)
+        self.accelerate.set_device(torch.device(device))
 
         if dist.is_main():
             self.params.to_yaml(self.exp.params_fn)
@@ -405,7 +393,7 @@ class Trainer(_BaseTrainer):
         Returns:
             The device used for training.
         """
-        return self.accelerate.device
+        return torch.device(self.params.device)
 
     def _load_fun_state_dict(self, src: dict):
         """
@@ -577,17 +565,7 @@ class Trainer(_BaseTrainer):
         :param stage:
         :return:
         """
-        if isinstance(loader, (DataLoaderShard, DataLoaderDispatcher)):
-            warnings.warn('Duplicated prepare a same DataLoader twice, check your code.')
-            return loader
-
-        split_batches = self.params.get('split_batches', None)
-        if stage is not None and not stage.is_train():
-            split_batches = True
-
-        """do not change original loader stage"""
         if isinstance(loader, DataLoader):
-            self.accelerate.split_batches = split_batches
             loader = self.accelerate.prepare_data_loader(loader)
         elif isinstance(loader, DataLoaderSide):
             loader = loader.copy()

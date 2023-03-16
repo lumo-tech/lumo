@@ -10,7 +10,7 @@ class Accelerator(_Accelerator):
     the device of data will be controlled by Trainer rather than Accelerator.
     """
 
-    def prepare_data_loader(self, data_loader):
+    def prepare_data_loader(self, data_loader, **kwargs):
         return prepare_data_loader(
             data_loader,
             None,  # None instead of self.device,

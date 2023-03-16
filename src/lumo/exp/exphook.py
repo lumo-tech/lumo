@@ -198,11 +198,9 @@ class LockFile(ExpHook):
                          'joblib',
                          'fire',
                          'psutil',
-                         'accelerate',
                          'hydra',
                          'omegaconf',
                          'decorator',
-
                          'numpy',
                          'torch',
                          )
