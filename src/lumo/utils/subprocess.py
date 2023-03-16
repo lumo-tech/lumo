@@ -13,7 +13,7 @@ def consume(p: subprocess.Popen):
             print(line, end='')
 
 
-def run_command(command, cwd=None, env=None, non_block=False):
+def run_command(command: str, cwd=None, env=None, non_block=False):
     """
     Executes a command in the shell and captures its standard output and standard error.
 
