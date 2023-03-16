@@ -51,23 +51,33 @@ pip install panel
 
 对已有项目，可以通过以下方式快速嵌入
 
+ - 引入
 ```python
 import random
 from lumo import SimpleExperiment, Params, Logger, Meter, Record
+```
 
+ - 初始化 Logger 和 Experiment
+```python
 logger = Logger()
 # 定义及使用，无需转换
 exp = SimpleExperiment(exp_name='my_exp_a')  # 为每种实验手动定义唯一名称
 exp.start()
 logger.add_log_dir(exp.mk_ipath())
+```
 
+ - 初始化参数
+```python
 # 替换基于 argparse 等的参数定义方法
 params = Params()
 params.dataset = params.choice('cifar10', 'cifar100')
 params.alpha = params.arange(default=1, left=0, right=10)
 params.from_args()  # python3 train.py --dataset=cifar100 --alpha=0.2
 print(params.to_dict())  # {"dataset": "cifar100", "alpha": 0.2}
+```
 
+ - 在训练过程中记录参数、存储信息
+```python
 # 记录实验参数
 exp.dump_info('params', params.to_dict())
 print(exp.test_name)  # 为每次实验自动分配唯一名称
@@ -111,10 +121,10 @@ exp.end()
 
 实验项目：
 
-| 项目                     | 说明                       |
-|------------------------|--------------------------|
-| [image-classification] | 集成了全监督、半监督、自监督的多个论文的复现代码 |
-| [emotion-recognition]  | 集成了情感分类、多模态情感分类的多个论文的复现代码 |
+| 项目                                                                                                        | 说明                            |
+|-----------------------------------------------------------------------------------------------------------|-------------------------------|
+| [image-classification](https://github.com/pytorch-lumo/image-classification)                              | 集成了全监督、半监督、自监督的多个论文的复现代码      |
+| [emotion-recognition-in-coversation](https://github.com/pytorch-lumo/emotion-recognition-in-conversation) | 集成了对话情感分类、多模态对话情感分类的多个论文的复现代码 |
 
 ## :small_orange_diamond: 可视化界面
 
@@ -131,7 +141,7 @@ widget.servable()
 
 ![Panel](./images/panel-example.png)
 
-将按手动条件过滤后的实验筛选出来：
+可视化手动筛选后的实验：
 ![Panel](./images/panel-example2.png)
 
 可以直接使用命令行打开页面查看当前所有实验：
