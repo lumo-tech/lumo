@@ -1,20 +1,16 @@
+import numbers
+
 try:
     import panel as pn
 except ImportError as e:
     raise ImportError('The experiment panel is supported by panel, '
                       'you should use it by `pip install panel` first.') from e
 
-from typing import Any
-
-from bokeh.core.property.primitive import String
-from bokeh.plotting import figure
 import pandas as pd
 from panel.models.tabulator import TableEditEvent
 
-from lumo.exp.watch import Watcher
-import datetime as dt
 import numpy as np
-from bokeh.models.widgets.tables import HTMLTemplateFormatter, NumberFormatter, TextEditor, StringEditor
+from bokeh.models.widgets.tables import HTMLTemplateFormatter
 from lumo import Experiment
 
 css = '''
@@ -48,7 +44,7 @@ css = '''
 pn.extension('tabulator', raw_css=[css], css_files=[pn.io.resources.CSS_URLS['font-awesome']])
 
 
-def DictFormatter(column_name):
+def FoldDictFormatter(column_name):
     base_template = """
     <details style="overflow: visible;">
         <summary>{column_name}</summary>
@@ -57,6 +53,15 @@ def DictFormatter(column_name):
         <% }); %>
     </details>"""
     return HTMLTemplateFormatter(template=base_template.replace('{column_name}', column_name))
+
+
+def DictFormatter(column_name):
+    base_template = """
+        <% _.each(value, function(vv, key) { %>
+            <li><b><%= key %>:</b> <%= vv %></li>
+        <% }); %>
+    """
+    return HTMLTemplateFormatter(template=base_template)
 
 
 class ExceptionFormatter:
@@ -79,9 +84,9 @@ progress_formatter = HTMLTemplateFormatter(
 
 tabulator_formatters = {
     'metrics': DictFormatter(column_name='metrics'),
-    'progress_': DictFormatter(column_name='progress'),
+    'progress_': FoldDictFormatter(column_name='progress'),
     'progress': progress_formatter,
-    'params': DictFormatter(column_name='params'),
+    'params': FoldDictFormatter(column_name='params'),
     'exception': HTMLTemplateFormatter(template=ExceptionFormatter.base_template),
 }
 
@@ -93,8 +98,54 @@ tabulator_editors = {
     'progress': None,
     'progress_': None,
     'exception': None,
-    'str': {'type': 'list', 'valuesLookup': True},
+    'note': {'type': 'list', 'valuesLookup': True},
+    'tags': {'type': 'list', 'valuesLookup': True},
 }
+
+
+def drop_nonscalar_metric(dic):
+    if not isinstance(dic, dict):
+        return
+
+    for k, v in list(dic.items()):
+        if not isinstance(v, numbers.Number):
+            dic.pop(k)
+    return dic
+
+
+def reformat_progress(dic):
+    if not isinstance(dic, dict):
+        return {
+            'ratio': '100%',
+            'color': 'yellow',
+        }
+
+    ratio = dic.get('ratio', 0)
+    end_code = dic.get('end_code', None)
+
+    # normal end ->  end_code == 0 -> green
+    # interrupt by exception ->  end_code > 0 -> red
+    # running -> end_code is None -> blue
+    # killed without any signal ( in 5 minute ) ->  end_code is None -> blue
+    # killed and dumped by watcher ->  end_code == -10 -> red
+
+    if end_code is None:
+        color = 'blue'
+    elif ratio == 1:
+        color = 'green'
+    elif end_code == 0:
+        color = 'green'
+    elif end_code > 0 or end_code < 0:
+        color = 'red'
+        if ratio == 0:
+            ratio = 0.01
+    else:
+        color = 'black'
+
+    return {
+        'ratio': f'{ratio:2%}',
+        'color': color,
+    }
 
 
 def make_experiment_tabular(df: pd.DataFrame):
@@ -117,40 +168,11 @@ def make_experiment_tabular(df: pd.DataFrame):
         df['exception'] = {}
     else:
         df['exception'].fillna({})
+
     if 'tags' not in df.columns:
         df['tags'] = np.empty((len(df.index), 0)).tolist()
 
-    def reformat_progress(dic):
-        if not isinstance(dic, dict):
-            return {
-                'ratio': '100%',
-                'color': 'yellow',
-            }
-
-        ratio = dic.get('ratio', 0)
-        end_code = dic.get('end_code', None)
-
-        # normal end ->  end_code == 0 -> green
-        # interrupt by exception ->  end_code > 0 -> red
-        # running -> end_code is None -> blue
-        # killed without any signal ( in 5 minute ) ->  end_code is None -> blue
-        # killed and dumped by watcher ->  end_code == -10 -> red
-
-        if end_code is None:
-            color = 'blue'
-        elif ratio == 1:
-            color = 'green'
-        elif end_code == 0:
-            color = 'green'
-        elif end_code > 0 or end_code < 0:
-            color = 'red'
-            if ratio == 0:
-                ratio = 0.01
-
-        return {
-            'ratio': f'{ratio:2%}',
-            'color': color,
-        }
+    df['metrics'] = df['metrics'].apply(drop_nonscalar_metric)
 
     # df['progress_'] = df['progress']
     df['progress'] = df['progress'].apply(reformat_progress)
@@ -158,11 +180,14 @@ def make_experiment_tabular(df: pd.DataFrame):
     # ratio = 1
     # ratio < 1, no-end-code ->
 
-    columns = set(df.columns) - {'git', 'paths', 'pinfo',
-                                 'execute', 'lock', 'params.yaml',
-                                 'params_hash', 'table_row', 'hooks', 'logger_args',
-                                 'agent', 'trainer', 'progress_',
-                                 'metric_board'}
+    extra_columns = set(df.columns) - {'git', 'paths', 'pinfo',
+                                       'execute', 'lock', 'params.yaml',
+                                       'params_hash', 'table_row', 'hooks', 'logger_args',
+                                       'agent', 'trainer', 'progress_',
+                                       'start', 'end',
+                                       'tensorboard_args',
+                                       'state',
+                                       'metric_board'}
     top_columns = [
         'exp_name', 'test_name',
         'progress',
@@ -171,9 +196,10 @@ def make_experiment_tabular(df: pd.DataFrame):
         'note', 'tags',
     ]
 
-    columns = columns - set(top_columns)
+    extra_columns = extra_columns - set(top_columns)
+    [tabulator_editors.setdefault(k, None) for k in extra_columns]
 
-    df = df[top_columns + list(columns)]
+    df = df[top_columns + list(extra_columns)]
 
     def on_cell_change(e: TableEditEvent):
         nonlocal df
