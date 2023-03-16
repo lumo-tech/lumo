@@ -19,6 +19,8 @@ class ScanBaseParams(Params):
         self.gpus = None
         self.group = None
         self.interval = 5  # sleep interval between two tests
+        self.skip = 0
+        self.n = -1
 
 
 def format_args(**kwargs):
@@ -49,7 +51,12 @@ def base_main(pm: ScanBaseParams, files: List[str], dics: List[dict]):
     gpus.append(None)
     gpus = cycle(gpus)
     c = 0
+    cnt = 0
     for i, (file, kwargs) in enumerate(zip(files, dics)):
+        if pm.skip > cnt:
+            cnt += 1
+            continue
+
         device = next(gpus)
         if device is None:
             # wait until all devices are free.
@@ -66,7 +73,13 @@ def base_main(pm: ScanBaseParams, files: List[str], dics: List[dict]):
             sleep=c * pm.interval,
             file=file, kwargs=format_args(**kwargs),
             device=device, group=group)
+
         c += 1
+        cnt += 1
         log.info(cur.strip())
         print(cur, flush=True, end='')
+
+        if pm.n > 0 and pm.skip + pm.n <= cnt:
+            break
+
     print('wait', flush=True)
