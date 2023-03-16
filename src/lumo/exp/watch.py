@@ -457,6 +457,7 @@ class Watcher:
                                       {
                                           'end': strftime(), 'end_code': -10,
                                           'msg': 'ended by watcher'}
+                                      , append=True
                                       )
                         os.remove(pid_f)
                 except:
