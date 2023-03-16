@@ -1,6 +1,6 @@
 import yaml
 from lumo.utils.safe_io import *
-
+import os
 
 def test_dump_json(tmpdir):
     # Test that dump_json creates a valid JSON file
