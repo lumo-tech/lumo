@@ -234,8 +234,8 @@ def main():
     else:  # not distributed or in distribution environment
         # create datamodule to contain dataloader
         ds, test_ds = make_dataset(dummy=params.dummy)
-        dl = ds.DataLoader(batch_size=params.batch_size)
-        test_dl = test_ds.DataLoader(batch_size=params.batch_size)
+        dl = ds.DataLoader(batch_size=params.batch_size, num_workers=4)
+        test_dl = test_ds.DataLoader(batch_size=params.batch_size, num_workers=4)
         dm = DataModule()
         dm.regist_dataloader(train=dl, test=test_dl)
 

@@ -267,9 +267,9 @@ def main():
     params.from_args()
 
     # create datamodule to contain dataloader
-    dl = ds.DataLoader(batch_size=params.batch_size)
-    memo_dl = memo_ds.DataLoader(batch_size=params.batch_size)
-    test_dl = test_ds.DataLoader(batch_size=params.batch_size)
+    dl = ds.DataLoader(batch_size=params.batch_size, num_workers=2)
+    memo_dl = memo_ds.DataLoader(batch_size=params.batch_size, num_workers=2)
+    test_dl = test_ds.DataLoader(batch_size=params.batch_size, num_workers=2)
     dm = DataModule()
     dm.regist_dataloader(train=dl,
                          test=test_dl,
