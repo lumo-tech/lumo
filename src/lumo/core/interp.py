@@ -281,7 +281,7 @@ class ABCPeriod(Interpolate):
 
 
 class Cos(ABCContinuous):
-    """one cycle cosine functoin
+    r"""one cycle cosine functoin
 
       end ->         ,---------
                     /
@@ -309,7 +309,7 @@ class Cos(ABCContinuous):
 
 
 class Linear(ABCContinuous):
-    """linear schedule
+    r"""linear schedule
 
             ^
     end     |               .*
@@ -359,7 +359,7 @@ class Exp(ABCContinuous):
 
 
 class Log(ABCContinuous):
-    """
+    r"""
     quick to slow
 
      end   |                              *
@@ -395,7 +395,7 @@ class Log(ABCContinuous):
 
 
 class Constant(ABCContinuous):
-    """
+    r"""
     A scheduler representing a constant value
                 |
     constant    |--------------
@@ -410,7 +410,7 @@ class Constant(ABCContinuous):
 
 
 class PeriodCos(ABCPeriod):
-    """
+    r"""
     periodic cosine schedule
 
       end ->         ,-.     ,-.     ,-.     ,-.
@@ -432,7 +432,7 @@ class PeriodCos(ABCPeriod):
 
 
 class PeriodHalfCos(ABCPeriod):
-    """
+    r"""
     half periodic cosine schedule, period is (right-left)
 
       end ->         ,-  ,-  ,-  ,-
