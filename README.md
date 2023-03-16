@@ -152,4 +152,4 @@ lumo board [--port, --address, --open]
 
 # :scroll: License
 
-Distributed under the GNU General Public License 3.0. See [LICENSE](./LICENSE) for more information.
+Distributed under the Apache License Version 2.0. See [LICENSE](./LICENSE) for more information.

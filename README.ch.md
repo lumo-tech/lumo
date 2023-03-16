@@ -158,5 +158,5 @@ lumo board [--port, --address, --open]
 
 # :scroll: License
 
-采用 [GNU General Public License 3.0 协议](./LICENSE)。
+采用 [Apache License Version 2.0](./LICENSE) 协议分发。
 
