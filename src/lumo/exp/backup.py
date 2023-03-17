@@ -2,6 +2,7 @@ from .experiment import Experiment
 import os
 from pprint import pformat
 from lumo.utils.fmt import strftime
+import re
 
 issue_title = """Test {test_name}"""
 
@@ -97,9 +98,15 @@ def make_summary(exp: Experiment, **kwargs):
         properties=properties_str,
     )
 
-    username = os.getlogin()
+    try:
+        username = os.getlogin()
+    except OSError:
+        pass
+
+    # hide privacy path, only show relative path
     home_with_name = os.path.expanduser('~')
-    body = body.replace(home_with_name, '~').replace(username, '{username}')
+    body = re.sub("""'[^']*\.lumo""", '.lumo', body)
+    body = body.replace(home_with_name, '~')
 
     return body
 
