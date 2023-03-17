@@ -69,7 +69,7 @@ class Condition:
     # create a sample DataFrame
     data = {'name': ['Alice', 'Bob', 'Charlie', 'David', 'Emily'],
             'age': [25, 30, 35, 40, 45],
-            'city': ['New York', 'Los Angeles', 'Chicago', 'Houston', 'Miami']}
+            'city': [{'index':0}, {'index':1}, {'index':2},{'index':3},{'index':4}]}
     df = pd.DataFrame(data)
 
     # create and apply the condition to filter the DataFrame
@@ -117,32 +117,34 @@ class Condition:
         return Condition(item)
 
     def __add__(self, other):
-        self.op = 'add_column'
-        self.value = {}
-        self.op
+        c = Condition()
+        c.op = 'add_column'
+        c.value = {}
         if isinstance(other, str):
-            self.value[other] = other
+            c.value[other] = other
         elif isinstance(other, dict):
-            self.value.update(other)
+            c.value.update(other)
         else:
             raise NotImplementedError()
-        return self
+        return c
 
     def __sub__(self, other):
-        self.name = None
-        self.op = 'drop_column'
-        self.value = {}
+        c = Condition()
+        c.name = None
+        c.op = 'drop_column'
+        c.value = {}
         if isinstance(other, str):
-            self.value.update({other: None})
+            c.value.update({other: None})
         elif isinstance(other, (list, set, dict)):
-            self.value.update({k: None for k in other})
+            c.value.update({k: None for k in other})
         else:
             raise NotImplementedError()
-        return self
+        return c
 
     def __neg__(self):
-        self.op = 'drop_column'
-        return self
+        c = Condition()
+        c.op = 'drop_column'
+        return c
 
     def __ge__(self, other):
         if other is None:
@@ -243,6 +245,8 @@ class Condition:
                 var = [self.value]
             else:
                 var = list(self.value)
+            print(var)
+            print(df.columns)
             df = df.drop(var, axis=1)
         else:
             assert isinstance(self.value, dict)
