@@ -10,7 +10,7 @@ from torch.utils.data import DataLoader
 
 from lumo import DatasetBuilder, MetricType, Trainer, TrainerParams, Meter, callbacks, DataModule
 from lumo.contrib import EMA, MemoryBank, StorageBank
-from lumo.contrib.accelerate.utils import send_to_device
+
 from lumo.contrib.nn.loss import contrastive_loss2
 from lumo.proc.path import cache_dir
 from torchvision.datasets.cifar import CIFAR10
@@ -18,6 +18,8 @@ from torchvision import transforms
 from torchvision.models.resnet import resnet18
 from torch import nn
 from torch.nn import functional as F
+
+from lumo.utils.device import send_to_device
 
 """define transforms"""
 

@@ -6,7 +6,7 @@ import torch
 from PIL import Image
 from torch.utils.data import DataLoader
 import os
-
+import torch.multiprocessing as mp
 from torchvision.datasets.folder import default_loader
 
 from lumo import DatasetBuilder, MetricType, Trainer, TrainerParams, Meter, callbacks, DataModule
@@ -221,31 +221,38 @@ class LargeTrainer(Trainer):
         return m
 
 
-def main():
+def main_worker(device, ngpus_per_node, args):
+    # create datamodule to contain dataloader
     params = LargeParams()
+    params.device = device
     params.from_args()
 
-    if params.multiprocessing_distributed and not is_dist():
-        command = ' '.join([
-            'accelerate', 'launch',
-            *sys.argv,
-        ])
-        run_command(command)
-    else:  # not distributed or in distribution environment
-        # create datamodule to contain dataloader
-        ds, test_ds = make_dataset(dummy=params.dummy)
-        dl = ds.DataLoader(batch_size=params.batch_size, num_workers=4)
-        test_dl = test_ds.DataLoader(batch_size=params.batch_size, num_workers=4)
-        dm = DataModule()
-        dm.regist_dataloader(train=dl, test=test_dl)
+    ds, test_ds = make_dataset(dummy=params.dummy)
+    dl = ds.DataLoader(batch_size=params.batch_size, num_workers=4)
+    test_dl = test_ds.DataLoader(batch_size=params.batch_size, num_workers=4)
+    dm = DataModule()
+    dm.regist_dataloader(train=dl, test=test_dl)
 
-        # with the input of params and dataloader, the initialization of models and optimizers in Trainer,
-        # then the output will be the trained parameters, metrics and logs.
-        trainer = LargeTrainer(params, dm=dm)
+    # with the input of params and dataloader, the initialization of models and optimizers in Trainer,
+    # then the output will be the trained parameters, metrics and logs.
+    trainer = LargeTrainer(params, dm=dm)
 
-        trainer.train()  # or trainer.train(dm=dl) if dm are not given above
-        trainer.test()  # or trainer.test(dm=dl)
-        trainer.save_last_model()
+    trainer.train()  # or trainer.train(dm=dl) if dm are not given above
+    trainer.test()  # or trainer.test(dm=dl)
+    trainer.save_last_model()
+
+
+def main():
+    # if params.multiprocessing_distributed and not is_dist():
+    #     mp.spawn(main, nprocs=torch.cuda.device_count(), args=(ngpus_per_node, args))
+    #     command = ' '.join([
+    #         'accelerate', 'launch',
+    #         *sys.argv,
+    #     ])
+    #     print(command)
+    #     run_command(command)
+    # else:  # not distributed or in distribution environment
+    pass
 
 
 if __name__ == '__main__':
