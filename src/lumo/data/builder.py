@@ -20,12 +20,15 @@ class DatasetBuilder(Dataset):
     A subclass of the Dataset class designed for quick and common dataset construction.
 
     For instance, a simple CIFAR-10 Dataset in (x, y) format can be easily created using the following code:
+
     ```python
     from torchvision.datasets.cifar import CIFAR10
     ds = CIFAR10(...)
     x,y = ds[0]
     ```
+
     However, there may be requirements to modify the format, such as (x1, x2, y), due to tricks like cutmix or multiple argument transformers. In this case, we need to extend the CIFAR10 class as follows:
+
     ```python
     class MyCIFAR10(CIFAR10):
         def __getitem__(self,index):
@@ -49,17 +52,20 @@ class DatasetBuilder(Dataset):
     ```
 
     Next, we define the outputs. If we want the output format to be (xs, ys), we can use the following code:
+
     ```python
     (ds
         .add_output('xs','xs')
         .add_output('ys','ys')
     )
     ```
+
     The function `.add_output(source_name, output_name)` defines a data flow from input to output.
     In `.add_output('xs', 'xs')`, the input is `source.data` named as 'xs', and the output is also named as 'xs'.
     If we want to rename the output name to 'xs1', we can use .add_output('xs', 'xs1').
 
     Now you can see the benefits of this approach. If you need an output format like `(xs1, xs2, ys)`, you just need to modify the code as follows:
+
     ```python
     (ds
         .add_output('xs','xs1')
@@ -69,6 +75,7 @@ class DatasetBuilder(Dataset):
     ```
 
     Besides, you can access the index of each data by `.add_idx('name')`.
+
     ```
     ds.add_idx('idx')
     print(ds[0])
