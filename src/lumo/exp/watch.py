@@ -231,7 +231,7 @@ class Condition:
             if isinstance(value, pd.DataFrame):
                 value = value[i]
             else:
-                value = value.apply(lambda x: x.get(i, {}))
+                value = value.apply(lambda x: x.get(i) if isinstance(x, dict) else None)
         return mapping[self.op](value, self.value)
 
     def capply(self, df):
@@ -257,7 +257,7 @@ class Condition:
                     if isinstance(value, pd.DataFrame):
                         value = value[i]
                     else:
-                        value = value.apply(lambda x: x.get(i, {}))
+                        value = value.apply(lambda x: x.get(i) if isinstance(x, dict) else None)
                 df[aim] = value
         return df
 
