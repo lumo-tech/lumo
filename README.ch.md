@@ -18,6 +18,8 @@
     - 分布式训练：同样支持多种训练加速框架，统一抽象，方便随时切换
 - 更多工具类...
 
+![lumo-framework](./images/lumo-intro.png)
+
 # :book: 目录
 
 - :book: [目录](#book-目录)

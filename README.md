@@ -25,6 +25,8 @@ and focuses on enhancing the experience of deep learning practitioners.
       switching at any time.
 - More utilities...
 
+![lumo-framework](./images/lumo-intro.png)
+
 # :book: Table of Contents
 
 - :cloud: [Installation](#cloud-installation)
@@ -35,7 +37,7 @@ and focuses on enhancing the experience of deep learning practitioners.
   - :small_orange_diamond: [re-run](#small_orange_diamond-re-run)
   - :small_orange_diamond: [backup](#small_orange_diamond-backup)
 - :scroll: [License](#scroll-license)
-- 
+
 # :cloud: Installation
 
 Install the published and tested version:
