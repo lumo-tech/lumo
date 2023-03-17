@@ -6,6 +6,7 @@ from datetime import datetime, timedelta
 
 import numpy as np
 import torch
+from lumo.proc.tz import timezone
 
 from . import re
 
@@ -42,7 +43,7 @@ def strftime(fmt='%y-%m-%d-%H%M%S', dateobj: datetime = None):
     """get current date with formatted"""
     if dateobj is not None:
         return dateobj.strftime(fmt)
-    return datetime.now().strftime(fmt)
+    return datetime.now(timezone()).strftime(fmt)
 
 
 def strptime(datestr: str = None, fmt='%y-%m-%d-%H%M%S', ):
@@ -72,7 +73,15 @@ def indent_print(text, indent='    '):
 
 
 def format_second(sec: int) -> str:
-    """Formats a duration given in seconds into a human-readable string."""
+    """
+    Formats a duration given in seconds into a human-readable string.
+
+    Args:
+        sec: the duration in seconds.
+
+    Returns:
+        A human-readable string representing the duration.
+    """
     sec, ms = divmod(sec, 1)
     if sec > 60:
         min, sec = divmod(sec, 60)
@@ -90,5 +99,14 @@ def format_second(sec: int) -> str:
     return fmt
 
 
-def format_timedelta(td: timedelta):
+def format_timedelta(td: timedelta) -> str:
+    """
+    Formats a timedelta object into a human-readable string.
+
+    Args:
+        td: a timedelta object.
+
+    Returns:
+        A human-readable string representing the timedelta.
+    """
     return format_second(td.total_seconds())

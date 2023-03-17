@@ -9,7 +9,7 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime
 from functools import wraps
 from typing import NewType, Any, Optional, Dict, Union
-
+from lumo.proc.tz import timezone
 import psutil
 from torch.utils.data import DataLoader
 
@@ -353,6 +353,7 @@ class LoggerCallback(TrainCallback, InitialCallback):
         self.step = step_frequence
         file = tempfile.TemporaryFile('w')
         self.temp = file
+        self.cur_tqdm = None
 
     def on_imodels_end(self, trainer: Trainer, func, params: ParamsType, result: Any, *args, **kwargs):
         super().on_imodels_end(trainer, func, params, result, *args, **kwargs)
@@ -404,12 +405,14 @@ class LoggerCallback(TrainCallback, InitialCallback):
                 TrainStage.train in self.stage and ((trainer.idx + 1) == self.stage[TrainStage.train])):
             trainer.logger.inline(self.cur_tqdm.full_str())
             trainer.logger.newline()
+            trainer.exp.trigger()
 
     def flush(self, trainer: Trainer):
         """Flush"""
         self.c = 0
-        trainer.logger.inline(self.cur_tqdm)
-        trainer.logger.newline()
+        if self.cur_tqdm is not None:
+            trainer.logger.inline(self.cur_tqdm)
+            trainer.logger.newline()
 
     def on_train_epoch_begin(self, trainer: Trainer, func, params: ParamsType, *args, **kwargs):
         super().on_train_epoch_begin(trainer, func, params, *args, **kwargs)
@@ -707,7 +710,7 @@ class RemoteCallback(InitialCallback, TrainCallback):
         task = self.executor.submit(self.req.post, self.url, json={'data': data,
                                                                    'type': 'timeevent',
                                                                    'from': 'lumo.RemoteCallback',
-                                                                   'datetime': datetime.now().isoformat()})
+                                                                   'datetime': datetime.now(timezone()).isoformat()})
         self.submits.append(task)
 
     def on_hooked(self, source: Trainer, params: ParamsType):
@@ -805,7 +808,7 @@ class SkipWhenParamsEq(TrainCallback, InitialCallback):
     def on_hooked(self, source: Trainer, params: ParamsType):
         super().on_hooked(source, params)
         from dbrecord import PDict
-        from lumo.exp.finder import is_test_root
+        from lumo.exp.watch import is_test_root
         self.fn = source.exp.mk_rpath('contrib', 'params_key.sqlite')
         olds = PDict(self.fn)
 

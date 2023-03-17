@@ -89,11 +89,13 @@ class RecordAbort(ExpHook):
         import traceback
         res = traceback.format_exception(exc_type, exc_val, exc_tb)
         res = [i for i in res if 'in _newfunc' not in i]
-        self.exp.dump_string('exception', "".join(res))
-        self.exp.end(
-            end_code=1,
-            exc_type=traceback.format_exception_only(exc_type, exc_val)[-1].strip()
-        )
+
+        self.exp.dump_info('exception', {
+            'exception_type': exc_type.__name__,
+            'exception_content': "".join(res)
+        })
+
+        self.exp.end(end_code=1)
 
 
 # class TimeMonitor(ExpHook):
@@ -196,11 +198,9 @@ class LockFile(ExpHook):
                          'joblib',
                          'fire',
                          'psutil',
-                         'accelerate',
                          'hydra',
                          'omegaconf',
                          'decorator',
-
                          'numpy',
                          'torch',
                          )

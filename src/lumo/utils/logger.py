@@ -128,7 +128,7 @@ class Logger:
             return None, None
 
         if self.adddate and not raw:
-            cur_date = datetime.now().strftime(self.datefmt)
+            cur_date = strftime(self.datefmt)
         else:
             cur_date = ""
 

@@ -112,6 +112,7 @@ def metricroot():
 
 
 def dbroot():
+    """Root path to store experiment information. Default is `~/.lumo/database`"""
     DB_ROOT = glob.get('db_root', None)
     if DB_ROOT:
         res = DB_ROOT

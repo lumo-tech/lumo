@@ -1,6 +1,7 @@
-from accelerate.utils import gather
-from lumo.proc.dist import is_dist
+from torch import distributed
+from lumo.proc.dist import is_dist, gather
 import torch.distributed
+
 from torch import nn
 import torch
 

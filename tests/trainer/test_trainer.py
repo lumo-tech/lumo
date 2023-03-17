@@ -72,9 +72,8 @@ class CBTrainer(Trainer):
                   device_args_kwargs=None):
         return super().to_device(item, device_args_kwargs)
 
-    def prepare_dataloader(self, stage: TrainStage, dataloader=None):
-        # assert self.context == 'prepare_dataloader'
-        return super().prepare_dataloader(stage, dataloader)
+    def prepare_dataloader(self, loader: DataLoaderType, stage: TrainStage = None):
+        return super().prepare_dataloader(loader, stage)
 
     def initialize(self):
         if not self.is_initialized:

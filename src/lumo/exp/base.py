@@ -88,7 +88,7 @@ class BaseExpHook:
 
         """
 
-    def __repr__(self):
+    def __str__(self):
         """Return a string representation of the hook.
 
         Returns:

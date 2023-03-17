@@ -1,37 +1,28 @@
 import bisect
 import os
-import sys
 import warnings
-from datetime import datetime
 from functools import lru_cache
 from typing import Union, Dict, Any, Optional, Sequence, Mapping, Callable
 
 import numpy as np
 import torch
-from accelerate import DistributedDataParallelKwargs
-from accelerate.data_loader import DataLoaderDispatcher, DataLoaderShard
+from .accelerator import get_accelerator
 from torch import nn
 from torch.optim import Optimizer
 from torch.utils.data import DataLoader
-import json
-from lumo.contrib.accelerate import Accelerator
-from lumo.contrib.accelerate.utils import send_to_device
+from lumo.utils.device import send_to_device
 from lumo.core import TrainStage, Record, MetricType, Meter
 from lumo.core.disk import TableRow, Metrics
 from lumo.data import DataModule
 from lumo.data.loader import DataLoaderType, DataLoaderSide
 from lumo.proc import dist
 from lumo.proc import glob
+from lumo.utils import safe_io as IO
 from lumo.trainer.rnd import RndManager
 from lumo.utils.logger import Logger
 from .base import _BaseTrainer
 from .components import TrainerExperiment, TrainerParams
 from .saver import Saver
-
-# overwrite send_to_device to resolve https://github.com/pytorch/pytorch/issues/83015
-# from accelerate import Accelerator
-# from accelerate.utils import send_to_device
-from ..utils.fmt import strftime
 
 ParamsType = TrainerParams
 
@@ -72,7 +63,7 @@ class Trainer(_BaseTrainer):
             raise TypeError(
                 f"Can't instantiate abstract class {cls.__name__} directly, please create a subclass of it.")
 
-    def __init__(self, params: ParamsType, dm: DataModule = None):
+    def __init__(self, params: ParamsType, dm: DataModule = None, accelerator=None):
         if dm is None:
             dm = DataModule(params)
         else:
@@ -85,30 +76,37 @@ class Trainer(_BaseTrainer):
         self._saver = None
 
         self.params.iparams()
-        self.exp = TrainerExperiment(self.generate_exp_name())
+        self.exp = TrainerExperiment(exp_name=self.generate_exp_name())
 
         self._database = TableRow(self.exp.mk_ipath('metric.pkl'), persistent=self.is_main)
         self.metric_board = Metrics(self.exp.mk_bpath('board.sqlite'), persistent=self.is_main)
         self.metric = self.exp.metric
 
-        self.exp.dump_info('metric_board', self.metric_board.fpath)
-        self.exp.dump_info('table_row', self._database.fpath)
+        # self.exp.dump_info('table_row', self._database.fpath)
         self.rnd = RndManager()
 
         self.train_epoch_toggle = False
         self.train_toggle = False
 
         device = params.get('device', None) if not self.is_dist else None
+        # self.accelerate = Accelerator(kwargs_handlers=[
+        #     DistributedDataParallelKwargs(find_unused_parameters=params.get('find_unused_parameters', False))
+        # ])
+        accelerator = glob.get('accelerator', 'accelerator')
+        self.accelerate = get_accelerator(accelerator)
 
-        self.accelerate = Accelerator(kwargs_handlers=[
-            DistributedDataParallelKwargs(find_unused_parameters=params.get('find_unused_parameters', False))
-        ])
-
-        if self.accelerate.state.distributed_type == self.accelerate.state.distributed_type.NO:
-            self.accelerate.state.device = torch.device(device)
+        self.accelerate.set_device(torch.device(device))
 
         if dist.is_main():
             self.params.to_yaml(self.exp.params_fn)
+            params_hash = self.params.hash()
+            self.exp.dump_info('trainer', {
+                'params_meta': {
+                    'fn': self.exp.params_fn,
+                    'hash': params_hash
+                },
+                'board_fn': self.metric_board.fpath
+            }, append=True)
             self.exp.dump_info('params', self.params.to_dict())
 
         self.set_global_steps(0)
@@ -169,7 +167,9 @@ class Trainer(_BaseTrainer):
                 self._logger.debug('Enable debug log.')
             if self.is_main:
                 fn = self._logger.add_log_dir(self.exp.log_dir)
-                self.exp.dump_info('logger_args', {'log_dir': fn})
+                self.exp.dump_info('trainer', {
+                    'logger_fn': fn
+                }, append=True)
 
         return self._logger
 
@@ -516,10 +516,10 @@ class Trainer(_BaseTrainer):
 
     def on_trainer_exception(self, func: Callable, exception: BaseException):
         """Updates database with error information when an exception occurs during training."""
-        self.exp.dump_info('exception', dict(end=strftime(),
-                                             finished=False,
-                                             error=str(exception),
-                                             trainer_frame=str(func)))
+        # self.exp.dump_info('exception', dict(end=strftime(),
+        #                                      finished=False,
+        #                                      error=str(exception),
+        #                                      trainer_frame=str(func)), append=True)
 
     @property
     def is_initialized(self):
@@ -541,14 +541,14 @@ class Trainer(_BaseTrainer):
             return
         self.exp.start()
 
-        params_hash = self.params.hash()
-        self.exp.dump_string('params_hash', params_hash)
-
         self.icallbacks(self.params)
         self.set_property('initial.callbacks', True)
         self.imodels(self.params)
         self.set_property('initial.model', True)
         self.set_property('initial', True)
+
+        self.logger.info('Use Experiment')
+        self.logger.info(self.exp)
 
     def stop_train(self):
         """Toggle to stop train."""
@@ -566,17 +566,7 @@ class Trainer(_BaseTrainer):
         :param stage:
         :return:
         """
-        if isinstance(loader, (DataLoaderShard, DataLoaderDispatcher)):
-            warnings.warn('Duplicated prepare a same DataLoader twice, check your code.')
-            return loader
-
-        split_batches = self.params.get('split_batches', None)
-        if stage is not None and not stage.is_train():
-            split_batches = True
-
-        """do not change original loader stage"""
         if isinstance(loader, DataLoader):
-            self.accelerate.split_batches = split_batches
             loader = self.accelerate.prepare_data_loader(loader)
         elif isinstance(loader, DataLoaderSide):
             loader = loader.copy()
@@ -599,6 +589,8 @@ class Trainer(_BaseTrainer):
             ValueError: If no data loader is available for training.
 
         """
+        self.change_stage(TrainStage.train)
+
         loader = self.select_loader(dm)
         if not loader:
             loader = self.train_dataloader
@@ -612,7 +604,6 @@ class Trainer(_BaseTrainer):
 
         for eidx in range(params.epoch):
             # update training progress
-            self.exp.dump_train_eidx(eidx, params.epoch)
             self.set_epoch_idx(eidx)
 
             # train loop
@@ -631,7 +622,8 @@ class Trainer(_BaseTrainer):
                 self.set_property('early_stop', f'meet limit_global_steps {limit_global_steps}')
                 break
 
-        # update when train finished
+            self.exp.dump_train_eidx(eidx, params.epoch)
+
         self.exp.end()
         return self._prop
 
@@ -805,8 +797,7 @@ class Trainer(_BaseTrainer):
             else:
                 v.eval()
 
-    @classmethod
-    def select_loader(cls, dm=None):
+    def select_loader(self, dm=None, stage=None):
         """
         Selects the appropriate loader based on the given data module.
 
@@ -819,7 +810,8 @@ class Trainer(_BaseTrainer):
         loader = None
         if dm:
             if isinstance(dm, DataModule):
-                loader = dm.train_dataloader
+                loader = dm.get_loader_with_stage(stage=self.trainstage)
+                # loader = dm.train_dataloader
             elif isinstance(dm, DataLoader) or isinstance(dm, DataLoaderSide):
                 loader = dm
             else:
@@ -1012,28 +1004,63 @@ class Trainer(_BaseTrainer):
         self.accelerate.wait_for_everyone()
 
     def save_best_model(self):
+        """
+        Saves the best model checkpoint and metadata.
+
+        If the current process is the main process, saves the best model checkpoint as 'best_model.ckpt'
+        and its metadata as 'best_model.json'. If not, saves the checkpoint and metadata with the process rank
+        appended to the filename, e.g., 'best_model-<rank>.ckpt' and 'best_model-<rank>.json'.
+
+        The saved metadata includes the global training steps and the value of the experiment's best metric.
+
+        Args:
+            self: the Experiment object.
+
+        Returns:
+            None.
+        """
         if self.is_main:
             file = self.exp.mk_bpath('models', 'best_model.ckpt')
             file_info = self.exp.mk_bpath('models', 'best_model.json')
         else:
             file = self.exp.mk_bpath('models', f'best_model-{self.local_rank}.ckpt')
             file_info = self.exp.mk_bpath('models', f'best_model-{self.local_rank}.json')
+
         torch.save(self.state_dict(), file)
 
-        with open(file_info, 'w') as w:
-            w.write(json.dumps({'global_steps': self.global_steps, 'metric': self.exp.metric.value}))
+        res = {'global_steps': self.global_steps, 'metric': self.exp.metric.value}
+        IO.dump_json(IO.filter_unserializable_values(res), file_info)
+
         self.logger.info(f'saved best model at {file}')
         self.wait_for_everyone()
 
     def save_last_model(self):
+        """
+        Saves the last model checkpoint and metadata.
+
+        If the current process is the main process, saves the last model checkpoint as 'last_model.ckpt'
+        and its metadata as 'last_model.json'. If not, saves the checkpoint and metadata with the process rank
+        appended to the filename, e.g., 'last_model-<rank>.ckpt' and 'last_model-<rank>.json'.
+
+        The saved metadata includes the global training steps and the value of the experiment's best metric.
+
+        Args:
+            self: the Experiment object.
+
+        Returns:
+            None.
+        """
         if self.is_main:
             file = self.exp.mk_bpath('models', 'last_model.ckpt')
             file_info = self.exp.mk_bpath('models', 'last_model.json')
         else:
             file = self.exp.mk_bpath('models', f'last_model-{self.local_rank}.ckpt')
             file_info = self.exp.mk_bpath('models', f'last_model-{self.local_rank}.json')
+
         torch.save(self.state_dict(), file)
-        with open(file_info, 'w') as w:
-            w.write(json.dumps({'global_steps': self.global_steps, 'metric': self.exp.metric.value}))
+
+        res = {'global_steps': self.global_steps, 'metric': self.exp.metric.current}
+        IO.dump_json(IO.filter_unserializable_values(res), file_info)
+
         self.logger.info(f'saved last model at {file}')
         self.wait_for_everyone()

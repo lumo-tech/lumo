@@ -126,9 +126,10 @@ class Meter:
         stg = self._avg.get(key, None)
         isscalar = value.size == 1
 
-        if stg is None:
+        if stg is None:  # Auto infer a stg method for the value
             dtype = value.dtype.name
 
+            # sanity check
             if self._stage in {'min', 'max'} and not isscalar:
                 raise ValueError(
                     f'Only support min/max(a) operator on scalar metrics, but got data of shape {value.shape}.')
@@ -145,9 +146,14 @@ class Meter:
                     self._stage = 'last'
 
             self._avg[key] = self._stage
+            stg = self._stage
 
         if isscalar:
             value = value.item()
+        elif stg == {'min', 'max', 'sum'}:
+            value = getattr(np, stg)(value).item()
+        elif stg == 'mean':
+            value = [getattr(np, stg)(value).item(), value.size]
 
         self._rec[key] = value
         self._stage = 'default'
@@ -183,6 +189,17 @@ class Meter:
 
     @property
     def mean(self):
+        """
+        Sets the aggregation method to 'mean'.
+
+        Returns:
+            The meter itself.
+        """
+        self._stage = 'mean'
+        return self
+
+    @property
+    def test_mean(self):
         """
         Sets the aggregation method to 'mean'.
 
@@ -405,6 +422,10 @@ class ReduceItem:
     def update(self, item):
         """Updates the reduction value with a new item."""
         self.cur = item
+        count = 1
+        if isinstance(item, list) and len(item) == 2:
+            item, count = item
+
         item = detach(item)
 
         avg = self.gb_method
@@ -419,8 +440,8 @@ class ReduceItem:
         elif avg in {'mean', 'sum'}:
             if len(self.acc) == 0:
                 self.acc.append(0)
-            self.acc[0] = self.acc[0] + item
-            self.c += 1
+            self.acc[0] = self.acc[0] + item * count
+            self.c += count
         elif avg == 'max':
             self._res = max(self.cur, self._res)
         elif avg == 'min':

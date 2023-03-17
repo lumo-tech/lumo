@@ -117,7 +117,7 @@ class DatasetBuilder(Dataset):
 
         self._iter_cache = {}
 
-    def __repr__(self):
+    def __str__(self):
 
         if self.sized:
             return f'Builder(flow={pformat(self._outs)}, sized={self.sized}, size={len(self)}, iterable={self.iterable})'
@@ -360,7 +360,7 @@ class DatasetBuilder(Dataset):
             size (int): the size to scale the dataset builder to.
 
         Returns:
-            self (DatasetBuilder): the scaled dataset builder.
+            the scaled dataset builder.
         """
         assert isinstance(size, int)
         assert 'pseudo_repeat' not in self._prop
@@ -378,7 +378,7 @@ class DatasetBuilder(Dataset):
             multiple (int): the number of times to repeat the dataset builder.
 
         Returns:
-            self (DatasetBuilder): the repeated dataset builder.
+            the repeated dataset builder.
         """
         assert isinstance(multiple, int)
         assert 'pseudo_length' not in self._prop
@@ -424,7 +424,7 @@ class DatasetBuilder(Dataset):
         Set the mode of the dataset builder to chain.
 
         Returns:
-            self (DatasetBuilder): the dataset builder with the chain mode set.
+            the dataset builder with the chain mode set.
         """
         self._prop['mode'] = 'chain'
         return self
@@ -434,7 +434,7 @@ class DatasetBuilder(Dataset):
         Set the mode of the dataset builder to item.
 
         Returns:
-            self (DatasetBuilder): the dataset builder with the item mode set.
+            the dataset builder with the item mode set.
         """
         self._prop['mode'] = 'item'
         return self
@@ -444,7 +444,7 @@ class DatasetBuilder(Dataset):
         Set the mode of the dataset builder to zip.
 
         Returns:
-            self (DatasetBuilder): the dataset builder with the zip mode set.
+            the dataset builder with the zip mode set.
         """
         self._prop['mode'] = 'zip'
         return self
@@ -489,7 +489,7 @@ class DatasetBuilder(Dataset):
             name (str): the name of the index.
 
         Returns:
-            self (DatasetBuilder): the dataset builder with the index added.
+            the dataset builder with the index added.
         """
         outkeys = self._outs.setdefault(f"::idx::", [])
         assert name not in self._outkeys, f'Output key {name} duplicated.'
@@ -507,7 +507,7 @@ class DatasetBuilder(Dataset):
             transform (SingleValueTransform): the transform to apply to the input source.
 
         Returns:
-            self (DatasetBuilder): the dataset builder with the input source added.
+            the dataset builder with the input source added.
 
         Notes:
             Iterable object without `__len__` method currently are not well-tested. Be careful to use them in DatasetBuilder.
@@ -529,7 +529,7 @@ class DatasetBuilder(Dataset):
             transform (SingleValueTransform): the transform to add.
 
         Returns:
-            self (DatasetBuilder): the dataset builder with the transform added.
+            the dataset builder with the transform added.
         """
         assert name in self._data, f'Source {name} should be added.'
         warnings.warn('`add` may cause confusion, use set_input_transform ')
@@ -545,7 +545,7 @@ class DatasetBuilder(Dataset):
             transform (SingleValueTransform): the transform to apply to the output.
 
         Returns:
-            self (DatasetBuilder): the dataset builder with the output added.
+            the dataset builder with the output added.
         """
         assert name in self._data, f'Must have data source {name} first.'
 
@@ -567,7 +567,7 @@ class DatasetBuilder(Dataset):
             transform (SingleValueTransform): the transform to add.
 
         Returns:
-            self (DatasetBuilder): the dataset builder with the transform added.
+            the dataset builder with the transform added.
         """
         assert outkey in self._outkeys, f'Output key {outkey} should be added.'
         warnings.warn('add may cause confusion, use set_output_transform ')
@@ -581,7 +581,7 @@ class DatasetBuilder(Dataset):
             transform (DictTransform): the global transform to apply to the dataset.
 
         Returns:
-            self (DatasetBuilder): the dataset builder with the global transform added.
+            the dataset builder with the global transform added.
         """
         self._transforms['::global::'] = transform
         return self
@@ -595,7 +595,7 @@ class DatasetBuilder(Dataset):
             transform (SingleValueTransform): the transform to set.
 
         Returns:
-            self (DatasetBuilder): the dataset builder with the transform set.
+            the dataset builder with the transform set.
         """
         self._transforms[name] = transform
         return self
@@ -609,7 +609,7 @@ class DatasetBuilder(Dataset):
             transform (SingleValueTransform): the transform to set.
 
         Returns:
-            self (DatasetBuilder): the dataset builder with the transform set.
+            the dataset builder with the transform set.
         """
         self._transforms[f'::{outkey}'] = transform
         return self

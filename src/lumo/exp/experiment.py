@@ -9,7 +9,7 @@ import random
 import sys
 import time
 import traceback
-from typing import Any, List
+from typing import Any, List, overload
 from functools import wraps
 from lumo.decorators.process import call_on_main_process_wrap
 from lumo.proc import glob
@@ -19,6 +19,7 @@ from lumo.proc.path import exproot, local_dir
 from lumo.utils import safe_io as io
 from lumo.utils.fmt import can_be_filename, strftime
 from lumo.utils.logger import Logger
+from lumo.utils.subprocess import run_command
 from .base import BaseExpHook
 from ..proc.pid import pid_hash, runtime_pid_obj
 from .metric import Metric
@@ -91,7 +92,7 @@ class Experiment:
 
     ENV_TEST_NAME_KEY = 'LUMO_EXP_TEST_NAME'
 
-    def __init__(self, exp_name: str, test_name=None, paths=None):
+    def __init__(self, exp_name: str = None, test_name=None, paths=None, info_dir=None):
         """
         Initializes a new instance of the Experiment class.
 
@@ -102,28 +103,34 @@ class Experiment:
         Raises:
             ValueError: If the experiment name is not a legal filename.
         """
-        if not can_be_filename(exp_name):
-            raise ValueError(f'Experiment name should be a ligal filename(bettor only contain letter or underline),'
-                             f'but got {exp_name}.')
+        if info_dir is not None:
+            exp = self.__class__.from_disk(info_dir=info_dir)
+            self._prop = exp._prop
+            self._hooks = exp._hooks
+            self._metric = exp._metric
+        else:
+            assert exp_name is not None
+            if not can_be_filename(exp_name):
+                raise ValueError(f'Experiment name should be a ligal filename(bettor only contain letter or underline),'
+                                 f'but got {exp_name}.')
+            self._prop = {'exp_name': exp_name}
+            if test_name is None:
+                test_name = os.environ.get(Experiment.ENV_TEST_NAME_KEY, None)
+            self._prop['test_name'] = test_name
+            if paths is None:
+                paths = {}
+            self._prop['paths'] = paths
+            self._prop['note'] = ''
 
-        self._prop = {}
-        self._prop['exp_name'] = exp_name
-        if test_name is None:
-            test_name = os.environ.get(Experiment.ENV_TEST_NAME_KEY, None)
-        self._prop['test_name'] = test_name
-        if paths is None:
-            paths = {}
-        self._prop['paths'] = paths
-
-        self._hooks = {}
-        self._metric = None
+            self._hooks = {}
+            self._metric = None
 
         # wrap
         self.dump_string = self._trigger_change(self.dump_string)
         self.dump_note = self._trigger_change(self.dump_note)
         self.dump_info = self._trigger_change(self.dump_info)
+        self.trigger = self._trigger_change(self.trigger)
 
-        self.add_exit_hook(self.end)
         self.logger = Logger()
 
     def __getitem__(self, item):
@@ -183,7 +190,7 @@ class Experiment:
         Returns:
             str: A string representation of the Experiment object.
         """
-        return f'{self.exp_name}->({self.test_name})'
+        return f'{self.__class__.__name__}(info_dir="{self.info_dir})"'
 
     def __str__(self):
         """
@@ -192,7 +199,7 @@ class Experiment:
         Returns:
             str: A string representation of the Experiment object.
         """
-        return self.__repr__()
+        return f'{self.__class__.__name__}(info_dir={self.info_dir})'
 
     def _repr_html_(self):
         """Return a html representation for a particular DataFrame."""
@@ -366,13 +373,31 @@ class Experiment:
         except:
             return []
 
+    def trigger(self):
+        """trigger the disk change"""
+        pass
+
     def _trigger_change(self, func):
-        #  test_root update some files
+        """
+        Decorator function that updates the heartbeat file before executing the decorated function.
+
+        The heartbeat file indicates that a change has occurred in the experiment directory.
+
+        Args:
+            func: the function to be decorated.
+
+        Returns:
+            A decorated function.
+        """
+
+        # test_root update some files
         @wraps(func)
         def inner(*args, **kwargs):
+            """wrap function"""
             fn = self.heartbeat_fn
             io.dump_text(self.info_dir, fn)
-            func(*args, **kwargs)
+            io.dump_text(self.info_dir, self.pid_fn)
+            return func(*args, **kwargs)
 
         return inner
 
@@ -437,9 +462,9 @@ class Experiment:
             update_from: The process from which the progress update came from.
         """
         res = {'ratio': max(min(ratio, 1), 0)}
+        res['last_edit_time'] = strftime()
         if update_from is None:
             res['update_from'] = update_from
-            res['last_edit_time'] = strftime()
         self.dump_info('progress', res, append=True)
 
     def dump_info(self, key: str, info: Any, append=False):
@@ -479,15 +504,39 @@ class Experiment:
             return {}
 
     def load_note(self):
+        """
+        Loads the contents of the note file, if it exists.
+
+        Returns:
+            A string representing the contents of the note file, or an empty string if the file does not exist.
+        """
         fn = self.mk_ipath('note.md')
         if os.path.exists(fn):
             return io.load_text(fn)
         return ''
 
     def dump_tags(self, *tags):
+        """
+        Dumps the experiment's tags to the info file.
+
+        Args:
+            *tags: a variable-length argument list of tags to be added to the experiment.
+
+        Returns:
+            None.
+        """
         self.dump_info('tags', tags)
 
     def dump_note(self, note: str):
+        """
+        Dumps the contents of the note to the note file.
+
+        Args:
+            note: a string representing the contents of the note.
+
+        Returns:
+            None.
+        """
         fn = self.mk_ipath('note.md')
         self.set_prop('note', note)
         io.dump_text(note, fn)
@@ -521,9 +570,15 @@ class Experiment:
         return io.load_text(fn)
 
     def dump_metric(self, key, value, cmp: str, flush=True, **kwargs):
+        """
+        See Metric for details.
+        """
         return self.metric.dump_metric(key, value, cmp, flush, **kwargs)
 
     def dump_metrics(self, dic: dict, cmp: str):
+        """
+        See Metric for details.
+        """
         return self.metric.dump_metrics(dic, cmp)
 
     @property
@@ -574,7 +629,17 @@ class Experiment:
         os.makedirs(d, exist_ok=True)
         return d
 
-    def _mk_path(self, *path: str, is_dir) -> str:
+    def _mk_path(self, *path: str, is_dir: bool) -> str:
+        """
+        Helper method to create a directory path if it does not exist and return the path.
+
+        Args:
+            *path: tuple of path strings to be joined.
+            is_dir: boolean flag indicating whether the path is a directory.
+
+        Returns:
+            str: the full path created.
+        """
         path = os.path.join(*path)
         if is_dir:
             os.makedirs(path, exist_ok=True)
@@ -582,16 +647,56 @@ class Experiment:
             os.makedirs(os.path.dirname(path), exist_ok=True)
         return path
 
-    def mk_ipath(self, *path, is_dir=False):
+    def mk_ipath(self, *path: str, is_dir: bool = False) -> str:
+        """
+        Creates a directory path within the experiment's info directory.
+
+        Args:
+            *path: tuple of path strings to be joined.
+            is_dir: boolean flag indicating whether the path is a directory. Default is False.
+
+        Returns:
+            str: the full path created.
+        """
         return self._mk_path(self.info_dir, *path, is_dir=is_dir)
 
-    def mk_cpath(self, *path, is_dir=False):
+    def mk_cpath(self, *path: str, is_dir: bool = False) -> str:
+        """
+        Creates a directory path within the experiment's cache directory.
+
+        Args:
+            *path: tuple of path strings to be joined.
+            is_dir: boolean flag indicating whether the path is a directory. Default is False.
+
+        Returns:
+            str: the full path created.
+        """
         return self._mk_path(self.cache_dir, *path, is_dir=is_dir)
 
-    def mk_bpath(self, *path, is_dir=False):
+    def mk_bpath(self, *path: str, is_dir: bool = False) -> str:
+        """
+        Creates a directory path within the experiment's blob directory.
+
+        Args:
+            *path: tuple of path strings to be joined.
+            is_dir: boolean flag indicating whether the path is a directory. Default is False.
+
+        Returns:
+            str: the full path created.
+        """
         return self._mk_path(self.blob_dir, *path, is_dir=is_dir)
 
-    def mk_rpath(self, *path, is_dir=False):
+    def mk_rpath(self, *path: str, is_dir: bool = False) -> str:
+        """
+        Creates a directory path within the user's home directory.
+
+        Args:
+            *path: tuple of path strings to be joined.
+            is_dir: boolean flag indicating whether the path is a directory. Default is False.
+
+        Returns:
+            str: the full path created.
+        """
         return self._mk_path(libhome(), *path, is_dir=is_dir)
 
     @classmethod
@@ -605,10 +710,10 @@ class Experiment:
         new_test_name = self._create_test_name(self.exp_dir)
         new_exp = Experiment(self.exp_name, test_name=new_test_name)
         self.dump_info('deprecated', {'rerun_at': {new_exp.test_name: True}}, append=True)
-        old_rerun_info = self.properties.get('rerun', None)
+        old_rerun_info = self.properties.get('rerun', {})
         count = 1
-        if old_rerun_info is not None:
-            count += old_rerun_info['count']
+        if isinstance(old_rerun_info, dict):
+            count += old_rerun_info.get('repeat', 0)
         new_exp.dump_info('rerun', {'from': self.test_name, 'repeat': count})
         from lumo.utils.subprocess import run_command
         old_exec = self.properties['execute']
@@ -639,11 +744,15 @@ class Experiment:
             'obj': runtime_pid_obj(),
         })
 
+        self.dump_tags()
+
         # register start
-        self.dump_info('progress', {'start': strftime(), 'finished': False}, append=True)
+        self.dump_info('progress', {'start': strftime()}, append=True)
         self.dump_progress(0)
         # register progress
-        io.dump_text(self.info_dir, self.pid_fn)
+        self.proc = run_command(f'python3 -m lumo.exp.agent --info_dir={self.info_dir}', non_block=True)
+
+        self.add_exit_hook(self.end)
 
     @call_on_main_process_wrap
     def start(self):
@@ -653,7 +762,6 @@ class Experiment:
         if self.properties.get('progress', None) is not None:
             return
         self.initial()
-        self.set_prop('start', True)
         for hook in self._hooks.values():  # type: BaseExpHook
             hook.on_start(self)
         return self
@@ -668,20 +776,19 @@ class Experiment:
             *args: Additional arguments to pass to the end hooks.
             **extra: Additional keyword arguments to pass to the end hooks.
         """
-        if not self.is_alive:
-            return
-        if not self.properties.get('progress', None) is None:
+        if self.properties.get('progress', None) is None:
             return
         if self.properties['progress'].get('end', False):
             return
 
-        self.set_prop('end', True)
         if end_code == 0:
             self.dump_progress(1)
 
-        self.dump_info('progress', {'end': strftime(), 'finished': end_code == 0}, append=True)
+        self.dump_info('progress', {'end': strftime(), 'end_code': end_code}, append=True)
         for hook in self._hooks.values():  # type: BaseExpHook
             hook.on_end(self, end_code=end_code, *args, **extra)
+
+        self.proc.terminate()
         return self
 
     @call_on_main_process_wrap
@@ -717,12 +824,24 @@ class Experiment:
         import atexit
         def exp_func():
             """Function executed before process exit."""
-            func(self)
+            func()
 
         atexit.register(exp_func)
 
     @classmethod
     def from_cache(cls, dic: dict):
+        """
+        Creates an Experiment object from a cached dictionary.
+
+        The cached dictionary should have the same format as the one returned by the Experiment.to_cache() method.
+
+        Args:
+            cls: the Experiment class.
+            dic: a dictionary with the cached Experiment data.
+
+        Returns:
+            An Experiment object.
+        """
         paths = dic.pop('paths', {})
         _ = dic.pop('metrics')
         self = cls(exp_name=dic['exp_name'], test_name=dic['test_name'], paths=paths)
@@ -730,12 +849,12 @@ class Experiment:
         return self
 
     @classmethod
-    def from_disk(cls, path):
+    def from_disk(cls, info_dir):
         """
         Creates an Experiment object from a test root directory on disk.
 
         Args:
-            path (str): The path to the test root directory.
+            info_dir (str): The path to the test root directory.
 
         Returns:
             Experiment: An Experiment object created from the test root directory.
@@ -743,13 +862,13 @@ class Experiment:
         Raises:
             ValueError: If the path is not a valid test root directory.
         """
-        from .finder import is_test_root
-        if not is_test_root(path):
-            raise ValueError(f'{path} is not a valid test_root')
-        path = os.path.abspath(path)
-        exp_dir = os.path.dirname(path)
+        from lumo.exp.watch import is_test_root
+        if not is_test_root(info_dir):
+            raise ValueError(f'{info_dir} is not a valid test_root')
+        info_dir = os.path.abspath(info_dir)
+        exp_dir = os.path.dirname(info_dir)
 
-        paths_fn = os.path.join(path, 'info', f'paths.json')
+        paths_fn = os.path.join(info_dir, 'info', f'paths.json')
         if os.path.exists(paths_fn):
             try:
                 paths = io.load_json(paths_fn)
@@ -758,7 +877,7 @@ class Experiment:
         else:
             paths = {}
 
-        self = cls(os.path.basename(exp_dir), test_name=os.path.basename(path), paths=paths)
+        self = cls(os.path.basename(exp_dir), test_name=os.path.basename(info_dir), paths=paths)
 
         # load prop
         for f in os.listdir(self.mk_ipath('info', is_dir=True)):
@@ -774,17 +893,30 @@ class Experiment:
         return self
 
     def cache(self):
+        """Cache information of current test."""
         return {
             **self.properties,
             'metrics': self.metric.value,
         }
 
     def dict(self):
+        """Get full information of current test, including dynamic status."""
         return {
             **self.properties,
             'is_alive': self.is_alive,
             'metrics': self.metric.value,
         }
+
+    def backup(self, backend: str = 'github', **kwargs):
+        """
+        Backup this experiment into the given target, currently only support GitHub, you can implement your own way
+        by the provided information of Experiment.
+        """
+        from .backup import backup_regist
+        if backend == 'github':
+            kwargs.setdefault('access_token', glob['github_access_token'])
+
+        return backup_regist[backend](exp=self, **kwargs)
 
 
 class SimpleExperiment(Experiment):
@@ -793,8 +925,8 @@ class SimpleExperiment(Experiment):
     execute before and after the experiment.
     """
 
-    def __init__(self, exp_name: str, root=None):
-        super().__init__(exp_name, root)
+    def __init__(self, exp_name: str = None, test_name=None, paths=None, info_dir=None):
+        super().__init__(exp_name, test_name, paths, info_dir)
         from . import exphook
         self.set_hook(exphook.LastCmd())
         self.set_hook(exphook.LockFile())

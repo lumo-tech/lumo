@@ -13,12 +13,17 @@ def rerun(test_name, **kwarg):
     Returns:
 
     """
-    from lumo.exp.finder import retrieval_experiment
-    exp = retrieval_experiment(test_name)
-    if exp is not None:
-        exp.rerun([f'--{k}={v}' for k, v in kwarg.items()])
-    else:
+    from lumo.exp.watch import Watcher
+    from lumo import Experiment
+    w = Watcher()
+    df = w.load()
+    df = df[df['test_name'] == test_name]
+    if len(df) == 0:
+        print(f'{test_name} not found')
         exit(1)
+    else:
+        exp = Experiment.from_cache(df.iloc[0].to_dict())
+        exp.rerun([f'--{k}={v}' for k, v in kwarg.items()])
 
 
 def note(test_name, description):
@@ -36,7 +41,7 @@ def note(test_name, description):
     print(f"Adding note '{description}' to {test_name}")
 
 
-def server(port=8080):
+def board(port=11606, address=None, open=True):
     """
 
     Args:
@@ -45,12 +50,16 @@ def server(port=8080):
     Returns:
 
     """
+    from lumo import Watcher
+    w = Watcher()
+    w.panel().show(port=port, address=address, open=open)
     print(f"Starting server on port {port}")
 
 
 def main():
+    """the entry"""
     fire.Fire({
         'rerun': rerun,
         'note': note,
-        'server': server,
+        'board': board,
     })

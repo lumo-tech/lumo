@@ -1,28 +1,10 @@
-"""
-Watcher 可以在运行实验后在 jupyter 或者网页上展示正在运行和已经运行结束的实验（按时间顺序？）
-以及可以简化记录实验的烦恼
-
-现在的核心痛点是
- - [ ] 所有元信息都有了，但是找不到哪个实验是哪个实验
- - [ ] 同时跑的多个实验有一个失败了，重跑时会混淆，或许需要一种覆盖手段 ->
- - > 怎么 rerun？
-        lumo rerun test_name √
-        lumo note html （用 streamlit 之类的生成动态网页）
-        lumo note cmd  (类似 top 的视角，按时间顺序排列)
-- > rerun 将已经跑的实验 move
-
-可以代替 analysis 的作用。主要有
-
--> 按照 progress 目录，获取所有的实验
--> 根据获取的实验，按顺序记录
--> 每次只记录
-
-"""
 import numbers
+import os
 import os.path
+import re
 from typing import List, Dict, overload
 from pprint import pformat
-import pandas as pd
+
 from dbrecord import PDict
 from datetime import datetime
 from operator import gt, ge, le, lt, eq, ne
@@ -31,6 +13,8 @@ from lumo.proc.path import progressroot, exproot, dbroot, cache_dir
 from .experiment import Experiment
 from lumo.utils import safe_io as IO
 from lumo.utils.fmt import format_timedelta, strptime, strftime
+from lumo.proc.tz import timezone
+from lumo.proc import glob
 
 PID_ROOT = os.path.join(progressroot(), 'pid')
 HB_ROOT = os.path.join(progressroot(), 'hb')
@@ -74,6 +58,53 @@ mapping = {
 
 
 class Condition:
+    """
+    Represents a condition to filter data based on a certain criteria.
+
+    row filter:
+    ```
+    from lumo import C
+    import pandas as pd
+
+    # create a sample DataFrame
+    data = {'name': ['Alice', 'Bob', 'Charlie', 'David', 'Emily'],
+            'age': [25, 30, 35, 40, 45],
+            'city': [{'index':0}, {'index':1}, {'index':2},{'index':3},{'index':4}]}
+    df = pd.DataFrame(data)
+
+    # create and apply the condition to filter the DataFrame
+    filtered_df = (C['age'] >= 35).apply(df)
+
+    # print the filtered DataFrame
+    print(filtered_df)
+    ```
+
+    column edit:
+    ```
+    (C+{'city.index':'cindex'}).apply(df).columns
+    # Index(['name', 'age', 'city', 'cindex'], dtype='object')
+
+    (-C['city']).apply(df).columns
+    # Index(['name', 'age'], dtype='object')
+
+    (C-['city']).apply(df).columns
+    (C-'city').apply(df).columns
+    # Index(['name', 'age'], dtype='object')
+
+    (C-['city','name']).apply(df).columns
+    # Index(['age'], dtype='object')
+    ```
+
+    pipeline:
+    ```
+    C.pipe(df,[
+        (C['age']>35),
+        C+{'city.index':'cindex'},
+        C-['city','name']
+    ])
+    ```
+    """
+
     def __init__(self, name: str = None, value=None, op=None):
         self.name = name
         self.value = value
@@ -85,9 +116,35 @@ class Condition:
     def __getitem__(self, item):
         return Condition(item)
 
+    def __add__(self, other):
+        c = Condition()
+        c.op = 'add_column'
+        c.value = {}
+        if isinstance(other, str):
+            c.value[other] = other
+        elif isinstance(other, dict):
+            c.value.update(other)
+        else:
+            raise NotImplementedError()
+        return c
+
+    def __sub__(self, other):
+        c = Condition()
+        c.name = None
+        c.op = 'drop_column'
+        c.value = {}
+        if isinstance(other, str):
+            c.value.update({other: None})
+        elif isinstance(other, (list, set, dict)):
+            c.value.update({k: None for k in other})
+        else:
+            raise NotImplementedError()
+        return c
+
     def __neg__(self):
-        self.drop = True
-        return self
+        c = Condition()
+        c.op = 'drop_column'
+        return c
 
     def __ge__(self, other):
         if other is None:
@@ -127,47 +184,115 @@ class Condition:
         return self
 
     def __repr__(self):
-        return f'C({self.name} {self.op} {self.value})'
+        return f'C({self.name}, {self.value}, {self.op})'
 
     def in_(self, lis):
-        """condition of `in` operation"""
+        """
+        Sets the condition to evaluate if the value is in a given list.
+
+        Args:
+            lis (list): the list of values to compare against.
+
+        Returns:
+            The current instance of the Condition class with the comparison operator and value set.
+        """
         self.op = 'in'
         self.value = set(lis)
         return self
 
     def not_in_(self, lis):
-        """condition of `.duplicated(value) == False` operation"""
+        """
+        Sets the condition to evaluate if the value is not in a given list.
+
+        Args:
+            lis (list): the list of values to compare against.
+
+        Returns:
+            The current instance of the Condition class with the comparison operator and value set.
+        """
         self.op = 'notin'
         self.value = set(lis)
         return self
 
     def mask(self, df):
+        """
+        Returns a boolean mask of the given DataFrame based on the condition.
+
+        Args:
+            df (pd.DataFrame): the DataFrame to evaluate.
+
+        Returns:
+            A boolean mask of the given DataFrame based on the condition.
+        """
+        import pandas as pd
         names = self.name.split('.')
         value = df
         for i in names:
             if isinstance(value, pd.DataFrame):
                 value = value[i]
             else:
-                value = df.apply(lambda x: x[i])
+                value = value.apply(lambda x: x[i])
         return mapping[self.op](value, self.value)
 
+    def capply(self, df):
+        """apply operations in column axis"""
+        import pandas as pd
+        df = df.reset_index(drop=True)
+        if self.op == 'drop_column':
+            if isinstance(self.name, str):
+                var = [self.name]
+            elif isinstance(self.value, str):
+                var = [self.value]
+            else:
+                var = list(self.value)
+            print(var)
+            print(df.columns)
+            df = df.drop(var, axis=1)
+        else:
+            assert isinstance(self.value, dict)
+            for name, aim in self.value.items():
+                names = name.split('.')
+                value = df
+                for i in names:
+                    if isinstance(value, pd.DataFrame):
+                        value = value[i]
+                    else:
+                        value = value.apply(lambda x: x[i])
+                df[aim] = value
+        return df
+
     def apply(self, df):
-        return df[self.mask(df)]
+        """Returns a new DataFrame with only the rows that meet the condition."""
+        if not self.op.endswith('column'):
+            return df[self.mask(df)].reset_index(drop=True)
+        else:
+            return self.capply(df)
+
+    def pipe(self, df, conditions: List['Condition']):
+        """Applies a list of conditions to a DataFrame using the pipe method."""
+        filtered_df = df
+        for condition in conditions:
+            filtered_df = condition.apply(filtered_df)  # .reset_index(drop=True)
+        return filtered_df
 
 
 C = Condition()
 
 
 class Watcher:
-    """List and watch experiments with time order
+    """
+    A class for listing and watching experiments with time order and caching test information in 'metrics/<experiment>.sqlite'.
 
-    Cache test_information in
-    metrics/<experiment>.sqlite
+    Attributes:
+        exp_root (str): The root directory to search for experiments.
+        hb_root (str): The root directory to search for heartbeat files.
+        pid_root (str): The root directory to search for PID files.
+        db_root (str): The root directory to store the experiment databases.
     """
 
     def __init__(self, exp_root=None, hb_root=None, pid_root=None, db_root=None):
         if exp_root is None:
-            exp_root = os.path.join(exproot(), 'hb')
+            exp_root = exproot()
 
         if hb_root is None:
             hb_root = os.path.join(cache_dir(), 'heartbeat')
@@ -182,11 +307,19 @@ class Watcher:
         self.hb_root = hb_root
         self.pid_root = pid_root
 
-    def load(self):
-        res = {}
+    def retrieve(self, test_name=None) -> Experiment:
+        """retrieve the Experiment of given test name"""
+        df = self.load()
+        res = df[df['test_name'] == test_name]
+        if len(res) > 0:
+            return Experiment.from_cache(res.iloc[0].to_dict())
+        return None
+
+    def update(self):
+        """Diff & Update"""
         updates = {}
         if not os.path.exists(self.hb_root):
-            return pd.DataFrame()
+            return {}
         for root, dirs, fs in os.walk(self.hb_root):
             if root == self.hb_root:
                 continue
@@ -199,338 +332,169 @@ class Watcher:
                         updates.setdefault(exp.exp_name, []).append(exp.cache())
                     except KeyboardInterrupt as e:
                         raise e
-                    except:
+                    except Exception as e:
+                        print(e)
+                        continue
+                    finally:
+                        os.remove(hb_file)
+
+        for exp_name, tests in updates.items():
+            dic = PDict(os.path.join(self.db_root, f'{exp_name}.sqlite'))
+
+            for test in tests:
+                dic[test['test_name']] = test
+            dic.flush()
+        return updates
+
+    def fullupdate(self):
+        """re-update all experiment from original experiment directories"""
+        updates = {}
+        for root, dirs, fs in os.walk(self.exp_root):
+            for f in dirs:
+                if is_test_name(f):
+                    info_dir = os.path.join(root, f)
+                    try:
+                        exp = Experiment.from_disk(info_dir)
+                        updates.setdefault(exp.exp_name, []).append(exp.cache())
+                    except KeyboardInterrupt as e:
+                        raise e
+                    except Exception as e:
+                        print(e)
                         continue
 
         for exp_name, tests in updates.items():
             dic = PDict(os.path.join(self.db_root, f'{exp_name}.sqlite'))
-            for test_name, test_prop in dic.items():
-                res[test_name] = test_prop
+            dic.clear()
 
             for test in tests:
                 dic[test['test_name']] = test
-                res[test['test_name']] = test
             dic.flush()
 
-        df = pd.DataFrame(res.values())
-        df = df.sort_values(['exp_name', 'test_name'])
-        return df.reset_index(drop=True)
+        return updates
 
-    def progress(self, is_alive=True):
-        """return the alive process"""
+    def load(self, with_pandas=True):
+        """
+        Loads the experiment information from heartbeat files and the experiment databases.
+
+        Args:
+            with_pandas (bool, optional): whether to return the experiment information as a pandas DataFrame.
+                Defaults to True.
+
+        Returns:
+            If with_pandas is True, returns a pandas DataFrame containing the experiment information
+            sorted by experiment name and test name. Otherwise, returns a dictionary containing the
+            experiment information.
+        """
+        res = {}
+        updates = self.update()
+
+        def valid_row(dic):
+            """is a valid row?"""
+            return isinstance(dic, dict) and 'test_name' in dic
+
+        for dic_fn in os.listdir(self.db_root):
+            if not dic_fn.endswith('sqlite'):
+                continue
+            dic = PDict(os.path.join(self.db_root, dic_fn))
+            exp_name = os.path.splitext(dic_fn)[0]
+
+            for test_name, test_prop in dic.items():
+                if valid_row(test_prop):
+                    res[test_name] = test_prop
+
+            if exp_name in updates:
+                for test in updates[exp_name]:
+                    if valid_row(test):
+                        res[test['test_name']] = test
+                dic.flush()
+
+        if with_pandas:
+            try:
+                import pandas as pd
+            except ImportError as e:
+                print(
+                    'with_padnas=True requires pandas to be installed, use pip install pandas or call `.load(with_padnas=False)`')
+
+            df = pd.DataFrame(res.values())
+            df = df.sort_values(['exp_name', 'test_name'])
+            return df.reset_index(drop=True)
+        else:
+            return res
+
+    def progress(self, with_pandas=True):
+        """
+        Returns a DataFrame of alive experiments.
+
+        Returns:
+            A pandas DataFrame containing the experiment information of alive experiments.
+        """
         res = []
         for root, dirs, fs in os.walk(self.pid_root):
             for f in fs:
                 if not f.endswith('.pid'):
                     continue
                 try:
-                    test_root = IO.load_text(os.path.join(root, f))
+                    pid_f = os.path.join(root, f)
+                    test_root = IO.load_text(pid_f)
                     exp = Experiment.from_disk(test_root)
-                    if exp.is_alive == is_alive:
+
+                    if exp.is_alive:
                         res.append(exp.dict())
+                    elif exp.properties['progress'].get('end_code', None) is None:
+                        if (datetime.timestamp(datetime.now()) - os.stat(pid_f).st_mtime) < glob.get(
+                                'ALIVE_SECONDS', 60 * 5):  # powered by exp/agent.py
+                            res.append(exp.dict())
+                    else:
+                        exp.dump_info('progress',
+                                      {
+                                          'end': strftime(), 'end_code': -10,
+                                          'msg': 'ended by watcher'}
+                                      , append=True
+                                      )
+                        os.remove(pid_f)
                 except:
                     continue
-        return pd.DataFrame(res)
-
-    def interactive(self):
-        """interactive, mark, label, note in ipython environment."""
-        pass
+        if with_pandas:
+            import pandas as pd
+            return pd.DataFrame(res)
+        else:
+            return res
 
     def server(self):
         """simple server which make you note your experiments"""
         pass
 
-    def list_all(self, exp_root=None, limit=100) -> Dict[str, List[Experiment]]:
-        """
-        Returns a dictionary of all experiments under exp_root directory.
-
-        Args:
-            exp_root: The root directory to search for experiments. Default is None, which uses the default experiment root directory.
-
-        Returns:
-            A dictionary of all experiments, where the keys are the names of the experiments and the values are lists of corresponding Experiment objects.
-        """
-
-    def widget(self,
-               is_finished: bool = None,
-               is_alive: bool = None,
-               time_filter: list = None,
-               params_filter: list = None,
-               metric_filter: list = None
-               ):
-        assert params_filter is None or isinstance(params_filter, list)
-        assert metric_filter is None or isinstance(metric_filter, list)
-
-        from ipywidgets import widgets, interact, Label
-        from IPython.display import display
-
-        def make_row(dic: dict):
-            exp = Experiment.from_cache(dic.copy())
-
-            def on_note_update(sender):
-                exp.dump_note(sender['new'])
-
-            def on_tag_update(sender):
-                exp.dump_tags(*sender['new'])
-
-            note_ui = widgets.Textarea(dic['note'])
-
-            note_ui.continuous_update = False
-            note_ui.observe(on_note_update, names='value', type='change')
-
-            tags = dic.get('tags', [])
-            try:
-                tags = list(tags)
-            except:
-                tags = []
-            tag_ui = widgets.TagsInput(value=tags)
-            tag_ui.observe(on_tag_update, names='value', type='change')
-
-            now = datetime.now()
-            start = strptime(datestr=dic['progress']['start'])
-            end = strptime(datestr=dic['progress']['last_edit_time'])
-
-            human = widgets.VBox([
-
-            ])
-            return [
-                widgets.Label(dic['exp_name']),
-                widgets.Label(dic['test_name']),
-                widgets.Label(f"""{strftime('%y-%m-%d %H:%M:%S', dateobj=start)}"""),
-                widgets.Label(f"""{strftime('%y-%m-%d %H:%M:%S', dateobj=end)}"""),
-                widgets.HTML('\n'.join([
-                    f'{k}: {v}'
-                    for k, v in dic['metrics'].items()
-                    if isinstance(v, numbers.Number)
-                ])),
-                widgets.HBox([note_ui,
-                              tag_ui, ])
-
-            ]
-
-        test_status = widgets.RadioButtons(options=['full', 'running', 'failed', 'succeed', 'finished'])
-        start_filter = widgets.DatetimePicker()
-        end_filter = widgets.DatetimePicker()
-
-        def status_filter(sender):
-            print(sender)
-            make()
-
-        test_status.observe(status_filter, names='value', type='change')
-
-        # display()
-
-        @interact
-        def make(
-                status=widgets.RadioButtons(options=['full', 'running', 'failed', 'succeed', 'finished']),
-                start=widgets.DatetimePicker(),
-                end=widgets.DatetimePicker(),
-        ):
-            if status == 'running':
-                df = self.progress()
-            elif status == 'finished':
-                df = self.progress(is_alive=False)
-            else:
-                df = self.load()
-                if status == 'succeed':
-                    df = df[df['progress'].apply(lambda x: x['finished'])]
-                elif status == 'failed':
-                    df = df[df['exception'].isna() == False]
-
-            if start:
-                df = df.pipe(
-                    lambda x: x[x['progress'].apply(lambda y: strptime(datestr=y['start'])) > start]
-                )
-            if end:
-                df = df.pipe(
-                    lambda x: x[x['progress'].apply(lambda y: strptime(datestr=y['end'])) < end]
-                )
-
-            if params_filter is not None:
-                df_params = df['params']
-                masks = None
-                for condition in params_filter:
-                    mask = condition.mask(df_params)
-                    if masks is None:
-                        masks = mask
-                    else:
-                        masks *= mask
-                df = df[masks]
-
-            if metric_filter is not None:
-                df_params = df['metrics']
-                masks = None
-                for condition in metric_filter:
-                    mask = condition.mask(df_params)
-                    if masks is None:
-                        masks = mask
-                    else:
-                        masks *= mask
-                df = df[masks]
-
-            exps = df.to_dict(orient='records')
-            # grid = widgets.GridspecLayout(len(exps) + 1, 7)
-
-            children = [
-                widgets.Label('exp_name'),
-                widgets.Label('test_name'),
-                widgets.Label('start'),
-                widgets.Label('end'),
-                widgets.Label('metrics'),
-                widgets.Label('note & tags'),
-            ]
-            # grid[0, 0] = widgets.Label('Meta')
-            # grid[0, 1] = widgets.Label('Metrics')
-            # grid[0, 2] = widgets.Label('Notes')
-            for i, exp in enumerate(exps, start=1):
-                row = make_row(exp)
-                children.extend(row)
-                # display(widgets.HBox(row))
-                # for j, item in enumerate(row):
-                #     grid[i, j] = item
-
-            grid = widgets.GridBox(children=children,
-
-                                   layout=widgets.Layout(
-                                       width='100%',
-                                       grid_template_columns=' '.join(['auto'] * 5) + ' auto',
-                                       # grid_template_rows='80px auto 80px',
-                                       grid_gap='5px 10px')
-                                   )
-            display(
-                widgets.HTML("""
-                <style>
-                .widget-gridbox div:nth-of-type(even) {background-color: #f2f2f2 !important;}
-                </style>
-                """),
-                grid,
-
-            )
-
-            # return display(
-            #     widgets.HTML(styles['row-radio']),
-            #     widgets.HTML("""
-            #     <style>
-            #     .widget-box, .jupyter-widget-box {border: 1px solid !important;}
-            #     </style>
-            # """),
-            #     grid, clear=True)
+    def panel(self, df=None):
+        """create a dashboard powered by Panel, need to install panel library first."""
+        from .lazy_panel import make_experiment_tabular
+        if df is None:
+            df = self.load()
+        widget = make_experiment_tabular(df)
+        return widget
 
 
-class ExperimentWidget:
-    @overload
-    def __init__(self, exp_name, test_name,
-                 progress: dict,
-                 params: dict, metrics: dict, note: str, tags: set, exp: Experiment):
-        pass
+def is_test_root(path: str) -> bool:
+    """
+    Determines if the specified path is a valid test root.
 
-    def __init__(self, **kwargs):
-        from ipywidgets import widgets
-        self.wid = widgets
-        self.exp = kwargs.pop('exp')  # type: Experiment
-        self._prop = kwargs
+    Args:
+        path: The path to check.
 
-        self._widgets = {
-            'exp_name': widgets.HTML(self._prop['exp_name']),
-            'test_name': widgets.HTML(self._prop['test_name']),
-            'metrics': widgets.VBox(
-                [widgets.HTML(f'{k}: {v}') for k, v in self._prop['metrics'].items() if
-                 isinstance(v, numbers.Number)]),
-        }
+    Returns:
+        True if the path is a valid test root, False otherwise.
+    """
+    test_name = os.path.basename(path.rstrip('/'))
+    return is_test_name(test_name)
 
-        self._params_widgets = {}
 
-        note_ui = widgets.Textarea(self._prop['note'])
+def is_test_name(test_name: str) -> bool:
+    """
+    Determines if the specified string is a valid test name.
 
-        note_ui.continuous_update = False
-        note_ui.observe(self.on_note_update, names='value', type='change')
-        self._widgets['note'] = note_ui
+    Args:
+        test_name: The string to check.
 
-        tag_ui = widgets.TagsInput(value=list(self._prop['tags']))
-        self._widgets['tags'] = tag_ui
-        tag_ui.observe(self.on_tag_update, names='value', type='change')
-
-    def on_note_update(self, sender):
-        self.exp.dump_note(sender['new'])
-
-    def on_tag_update(self, sender):
-        self.exp.dump_tags(*sender['new'])
-
-    def set_key_params(self, keys: list):
-        self._params_widgets.clear()
-        for key in keys:
-            self._params_widgets[key] = self.wid.HTML(
-                f"""<code><b>{key}</b>: {pformat(self._prop['params'][key], width=10, indent=2, compact=True)}</code>""")
-
-    def sep(self):
-        return self.wid.Output(layout={'border': '1px solid black'})
-
-    def id_flag(self):
-        return self.wid.VBox([
-            self._widgets['exp_name'],
-            self._widgets['test_name'],
-        ])
-
-    def key_params(self):
-        return self.wid.VBox([
-            *self._params_widgets.values()
-        ])
-
-    def editable(self):
-        return self.wid.VBox([
-            self._widgets['note'],
-            self.sep(),
-            self._widgets['tags'],
-        ])
-
-    def time(self):
-        now = datetime.now()
-        start = strptime(datestr=self._prop['progress']['start'])
-        end = strptime(datestr=self._prop['progress']['start'])
-        return self.wid.VBox([
-            self.wid.HTML(f"""Start at: {format_timedelta(now - start)}"""),
-            self.wid.HTML(f"""End at: {format_timedelta(now - end)}"""),
-        ])
-
-    def widget_dict(self):
-        return {
-            'id_flag': self.id_flag(),
-            'time': self.time(),
-            'editable': self.editable(),
-            'params': self.key_params(),
-        }
-
-    def widget(self):
-        params = self.key_params()
-        params = [
-            self.sep(),
-            params,
-        ]
-
-        hbox = self.wid.HBox([
-            self.id_flag(),
-            self.time(),
-            self._widgets['metrics'],
-            self.editable(),
-            self.key_params(),
-        ])
-
-        return hbox
-
-    @classmethod
-    def from_experiment(cls, exp: Experiment):
-        tags = exp.properties.get('tags', [])
-        try:
-            tags = set(tags)
-        except:
-            tags = set()
-        return cls(
-            exp_name=exp.exp_name,
-            test_name=exp.test_name,
-            progress=exp.properties.get('progress', {}),
-            params=exp['params'],
-            metrics=exp.metric.value,
-            note=exp.properties.get('note', ''),
-            tags=tags,
-            exp=exp,
-        )
+    Returns:
+        True if the string is a valid test name, False otherwise.
+    """
+    return re.search(r'^\d{6}\.\d{3}\.[a-z\d]{2}t$', test_name) is not None

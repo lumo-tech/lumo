@@ -16,6 +16,31 @@ dump_nd = dump_nd
 load_nd = load_nd
 
 
+def filter_unserializable_values(dic):
+    """
+    Recursively filter out unserializable values in a dictionary.
+
+    Args:
+        dic (dict): The dictionary to be filtered.
+
+    Returns:
+        The filtered dictionary.
+    """
+    for key, value in list(dic.items()):
+        if isinstance(value, dict):
+            filter_unserializable_values(value)
+        elif isinstance(value, list):
+            for i in range(len(value)):
+                if isinstance(value[i], dict):
+                    filter_unserializable_values(value[i])
+                elif not json.dumps(value[i], default=lambda x: None):
+                    value[i] = None
+        elif json.dumps(value, default=lambda x: None) == 'null':
+            dic[key] = None
+    dic = {key: value for key, value in dic.items() if value is not None}
+    return dic
+
+
 def dump_json(obj, fn):
     """
     Dumps the given object to a JSON file at the given file path.
@@ -27,8 +52,11 @@ def dump_json(obj, fn):
     Notes:
         The JSON data will be written with an indentation of 2 spaces.
     """
-    with open(fn, 'w', encoding='utf-8') as w:
-        json.dump(obj, w, indent=2)
+    try:
+        with open(fn, 'w', encoding='utf-8') as w:
+            json.dump(obj, w, indent=2)
+    except TypeError as e:
+        raise TypeError(str(obj)) from e
 
 
 def dump_yaml(obj, fn):

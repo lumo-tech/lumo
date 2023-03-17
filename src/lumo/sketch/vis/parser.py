@@ -23,25 +23,25 @@ class Step:
     step: int
 
 
-def find_metric_fron_test_root(test_root):
-    test_root = finder.retrieval_test_root(test_root)
-    if test_root is None:
-        return False, {}
-
-    exp = Experiment.from_disk(test_root)
-    if exp.has_prop('tensorboard_args'):
-        tb = exp.properties.get('tensorboard_args')
-        metrics = parse_fron_tensorboard(tb['log_dir'])
-    elif exp.has_prop('logger_args'):
-        tb = exp.properties.get('logger_args')
-        metrics = parse_from_log(tb['log_dir'])
-    else:
-        fs = [i for i in os.listdir(exp.test_root)]
-        if len([f for f in fs if f.endswith('.log')]) > 0:
-            metrics = parse_from_log(os.path.join(exp.test_root, fs[0]))
-        else:
-            metrics = {}
-    return True, metrics
+# def find_metric_fron_test_root(test_root):
+#     test_root = finder.retrieval_test_root(test_root)
+#     if test_root is None:
+#         return False, {}
+#
+#     exp = Experiment.from_disk(test_root)
+#     if exp.has_prop('tensorboard_args'):
+#         tb = exp.properties.get('tensorboard_args')
+#         metrics = parse_fron_tensorboard(tb['log_dir'])
+#     elif exp.has_prop('logger_args'):
+#         tb = exp.properties.get('logger_args')
+#         metrics = parse_from_log(tb['log_dir'])
+#     else:
+#         fs = [i for i in os.listdir(exp.test_root)]
+#         if len([f for f in fs if f.endswith('.log')]) > 0:
+#             metrics = parse_from_log(os.path.join(exp.test_root, fs[0]))
+#         else:
+#             metrics = {}
+#     return True, metrics
 
 
 def parse_from_log(log) -> Dict[str, List[Step]]:
