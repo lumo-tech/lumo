@@ -112,7 +112,7 @@ def make_summary(exp: Experiment, **kwargs):
 
 
 def backup_github_issue(exp: Experiment, repo: str, access_token: str,
-                        labels: list = None,
+                        labels: list = None, update: bool = True,
                         **kwargs):
     """backup ipath content and bpath content(optional) to github"""
     try:
@@ -125,8 +125,20 @@ def backup_github_issue(exp: Experiment, repo: str, access_token: str,
 
     title = issue_title.format(test_name=exp.test_name)
 
-    issue = repo_obj.create_issue(title=title)
-    exp.dump_info('backup', {strftime(): {'backend': 'github', 'number': issue.number, 'repo': repo}}, append=True)
+    issue = None
+    if update:
+        number = -1
+        old_backup = exp.properties.get('backup', {})
+        for k, v in sorted(list(old_backup.items())):
+            if v['backend'] == 'github' and v['repo'] == repo:
+                number = v['number']
+
+        if number > 0:
+            issue = repo_obj.get_issue(number)
+
+    if issue is None:
+        issue = repo_obj.create_issue(title=title)
+        exp.dump_info('backup', {strftime(): {'backend': 'github', 'number': issue.number, 'repo': repo}}, append=True)
 
     body = make_summary(exp, **kwargs)
 
