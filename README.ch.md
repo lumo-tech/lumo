@@ -20,8 +20,17 @@
 
 # :book: 目录
 
-- [安装](#安装)
-- [快速开始](#快速开始)
+- :book: [目录](#book-目录)
+- :cloud: [安装](#cloud-安装)
+- :book: [快速开始](#book-快速开始)
+  - :small_orange_diamond: [已有项目嵌入](#small_orange_diamond-已有项目嵌入)
+  - :small_orange_diamond: [从零开始](#small_orange_diamond-从零开始)
+  - :small_orange_diamond: [可视化界面](#small_orange_diamond-可视化界面)
+  - :small_orange_diamond: [复现实验](#small_orange_diamond-复现实验)
+  - :small_orange_diamond: [备份](#small_orange_diamond-备份)
+- [More](#more)
+- :pencil: [Acknowledge](#pencil-acknowledge)
+- :scroll: [License](#scroll-license)
 
 # :cloud: 安装
 

@@ -27,9 +27,15 @@ and focuses on enhancing the experience of deep learning practitioners.
 
 # :book: Table of Contents
 
-- [Installation](#installation)
-- [Quick Start](#quick-start)
-
+- :cloud: [Installation](#cloud-installation)
+- :book: [Quick Start](#book-quick-start)
+  - :small_orange_diamond: [Embedding into Existing Projects](#small_orange_diamond-embedding-into-existing-projects)
+  - :small_orange_diamond: [Building from Scratch](#small_orange_diamond-building-from-scratch)
+  - :small_orange_diamond: [Visual Interface](#small_orange_diamond-visual-interface)
+  - :small_orange_diamond: [re-run](#small_orange_diamond-re-run)
+  - :small_orange_diamond: [backup](#small_orange_diamond-backup)
+- :scroll: [License](#scroll-license)
+- 
 # :cloud: Installation
 
 Install the published and tested version:
