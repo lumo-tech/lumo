@@ -42,6 +42,7 @@ omit = [
     'src/lumo/vis/*',
     'src/lumo/decorators/*',
     'src/lumo/exp/agent.py',
+    'src/lumo/exp/lazy_panel.py',
     'src/lumo/analyse/*',
     'src/lumo/sketch/*',
     'src/lumo/core/record_backend/*',
