@@ -63,7 +63,7 @@ class Trainer(_BaseTrainer):
             raise TypeError(
                 f"Can't instantiate abstract class {cls.__name__} directly, please create a subclass of it.")
 
-    def __init__(self, params: ParamsType, dm: DataModule = None, accelerator='accelerator'):
+    def __init__(self, params: ParamsType, dm: DataModule = None, accelerator=None):
         if dm is None:
             dm = DataModule(params)
         else:
@@ -92,6 +92,7 @@ class Trainer(_BaseTrainer):
         # self.accelerate = Accelerator(kwargs_handlers=[
         #     DistributedDataParallelKwargs(find_unused_parameters=params.get('find_unused_parameters', False))
         # ])
+        accelerator = glob.get('accelerator', 'accelerator')
         self.accelerate = get_accelerator(accelerator)
 
         self.accelerate.set_device(torch.device(device))
@@ -393,7 +394,7 @@ class Trainer(_BaseTrainer):
         Returns:
             The device used for training.
         """
-        return torch.device(self.params.device)
+        return self.accelerate.device
 
     def _load_fun_state_dict(self, src: dict):
         """

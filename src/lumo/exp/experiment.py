@@ -9,7 +9,7 @@ import random
 import sys
 import time
 import traceback
-from typing import Any, List
+from typing import Any, List, overload
 from functools import wraps
 from lumo.decorators.process import call_on_main_process_wrap
 from lumo.proc import glob
@@ -905,6 +905,13 @@ class Experiment:
             'is_alive': self.is_alive,
             'metrics': self.metric.value,
         }
+
+    def backup(self, backend: str = 'github', **kwargs):
+        from .backup import backup_regist
+        if backend == 'github':
+            kwargs.setdefault('access_token', glob['github_access_token'])
+
+        return backup_regist[backend](exp=self, **kwargs)
 
 
 class SimpleExperiment(Experiment):

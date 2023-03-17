@@ -13,6 +13,7 @@ from lumo.exp import Experiment
 
 
 def wait_pid_stop(info_dir=None):
+    """wait test """
     params = BaseParams()
     params.info_dir = info_dir
     params.from_args()
