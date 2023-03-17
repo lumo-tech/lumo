@@ -79,6 +79,15 @@ def is_main():
 
 
 def gather(tensor):
+    """
+    Gather the tensor data across all processes in the distributed setting.
+
+    Args:
+        tensor (torch.Tensor): The tensor to be gathered.
+
+    Returns:
+        The gathered tensor data.
+    """
     if dist.is_initialized():
         if tensor.ndim == 0:
             tensor = tensor.clone()[None]

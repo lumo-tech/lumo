@@ -374,6 +374,7 @@ class Experiment:
             return []
 
     def trigger(self):
+        """trigger the disk change"""
         pass
 
     def _trigger_change(self, func):
@@ -907,6 +908,10 @@ class Experiment:
         }
 
     def backup(self, backend: str = 'github', **kwargs):
+        """
+        Backup this experiment into the given target, currently only support GitHub, you can implement your own way
+        by the provided information of Experiment.
+        """
         from .backup import backup_regist
         if backend == 'github':
             kwargs.setdefault('access_token', glob['github_access_token'])

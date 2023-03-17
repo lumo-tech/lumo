@@ -48,6 +48,7 @@ Tensor metrics:
 
 
 def make_summary(exp: Experiment, **kwargs):
+    """make a summary of experiment, can be used for backup or write report."""
     properties = exp.properties.copy()
 
     execute = properties['execute']
@@ -177,7 +178,8 @@ def backup_ssh(exp: Experiment, host, username, root, size_limit):
     pass
 
 
-def backup_local(exp: Experiment, target):
+def backup_local(exp: Experiment, target: str):
+    """backup in local dist"""
     pass
 
 

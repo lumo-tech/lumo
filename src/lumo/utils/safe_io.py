@@ -17,6 +17,15 @@ load_nd = load_nd
 
 
 def filter_unserializable_values(dic):
+    """
+    Recursively filter out unserializable values in a dictionary.
+
+    Args:
+        dic (dict): The dictionary to be filtered.
+
+    Returns:
+        The filtered dictionary.
+    """
     for key, value in list(dic.items()):
         if isinstance(value, dict):
             filter_unserializable_values(value)

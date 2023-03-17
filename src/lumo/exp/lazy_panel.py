@@ -45,6 +45,7 @@ pn.extension('tabulator', raw_css=[css], css_files=[pn.io.resources.CSS_URLS['fo
 
 
 def FoldDictFormatter(column_name):
+    """unfold dict in summary tag"""
     base_template = """
     <details style="overflow: visible;">
         <summary>{column_name}</summary>
@@ -56,6 +57,7 @@ def FoldDictFormatter(column_name):
 
 
 def DictFormatter(column_name):
+    """unfold dict in list tag"""
     base_template = """
         <% _.each(value, function(vv, key) { %>
             <li><b><%= key %>:</b> <%= vv %></li>
@@ -65,6 +67,7 @@ def DictFormatter(column_name):
 
 
 class ExceptionFormatter:
+    """format exception"""
     base_template = """
 <details style="overflow: visible;">
     <summary> 
@@ -104,6 +107,7 @@ tabulator_editors = {
 
 
 def drop_nonscalar_metric(dic):
+    """only keep scalar metrics"""
     if not isinstance(dic, dict):
         return
 
@@ -114,6 +118,7 @@ def drop_nonscalar_metric(dic):
 
 
 def reformat_progress(dic):
+    """make progress"""
     if not isinstance(dic, dict):
         return {
             'ratio': '100%',
@@ -202,6 +207,7 @@ def make_experiment_tabular(df: pd.DataFrame):
     df = df[top_columns + list(extra_columns)]
 
     def on_cell_change(e: TableEditEvent):
+        """on edit cell"""
         nonlocal df
 
         if e.column == 'note':

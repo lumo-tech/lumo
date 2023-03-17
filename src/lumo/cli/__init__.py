@@ -57,6 +57,7 @@ def board(port=11606, address=None, open=True):
 
 
 def main():
+    """the entry"""
     fire.Fire({
         'rerun': rerun,
         'note': note,

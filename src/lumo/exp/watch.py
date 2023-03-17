@@ -1,23 +1,3 @@
-"""
-Watcher 可以在运行实验后在 jupyter 或者网页上展示正在运行和已经运行结束的实验（按时间顺序？）
-以及可以简化记录实验的烦恼
-
-现在的核心痛点是
- - [ ] 所有元信息都有了，但是找不到哪个实验是哪个实验
- - [ ] 同时跑的多个实验有一个失败了，重跑时会混淆，或许需要一种覆盖手段 ->
- - > 怎么 rerun？
-        lumo rerun test_name √
-        lumo note html （用 streamlit 之类的生成动态网页）
-        lumo note cmd  (类似 top 的视角，按时间顺序排列)
-- > rerun 将已经跑的实验 move
-
-可以代替 analysis 的作用。主要有
-
--> 按照 progress 目录，获取所有的实验
--> 根据获取的实验，按顺序记录
--> 每次只记录
-
-"""
 import numbers
 import os
 import os.path
@@ -253,6 +233,7 @@ class Condition:
         return mapping[self.op](value, self.value)
 
     def capply(self, df):
+        """apply operations in column axis"""
         import pandas as pd
         df = df.reset_index(drop=True)
         if self.op == 'drop_column':
@@ -322,8 +303,13 @@ class Watcher:
         self.hb_root = hb_root
         self.pid_root = pid_root
 
-    def retrieve(self, test_name=None):
-        raise NotImplementedError()
+    def retrieve(self, test_name=None) -> Experiment:
+        """retrieve the Experiment of given test name"""
+        df = self.load()
+        res = df[df['test_name'] == test_name]
+        if len(res) > 0:
+            return Experiment.from_cache(res.iloc[0].to_dict())
+        return None
 
     def update(self):
         """Diff & Update"""
@@ -357,6 +343,7 @@ class Watcher:
         return updates
 
     def fullupdate(self):
+        """re-update all experiment from original experiment directories"""
         updates = {}
         for root, dirs, fs in os.walk(self.exp_root):
             for f in dirs:
@@ -398,6 +385,7 @@ class Watcher:
         updates = self.update()
 
         def valid_row(dic):
+            """is a valid row?"""
             return isinstance(dic, dict) and 'test_name' in dic
 
         for dic_fn in os.listdir(self.db_root):
@@ -473,6 +461,7 @@ class Watcher:
         pass
 
     def panel(self, df=None):
+        """create a dashboard powered by Panel, need to install panel library first."""
         from .lazy_panel import make_experiment_tabular
         if df is None:
             df = self.load()

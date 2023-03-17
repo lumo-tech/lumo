@@ -14,6 +14,15 @@ def honor_type(obj, generator):
 
 
 def is_torch_tensor(tensor):
+    """
+    Check if the input is a PyTorch tensor.
+
+    Args:
+        tensor: The input tensor.
+
+    Returns:
+        A boolean indicating if the input is a PyTorch tensor.
+    """
     return isinstance(tensor, torch.Tensor)
 
 
