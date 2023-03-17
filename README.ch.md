@@ -79,7 +79,7 @@ exp.start()
 logger.add_log_dir(exp.mk_ipath())
 ```
 
-- 初始化参数
+- 初始化参数（代替 argparse 等）
 
 ```python
 # 替换基于 argparse 等的参数定义方法
@@ -90,7 +90,7 @@ params.from_args()  # python3 train.py --dataset=cifar100 --alpha=0.2
 print(params.to_dict())  # {"dataset": "cifar100", "alpha": 0.2}
 ```
 
-- 在训练过程中记录参数、存储信息
+- 在训练过程中记录参数、存储信息（代替手动管理路径、自己维护 AvgItem）
 
 ```python
 # 记录实验参数
@@ -204,7 +204,8 @@ issues = df.apply(
 
 ![backup_github](./images/backup_github.png)
 
-Full properties 内容:
+# Full properties
+
 ```
 {'agent': nan,
  'backup': {'23-03-17-003438': {'backend': 'github',
@@ -259,8 +260,6 @@ Full properties 内容:
  'test_name': '230316.000.8ct',
  'trainer': nan}
 ```
-
-# More
 
 # :pencil: Acknowledge
 

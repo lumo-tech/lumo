@@ -200,7 +200,7 @@ issues = df.apply(
 
 ![backup_github](./images/backup_github.png)
 
-Full properties content:
+# Full properties
 
 ```
 {'agent': nan,
