@@ -7,7 +7,7 @@
 
 `lumo` 是一个精简高效的库，简化了实验所需的所有组件的管理，并特别关注增强深度学习实践者的体验。
 
-- 实验管理：: 为每次运行分配唯一路径，区分不同类型的文件并存储；并通过 git 管理代码快照。
+- 实验管理：: 为每次运行分配唯一路径，区分不同类型的文件并存储；通过 git 管理代码快照；记录实验中产生的一切信息，保障可回溯、可复现
 - 参数管理：基于 fire 提供比 argparser 更便捷的参数管理
 - 运行时配置：提供多级作用域下的配置管理
 - 可视化：基于 [Panel](https://panel.holoviz.org/index.html) 提供可交互的 jupyter 实验管理面板
@@ -204,6 +204,61 @@ issues = df.apply(
 
 ![backup_github](./images/backup_github.png)
 
+Full properties 内容:
+```
+{'agent': nan,
+ 'backup': {'23-03-17-003438': {'backend': 'github',
+                                'number': 9,
+                                'repo': '...'},
+            },
+ 'exception': nan,
+ 'execute': {'cwd': '~/Documents/Python/lumo',
+             'exec_argv': ['~/Documents/Python/lumo/a.py'],
+             'exec_bin': '~/.pyenv/versions/3.9.16/bin/python3.9',
+             'exec_file': '~/Documents/Python/lumo/a.py',
+             'repo': '~/Documents/Python/lumo'},
+ 'exp_name': 'my_exp_a',
+ 'git': {'commit': '1014b6b5',
+         'dep_hash': 'c93b8c4e340882f55cf0c8e125fa0203',
+         'repo': '~/Documents/Python/lumo'},
+ 'hooks': {'Diary': {'loaded': True, 'msg': ''},
+           'FinalReport': {'loaded': True, 'msg': ''},
+           'GitCommit': {'loaded': True, 'msg': ''},
+           'LastCmd': {'loaded': True, 'msg': ''},
+           'LockFile': {'loaded': True, 'msg': ''},
+           'RecordAbort': {'loaded': True, 'msg': ''}},
+ 'lock': {'accelerate': '0.16.0',
+          'decorator': '5.1.1',
+          'fire': '0.5.0',
+          'hydra': '1.3.2',
+          'joblib': '1.2.0',
+          'lumo': '0.15.0',
+          'numpy': '1.24.2',
+          'omegaconf': '2.3.0',
+          'psutil': '5.9.4',
+          'torch': '1.13.1'},
+ 'note': 'This is a Note',
+ 'params': {'alpha': 1, 'dataset': 'cifar10'},
+ 'paths': {'blob_root': '~/.lumo/blob',
+           'cache_root': '~/.lumo/cache',
+           'info_root': '~/.lumo/experiments'},
+ 'pinfo': {'hash': '0af4b77497c85bc5b65ccbdd9ff4ca0f',
+           'obj': {'argv': ['~/.pyenv/versions/3.9.16/bin/python3.9',
+                            '~/Documents/Python/lumo/a.py'],
+                   'pid': 63975,
+                   'pname': 'python3.9',
+                   'pstart': 1678898740.099484},
+           'pid': 63975},
+ 'progress': {'end': '23-03-16-004542',
+              'end_code': 0,
+              'last_edit_time': '23-03-16-004542',
+              'ratio': 1,
+              'start': '23-03-16-004542',
+              'update_from': None},
+ 'tags': [],
+ 'test_name': '230316.000.8ct',
+ 'trainer': nan}
+```
 
 # More
 

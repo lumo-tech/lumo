@@ -10,11 +10,12 @@
 `lumo` is a streamlined and efficient library that simplifies the management of all components required for experiments
 and focuses on enhancing the experience of deep learning practitioners.
 
-- **Experiment Management:** Allocates a unique path for each run, distinguishes and stores files for different types of
-  experiments, and manages code snapshots via Git.
-- **Parameter Management:** Provides more convenient parameter management than argparser based on fire.
+- **Experimental Management**: **Assign unique id and path** for each run, distinguish and store various file types;
+  manage **code snapshots** through git; **record all information** generated during the experiment to ensure
+  traceability and reproducibility.
+- **Parameter Management:** Provides more convenient **parameter management** than argparser based on fire.
 - **Runtime Configuration:** Provides configuration management under multi-level scopes.
-- **Visualization:** Provides an interactive Jupyter experiment management panel based
+- **Visualization:** Provides an Jupyter-compatible interactive dashboard for experiment management based
   on [Panel](https://panel.holoviz.org/index.html).
 - Additional optimization for deep learning:
     - **Training:** Provides easily extendable training logic based on Trainer and provides comprehensive callback
@@ -31,11 +32,11 @@ and focuses on enhancing the experience of deep learning practitioners.
 
 - :cloud: [Installation](#cloud-installation)
 - :book: [Quick Start](#book-quick-start)
-  - :small_orange_diamond: [Embedding into Existing Projects](#small_orange_diamond-embedding-into-existing-projects)
-  - :small_orange_diamond: [Building from Scratch](#small_orange_diamond-building-from-scratch)
-  - :small_orange_diamond: [Visual Interface](#small_orange_diamond-visual-interface)
-  - :small_orange_diamond: [re-run](#small_orange_diamond-re-run)
-  - :small_orange_diamond: [backup](#small_orange_diamond-backup)
+    - :small_orange_diamond: [Embedding into Existing Projects](#small_orange_diamond-embedding-into-existing-projects)
+    - :small_orange_diamond: [Building from Scratch](#small_orange_diamond-building-from-scratch)
+    - :small_orange_diamond: [Visual Interface](#small_orange_diamond-visual-interface)
+    - :small_orange_diamond: [re-run](#small_orange_diamond-re-run)
+    - :small_orange_diamond: [backup](#small_orange_diamond-backup)
 - :scroll: [License](#scroll-license)
 
 # :cloud: Installation
@@ -198,6 +199,63 @@ issues = df.apply(
 ```
 
 ![backup_github](./images/backup_github.png)
+
+Full properties content:
+
+```
+{'agent': nan,
+ 'backup': {'23-03-17-003438': {'backend': 'github',
+                                'number': 9,
+                                'repo': '...'},
+            },
+ 'exception': nan,
+ 'execute': {'cwd': '~/Documents/Python/lumo',
+             'exec_argv': ['~/Documents/Python/lumo/a.py'],
+             'exec_bin': '~/.pyenv/versions/3.9.16/bin/python3.9',
+             'exec_file': '~/Documents/Python/lumo/a.py',
+             'repo': '~/Documents/Python/lumo'},
+ 'exp_name': 'my_exp_a',
+ 'git': {'commit': '1014b6b5',
+         'dep_hash': 'c93b8c4e340882f55cf0c8e125fa0203',
+         'repo': '~/Documents/Python/lumo'},
+ 'hooks': {'Diary': {'loaded': True, 'msg': ''},
+           'FinalReport': {'loaded': True, 'msg': ''},
+           'GitCommit': {'loaded': True, 'msg': ''},
+           'LastCmd': {'loaded': True, 'msg': ''},
+           'LockFile': {'loaded': True, 'msg': ''},
+           'RecordAbort': {'loaded': True, 'msg': ''}},
+ 'lock': {'accelerate': '0.16.0',
+          'decorator': '5.1.1',
+          'fire': '0.5.0',
+          'hydra': '1.3.2',
+          'joblib': '1.2.0',
+          'lumo': '0.15.0',
+          'numpy': '1.24.2',
+          'omegaconf': '2.3.0',
+          'psutil': '5.9.4',
+          'torch': '1.13.1'},
+ 'note': 'This is a Note',
+ 'params': {'alpha': 1, 'dataset': 'cifar10'},
+ 'paths': {'blob_root': '~/.lumo/blob',
+           'cache_root': '~/.lumo/cache',
+           'info_root': '~/.lumo/experiments'},
+ 'pinfo': {'hash': '0af4b77497c85bc5b65ccbdd9ff4ca0f',
+           'obj': {'argv': ['~/.pyenv/versions/3.9.16/bin/python3.9',
+                            '~/Documents/Python/lumo/a.py'],
+                   'pid': 63975,
+                   'pname': 'python3.9',
+                   'pstart': 1678898740.099484},
+           'pid': 63975},
+ 'progress': {'end': '23-03-16-004542',
+              'end_code': 0,
+              'last_edit_time': '23-03-16-004542',
+              'ratio': 1,
+              'start': '23-03-16-004542',
+              'update_from': None},
+ 'tags': [],
+ 'test_name': '230316.000.8ct',
+ 'trainer': nan}
+```
 
 # :scroll: License
 
