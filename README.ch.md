@@ -45,19 +45,21 @@ pip install panel
 
 # :book: 快速开始
 
-以下是两个经典场景：
+以下是几个经典场景：
 
 ## :small_orange_diamond: 已有项目嵌入
 
 对已有项目，可以通过以下方式快速嵌入
 
- - 引入
+- 引入
+
 ```python
 import random
 from lumo import SimpleExperiment, Params, Logger, Meter, Record
 ```
 
- - 初始化 Logger 和 Experiment
+- 初始化 Logger 和 Experiment
+
 ```python
 logger = Logger()
 # 定义及使用，无需转换
@@ -66,7 +68,8 @@ exp.start()
 logger.add_log_dir(exp.mk_ipath())
 ```
 
- - 初始化参数
+- 初始化参数
+
 ```python
 # 替换基于 argparse 等的参数定义方法
 params = Params()
@@ -76,7 +79,8 @@ params.from_args()  # python3 train.py --dataset=cifar100 --alpha=0.2
 print(params.to_dict())  # {"dataset": "cifar100", "alpha": 0.2}
 ```
 
- - 在训练过程中记录参数、存储信息
+- 在训练过程中记录参数、存储信息
+
 ```python
 # 记录实验参数
 exp.dump_info('params', params.to_dict())
@@ -150,11 +154,51 @@ widget.servable()
 lumo board [--port, --address, --open]
 ```
 
+## :small_orange_diamond: 复现实验
+
+对因为个中原因失败的实验，在藉由可视化界面观察并解决后，可以通过唯一实验 Id (test_name) 直接重跑，并对关键参数重新赋值：
+
+```
+lumo rerun 230313.030.57t --device=0
+```
+
+## :small_orange_diamond: 备份
+
+记录实验信息到 Github issue (基于 PyGitHub):
+
+```python
+from lumo import Experiment, Watcher
+from lumo import glob
+
+glob['github_access_token'] = 'ghp_*'  # `access_token` 的默认值，建议将 access_token 写在全局配置 `~/.lumorc.json` 中 
+
+w = Watcher()
+df = w.load()
+
+# 选择单个实验备份
+exp = Experiment.from_cache(df.iloc[0].to_dict())
+issue = exp.backup('github', repo='pytorch-lumo/image-classification-private',
+                   access_token='ghp_*',
+                   update=True,  # 如果已备份，则覆盖更新之前的 issue
+                   labels=None,  # 可选标签
+                   )
+print(issue.number)
+
+# 批量备份，并且基于每个实验的参数添加标签
+issues = df.apply(
+    lambda x: Experiment.from_cache(x.to_dict()).backup(..., labels=[x['params'].get('dataset', '')]),
+    axis=1
+)
+```
+
+![backup_github](./images/backup_github.png)
+
+
 # More
 
 # :pencil: Acknowledge
 
-从 2020 年维护至今。感谢 lumo 陪我见证我的学术生涯。
+从 2020 年维护至今。感谢 lumo 陪我见证我的研究生生涯。
 
 # :scroll: License
 

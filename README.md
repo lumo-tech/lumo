@@ -17,7 +17,8 @@ and focuses on enhancing the experience of deep learning practitioners.
 - **Visualization:** Provides an interactive Jupyter experiment management panel based
   on [Panel](https://panel.holoviz.org/index.html).
 - Additional optimization for deep learning:
-    - **Training:** Provides easily extendable training logic based on Trainer and provides comprehensive callback logic.
+    - **Training:** Provides easily extendable training logic based on Trainer and provides comprehensive callback
+      logic.
     - **Optimizer:** Integrated parameter and optimizer construction.
     - **Data:** Abstraction of dataset construction process, combination of multiple DataLoaders, etc.
     - **Distributed Training:** Also supports multiple training acceleration frameworks, unified abstraction, and easy
@@ -115,8 +116,8 @@ one-fine training:
 | Example                                     | CoLab | Lines of Code |
 |---------------------------------------------|-------|---------------|
 | [MNIST example](./examples/mnist.py)        |       | 118           |
-| [MocoV2 trains CIFAR10](./examples/moco.py) || 284   |
-| [Multi-GPU training ImageNet]()             |||
+| [MocoV2 trains CIFAR10](./examples/moco.py) |       | 284   |
+| [Multi-GPU training ImageNet]()             |       ||
 
 Experimental project:
 
@@ -124,7 +125,6 @@ Experimental project:
 |-----------------------------------------------------------------------------------------------------------|-------------------------------|
 | [image-classification](https://github.com/pytorch-lumo/image-classification)                              | Reproducible code for multiple papers with full supervision, semi-supervision, and self-supervision      |
 | [emotion-recognition-in-coversation](https://github.com/pytorch-lumo/emotion-recognition-in-conversation) | Reproducible code for multiple papers on dialogue emotion classification and multimodal dialogue emotion classification |
-
 
 ## :small_orange_diamond: Visual Interface
 
@@ -149,6 +149,47 @@ You can directly use the command line:
 ```
 lumo board [--port, --address, --open]
 ```
+
+## :small_orange_diamond: re-run
+
+Experiment that failed due to certain reasons can be **re-run by using the unique experiment ID (test_name)** , extra
+parameters can be **reassigned and replaced**.
+
+```
+lumo rerun 230313.030.57t --device=0
+```
+
+## :small_orange_diamond: backup
+
+Backing up experiment information to a Github issue (based on PyGitHub):
+
+```python
+from lumo import Experiment, Watcher
+from lumo import glob
+
+glob[
+    'github_access_token'] = 'ghp_*'  # Default value for `access_token`. It is recommended to store the access_token in the global configuration `~/.lumorc.json`.
+
+w = Watcher()
+df = w.load()
+
+# Selecting a single experiment for backup
+exp = Experiment.from_cache(df.iloc[0].to_dict())
+issue = exp.backup('github', repo='pytorch-lumo/image-classification-private',
+                   access_token='ghp_*',
+                   update=True,  # If already backed up, overwrite the previous issue
+                   labels=None,  # Optional labels
+                   )
+print(issue.number)
+
+# Batch backup and add labels based on each experiment's parameters
+issues = df.apply(
+    lambda x: Experiment.from_cache(x.to_dict()).backup(..., labels=[x['params'].get('dataset', '')]),
+    axis=1
+)
+```
+
+![backup_github](./images/backup_github.png)
 
 # :scroll: License
 
