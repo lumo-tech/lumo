@@ -8,7 +8,7 @@ import extract_version
 project = 'lumo'
 copyright = '2023, sailist'
 author = 'sailist'
-release = extract_version()
+release = extract_version.extract_version()
 
 # -- Path setup --------------------------------------------------------------
 
@@ -31,7 +31,7 @@ import commonmark
 extensions = [
     "myst_parser",
     # "autodoc2",
-    "sphinx_rtd_theme", # pip install sphinx_rtd_theme
+    "sphinx_rtd_theme",  # pip install sphinx_rtd_theme
     'sphinx.ext.napoleon',
     'sphinx.ext.autodoc',
 
