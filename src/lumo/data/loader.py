@@ -36,17 +36,7 @@ def summarize_loader(loader: DataLoader):
         if loader.batch_sampler is not None:
             batch_size = loader.batch_sampler.batch_size
 
-        # clss = type(loader).__mro__
-        # cls_str = []
-        # for cls in clss:
-        #     if isinstance(cls, DataLoader):
-        #         if len(cls_str) == 0:
-        #             cls_str.append(cls.__name__)
-        #         break
-        #     else:
-        #         cls_str.append(cls.__name__)
-        #
-        # cls_str = '|'.join(cls_str)
+
         return f"{loader.__class__.__name__}(batch_size={batch_size}, num_workers={loader.num_workers}, size={size})"
     else:
         raise ValueError(f'Need {DataLoaderType}, got type {type(loader)}')
@@ -57,17 +47,16 @@ class DataLoaderSide:
     A utility class for loading data from different DataLoaders with different batch sizes at the same time.
 
     Example usage:
-        loader = DataLoaderSide()
-        loader.add('train', train_loader, cycle=True)
-        loader.add('val', val_loader)
-        loader.zip()
-        for batch in loader:
-            # process batch
 
-    Attributes:
-        _loaders: An ordered dictionary that maps the name of the DataLoader to the corresponding DataLoader instance.
-        _cycle: An ordered dictionary that maps the name of the DataLoader to a boolean indicating whether the DataLoader should be cycled.
-        _state: A string that indicates the current state of the DataLoaderSide instance. The possible values are 'zip' and 'chain'.
+    ```python
+    from lumo import DataLoaderSide
+    loader = DataLoaderSide()
+    loader.add('train', train_loader, cycle=True)
+    loader.add('val', val_loader)
+    loader.zip()
+    for batch in loader:
+        # process batch
+    ```
 
     Methods:
         dataset(): Returns a dictionary that maps the name of the DataLoader to its corresponding dataset.
@@ -104,10 +93,10 @@ class DataLoaderSide:
     def add(self, name, loader: DataLoader, cycle=False):
         """
         Adds a DataLoader instance to the _loaders dictionary.
-            Args:
-                name (str): The name of the DataLoader.
-                loader (DataLoader): The DataLoader instance to be added.
-                cycle (bool): A boolean indicating whether the DataLoader should be cycled. Defaults to False.
+        Args:
+            name (str): The name of the DataLoader.
+            loader (DataLoader): The DataLoader instance to be added.
+            cycle (bool): A boolean indicating whether the DataLoader should be cycled. Defaults to False.
 
         """
         self._loaders[name] = loader

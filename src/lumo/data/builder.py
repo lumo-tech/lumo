@@ -76,13 +76,14 @@ class DatasetBuilder(Dataset):
 
     Besides, you can access the index of each data by `.add_idx('name')`.
 
-    ```
+    ```python
     ds.add_idx('idx')
     print(ds[0])
     {'idx': 0, ...others...}
     ```
 
     Finally, we can use transforms. Each input and output can be passed a transform parameter during definition, such as:
+
     ```python
     ds.add_input('xs', xs, transform=default_loader)
     ds.add_output('xs','xs1',transform=randargument)
@@ -91,6 +92,7 @@ class DatasetBuilder(Dataset):
 
     The transform defined at the input stage will only be called once when there is a corresponding output. Each output has its own transform.
     That is to say, the transform execution process defined by the above code will like:
+
     ```python
     x -> default_loader -> randargument -> xs1
                        \-> weak -> xs2
@@ -98,18 +100,17 @@ class DatasetBuilder(Dataset):
 
     It's possible that you may be confused about the usage of output names. Commonly, the output types of `dataset[index]` are `list` or `dict`.
     DatasetBuilder provides both types for everyone, and by default, the dict type is used. When defining outputs as `(xs1, xs2, ys)`, the output of `ds[index]` should be:
+
     ```python
     {'xs1': np.array, 'xs2': np.array, 'ys': 1}
     ```
 
     You can change the output type to list by calling `.chain()`:
+
     ...python
     ds.chain()
     xs1,xs2,ys = ds[index]
     ```
-
-
-
     """
 
     def __init__(self):
