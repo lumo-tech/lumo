@@ -3,12 +3,22 @@
 
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
-import extract_version
+import re
+from pathlib import Path
+
+version_fn = Path(__file__).parent.parent.parent.joinpath('src/lumo/__init__.py').as_posix()
+
+
+def extract_version():
+    return re.search(
+        r'__version__ = "([\d.d\-]+)"',
+        open(version_fn, 'r', encoding='utf-8').read()).group(1)
+
 
 project = 'lumo'
 copyright = '2023, sailist'
 author = 'sailist'
-release = extract_version.extract_version()
+release = extract_version()
 
 # -- Path setup --------------------------------------------------------------
 
