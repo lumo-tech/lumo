@@ -1,9 +1,8 @@
 name: github pages
 
-#on:
-#  push:
-
-on: [ push ]
+on:
+  push:
+    - "master"
 
 jobs:
   deploy:
