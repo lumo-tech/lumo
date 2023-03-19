@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>lumo.decorators package &mdash; lumo 1.0.0 documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            lumo
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="tutorial/getting_start.html">Getting Start</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">lumo</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">lumo.decorators package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/lumo.decorators.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="lumo-decorators-package">
+<h1>lumo.decorators package<a class="headerlink" href="#lumo-decorators-package" title="Permalink to this heading"></a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this heading"></a></h2>
+</section>
+<section id="module-lumo.decorators.clsmethod">
+<span id="lumo-decorators-clsmethod-module"></span><h2>lumo.decorators.clsmethod module<a class="headerlink" href="#module-lumo.decorators.clsmethod" title="Permalink to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="lumo.decorators.clsmethod.clswrap">
+<span class="sig-prename descclassname"><span class="pre">lumo.decorators.clsmethod.</span></span><span class="sig-name descname"><span class="pre">clswrap</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">callable</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">T</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">T</span></span></span><a class="headerlink" href="#lumo.decorators.clsmethod.clswrap" title="Permalink to this definition"></a></dt>
+<dd><p>A decorator for creating a staticmethod with type hints.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>callable</strong> – The function to be wrapped with a staticmethod.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A new staticmethod that calls the original function.</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>This decorator should be used on a class method. It creates a new staticmethod that calls the original function,
+allowing it to be called without an instance of the class. The <code class="docutils literal notranslate"><span class="pre">callable</span></code> argument should have type hints
+for the parameters and return type. The resulting staticmethod will also have the same type hints.</p>
+</dd></dl>
+
+</section>
+<section id="module-lumo.decorators.debounce">
+<span id="lumo-decorators-debounce-module"></span><h2>lumo.decorators.debounce module<a class="headerlink" href="#module-lumo.decorators.debounce" title="Permalink to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="lumo.decorators.debounce.debounce">
+<span class="sig-prename descclassname"><span class="pre">lumo.decorators.debounce.</span></span><span class="sig-name descname"><span class="pre">debounce</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wait</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.decorators.debounce.debounce" title="Permalink to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>wait</strong> (<em>float</em>) – seconds</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>function</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<p>&#64;debounce(5)
+def my_func():
+print(“my_func called”)</p>
+<p>while True:
+my_func()
+time.sleep(1)</p>
+</dd></dl>
+
+</section>
+<section id="module-lumo.decorators.deprecated">
+<span id="lumo-decorators-deprecated-module"></span><h2>lumo.decorators.deprecated module<a class="headerlink" href="#module-lumo.decorators.deprecated" title="Permalink to this heading"></a></h2>
+<dl class="py exception">
+<dt class="sig sig-object py" id="lumo.decorators.deprecated.DeprecatedWarning">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">lumo.decorators.deprecated.</span></span><span class="sig-name descname"><span class="pre">DeprecatedWarning</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">function</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">deprecated_in</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">removed_in</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">details</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.decorators.deprecated.DeprecatedWarning" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">DeprecationWarning</span></code></p>
+<p>A warning class for deprecated methods
+This is a specialization of the built-in :class:<code class="docutils literal notranslate"><span class="pre">DeprecationWarning</span></code>,
+adding parameters that allow us to get information into the <strong>str</strong>
+that ends up being sent through the :mod:<code class="docutils literal notranslate"><span class="pre">warnings</span></code> system.
+The attributes aren’t able to be retrieved after the warning gets
+raised and passed through the system as only the class–not the
+instance–and message are what gets preserved.
+:param function: The function being deprecated.
+:param deprecated_in: The version that <code class="docutils literal notranslate"><span class="pre">function</span></code> is deprecated in
+:param removed_in: The version or :class:<code class="docutils literal notranslate"><span class="pre">datetime.date</span></code> specifying
+when <code class="docutils literal notranslate"><span class="pre">function</span></code> gets removed.
+:param details: Optional details about the deprecation. Most often
+this will include directions on what to use instead
+of the now deprecated code.</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="lumo.decorators.deprecated.UnsupportedWarning">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">lumo.decorators.deprecated.</span></span><span class="sig-name descname"><span class="pre">UnsupportedWarning</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">function</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">deprecated_in</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">removed_in</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">details</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.decorators.deprecated.UnsupportedWarning" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#lumo.decorators.deprecated.DeprecatedWarning" title="lumo.decorators.deprecated.DeprecatedWarning"><code class="xref py py-class docutils literal notranslate"><span class="pre">DeprecatedWarning</span></code></a></p>
+<p>A warning class for methods to be removed
+This is a subclass of :class:<code class="docutils literal notranslate"><span class="pre">~deprecation.DeprecatedWarning</span></code> and is used
+to output a proper message about a function being unsupported.
+Additionally, the :func:<code class="docutils literal notranslate"><span class="pre">~deprecation.fail_if_not_removed</span></code> decorator
+will handle this warning and cause any tests to fail if the system
+under test uses code that raises this warning.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="lumo.decorators.deprecated.deprecated">
+<span class="sig-prename descclassname"><span class="pre">lumo.decorators.deprecated.</span></span><span class="sig-name descname"><span class="pre">deprecated</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">deprecated_in</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">removed_in</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">details</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.decorators.deprecated.deprecated" title="Permalink to this definition"></a></dt>
+<dd><p>Decorate a function to signify its deprecation
+This function wraps a method that will soon be removed and does two things:
+* The docstring of the method will be modified to include a notice
+about deprecation, e.g., “Deprecated since 0.9.11. Use foo instead.”
+* Raises a :class:<code class="docutils literal notranslate"><span class="pre">~deprecation.DeprecatedWarning</span></code>
+via the :mod:<code class="docutils literal notranslate"><span class="pre">warnings</span></code> module, which is a subclass of the built-in
+:class:<code class="docutils literal notranslate"><span class="pre">DeprecationWarning</span></code>. Note that built-in
+:class:<code class="docutils literal notranslate"><span class="pre">DeprecationWarning``s</span> <span class="pre">are</span> <span class="pre">ignored</span> <span class="pre">by</span> <span class="pre">default,</span> <span class="pre">so</span> <span class="pre">for</span> <span class="pre">users</span>
+<span class="pre">to</span> <span class="pre">be</span> <span class="pre">informed</span> <span class="pre">of</span> <span class="pre">said</span> <span class="pre">warnings</span> <span class="pre">they</span> <span class="pre">will</span> <span class="pre">need</span> <span class="pre">to</span> <span class="pre">enable</span> <span class="pre">them--see</span>
+<span class="pre">the</span> <span class="pre">:mod:``warnings</span></code> module documentation for more details.
+:param deprecated_in: The version at which the decorated method is
+considered deprecated. This will usually be the
+next version to be released when the decorator is
+added. The default is <strong>None</strong>, which effectively
+means immediate deprecation. If this is not
+specified, then the <code class="docutils literal notranslate"><span class="pre">removed_in</span></code> and
+<code class="docutils literal notranslate"><span class="pre">current_version</span></code> arguments are ignored.
+:param removed_in: The version or :class:<code class="docutils literal notranslate"><span class="pre">datetime.date</span></code> when the decorated
+method will be removed. The default is <strong>None</strong>,
+specifying that the function is not currently planned
+to be removed.
+Note: This parameter cannot be set to a value if
+<code class="docutils literal notranslate"><span class="pre">deprecated_in=None</span></code>.
+:param current_version: The source of version information for the
+currently running code. This will usually be
+a <code class="docutils literal notranslate"><span class="pre">__version__</span></code> attribute on your library.
+The default is <code class="docutils literal notranslate"><span class="pre">None</span></code>.
+When <code class="docutils literal notranslate"><span class="pre">current_version=None</span></code> the automation to
+determine if the wrapped function is actually
+in a period of deprecation or time for removal
+does not work, causing a
+:class:<code class="docutils literal notranslate"><span class="pre">~deprecation.DeprecatedWarning</span></code>
+to be raised in all cases.
+:param details: Extra details to be added to the method docstring and
+warning. For example, the details may point users to
+a replacement method, such as “Use the foo_bar
+method instead”. By default there are no details.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="lumo.decorators.deprecated.fail_if_not_removed">
+<span class="sig-prename descclassname"><span class="pre">lumo.decorators.deprecated.</span></span><span class="sig-name descname"><span class="pre">fail_if_not_removed</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">method</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.decorators.deprecated.fail_if_not_removed" title="Permalink to this definition"></a></dt>
+<dd><p>Decorate a test method to track removal of deprecated code
+This decorator catches :class:<code class="docutils literal notranslate"><span class="pre">~deprecation.UnsupportedWarning</span></code>
+warnings that occur during testing and causes unittests to fail,
+making it easier to keep track of when code should be removed.
+:raises: :class:<code class="docutils literal notranslate"><span class="pre">AssertionError</span></code> if an
+:class:<code class="docutils literal notranslate"><span class="pre">~deprecation.UnsupportedWarning</span></code>
+is raised while running the test method.</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="lumo.decorators.deprecated.message_location">
+<span class="sig-prename descclassname"><span class="pre">lumo.decorators.deprecated.</span></span><span class="sig-name descname"><span class="pre">message_location</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'bottom'</span></em><a class="headerlink" href="#lumo.decorators.deprecated.message_location" title="Permalink to this definition"></a></dt>
+<dd><p>Location where the details are added to a deprecated docstring</p>
+<p>When set to <code class="docutils literal notranslate"><span class="pre">&quot;bottom&quot;</span></code>, the details are appended to the end.
+When set to <code class="docutils literal notranslate"><span class="pre">&quot;top&quot;</span></code>, the details are inserted between the
+summary line and docstring contents.</p>
+</dd></dl>
+
+</section>
+<section id="module-lumo.decorators.lazy_required">
+<span id="lumo-decorators-lazy-required-module"></span><h2>lumo.decorators.lazy_required module<a class="headerlink" href="#module-lumo.decorators.lazy_required" title="Permalink to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="lumo.decorators.lazy_required.is_lib_available">
+<span class="sig-prename descclassname"><span class="pre">lumo.decorators.lazy_required.</span></span><span class="sig-name descname"><span class="pre">is_lib_available</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lib</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.decorators.lazy_required.is_lib_available" title="Permalink to this definition"></a></dt>
+<dd><p>Check if a library is available to be imported.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>lib</strong> (<em>str</em>) – The name of the library to check for.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>True if the library is available, False otherwise.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="lumo.decorators.lazy_required.lib_required">
+<span class="sig-prename descclassname"><span class="pre">lumo.decorators.lazy_required.</span></span><span class="sig-name descname"><span class="pre">lib_required</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lib_name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.decorators.lazy_required.lib_required" title="Permalink to this definition"></a></dt>
+<dd><p>Wrap a function to raise an ImportError if a required library is not available.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="lumo.decorators.lazy_required.torch_required">
+<span class="sig-prename descclassname"><span class="pre">lumo.decorators.lazy_required.</span></span><span class="sig-name descname"><span class="pre">torch_required</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.decorators.lazy_required.torch_required" title="Permalink to this definition"></a></dt>
+<dd><p>Wrap a function to raise an ImportError if PyTorch is not available.</p>
+</dd></dl>
+
+</section>
+<section id="module-lumo.decorators.process">
+<span id="lumo-decorators-process-module"></span><h2>lumo.decorators.process module<a class="headerlink" href="#module-lumo.decorators.process" title="Permalink to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="lumo.decorators.process.call_on_main_process_wrap">
+<span class="sig-prename descclassname"><span class="pre">lumo.decorators.process.</span></span><span class="sig-name descname"><span class="pre">call_on_main_process_wrap</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Callable</span></span></span><a class="headerlink" href="#lumo.decorators.process.call_on_main_process_wrap" title="Permalink to this definition"></a></dt>
+<dd><p>Wrap a function to only execute on the main process.</p>
+<p>If the current process is the main process, it calls the original func with the passed arguments and returns the result.
+If it is not the main process, it does nothing and returns None.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>func</strong> (<em>callable</em>) – The function to wrap.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A wrapped function that only executes on the main process.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>callable</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-lumo.decorators.regist">
+<span id="lumo-decorators-regist-module"></span><h2>lumo.decorators.regist module<a class="headerlink" href="#module-lumo.decorators.regist" title="Permalink to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="lumo.decorators.regist.Register">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">lumo.decorators.regist.</span></span><span class="sig-name descname"><span class="pre">Register</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.decorators.regist.Register" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>A class for registering functions.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>name</strong> – The name of the register.</p>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="lumo.decorators.regist.Register.name">
+<span class="sig-name descname"><span class="pre">name</span></span><a class="headerlink" href="#lumo.decorators.regist.Register.name" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<p>The name of the register.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="lumo.decorators.regist.Register.source">
+<span class="sig-name descname"><span class="pre">source</span></span><a class="headerlink" href="#lumo.decorators.regist.Register.source" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<p>An ordered dictionary that holds the registered functions.</p>
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">**str**()</span></span></dt>
+<dd></dd></dl>
+
+<p>Returns a string representation of the register.</p>
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">**repr**()</span></span></dt>
+<dd></dd></dl>
+
+<p>Returns a string representation of the register.</p>
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">**getitem**(item)</span></span></dt>
+<dd></dd></dl>
+
+<p>Gets a function from the register by name.</p>
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">**call**(wrapped,</span> <span class="pre">name)</span></span></dt>
+<dd></dd></dl>
+
+<p>A decorator function that adds a function to the register.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="lumo.decorators.regist.Register.regist">
+<span class="sig-name descname"><span class="pre">regist</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.decorators.regist.Register.regist" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<p>A method that returns a partial function of <strong>call</strong> with the register’s name.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="id0">
+<span class="sig-name descname"><span class="pre">regist</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="lumo.trainer.html#lumo.trainer.factory.OptimBuilder.None" title="lumo.trainer.factory.OptimBuilder.None"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#id0" title="Permalink to this definition"></a></dt>
+<dd><p>Returns a partial function of <strong>call</strong> with the register’s name.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>name</strong> – The name of the function in the register. If not provided, the function’s name will be used.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A partial function of <strong>call</strong> with the register’s name.</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>This method is used to create a decorator that will add a function to the register. The <code class="docutils literal notranslate"><span class="pre">name</span></code> argument
+is optional, but if it is provided it should be a string.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="lumo.decorators.regist.regist_func_to">
+<span class="sig-prename descclassname"><span class="pre">lumo.decorators.regist.</span></span><span class="sig-name descname"><span class="pre">regist_func_to</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">val</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Callable</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Callable</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name_</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.decorators.regist.regist_func_to" title="Permalink to this definition"></a></dt>
+<dd><p>A decorator function that registers a function to a dictionary or list.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>val</strong> – A dictionary or list to register the function to.</p></li>
+<li><p><strong>name</strong> – The key or index of the function in the dictionary or list. If not provided, it defaults to the name</p></li>
+</ul>
+</dd>
+</dl>
+<p>of the function.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The decorated function.</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>This decorator function is used to register a function to a dictionary or list. If the <code class="docutils literal notranslate"><span class="pre">val</span></code> argument is a
+dictionary, the function will be added to the dictionary with a key equal to <code class="docutils literal notranslate"><span class="pre">name_</span></code> or the function name if
+<code class="docutils literal notranslate"><span class="pre">name_</span></code> is not provided. If the <code class="docutils literal notranslate"><span class="pre">val</span></code> argument is a list, the function will be appended to the list. The
+registered function can then be retrieved and called later. The <code class="docutils literal notranslate"><span class="pre">name_</span></code> argument is optional, but if it is
+provided it should be a string. The <code class="docutils literal notranslate"><span class="pre">val</span></code> argument should be either a dictionary or a list of functions.</p>
+</dd></dl>
+
+</section>
+<section id="module-lumo.decorators">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-lumo.decorators" title="Permalink to this heading"></a></h2>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, sailist.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

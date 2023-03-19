@@ -1,0 +1,1076 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>lumo.data package &mdash; lumo 1.0.0 documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            lumo
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="tutorial/getting_start.html">Getting Start</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">lumo</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">lumo.data package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/lumo.data.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="lumo-data-package">
+<h1>lumo.data package<a class="headerlink" href="#lumo-data-package" title="Permalink to this heading"></a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this heading"></a></h2>
+</section>
+<section id="module-lumo.data.builder">
+<span id="lumo-data-builder-module"></span><h2>lumo.data.builder module<a class="headerlink" href="#module-lumo.data.builder" title="Permalink to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="lumo.data.builder.DatasetBuilder">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">lumo.data.builder.</span></span><span class="sig-name descname"><span class="pre">DatasetBuilder</span></span><a class="headerlink" href="#lumo.data.builder.DatasetBuilder" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Dataset</span></code></p>
+<p>A subclass of the Dataset class designed for quick and common dataset construction.</p>
+<p>For instance, a simple CIFAR-10 Dataset in (x, y) format can be easily created using the following code:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">torchvision.datasets.cifar</span> <span class="kn">import</span> <span class="n">CIFAR10</span>
+<span class="n">ds</span> <span class="o">=</span> <span class="n">CIFAR10</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
+<span class="n">x</span><span class="p">,</span><span class="n">y</span> <span class="o">=</span> <span class="n">ds</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>However, there may be requirements to modify the format, such as (x1, x2, y), due to tricks like cutmix or multiple argument transformers. In this case, we need to extend the CIFAR10 class as follows:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">MyCIFAR10</span><span class="p">(</span><span class="n">CIFAR10</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">index</span><span class="p">):</span>
+        <span class="o">...</span>
+        <span class="k">return</span> <span class="n">x1</span><span class="p">,</span> <span class="n">x2</span><span class="p">,</span> <span class="n">y</span>
+</pre></div>
+</div>
+<p>If we have multiple format requirements, we can either add extra arguments to the MyCIFAR10 class or create more subclasses, but both methods are redundant.</p>
+<p>Now, by using the DatasetBuilder, this process can be simplified to the utmost.</p>
+<p>To begin, we need to prepare the data source/inputs for CIFAR-10, which includes images and targets. We can register these inputs using .add_input(source, name) as follows:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">source</span> <span class="o">=</span> <span class="n">CIFAR10</span><span class="p">()</span>
+<span class="n">ds</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="n">DatasetBuilder</span><span class="p">()</span>
+        <span class="o">.</span><span class="n">add_input</span><span class="p">(</span><span class="s1">&#39;xs&#39;</span><span class="p">,</span> <span class="n">source</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+        <span class="o">.</span><span class="n">add_input</span><span class="p">(</span><span class="s1">&#39;ys&#39;</span><span class="p">,</span> <span class="n">source</span><span class="o">.</span><span class="n">targets</span><span class="p">)</span>
+    <span class="p">)</span>
+</pre></div>
+</div>
+<p>Next, we define the outputs. If we want the output format to be (xs, ys), we can use the following code:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">ds</span>
+    <span class="o">.</span><span class="n">add_output</span><span class="p">(</span><span class="s1">&#39;xs&#39;</span><span class="p">,</span><span class="s1">&#39;xs&#39;</span><span class="p">)</span>
+    <span class="o">.</span><span class="n">add_output</span><span class="p">(</span><span class="s1">&#39;ys&#39;</span><span class="p">,</span><span class="s1">&#39;ys&#39;</span><span class="p">)</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>The function <code class="docutils literal notranslate"><span class="pre">.add_output(source_name,</span> <span class="pre">output_name)</span></code> defines a data flow from input to output.
+In <code class="docutils literal notranslate"><span class="pre">.add_output('xs',</span> <span class="pre">'xs')</span></code>, the input is <code class="docutils literal notranslate"><span class="pre">source.data</span></code> named as ‘xs’, and the output is also named as ‘xs’.
+If we want to rename the output name to ‘xs1’, we can use .add_output(‘xs’, ‘xs1’).</p>
+<p>Now you can see the benefits of this approach. If you need an output format like <code class="docutils literal notranslate"><span class="pre">(xs1,</span> <span class="pre">xs2,</span> <span class="pre">ys)</span></code>, you just need to modify the code as follows:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">ds</span>
+    <span class="o">.</span><span class="n">add_output</span><span class="p">(</span><span class="s1">&#39;xs&#39;</span><span class="p">,</span><span class="s1">&#39;xs1&#39;</span><span class="p">)</span>
+    <span class="o">.</span><span class="n">add_output</span><span class="p">(</span><span class="s1">&#39;xs&#39;</span><span class="p">,</span><span class="s1">&#39;xs2&#39;</span><span class="p">)</span>
+    <span class="o">.</span><span class="n">add_output</span><span class="p">(</span><span class="s1">&#39;ys&#39;</span><span class="p">,</span><span class="s1">&#39;ys&#39;</span><span class="p">)</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>Besides, you can access the index of each data by <code class="docutils literal notranslate"><span class="pre">.add_idx('name')</span></code>.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">ds</span><span class="o">.</span><span class="n">add_idx</span><span class="p">(</span><span class="s1">&#39;idx&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">ds</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+<span class="p">{</span><span class="s1">&#39;idx&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="o">...</span><span class="n">others</span><span class="o">...</span><span class="p">}</span>
+</pre></div>
+</div>
+<p>Finally, we can use transforms. Each input and output can be passed a transform parameter during definition, such as:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">ds</span><span class="o">.</span><span class="n">add_input</span><span class="p">(</span><span class="s1">&#39;xs&#39;</span><span class="p">,</span> <span class="n">xs</span><span class="p">,</span> <span class="n">transform</span><span class="o">=</span><span class="n">default_loader</span><span class="p">)</span>
+<span class="n">ds</span><span class="o">.</span><span class="n">add_output</span><span class="p">(</span><span class="s1">&#39;xs&#39;</span><span class="p">,</span><span class="s1">&#39;xs1&#39;</span><span class="p">,</span><span class="n">transform</span><span class="o">=</span><span class="n">randargument</span><span class="p">)</span>
+<span class="n">ds</span><span class="o">.</span><span class="n">add_output</span><span class="p">(</span><span class="s1">&#39;xs&#39;</span><span class="p">,</span><span class="s1">&#39;xs2&#39;</span><span class="p">,</span><span class="n">transform</span><span class="o">=</span><span class="n">weak</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The transform defined at the input stage will only be called once when there is a corresponding output. Each output has its own transform.
+That is to say, the transform execution process defined by the above code will like:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">x</span> <span class="o">-&gt;</span> <span class="n">default_loader</span> <span class="o">-&gt;</span> <span class="n">randargument</span> <span class="o">-&gt;</span> <span class="n">xs1</span>
+                   \<span class="o">-&gt;</span> <span class="n">weak</span> <span class="o">-&gt;</span> <span class="n">xs2</span>
+</pre></div>
+</div>
+<p>It’s possible that you may be confused about the usage of output names. Commonly, the output types of <code class="docutils literal notranslate"><span class="pre">dataset[index]</span></code> are <code class="docutils literal notranslate"><span class="pre">list</span></code> or <code class="docutils literal notranslate"><span class="pre">dict</span></code>.
+DatasetBuilder provides both types for everyone, and by default, the dict type is used. When defining outputs as <code class="docutils literal notranslate"><span class="pre">(xs1,</span> <span class="pre">xs2,</span> <span class="pre">ys)</span></code>, the output of <code class="docutils literal notranslate"><span class="pre">ds[index]</span></code> should be:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="s1">&#39;xs1&#39;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">,</span> <span class="s1">&#39;xs2&#39;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">,</span> <span class="s1">&#39;ys&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">}</span>
+</pre></div>
+</div>
+<p>You can change the output type to list by calling <code class="docutils literal notranslate"><span class="pre">.chain()</span></code>:</p>
+<p>…python
+ds.chain()
+xs1,xs2,ys = ds[index]</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="lumo.data.builder.DatasetBuilder.DL">
+<span class="sig-name descname"><span class="pre">DL</span></span><a class="headerlink" href="#lumo.data.builder.DatasetBuilder.DL" title="Permalink to this definition"></a></dt>
+<dd><p>alias of <a class="reference internal" href="#lumo.data.loader.LumoDataLoader" title="lumo.data.loader.LumoDataLoader"><code class="xref py py-class docutils literal notranslate"><span class="pre">LumoDataLoader</span></code></a></p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="lumo.data.builder.DatasetBuilder.DataLoader">
+<span class="sig-name descname"><span class="pre">DataLoader</span></span><a class="headerlink" href="#lumo.data.builder.DatasetBuilder.DataLoader" title="Permalink to this definition"></a></dt>
+<dd><p>alias of <a class="reference internal" href="#lumo.data.loader.LumoDataLoader" title="lumo.data.loader.LumoDataLoader"><code class="xref py py-class docutils literal notranslate"><span class="pre">LumoDataLoader</span></code></a></p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lumo.data.builder.DatasetBuilder.add_global_transform">
+<span class="sig-name descname"><span class="pre">add_global_transform</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">transform</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DictTransform</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.data.builder.DatasetBuilder.add_global_transform" title="Permalink to this definition"></a></dt>
+<dd><p>Add a global transform to the dataset builder.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>transform</strong> (<em>DictTransform</em>) – the global transform to apply to the dataset.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>the dataset builder with the global transform added.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lumo.data.builder.DatasetBuilder.add_idx">
+<span class="sig-name descname"><span class="pre">add_idx</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.data.builder.DatasetBuilder.add_idx" title="Permalink to this definition"></a></dt>
+<dd><p>Add an index pseudo source to the dataset builder.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>name</strong> (<em>str</em>) – the name of the index.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>the dataset builder with the index added.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lumo.data.builder.DatasetBuilder.add_input">
+<span class="sig-name descname"><span class="pre">add_input</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transform</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">SingleValueTransform</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="lumo.trainer.html#lumo.trainer.factory.OptimBuilder.None" title="lumo.trainer.factory.OptimBuilder.None"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.data.builder.DatasetBuilder.add_input" title="Permalink to this definition"></a></dt>
+<dd><p>Add an input source to the dataset builder.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<em>str</em>) – the name of the input source.</p></li>
+<li><p><strong>source</strong> – the input source to add.</p></li>
+<li><p><strong>transform</strong> (<em>SingleValueTransform</em>) – the transform to apply to the input source.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>the dataset builder with the input source added.</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>Iterable object without <code class="docutils literal notranslate"><span class="pre">__len__</span></code> method currently are not well-tested. Be careful to use them in DatasetBuilder.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lumo.data.builder.DatasetBuilder.add_input_transform">
+<span class="sig-name descname"><span class="pre">add_input_transform</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transform</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">SingleValueTransform</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="lumo.trainer.html#lumo.trainer.factory.OptimBuilder.None" title="lumo.trainer.factory.OptimBuilder.None"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.data.builder.DatasetBuilder.add_input_transform" title="Permalink to this definition"></a></dt>
+<dd><p>Add a transform to an existing input source.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<em>str</em>) – the name of the input source to add the transform to.</p></li>
+<li><p><strong>transform</strong> (<em>SingleValueTransform</em>) – the transform to add.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>the dataset builder with the transform added.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lumo.data.builder.DatasetBuilder.add_output">
+<span class="sig-name descname"><span class="pre">add_output</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outkey</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transform</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">SingleValueTransform</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="lumo.trainer.html#lumo.trainer.factory.OptimBuilder.None" title="lumo.trainer.factory.OptimBuilder.None"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.data.builder.DatasetBuilder.add_output" title="Permalink to this definition"></a></dt>
+<dd><p>Add an output flow from input source to the dataset builder.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<em>str</em>) – the name of the input source for the output.</p></li>
+<li><p><strong>outkey</strong> (<em>str</em>) – the name of the output.</p></li>
+<li><p><strong>transform</strong> (<em>SingleValueTransform</em>) – the transform to apply to the output.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>the dataset builder with the output added.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lumo.data.builder.DatasetBuilder.add_output_transform">
+<span class="sig-name descname"><span class="pre">add_output_transform</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">outkey</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transform</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">SingleValueTransform</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="lumo.trainer.html#lumo.trainer.factory.OptimBuilder.None" title="lumo.trainer.factory.OptimBuilder.None"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.data.builder.DatasetBuilder.add_output_transform" title="Permalink to this definition"></a></dt>
+<dd><p>Add a transform to an existing output.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>outkey</strong> (<em>str</em>) – the name of the output to add the transform to.</p></li>
+<li><p><strong>transform</strong> (<em>SingleValueTransform</em>) – the transform to add.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>the dataset builder with the transform added.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lumo.data.builder.DatasetBuilder.chain">
+<span class="sig-name descname"><span class="pre">chain</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#lumo.data.builder.DatasetBuilder.chain" title="Permalink to this definition"></a></dt>
+<dd><p>Set the mode of the dataset builder to chain.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>the dataset builder with the chain mode set.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lumo.data.builder.DatasetBuilder.copy">
+<span class="sig-name descname"><span class="pre">copy</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#lumo.data.builder.DatasetBuilder.copy" title="Permalink to this definition"></a></dt>
+<dd><p>Create a copy of the dataset builder.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>a copy of the dataset builder.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>builder (<a class="reference internal" href="#lumo.data.builder.DatasetBuilder" title="lumo.data.builder.DatasetBuilder">DatasetBuilder</a>)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lumo.data.builder.DatasetBuilder.get_source">
+<span class="sig-name descname"><span class="pre">get_source</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.data.builder.DatasetBuilder.get_source" title="Permalink to this definition"></a></dt>
+<dd><p>Get the input source with the given name.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="lumo.data.builder.DatasetBuilder.inputs">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">inputs</span></span><a class="headerlink" href="#lumo.data.builder.DatasetBuilder.inputs" title="Permalink to this definition"></a></dt>
+<dd><p>Property getter for the input sources.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The input data.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>self._data (dict)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lumo.data.builder.DatasetBuilder.item">
+<span class="sig-name descname"><span class="pre">item</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#lumo.data.builder.DatasetBuilder.item" title="Permalink to this definition"></a></dt>
+<dd><p>Set the mode of the dataset builder to item.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>the dataset builder with the item mode set.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="lumo.data.builder.DatasetBuilder.iterable">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">iterable</span></span><a class="headerlink" href="#lumo.data.builder.DatasetBuilder.iterable" title="Permalink to this definition"></a></dt>
+<dd><p>Property getter for the iterability of the dataset.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Whether the dataset is iterable.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>self._prop.get(‘iterable’, False)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lumo.data.builder.DatasetBuilder.map_index">
+<span class="sig-name descname"><span class="pre">map_index</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.data.builder.DatasetBuilder.map_index" title="Permalink to this definition"></a></dt>
+<dd><p>Map the raw index to the final index for the source data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>index</strong> – the raw index to map.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>the final index for the source data.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>index (int)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="lumo.data.builder.DatasetBuilder.mode">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">mode</span></span><a class="headerlink" href="#lumo.data.builder.DatasetBuilder.mode" title="Permalink to this definition"></a></dt>
+<dd><p>Property getter for the mode of the dataset.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The mode of the dataset.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>self._prop.get(‘mode’, ‘zip’)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="lumo.data.builder.DatasetBuilder.outputs">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">outputs</span></span><a class="headerlink" href="#lumo.data.builder.DatasetBuilder.outputs" title="Permalink to this definition"></a></dt>
+<dd><p>Property getter for the output data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A mapping of output keys to their corresponding sources.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>mapping (dict)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="lumo.data.builder.DatasetBuilder.pseudo_length">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">pseudo_length</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#lumo.data.builder.DatasetBuilder.pseudo_length" title="Permalink to this definition"></a></dt>
+<dd><p>Property getter for the pseudo-length of the dataset.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The pseudo-length of the dataset.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>self._prop.get(‘pseudo_length’, None)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="lumo.data.builder.DatasetBuilder.pseudo_repeat">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">pseudo_repeat</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#lumo.data.builder.DatasetBuilder.pseudo_repeat" title="Permalink to this definition"></a></dt>
+<dd><p>Property getter for the pseudo-repeat of the dataset.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The pseudo-repeat of the dataset.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>self._prop.get(‘pseudo_repeat’, None)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lumo.data.builder.DatasetBuilder.repeat">
+<span class="sig-name descname"><span class="pre">repeat</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">multiple</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.data.builder.DatasetBuilder.repeat" title="Permalink to this definition"></a></dt>
+<dd><p>Repeat the dataset builder multiple times to increase its size.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>multiple</strong> (<em>int</em>) – the number of times to repeat the dataset builder.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>the repeated dataset builder.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lumo.data.builder.DatasetBuilder.scale_to_size">
+<span class="sig-name descname"><span class="pre">scale_to_size</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.data.builder.DatasetBuilder.scale_to_size" title="Permalink to this definition"></a></dt>
+<dd><p>Scale the dataset builder to a certain size by repeating or randomly truncating the data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>size</strong> (<em>int</em>) – the size to scale the dataset builder to.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>the scaled dataset builder.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lumo.data.builder.DatasetBuilder.set_input_transform">
+<span class="sig-name descname"><span class="pre">set_input_transform</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transform</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">SingleValueTransform</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="lumo.trainer.html#lumo.trainer.factory.OptimBuilder.None" title="lumo.trainer.factory.OptimBuilder.None"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.data.builder.DatasetBuilder.set_input_transform" title="Permalink to this definition"></a></dt>
+<dd><p>Set the transform for an input source.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<em>str</em>) – the name of the input source to set the transform for.</p></li>
+<li><p><strong>transform</strong> (<em>SingleValueTransform</em>) – the transform to set.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>the dataset builder with the transform set.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lumo.data.builder.DatasetBuilder.set_output_transform">
+<span class="sig-name descname"><span class="pre">set_output_transform</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">outkey</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transform</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">SingleValueTransform</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="lumo.trainer.html#lumo.trainer.factory.OptimBuilder.None" title="lumo.trainer.factory.OptimBuilder.None"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.data.builder.DatasetBuilder.set_output_transform" title="Permalink to this definition"></a></dt>
+<dd><p>Set the transform for an output.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>outkey</strong> (<em>str</em>) – the name of the output to set the transform for.</p></li>
+<li><p><strong>transform</strong> (<em>SingleValueTransform</em>) – the transform to set.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>the dataset builder with the transform set.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="lumo.data.builder.DatasetBuilder.sized">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">sized</span></span><a class="headerlink" href="#lumo.data.builder.DatasetBuilder.sized" title="Permalink to this definition"></a></dt>
+<dd><p>Check if the dataset builder is sized.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>True if the dataset builder is sized, False otherwise.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="lumo.data.builder.DatasetBuilder.subindices">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">subindices</span></span><a class="headerlink" href="#lumo.data.builder.DatasetBuilder.subindices" title="Permalink to this definition"></a></dt>
+<dd><p>Property getter for the sub-indices of the dataset.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The sub-indices of the dataset.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>self._prop.get(‘subindices’, None)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lumo.data.builder.DatasetBuilder.subset">
+<span class="sig-name descname"><span class="pre">subset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">indices</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">copy</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.data.builder.DatasetBuilder.subset" title="Permalink to this definition"></a></dt>
+<dd><p>Create a subset of the dataset builder by selecting indices.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>indices</strong> (<em>Sequence</em><em>[</em><em>int</em><em>]</em>) – a sequence of indices to select.</p></li>
+<li><p><strong>copy</strong> (<em>bool</em>) – whether to create a copy of the dataset builder or modify it in place.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>a new dataset builder containing only the selected indices.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>builder (<a class="reference internal" href="#lumo.data.builder.DatasetBuilder" title="lumo.data.builder.DatasetBuilder">DatasetBuilder</a>)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lumo.data.builder.DatasetBuilder.zip">
+<span class="sig-name descname"><span class="pre">zip</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#lumo.data.builder.DatasetBuilder.zip" title="Permalink to this definition"></a></dt>
+<dd><p>Set the mode of the dataset builder to zip.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>the dataset builder with the zip mode set.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-lumo.data.collate">
+<span id="lumo-data-collate-module"></span><h2>lumo.data.collate module<a class="headerlink" href="#module-lumo.data.collate" title="Permalink to this heading"></a></h2>
+<p>A module that provides classes and functions to act as the collect_fn in dataloader.</p>
+<p>Classes:
+CollateBase: A base class for implementing collate functions.
+IgnoreNoneCollate: A collate function that ignores None samples.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="lumo.data.collate.CollateBase">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">lumo.data.collate.</span></span><span class="sig-name descname"><span class="pre">CollateBase</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">params</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ParamsType</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="lumo.trainer.html#lumo.trainer.factory.OptimBuilder.None" title="lumo.trainer.factory.OptimBuilder.None"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.data.collate.CollateBase" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>A base class for implementing collate functions.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>params</strong> (<em>ParamsType</em><em>, </em><em>optional</em>) – Parameters for the collate function. Defaults to None.</p>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="lumo.data.collate.CollateBase._collate_fn">
+<span class="sig-name descname"><span class="pre">_collate_fn</span></span><a class="headerlink" href="#lumo.data.collate.CollateBase._collate_fn" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<p>A function that combines a list of samples into a batch.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>callable</p>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="lumo.data.collate.CollateBase.params">
+<span class="sig-name descname"><span class="pre">params</span></span><a class="headerlink" href="#lumo.data.collate.CollateBase.params" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<p>Parameters for the collate function.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>ParamsType</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="lumo.data.collate.CollateBase.from_collate">
+<span class="sig-name descname"><span class="pre">from_collate</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#lumo.data.collate.CollateBase.from_collate" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<p>Creates an instance of the class from a collate function.</p>
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">**call**</span></span></dt>
+<dd></dd></dl>
+
+<p>Applies the collate function to a list of samples.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="lumo.data.collate.CollateBase.before_collate">
+<span class="sig-name descname"><span class="pre">before_collate</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#lumo.data.collate.CollateBase.before_collate" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<p>A hook function called before the collate function is applied.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="lumo.data.collate.CollateBase.raw_collate">
+<span class="sig-name descname"><span class="pre">raw_collate</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#lumo.data.collate.CollateBase.raw_collate" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<p>Applies the collate function to a list of samples without calling the <code class="docutils literal notranslate"><span class="pre">before_collate</span></code> and <code class="docutils literal notranslate"><span class="pre">after_collate</span></code> hook functions.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="lumo.data.collate.CollateBase.collate">
+<span class="sig-name descname"><span class="pre">collate</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#lumo.data.collate.CollateBase.collate" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<p>Alias for <code class="docutils literal notranslate"><span class="pre">raw_collate</span></code>.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="lumo.data.collate.CollateBase.after_collate">
+<span class="sig-name descname"><span class="pre">after_collate</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#lumo.data.collate.CollateBase.after_collate" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<p>A hook function called after the collate function is applied.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="id0">
+<span class="sig-name descname"><span class="pre">after_collate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">batch</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#id0" title="Permalink to this definition"></a></dt>
+<dd><p>A hook function called after the collate function is applied.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>batch</strong> (<em>Any</em>) – The batch of samples.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The modified batch of samples.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Any</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="id1">
+<span class="sig-name descname"><span class="pre">before_collate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sample_list</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#id1" title="Permalink to this definition"></a></dt>
+<dd><p>A hook function called before the collate function is applied.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>sample_list</strong> (<em>Sequence</em>) – A list of samples.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The modified list of samples.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Sequence</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="id2">
+<span class="sig-name descname"><span class="pre">collate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sample_list</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#id2" title="Permalink to this definition"></a></dt>
+<dd><p>Alias for <code class="docutils literal notranslate"><span class="pre">raw_collate</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>sample_list</strong> (<em>Sequence</em>) – A list of samples.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The batch of samples.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="id3">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_collate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">collate_fn</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ParamsType</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="lumo.trainer.html#lumo.trainer.factory.OptimBuilder.None" title="lumo.trainer.factory.OptimBuilder.None"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#id3" title="Permalink to this definition"></a></dt>
+<dd><p>Creates an instance of the class from a collate function.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>collate_fn</strong> (<em>callable</em>) – A function that combines a list of samples into a batch.</p></li>
+<li><p><strong>params</strong> (<em>ParamsType</em><em>, </em><em>optional</em>) – Parameters for the collate function. Defaults to None.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>An instance of the class.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#lumo.data.collate.CollateBase" title="lumo.data.collate.CollateBase">CollateBase</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="id4">
+<span class="sig-name descname"><span class="pre">raw_collate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sample_list</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#id4" title="Permalink to this definition"></a></dt>
+<dd><p>Applies the collate function to a list of samples without calling the <code class="docutils literal notranslate"><span class="pre">before_collate</span></code> and <code class="docutils literal notranslate"><span class="pre">after_collate</span></code> hook functions.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>sample_list</strong> (<em>Sequence</em>) – A list of samples.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The batch of samples.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="lumo.data.collate.IgnoreNoneCollate">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">lumo.data.collate.</span></span><span class="sig-name descname"><span class="pre">IgnoreNoneCollate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">params</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ParamsType</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="lumo.trainer.html#lumo.trainer.factory.OptimBuilder.None" title="lumo.trainer.factory.OptimBuilder.None"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.data.collate.IgnoreNoneCollate" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#lumo.data.collate.CollateBase" title="lumo.data.collate.CollateBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">CollateBase</span></code></a></p>
+<p>A collate function that ignores <code class="docutils literal notranslate"><span class="pre">None</span></code> samples.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="lumo.data.collate.IgnoreNoneCollate.before_collate">
+<span class="sig-name descname"><span class="pre">before_collate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sample_list</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.data.collate.IgnoreNoneCollate.before_collate" title="Permalink to this definition"></a></dt>
+<dd><p>before collate</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="lumo.data.collate.numpy_collate">
+<span class="sig-prename descclassname"><span class="pre">lumo.data.collate.</span></span><span class="sig-name descname"><span class="pre">numpy_collate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">batch</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.data.collate.numpy_collate" title="Permalink to this definition"></a></dt>
+<dd><p>Collate function for numpy arrays.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>batch</strong> (<em>list</em>) – A list of numpy arrays or other python objects.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Returns a collated numpy array, a dictionary of collated numpy arrays,</p>
+</dd>
+</dl>
+<p>or a list of collated numpy arrays depending on the type of input elements.
+:rtype: numpy.ndarray or dict or list</p>
+<dl class="field-list simple">
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>RuntimeError</strong> – If the elements in batch do not have consistent size.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-lumo.data.datamodule">
+<span id="lumo-data-datamodule-module"></span><h2>lumo.data.datamodule module<a class="headerlink" href="#module-lumo.data.datamodule" title="Permalink to this heading"></a></h2>
+<p>A module to manage dataloaders for different stages of training.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="lumo.data.datamodule.DataModule">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">lumo.data.datamodule.</span></span><span class="sig-name descname"><span class="pre">DataModule</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">params</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ParamsType</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="lumo.trainer.html#lumo.trainer.factory.OptimBuilder.None" title="lumo.trainer.factory.OptimBuilder.None"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.data.datamodule.DataModule" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Used in Trainer to easily access DataLoaders for different stage(train/test/eval/others).</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="lumo.data.datamodule.DataModule.get_loader_with_stage">
+<span class="sig-name descname"><span class="pre">get_loader_with_stage</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stage</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="lumo.core.html#lumo.core.enums.TrainStage" title="lumo.core.enums.TrainStage"><span class="pre">TrainStage</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">DataLoaderType</span></span></span><a class="headerlink" href="#lumo.data.datamodule.DataModule.get_loader_with_stage" title="Permalink to this definition"></a></dt>
+<dd><p>Get the dataloader for a given stage.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lumo.data.datamodule.DataModule.idataloader">
+<span class="sig-name descname"><span class="pre">idataloader</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">params</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ParamsType</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="lumo.trainer.html#lumo.trainer.factory.OptimBuilder.None" title="lumo.trainer.factory.OptimBuilder.None"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stage</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="lumo.core.html#lumo.core.enums.TrainStage" title="lumo.core.enums.TrainStage"><span class="pre">TrainStage</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="lumo.trainer.html#lumo.trainer.factory.OptimBuilder.None" title="lumo.trainer.factory.OptimBuilder.None"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.data.datamodule.DataModule.idataloader" title="Permalink to this definition"></a></dt>
+<dd><p>Interface function to implement in a child class to set up data loading.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>params</strong> – A ParamsType object containing data loading parameters.</p></li>
+<li><p><strong>stage</strong> – A TrainStage object indicating which stage to set up data loading for.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="lumo.data.datamodule.DataModule.prop">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">prop</span></span><a class="headerlink" href="#lumo.data.datamodule.DataModule.prop" title="Permalink to this definition"></a></dt>
+<dd><p>Get the dictionary of registered dataloaders.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>the dictionary of registered dataloaders.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lumo.data.datamodule.DataModule.regist_dataloader">
+<span class="sig-name descname"><span class="pre">regist_dataloader</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">train</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">test</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">val</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.data.datamodule.DataModule.regist_dataloader" title="Permalink to this definition"></a></dt>
+<dd><p>Registers the given dataloaders under the given keys.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>train</strong> – A DataLoaderType object for the train set.</p></li>
+<li><p><strong>test</strong> – A DataLoaderType object for the test set.</p></li>
+<li><p><strong>val</strong> – A DataLoaderType object for the validation set.</p></li>
+<li><p><strong>**kwargs</strong> – <p>A DataLoaderType object for other stage</p>
+</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lumo.data.datamodule.DataModule.regist_dataloader_with_stage">
+<span class="sig-name descname"><span class="pre">regist_dataloader_with_stage</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stage</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="lumo.core.html#lumo.core.enums.TrainStage" title="lumo.core.enums.TrainStage"><span class="pre">TrainStage</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">dl</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataLoaderType</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.data.datamodule.DataModule.regist_dataloader_with_stage" title="Permalink to this definition"></a></dt>
+<dd><p>Registers the given dataloader under the given TrainStage.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>stage</strong> – A TrainStage object.</p></li>
+<li><p><strong>dl</strong> – A DataLoaderType object.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="lumo.data.datamodule.DataModule.test_dataloader">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">test_dataloader</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">DataLoaderType</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="lumo.trainer.html#lumo.trainer.factory.OptimBuilder.None" title="lumo.trainer.factory.OptimBuilder.None"><span class="pre">None</span></a></em><a class="headerlink" href="#lumo.data.datamodule.DataModule.test_dataloader" title="Permalink to this definition"></a></dt>
+<dd><p>Get the test dataloader.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="lumo.data.datamodule.DataModule.test_dataset">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">test_dataset</span></span><a class="headerlink" href="#lumo.data.datamodule.DataModule.test_dataset" title="Permalink to this definition"></a></dt>
+<dd><p>Get the test dataset.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="lumo.data.datamodule.DataModule.train_dataloader">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">train_dataloader</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">DataLoaderType</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="lumo.trainer.html#lumo.trainer.factory.OptimBuilder.None" title="lumo.trainer.factory.OptimBuilder.None"><span class="pre">None</span></a></em><a class="headerlink" href="#lumo.data.datamodule.DataModule.train_dataloader" title="Permalink to this definition"></a></dt>
+<dd><p>Get the train dataloader.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="lumo.data.datamodule.DataModule.train_dataset">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">train_dataset</span></span><a class="headerlink" href="#lumo.data.datamodule.DataModule.train_dataset" title="Permalink to this definition"></a></dt>
+<dd><p>Get the train dataset.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>the train dataset.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Dataset</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="lumo.data.datamodule.DataModule.val_dataloader">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">val_dataloader</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">NoReturn</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">DataLoaderType</span></em><a class="headerlink" href="#lumo.data.datamodule.DataModule.val_dataloader" title="Permalink to this definition"></a></dt>
+<dd><p>Get the val dataloader.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="lumo.data.datamodule.DataModule.val_dataset">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">val_dataset</span></span><a class="headerlink" href="#lumo.data.datamodule.DataModule.val_dataset" title="Permalink to this definition"></a></dt>
+<dd><p>Get the validation dataset.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-lumo.data.loader">
+<span id="lumo-data-loader-module"></span><h2>lumo.data.loader module<a class="headerlink" href="#module-lumo.data.loader" title="Permalink to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="lumo.data.loader.DataLoaderSide">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">lumo.data.loader.</span></span><span class="sig-name descname"><span class="pre">DataLoaderSide</span></span><a class="headerlink" href="#lumo.data.loader.DataLoaderSide" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>A utility class for loading data from different DataLoaders with different batch sizes at the same time.</p>
+<p>Example usage:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">lumo</span> <span class="kn">import</span> <span class="n">DataLoaderSide</span>
+<span class="n">loader</span> <span class="o">=</span> <span class="n">DataLoaderSide</span><span class="p">()</span>
+<span class="n">loader</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s1">&#39;train&#39;</span><span class="p">,</span> <span class="n">train_loader</span><span class="p">,</span> <span class="n">cycle</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">loader</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s1">&#39;val&#39;</span><span class="p">,</span> <span class="n">val_loader</span><span class="p">)</span>
+<span class="n">loader</span><span class="o">.</span><span class="n">zip</span><span class="p">()</span>
+<span class="k">for</span> <span class="n">batch</span> <span class="ow">in</span> <span class="n">loader</span><span class="p">:</span>
+    <span class="c1"># process batch</span>
+</pre></div>
+</div>
+<dl class="py method">
+<dt class="sig sig-object py" id="lumo.data.loader.DataLoaderSide.dataset">
+<span class="sig-name descname"><span class="pre">dataset</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#lumo.data.loader.DataLoaderSide.dataset" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<p>Returns a dictionary that maps the name of the DataLoader to its corresponding dataset.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="lumo.data.loader.DataLoaderSide.source">
+<span class="sig-name descname"><span class="pre">source</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#lumo.data.loader.DataLoaderSide.source" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<p>Returns the _loaders dictionary.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="lumo.data.loader.DataLoaderSide.add">
+<span class="sig-name descname"><span class="pre">add</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loader</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cycle</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.data.loader.DataLoaderSide.add" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<p>Adds a DataLoader instance to the _loaders dictionary.</p>
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">name</span> <span class="pre">is</span> <span class="pre">the</span> <span class="pre">name</span> <span class="pre">of</span> <span class="pre">the</span> <span class="pre">DataLoader.</span></span></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">loader</span> <span class="pre">is</span> <span class="pre">the</span> <span class="pre">DataLoader</span> <span class="pre">instance</span> <span class="pre">to</span> <span class="pre">be</span> <span class="pre">added.</span></span></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">cycle</span> <span class="pre">is</span> <span class="pre">a</span> <span class="pre">boolean</span> <span class="pre">indicating</span> <span class="pre">whether</span> <span class="pre">the</span> <span class="pre">DataLoader</span> <span class="pre">should</span> <span class="pre">be</span> <span class="pre">cycled.</span> <span class="pre">Defaults</span> <span class="pre">to</span> <span class="pre">False.</span></span></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="lumo.data.loader.DataLoaderSide.copy">
+<span class="sig-name descname"><span class="pre">copy</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#lumo.data.loader.DataLoaderSide.copy" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<p>Returns a new DataLoaderSide instance with the same _loaders, _cycle, and _state attributes as the original.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="lumo.data.loader.DataLoaderSide.zip">
+<span class="sig-name descname"><span class="pre">zip</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#lumo.data.loader.DataLoaderSide.zip" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<p>Sets the _state attribute to ‘zip’, which means the batches are zipped together.
+if _state is ‘zip’, the batches are returned as an ordered dictionary.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="lumo.data.loader.DataLoaderSide.chain">
+<span class="sig-name descname"><span class="pre">chain</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#lumo.data.loader.DataLoaderSide.chain" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<p>Sets the _state attribute to ‘chain’, which means the batches are concatenated.
+if _state is ‘chain’, the batches are returned as a list.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="lumo.data.loader.DataLoaderSide.len">
+<span class="sig-name descname"><span class="pre">len</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#lumo.data.loader.DataLoaderSide.len" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<p>Returns the minimum length of all the DataLoaders that do not have the cycle flag set to True.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="lumo.data.loader.DataLoaderSide.iter">
+<span class="sig-name descname"><span class="pre">iter</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#lumo.data.loader.DataLoaderSide.iter" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<p>Returns an iterator that generates batches from the DataLoaders in the _loaders dictionary.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="id7">
+<span class="sig-name descname"><span class="pre">add</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loader</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataLoader</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cycle</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#id7" title="Permalink to this definition"></a></dt>
+<dd><p>Adds a DataLoader instance to the _loaders dictionary.
+:param name: The name of the DataLoader.
+:type name: str
+:param loader: The DataLoader instance to be added.
+:type loader: DataLoader
+:param cycle: A boolean indicating whether the DataLoader should be cycled. Defaults to False.
+:type cycle: bool</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="id8">
+<span class="sig-name descname"><span class="pre">chain</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#id8" title="Permalink to this definition"></a></dt>
+<dd><p>Sets the _state attribute to ‘chain’, which means the batches are concatenated.
+If _state is ‘chain’, the batches are returned as a list.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="id9">
+<span class="sig-name descname"><span class="pre">copy</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#id9" title="Permalink to this definition"></a></dt>
+<dd><p>Returns a new DataLoaderSide instance with the same _loaders, _cycle, and _state attributes as the original.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="id10">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">dataset</span></span><a class="headerlink" href="#id10" title="Permalink to this definition"></a></dt>
+<dd><p>Returns a dictionary that maps the name of the DataLoader to its corresponding dataset.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="id11">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">source</span></span><a class="headerlink" href="#id11" title="Permalink to this definition"></a></dt>
+<dd><p>Returns the _loaders dictionary.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="id12">
+<span class="sig-name descname"><span class="pre">zip</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#id12" title="Permalink to this definition"></a></dt>
+<dd><p>Sets the _state attribute to ‘zip’, which means the batches are zipped together.
+If _state is ‘zip’, the batches are returned as an ordered dictionary.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="lumo.data.loader.LumoDataLoader">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">lumo.data.loader.</span></span><span class="sig-name descname"><span class="pre">LumoDataLoader</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataset</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dataset</span><span class="p"><span class="pre">[</span></span><span class="pre">T_co</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="lumo.trainer.html#lumo.trainer.factory.OptimBuilder.None" title="lumo.trainer.factory.OptimBuilder.None"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shuffle</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="lumo.trainer.html#lumo.trainer.factory.OptimBuilder.None" title="lumo.trainer.factory.OptimBuilder.None"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sampler</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Sampler</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Iterable</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="lumo.trainer.html#lumo.trainer.factory.OptimBuilder.None" title="lumo.trainer.factory.OptimBuilder.None"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_sampler</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Sampler</span><span class="p"><span class="pre">[</span></span><span class="pre">Sequence</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Iterable</span><span class="p"><span class="pre">[</span></span><span class="pre">Sequence</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="lumo.trainer.html#lumo.trainer.factory.OptimBuilder.None" title="lumo.trainer.factory.OptimBuilder.None"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_workers</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">collate_fn</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">T</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="lumo.trainer.html#lumo.trainer.factory.OptimBuilder.None" title="lumo.trainer.factory.OptimBuilder.None"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pin_memory</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">drop_last</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">worker_init_fn</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="lumo.trainer.html#lumo.trainer.factory.OptimBuilder.None" title="lumo.trainer.factory.OptimBuilder.None"><span class="pre">None</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="lumo.trainer.html#lumo.trainer.factory.OptimBuilder.None" title="lumo.trainer.factory.OptimBuilder.None"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">multiprocessing_context</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">generator</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prefetch_factor</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="lumo.trainer.html#lumo.trainer.factory.OptimBuilder.None" title="lumo.trainer.factory.OptimBuilder.None"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">persistent_workers</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pin_memory_device</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.data.loader.LumoDataLoader" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">DataLoader</span></code></p>
+<p>This module defines the LumoDataLoader class that inherits from the DataLoader class.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="lumo.data.loader.LumoDataLoader.batch_size">
+<span class="sig-name descname"><span class="pre">batch_size</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="lumo.trainer.html#lumo.trainer.factory.OptimBuilder.None" title="lumo.trainer.factory.OptimBuilder.None"><span class="pre">None</span></a></em><a class="headerlink" href="#lumo.data.loader.LumoDataLoader.batch_size" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="lumo.data.loader.LumoDataLoader.dataset">
+<span class="sig-name descname"><span class="pre">dataset</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Dataset</span><span class="p"><span class="pre">[</span></span><span class="pre">T_co</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#lumo.data.loader.LumoDataLoader.dataset" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="lumo.data.loader.LumoDataLoader.drop_last">
+<span class="sig-name descname"><span class="pre">drop_last</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><a class="headerlink" href="#lumo.data.loader.LumoDataLoader.drop_last" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="lumo.data.loader.LumoDataLoader.num_workers">
+<span class="sig-name descname"><span class="pre">num_workers</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#lumo.data.loader.LumoDataLoader.num_workers" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="lumo.data.loader.LumoDataLoader.pin_memory">
+<span class="sig-name descname"><span class="pre">pin_memory</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><a class="headerlink" href="#lumo.data.loader.LumoDataLoader.pin_memory" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="lumo.data.loader.LumoDataLoader.pin_memory_device">
+<span class="sig-name descname"><span class="pre">pin_memory_device</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#lumo.data.loader.LumoDataLoader.pin_memory_device" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="lumo.data.loader.LumoDataLoader.prefetch_factor">
+<span class="sig-name descname"><span class="pre">prefetch_factor</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="lumo.trainer.html#lumo.trainer.factory.OptimBuilder.None" title="lumo.trainer.factory.OptimBuilder.None"><span class="pre">None</span></a></em><a class="headerlink" href="#lumo.data.loader.LumoDataLoader.prefetch_factor" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="lumo.data.loader.LumoDataLoader.sampler">
+<span class="sig-name descname"><span class="pre">sampler</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Sampler</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Iterable</span></em><a class="headerlink" href="#lumo.data.loader.LumoDataLoader.sampler" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="lumo.data.loader.LumoDataLoader.timeout">
+<span class="sig-name descname"><span class="pre">timeout</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><a class="headerlink" href="#lumo.data.loader.LumoDataLoader.timeout" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="lumo.data.loader.summarize_loader">
+<span class="sig-prename descclassname"><span class="pre">lumo.data.loader.</span></span><span class="sig-name descname"><span class="pre">summarize_loader</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">loader</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataLoader</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.data.loader.summarize_loader" title="Permalink to this definition"></a></dt>
+<dd><p>Summarize the DataLoader object and return a formatted string representation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>loader</strong> – A DataLoader object.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A formatted string representation of the DataLoader object.</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>ValueError</strong> – If the input argument is not a DataLoader object.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-lumo.data">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-lumo.data" title="Permalink to this heading"></a></h2>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, sailist.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

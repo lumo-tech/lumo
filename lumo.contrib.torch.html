@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>lumo.contrib.torch package &mdash; lumo 1.0.0 documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            lumo
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="tutorial/getting_start.html">Getting Start</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">lumo</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">lumo.contrib.torch package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/lumo.contrib.torch.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="lumo-contrib-torch-package">
+<h1>lumo.contrib.torch package<a class="headerlink" href="#lumo-contrib-torch-package" title="Permalink to this heading"></a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this heading"></a></h2>
+</section>
+<section id="module-lumo.contrib.torch.accuracy">
+<span id="lumo-contrib-torch-accuracy-module"></span><h2>lumo.contrib.torch.accuracy module<a class="headerlink" href="#module-lumo.contrib.torch.accuracy" title="Permalink to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="lumo.contrib.torch.accuracy.classify">
+<span class="sig-prename descclassname"><span class="pre">lumo.contrib.torch.accuracy.</span></span><span class="sig-name descname"><span class="pre">classify</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">preds</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">labels</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cacu_rate</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">topk</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="lumo.trainer.html#lumo.trainer.factory.OptimBuilder.None" title="lumo.trainer.factory.OptimBuilder.None"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#lumo.contrib.torch.accuracy.classify" title="Permalink to this definition"></a></dt>
+<dd><p>用于在分类问题中计算准确率</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>preds</strong> – [batch,logits]</p></li>
+<li><p><strong>labels</strong> – [labels,]</p></li>
+<li><p><strong>cacu_rate</strong> – 计算正确率而不是计数</p></li>
+<li><p><strong>topk</strong> – list(int) ，表明计算哪些topk，默认计算 top1 和 top5</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>[topk_rate,…]</p>
+</dd>
+</dl>
+<p>else:
+total, [topk_count,…]
+:rtype: if cacu_rate</p>
+</dd></dl>
+
+</section>
+<section id="module-lumo.contrib.torch.tensor">
+<span id="lumo-contrib-torch-tensor-module"></span><h2>lumo.contrib.torch.tensor module<a class="headerlink" href="#module-lumo.contrib.torch.tensor" title="Permalink to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="lumo.contrib.torch.tensor.cartesian_product">
+<span class="sig-prename descclassname"><span class="pre">lumo.contrib.torch.tensor.</span></span><span class="sig-name descname"><span class="pre">cartesian_product</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">left</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">right</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="lumo.trainer.html#lumo.trainer.factory.OptimBuilder.None" title="lumo.trainer.factory.OptimBuilder.None"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Tensor</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Tensor</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#lumo.contrib.torch.tensor.cartesian_product" title="Permalink to this definition"></a></dt>
+<dd><p>Calculate cartesian product of the given tensor(s)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>left</strong> – A pytorch tensor.</p></li>
+<li><p><strong>right</strong> – A pytorch tensor,</p></li>
+</ul>
+</dd>
+</dl>
+<p>if None, wile be left X left</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Tuple[torch.Tensor, torch.Tensor]</p>
+</dd>
+</dl>
+<p>(tensor([0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2]),
+tensor([0, 1, 2, 3, 4, 0, 1, 2, 3, 4, 0, 1, 2, 3, 4]))</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="lumo.contrib.torch.tensor.cat_then_split">
+<span class="sig-prename descclassname"><span class="pre">lumo.contrib.torch.tensor.</span></span><span class="sig-name descname"><span class="pre">cat_then_split</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">op</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="pre">Tensor</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Tensor</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tensors</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Tensor</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Tensor</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#lumo.contrib.torch.tensor.cat_then_split" title="Permalink to this definition"></a></dt>
+<dd><p>Examples:</p>
+<blockquote>
+<div><p>ta,tb,tc = cat_then_split(lambda x:model(x),[ta,tb,tc])
+alogits,blogits,clogits = cat_then_split(model,[ta,tb,tc])</p>
+</div></blockquote>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="lumo.contrib.torch.tensor.elementwise_mul">
+<span class="sig-prename descclassname"><span class="pre">lumo.contrib.torch.tensor.</span></span><span class="sig-name descname"><span class="pre">elementwise_mul</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">vec</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mat</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tensor</span></span></span><a class="headerlink" href="#lumo.contrib.torch.tensor.elementwise_mul" title="Permalink to this definition"></a></dt>
+<dd><p>Element-wise multiplication of a vector and a matrix</p>
+<p class="rubric">References</p>
+<p><a class="reference external" href="https://discuss.pytorch.org/t/element-wise-multiplication-of-a-vector-and-a-matrix/56946">https://discuss.pytorch.org/t/element-wise-multiplication-of-a-vector-and-a-matrix/56946</a></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>vec</strong> – tensor of shape (N, )</p></li>
+<li><p><strong>mat</strong> – matrix of shape (N, …)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A tensor</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="lumo.contrib.torch.tensor.euclidean_dist">
+<span class="sig-prename descclassname"><span class="pre">lumo.contrib.torch.tensor.</span></span><span class="sig-name descname"><span class="pre">euclidean_dist</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-12</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.contrib.torch.tensor.euclidean_dist" title="Permalink to this definition"></a></dt>
+<dd><p>copy from <a class="reference external" href="https://blog.csdn.net/IT_forlearn/article/details/100022244">https://blog.csdn.net/IT_forlearn/article/details/100022244</a>
+:param x: pytorch Variable, with shape [m, d]
+:param y: pytorch Variable, with shape [n, d]</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>pytorch Variable, with shape [m, n]</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>dist</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="lumo.contrib.torch.tensor.label_eq_matric">
+<span class="sig-prename descclassname"><span class="pre">lumo.contrib.torch.tensor.</span></span><span class="sig-name descname"><span class="pre">label_eq_matric</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">labels</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.contrib.torch.tensor.label_eq_matric" title="Permalink to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>labels</strong> – ground truth of shape [bsz].</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>a bool tensor [bsz, bsz],</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="lumo.contrib.torch.tensor.label_smoothing">
+<span class="sig-prename descclassname"><span class="pre">lumo.contrib.torch.tensor.</span></span><span class="sig-name descname"><span class="pre">label_smoothing</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">onehot_labels</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">epsilon</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.contrib.torch.tensor.label_smoothing" title="Permalink to this definition"></a></dt>
+<dd><p>Applies label smoothing</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>onehot_labels</strong> – </p></li>
+<li><p><strong>epsilon</strong> – </p></li>
+</ul>
+</dd>
+</dl>
+<p>Returns:</p>
+<p class="rubric">References</p>
+<p>see
+<a class="reference external" href="https://arxiv.org/abs/1512.00567">https://arxiv.org/abs/1512.00567</a>
+<a class="reference external" href="https://arxiv.org/abs/1906.02629">https://arxiv.org/abs/1906.02629</a></p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="lumo.contrib.torch.tensor.label_smoothing_v2">
+<span class="sig-prename descclassname"><span class="pre">lumo.contrib.torch.tensor.</span></span><span class="sig-name descname"><span class="pre">label_smoothing_v2</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">onehot_labels</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.contrib.torch.tensor.label_smoothing_v2" title="Permalink to this definition"></a></dt>
+<dd><p>Applies label smoothing</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>onehot_labels</strong> – </p></li>
+<li><p><strong>epsilon</strong> – </p></li>
+</ul>
+</dd>
+</dl>
+<p>Returns:</p>
+<p class="rubric">References</p>
+<p>see
+<a class="reference external" href="https://arxiv.org/abs/1512.00567">https://arxiv.org/abs/1512.00567</a>
+<a class="reference external" href="https://arxiv.org/abs/1906.02629">https://arxiv.org/abs/1906.02629</a></p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="lumo.contrib.torch.tensor.onehot">
+<span class="sig-prename descclassname"><span class="pre">lumo.contrib.torch.tensor.</span></span><span class="sig-name descname"><span class="pre">onehot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">labels</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label_num</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.contrib.torch.tensor.onehot" title="Permalink to this definition"></a></dt>
+<dd><p>convert label to onehot vector
+:param labels:
+:param label_num:</p>
+<p>Returns:</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="lumo.contrib.torch.tensor.rotate_right_angle">
+<span class="sig-prename descclassname"><span class="pre">lumo.contrib.torch.tensor.</span></span><span class="sig-name descname"><span class="pre">rotate_right_angle</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">w_dim</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">h_dim</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">degree</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">90</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.contrib.torch.tensor.rotate_right_angle" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="lumo.contrib.torch.tensor.split_sub_matrix">
+<span class="sig-prename descclassname"><span class="pre">lumo.contrib.torch.tensor.</span></span><span class="sig-name descname"><span class="pre">split_sub_matrix</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mat</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">sizes</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.contrib.torch.tensor.split_sub_matrix" title="Permalink to this definition"></a></dt>
+<dd><p>将一个[N,M,…,L]的矩阵按 n,m,…l 拆分成 N/n*M/m*…L/l 个 [n,m,…l]的小矩阵</p>
+<p>如果N/n 无法整除，不会报错而是会将多余的裁掉
+.. rubric:: Example</p>
+<p>mat = torch.arange(0,24).view(4,6) # shape = [4, 6]</p>
+<blockquote>
+<div><p>tensor([[ 0,  1,  2,  3,  4,  5],
+[ 6,  7,  8,  9, 10, 11],
+[12, 13, 14, 15, 16, 17],
+[18, 19, 20, 21, 22, 23]])</p>
+</div></blockquote>
+<p>split_sub_matrix(mat,2,3) # shape = [2, 2, 2, 3]</p>
+<blockquote>
+<div><p>tensor([[[[ 0,  1,  2],
+[ 6,  7,  8]],</p>
+</div></blockquote>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span> <span class="p">[[</span> <span class="mi">3</span><span class="p">,</span>  <span class="mi">4</span><span class="p">,</span>  <span class="mi">5</span><span class="p">],</span>
+  <span class="p">[</span> <span class="mi">9</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">11</span><span class="p">]]],</span>
+
+<span class="p">[[[</span><span class="mi">12</span><span class="p">,</span> <span class="mi">13</span><span class="p">,</span> <span class="mi">14</span><span class="p">],</span>
+  <span class="p">[</span><span class="mi">18</span><span class="p">,</span> <span class="mi">19</span><span class="p">,</span> <span class="mi">20</span><span class="p">]],</span>
+
+ <span class="p">[[</span><span class="mi">15</span><span class="p">,</span> <span class="mi">16</span><span class="p">,</span> <span class="mi">17</span><span class="p">],</span>
+  <span class="p">[</span><span class="mi">21</span><span class="p">,</span> <span class="mi">22</span><span class="p">,</span> <span class="mi">23</span><span class="p">]]]])</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>mat</strong> – 一个[N,M,…L] 的矩阵</p></li>
+<li><p><strong>sizes</strong> – n,m,…l 的list, 其长度不一定完全和mat的维数相同</p></li>
+</ul>
+</dd>
+</dl>
+<p>mat = torch.arange(0,240).view([4,6,10])
+split_sub_matrix(mat,2,3) # shape = [2, 2, 10, 2, 3]
+:return: 一个 [N/row,M/col,row,col] 的矩阵</p>
+</dd></dl>
+
+</section>
+<section id="module-lumo.contrib.torch">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-lumo.contrib.torch" title="Permalink to this heading"></a></h2>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, sailist.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

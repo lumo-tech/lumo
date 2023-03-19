@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>lumo.contrib.nn package &mdash; lumo 1.0.0 documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            lumo
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="tutorial/getting_start.html">Getting Start</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">lumo</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">lumo.contrib.nn package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/lumo.contrib.nn.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="lumo-contrib-nn-package">
+<h1>lumo.contrib.nn package<a class="headerlink" href="#lumo-contrib-nn-package" title="Permalink to this heading"></a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this heading"></a></h2>
+</section>
+<section id="module-lumo.contrib.nn.functional">
+<span id="lumo-contrib-nn-functional-module"></span><h2>lumo.contrib.nn.functional module<a class="headerlink" href="#module-lumo.contrib.nn.functional" title="Permalink to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="lumo.contrib.nn.functional.batch_cosine_similarity">
+<span class="sig-prename descclassname"><span class="pre">lumo.contrib.nn.functional.</span></span><span class="sig-name descname"><span class="pre">batch_cosine_similarity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-08</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.contrib.nn.functional.batch_cosine_similarity" title="Permalink to this definition"></a></dt>
+<dd><p>a: [bs_a, feature_dim]
+a: [bs_b, feature_dim]</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="lumo.contrib.nn.functional.batch_cosine_similarity2">
+<span class="sig-prename descclassname"><span class="pre">lumo.contrib.nn.functional.</span></span><span class="sig-name descname"><span class="pre">batch_cosine_similarity2</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.contrib.nn.functional.batch_cosine_similarity2" title="Permalink to this definition"></a></dt>
+<dd><p>a: [bs_a, feature_dim]
+a: [bs_b, feature_dim]</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="lumo.contrib.nn.functional.log_softmax_stable">
+<span class="sig-prename descclassname"><span class="pre">lumo.contrib.nn.functional.</span></span><span class="sig-name descname"><span class="pre">log_softmax_stable</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dim</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="lumo.trainer.html#lumo.trainer.factory.OptimBuilder.None" title="lumo.trainer.factory.OptimBuilder.None"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">-1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.contrib.nn.functional.log_softmax_stable" title="Permalink to this definition"></a></dt>
+<dd><p>Applies a softmax followed by a logarithm.
+Both CPU and GPU implementations of <code class="docutils literal notranslate"><span class="pre">log_softmax</span></code> use following formula:
+$log_softmax(a)=(a-C)−log(sum{exp(a-C)}), C = max(a)$
+But, in early version of MPS backend, the implementation is log(softmax(x)), which may cause unstable result (inf).
+See <a class="reference external" href="https://github.com/pytorch/pytorch/issues/94043">https://github.com/pytorch/pytorch/issues/94043</a> for details.</p>
+<p>For that reasom, I rewrite this function to temporarily avoid this problem. Before the MPS backend fix this implementation,
+you can use this function to workaround.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>input</strong> – same as F.log_softmax</p></li>
+<li><p><strong>dim</strong> – same as F.log_softmax</p></li>
+</ul>
+</dd>
+</dl>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><code class="docutils literal notranslate"><span class="pre">~lumo.contrib.nn.loss.cross_entropy_stable</span></code></p>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="lumo.contrib.nn.functional.masked_log_softmax">
+<span class="sig-prename descclassname"><span class="pre">lumo.contrib.nn.functional.</span></span><span class="sig-name descname"><span class="pre">masked_log_softmax</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">logits</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mask</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.contrib.nn.functional.masked_log_softmax" title="Permalink to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>logits</strong> – </p>
+</dd>
+</dl>
+<p>Returns:</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="lumo.contrib.nn.functional.masked_softmax">
+<span class="sig-prename descclassname"><span class="pre">lumo.contrib.nn.functional.</span></span><span class="sig-name descname"><span class="pre">masked_softmax</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">logits</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mask</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-08</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.contrib.nn.functional.masked_softmax" title="Permalink to this definition"></a></dt>
+<dd><p>see <a class="reference external" href="https://discuss.pytorch.org/t/apply-mask-softmax/14212/7">https://discuss.pytorch.org/t/apply-mask-softmax/14212/7</a>
+:param logits:
+:param mask:
+:param dim:
+:param eps:</p>
+<p>Returns:</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="lumo.contrib.nn.functional.normalize">
+<span class="sig-prename descclassname"><span class="pre">lumo.contrib.nn.functional.</span></span><span class="sig-name descname"><span class="pre">normalize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">feature</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inplace</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-08</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.contrib.nn.functional.normalize" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="lumo.contrib.nn.functional.sharpen">
+<span class="sig-prename descclassname"><span class="pre">lumo.contrib.nn.functional.</span></span><span class="sig-name descname"><span class="pre">sharpen</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.contrib.nn.functional.sharpen" title="Permalink to this definition"></a></dt>
+<dd><p>让概率分布变的更 sharp，即倾向于 onehot
+:param x: prediction, sum(x,dim=-1) = 1
+:param t: temperature, default is 0.5
+:return:</p>
+</dd></dl>
+
+</section>
+<section id="module-lumo.contrib.nn.loss">
+<span id="lumo-contrib-nn-loss-module"></span><h2>lumo.contrib.nn.loss module<a class="headerlink" href="#module-lumo.contrib.nn.loss" title="Permalink to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="lumo.contrib.nn.loss.cluster_loss">
+<span class="sig-prename descclassname"><span class="pre">lumo.contrib.nn.loss.</span></span><span class="sig-name descname"><span class="pre">cluster_loss</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">query</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label_graph_mask</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">temperature</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.7</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.contrib.nn.loss.cluster_loss" title="Permalink to this definition"></a></dt>
+<dd><p>see <a class="reference external" href="https://github.com/Yunfan-Li/Contrastive-Clustering">https://github.com/Yunfan-Li/Contrastive-Clustering</a></p>
+<p class="rubric">Examples</p>
+<p>assert (prob_a.sum(dim=-1) == 1).all()
+assert (prob_b.sum(dim=-1) == 1).all()
+cluster_loss(prob_a,prob_b)</p>
+<section id="sanity-check">
+<h3>sanity check<a class="headerlink" href="#sanity-check" title="Permalink to this heading"></a></h3>
+</section>
+<section id="see-clusterloss-from-https-github-com-yunfan-li-contrastive-clustering-blob-main-modules-contrastive-loss-py">
+<h3>see <code class="docutils literal notranslate"><span class="pre">ClusterLoss</span></code> from <a class="reference external" href="https://github.com/Yunfan-Li/Contrastive-Clustering/blob/main/modules/contrastive_loss.py">https://github.com/Yunfan-Li/Contrastive-Clustering/blob/main/modules/contrastive_loss.py</a><a class="headerlink" href="#see-clusterloss-from-https-github-com-yunfan-li-contrastive-clustering-blob-main-modules-contrastive-loss-py" title="Permalink to this heading"></a></h3>
+<p>loss_fn = ClusterLoss(5,0.7,’cpu’)
+loss_fn(prob_a,prob_b)
+cluster_loss(prob_a,prob_b,temperature=0.7)</p>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="lumo.contrib.nn.loss.contrastive_loss">
+<span class="sig-prename descclassname"><span class="pre">lumo.contrib.nn.loss.</span></span><span class="sig-name descname"><span class="pre">contrastive_loss</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">query</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">norm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">temperature</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.7</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inbatch_neg</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">graph_mask</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.contrib.nn.loss.contrastive_loss" title="Permalink to this definition"></a></dt>
+<dd><p class="rubric">Examples</p>
+<p>from lumo.contrib.nn import functional as LF
+logits = torch.rand(4,128)
+logits_s = torch.rand(4,128)
+contrastive_loss(logits,logits_s,norm=True,inbatch_neg=True)</p>
+<p>logits = LF.normalize(logits)
+logits_s = LF.normalize(logits_s)
+contrastive_loss(logits,logits_s,norm=False,inbatch_neg=True)</p>
+<section id="id1">
+<h3>sanity check<a class="headerlink" href="#id1" title="Permalink to this heading"></a></h3>
+</section>
+<section id="see-instanceloss-from-https-github-com-yunfan-li-contrastive-clustering-blob-main-modules-contrastive-loss-py">
+<h3>see <code class="docutils literal notranslate"><span class="pre">InstanceLoss</span></code> from <a class="reference external" href="https://github.com/Yunfan-Li/Contrastive-Clustering/blob/main/modules/contrastive_loss.py">https://github.com/Yunfan-Li/Contrastive-Clustering/blob/main/modules/contrastive_loss.py</a><a class="headerlink" href="#see-instanceloss-from-https-github-com-yunfan-li-contrastive-clustering-blob-main-modules-contrastive-loss-py" title="Permalink to this heading"></a></h3>
+<p>loss_fn = InstanceLoss(4,0.7,’cpu’)
+loss_fn(logits,logits_s)
+contrastive_loss(logits,logits_s,inbatch_neg=True,temperature=0.7)</p>
+<dl class="field-list simple">
+<dt class="field-odd">param query<span class="colon">:</span></dt>
+<dd class="field-odd"><p>[Bq, feature_dim]</p>
+</dd>
+<dt class="field-even">param key<span class="colon">:</span></dt>
+<dd class="field-even"><p>[Bk, feature_dim]</p>
+</dd>
+<dt class="field-odd">param norm<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool, norm or not</p>
+</dd>
+<dt class="field-even">param temperature<span class="colon">:</span></dt>
+<dd class="field-even"><p>float, temperature</p>
+</dd>
+<dt class="field-odd">param inbatch_neg<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool,</p>
+</dd>
+<dt class="field-even">param graph_mask<span class="colon">:</span></dt>
+<dd class="field-even"><p>[Bq, Bk] or [Bq+Bk, Bq+Bk] if inbatch_neg = True</p>
+</dd>
+</dl>
+<p>Returns:</p>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="lumo.contrib.nn.loss.contrastive_loss2">
+<span class="sig-prename descclassname"><span class="pre">lumo.contrib.nn.loss.</span></span><span class="sig-name descname"><span class="pre">contrastive_loss2</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">query</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">memory</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="lumo.trainer.html#lumo.trainer.factory.OptimBuilder.None" title="lumo.trainer.factory.OptimBuilder.None"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">norm</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="lumo.trainer.html#lumo.trainer.factory.OptimBuilder.None" title="lumo.trainer.factory.OptimBuilder.None"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">temperature</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.7</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">query_neg</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="lumo.trainer.html#lumo.trainer.factory.OptimBuilder.None" title="lumo.trainer.factory.OptimBuilder.None"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">key_neg</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="lumo.trainer.html#lumo.trainer.factory.OptimBuilder.None" title="lumo.trainer.factory.OptimBuilder.None"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">qk_graph</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="lumo.trainer.html#lumo.trainer.factory.OptimBuilder.None" title="lumo.trainer.factory.OptimBuilder.None"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">qm_graph</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="lumo.trainer.html#lumo.trainer.factory.OptimBuilder.None" title="lumo.trainer.factory.OptimBuilder.None"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eye_one_in_qk</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="lumo.trainer.html#lumo.trainer.factory.OptimBuilder.None" title="lumo.trainer.factory.OptimBuilder.None"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">softmax_mask</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reduction</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="lumo.trainer.html#lumo.trainer.factory.OptimBuilder.None" title="lumo.trainer.factory.OptimBuilder.None"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'mean'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.contrib.nn.loss.contrastive_loss2" title="Permalink to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>query</strong> – [bq, f_dim]</p></li>
+<li><p><strong>key</strong> – [bq, f_dim]</p></li>
+<li><p><strong>memory</strong> – [bm, f_dim]</p></li>
+<li><p><strong>norm</strong> – bool, normalize feature or not</p></li>
+<li><p><strong>temperature</strong> – float</p></li>
+<li><p><strong>query_neg</strong> – bool</p></li>
+<li><p><strong>key_neg</strong> – bool</p></li>
+<li><p><strong>qk_graph</strong> – [bq, bq], &gt;= 0</p></li>
+<li><p><strong>qm_graph</strong> – [bq, bm], &gt;= 0</p></li>
+<li><p><strong>eye_one_in_qk</strong> – bool</p></li>
+<li><p><strong>reduction</strong> – str</p></li>
+</ul>
+</dd>
+</dl>
+<p>‘mean’,
+‘sum’,
+‘none’</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>loss</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="lumo.contrib.nn.loss.cross_entropy_stable">
+<span class="sig-prename descclassname"><span class="pre">lumo.contrib.nn.loss.</span></span><span class="sig-name descname"><span class="pre">cross_entropy_stable</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.contrib.nn.loss.cross_entropy_stable" title="Permalink to this definition"></a></dt>
+<dd><p>This criterion computes the cross entropy loss between input logits and target.</p>
+<p>For why have this function and when to use this instead of F.cross_entropy, see <code class="docutils literal notranslate"><span class="pre">~lumo.contrib.nn.log_softmax_stable</span></code>
+for details.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="lumo.contrib.nn.loss.cross_entropy_with_targets">
+<span class="sig-prename descclassname"><span class="pre">lumo.contrib.nn.loss.</span></span><span class="sig-name descname"><span class="pre">cross_entropy_with_targets</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">logits</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">targets</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mask</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.contrib.nn.loss.cross_entropy_with_targets" title="Permalink to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>logits</strong> – [bs, class_num]</p></li>
+<li><p><strong>targets</strong> – [bs, class_num]</p></li>
+<li><p><strong>mask</strong> – [bs,]</p></li>
+</ul>
+</dd>
+</dl>
+<p>Returns:</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="lumo.contrib.nn.loss.minent">
+<span class="sig-prename descclassname"><span class="pre">lumo.contrib.nn.loss.</span></span><span class="sig-name descname"><span class="pre">minent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">logits</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">w_ent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.contrib.nn.loss.minent" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="lumo.contrib.nn.loss.sup_contrastive_loss">
+<span class="sig-prename descclassname"><span class="pre">lumo.contrib.nn.loss.</span></span><span class="sig-name descname"><span class="pre">sup_contrastive_loss</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">query</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">norm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">temperature</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.7</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.contrib.nn.loss.sup_contrastive_loss" title="Permalink to this definition"></a></dt>
+<dd><p>A modified version from <a class="reference external" href="https://github.com/HobbitLong/SupContrast">https://github.com/HobbitLong/SupContrast</a></p>
+<p class="rubric">Examples</p>
+<p>q = torch.rand(4,128)
+k = torch.rand(4,128)
+label = torch.randint(0,10,(4,))
+sup_contrastive_loss(q,k,label,norm=True)</p>
+<section id="id2">
+<h3>sanity check<a class="headerlink" href="#id2" title="Permalink to this heading"></a></h3>
+<p>sup = SupConLoss()
+sup(torch.stack([a,b],1))
+sup_contrastive_loss(a,b,norm=False,temperature=0.07)</p>
+</section>
+</dd></dl>
+
+</section>
+<section id="module-lumo.contrib.nn">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-lumo.contrib.nn" title="Permalink to this heading"></a></h2>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, sailist.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
