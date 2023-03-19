@@ -2,12 +2,11 @@ import numbers
 import os
 import os.path
 import re
-from typing import List, Dict, overload
-from pprint import pformat
+from typing import List
 
 from dbrecord import PDict
 from datetime import datetime
-from operator import gt, ge, le, lt, eq, ne
+from operator import gt, ge, le, lt
 
 from lumo.proc.path import progressroot, exproot, dbroot, cache_dir
 from .experiment import Experiment
@@ -32,6 +31,20 @@ styles = {
     
     """
 }
+
+
+def eq(ser, value):
+    if value is None:
+        return ser.isna() == True
+    else:
+        return ser == value
+
+
+def ne(ser, value):
+    if value is None:
+        return ser.isna() == False
+    else:
+        return ser != value
 
 
 def in_(ser, value):
@@ -231,7 +244,7 @@ class Condition:
             if isinstance(value, pd.DataFrame):
                 value = value[i]
             else:
-                value = value.apply(lambda x: x[i])
+                value = value.apply(lambda x: x.get(i) if isinstance(x, dict) else None)
         return mapping[self.op](value, self.value)
 
     def capply(self, df):
@@ -257,7 +270,7 @@ class Condition:
                     if isinstance(value, pd.DataFrame):
                         value = value[i]
                     else:
-                        value = value.apply(lambda x: x[i])
+                        value = value.apply(lambda x: x.get(i) if isinstance(x, dict) else None)
                 df[aim] = value
         return df
 

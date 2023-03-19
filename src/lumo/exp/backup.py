@@ -130,9 +130,10 @@ def backup_github_issue(exp: Experiment, repo: str, access_token: str,
     if update:
         number = -1
         old_backup = exp.properties.get('backup', {})
-        for k, v in sorted(list(old_backup.items())):
-            if v['backend'] == 'github' and v['repo'] == repo:
-                number = v['number']
+        if isinstance(old_backup, dict):
+            for k, v in sorted(list(old_backup.items())):
+                if v['backend'] == 'github' and v['repo'] == repo:
+                    number = v['number']
 
         if number > 0:
             issue = repo_obj.get_issue(number)
