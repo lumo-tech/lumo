@@ -11,8 +11,6 @@
     <script src="_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script src="_static/jquery.js"></script>
-        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
         <script src="_static/doctools.js"></script>
         <script src="_static/sphinx_highlight.js"></script>
@@ -32,6 +30,9 @@
           <a href="index.html" class="icon icon-home">
             lumo
           </a>
+              <div class="version">
+                
+              </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
@@ -70,15 +71,15 @@
            <div itemprop="articleBody">
              
   <section id="lumo-core-record-backend-package">
-<h1>lumo.core.record_backend package<a class="headerlink" href="#lumo-core-record-backend-package" title="Permalink to this heading"></a></h1>
+<h1>lumo.core.record_backend package<a class="headerlink" href="#lumo-core-record-backend-package" title="Permalink to this heading">¶</a></h1>
 <section id="submodules">
-<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this heading"></a></h2>
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this heading">¶</a></h2>
 </section>
 <section id="module-lumo.core.record_backend.abc">
-<span id="lumo-core-record-backend-abc-module"></span><h2>lumo.core.record_backend.abc module<a class="headerlink" href="#module-lumo.core.record_backend.abc" title="Permalink to this heading"></a></h2>
+<span id="lumo-core-record-backend-abc-module"></span><h2>lumo.core.record_backend.abc module<a class="headerlink" href="#module-lumo.core.record_backend.abc" title="Permalink to this heading">¶</a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="lumo.core.record_backend.abc.RecordBackend">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">lumo.core.record_backend.abc.</span></span><span class="sig-name descname"><span class="pre">RecordBackend</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">location</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.core.record_backend.abc.RecordBackend" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">lumo.core.record_backend.abc.</span></span><span class="sig-name descname"><span class="pre">RecordBackend</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">location</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.core.record_backend.abc.RecordBackend" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">ABC</span></code></p>
 <p>Defines an abstract base class for recording and logging data.</p>
 <p>This module provides an abstract base class, RecordBackend,
@@ -86,7 +87,7 @@ that defines the interface for recording and logging data.</p>
 <p>Subclasses of RecordBackend must implement the log(), log_image(), log_audio(), and log_video() methods.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="lumo.core.record_backend.abc.RecordBackend.log">
-<span class="sig-name descname"><span class="pre">log</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="lumo.trainer.html#lumo.trainer.factory.OptimBuilder.None" title="lumo.trainer.factory.OptimBuilder.None"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">commit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="lumo.trainer.html#lumo.trainer.factory.OptimBuilder.None" title="lumo.trainer.factory.OptimBuilder.None"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sync</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="lumo.trainer.html#lumo.trainer.factory.OptimBuilder.None" title="lumo.trainer.factory.OptimBuilder.None"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.core.record_backend.abc.RecordBackend.log" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">log</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="lumo.trainer.html#lumo.trainer.factory.OptimBuilder.None" title="lumo.trainer.factory.OptimBuilder.None"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">commit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="lumo.trainer.html#lumo.trainer.factory.OptimBuilder.None" title="lumo.trainer.factory.OptimBuilder.None"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sync</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="lumo.trainer.html#lumo.trainer.factory.OptimBuilder.None" title="lumo.trainer.factory.OptimBuilder.None"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.core.record_backend.abc.RecordBackend.log" title="Permalink to this definition">¶</a></dt>
 <dd><p>Logs data to the backend.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -102,7 +103,7 @@ that defines the interface for recording and logging data.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="lumo.core.record_backend.abc.RecordBackend.log_audio">
-<span class="sig-name descname"><span class="pre">log_audio</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">image_array</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">caption</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.core.record_backend.abc.RecordBackend.log_audio" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">log_audio</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">image_array</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">caption</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.core.record_backend.abc.RecordBackend.log_audio" title="Permalink to this definition">¶</a></dt>
 <dd><p>Logs an audio clip to the backend.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -116,7 +117,7 @@ that defines the interface for recording and logging data.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="lumo.core.record_backend.abc.RecordBackend.log_image">
-<span class="sig-name descname"><span class="pre">log_image</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">image_array</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">caption</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.core.record_backend.abc.RecordBackend.log_image" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">log_image</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">image_array</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">caption</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.core.record_backend.abc.RecordBackend.log_image" title="Permalink to this definition">¶</a></dt>
 <dd><p>Logs a video clip to the backend.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -132,19 +133,19 @@ that defines the interface for recording and logging data.</p>
 
 </section>
 <section id="module-lumo.core.record_backend.record_csv">
-<span id="lumo-core-record-backend-record-csv-module"></span><h2>lumo.core.record_backend.record_csv module<a class="headerlink" href="#module-lumo.core.record_backend.record_csv" title="Permalink to this heading"></a></h2>
+<span id="lumo-core-record-backend-record-csv-module"></span><h2>lumo.core.record_backend.record_csv module<a class="headerlink" href="#module-lumo.core.record_backend.record_csv" title="Permalink to this heading">¶</a></h2>
 </section>
 <section id="module-lumo.core.record_backend.record_sqlite">
-<span id="lumo-core-record-backend-record-sqlite-module"></span><h2>lumo.core.record_backend.record_sqlite module<a class="headerlink" href="#module-lumo.core.record_backend.record_sqlite" title="Permalink to this heading"></a></h2>
+<span id="lumo-core-record-backend-record-sqlite-module"></span><h2>lumo.core.record_backend.record_sqlite module<a class="headerlink" href="#module-lumo.core.record_backend.record_sqlite" title="Permalink to this heading">¶</a></h2>
 </section>
 <section id="module-lumo.core.record_backend.record_tb">
-<span id="lumo-core-record-backend-record-tb-module"></span><h2>lumo.core.record_backend.record_tb module<a class="headerlink" href="#module-lumo.core.record_backend.record_tb" title="Permalink to this heading"></a></h2>
+<span id="lumo-core-record-backend-record-tb-module"></span><h2>lumo.core.record_backend.record_tb module<a class="headerlink" href="#module-lumo.core.record_backend.record_tb" title="Permalink to this heading">¶</a></h2>
 </section>
 <section id="module-lumo.core.record_backend.record_wandb">
-<span id="lumo-core-record-backend-record-wandb-module"></span><h2>lumo.core.record_backend.record_wandb module<a class="headerlink" href="#module-lumo.core.record_backend.record_wandb" title="Permalink to this heading"></a></h2>
+<span id="lumo-core-record-backend-record-wandb-module"></span><h2>lumo.core.record_backend.record_wandb module<a class="headerlink" href="#module-lumo.core.record_backend.record_wandb" title="Permalink to this heading">¶</a></h2>
 </section>
 <section id="module-lumo.core.record_backend">
-<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-lumo.core.record_backend" title="Permalink to this heading"></a></h2>
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-lumo.core.record_backend" title="Permalink to this heading">¶</a></h2>
 </section>
 </section>
 
@@ -169,7 +170,25 @@ that defines the interface for recording and logging data.</p>
       </div>
     </section>
   </div>
-  <script>
+  <div>
+    <p>True Flag</p>
+    
+    
+    <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="Versions">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      <span class="fa fa-book"> Read the Docs</span>
+      v: 1.0.0
+      <span class="fa fa-caret-down"></span>
+    </span>
+        <div class="rst-other-versions">
+            <dl>
+                <dt>Versions</dt>
+            </dl>
+        </div>
+    </div>
+    
+
+</div><script>
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });

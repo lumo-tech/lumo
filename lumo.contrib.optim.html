@@ -11,8 +11,6 @@
     <script src="_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script src="_static/jquery.js"></script>
-        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
         <script src="_static/doctools.js"></script>
         <script src="_static/sphinx_highlight.js"></script>
@@ -32,6 +30,9 @@
           <a href="index.html" class="icon icon-home">
             lumo
           </a>
+              <div class="version">
+                
+              </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
@@ -70,15 +71,15 @@
            <div itemprop="articleBody">
              
   <section id="lumo-contrib-optim-package">
-<h1>lumo.contrib.optim package<a class="headerlink" href="#lumo-contrib-optim-package" title="Permalink to this heading"></a></h1>
+<h1>lumo.contrib.optim package<a class="headerlink" href="#lumo-contrib-optim-package" title="Permalink to this heading">¶</a></h1>
 <section id="submodules">
-<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this heading"></a></h2>
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this heading">¶</a></h2>
 </section>
 <section id="module-lumo.contrib.optim.grouper">
-<span id="lumo-contrib-optim-grouper-module"></span><h2>lumo.contrib.optim.grouper module<a class="headerlink" href="#module-lumo.contrib.optim.grouper" title="Permalink to this heading"></a></h2>
+<span id="lumo-contrib-optim-grouper-module"></span><h2>lumo.contrib.optim.grouper module<a class="headerlink" href="#module-lumo.contrib.optim.grouper" title="Permalink to this heading">¶</a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="lumo.contrib.optim.grouper.ParamGrouper">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">lumo.contrib.optim.grouper.</span></span><span class="sig-name descname"><span class="pre">ParamGrouper</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">module</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Module</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.contrib.optim.grouper.ParamGrouper" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">lumo.contrib.optim.grouper.</span></span><span class="sig-name descname"><span class="pre">ParamGrouper</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">module</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Module</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.contrib.optim.grouper.ParamGrouper" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Most of pytorch Optimizers have the hyperparam <code class="docutils literal notranslate"><span class="pre">weight</span> <span class="pre">decay</span></code>, but if you use <code class="docutils literal notranslate"><span class="pre">model.parameters()</span></code> as the
 Optimizer’s parameter, it will decay all parameters including bias,</p>
@@ -99,52 +100,52 @@ can do this easily and elegant.</p>
 </div></blockquote>
 <dl class="py method">
 <dt class="sig sig-object py" id="lumo.contrib.optim.grouper.ParamGrouper.batchnorm_params">
-<span class="sig-name descname"><span class="pre">batchnorm_params</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#lumo.contrib.optim.grouper.ParamGrouper.batchnorm_params" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">batchnorm_params</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#lumo.contrib.optim.grouper.ParamGrouper.batchnorm_params" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="lumo.contrib.optim.grouper.ParamGrouper.bias_params">
-<span class="sig-name descname"><span class="pre">bias_params</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">with_norm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.contrib.optim.grouper.ParamGrouper.bias_params" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">bias_params</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">with_norm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.contrib.optim.grouper.ParamGrouper.bias_params" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="lumo.contrib.optim.grouper.ParamGrouper.create_param_group">
-<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">create_param_group</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">params</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.contrib.optim.grouper.ParamGrouper.create_param_group" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">create_param_group</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">params</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.contrib.optim.grouper.ParamGrouper.create_param_group" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="lumo.contrib.optim.grouper.ParamGrouper.kernel_params">
-<span class="sig-name descname"><span class="pre">kernel_params</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">with_norm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.contrib.optim.grouper.ParamGrouper.kernel_params" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">kernel_params</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">with_norm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.contrib.optim.grouper.ParamGrouper.kernel_params" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="lumo.contrib.optim.grouper.ParamGrouper.layernorm_params">
-<span class="sig-name descname"><span class="pre">layernorm_params</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#lumo.contrib.optim.grouper.ParamGrouper.layernorm_params" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">layernorm_params</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#lumo.contrib.optim.grouper.ParamGrouper.layernorm_params" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="lumo.contrib.optim.grouper.ParamGrouper.norm_params">
-<span class="sig-name descname"><span class="pre">norm_params</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#lumo.contrib.optim.grouper.ParamGrouper.norm_params" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">norm_params</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#lumo.contrib.optim.grouper.ParamGrouper.norm_params" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="lumo.contrib.optim.grouper.ParamGrouper.params">
-<span class="sig-name descname"><span class="pre">params</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">with_norm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.contrib.optim.grouper.ParamGrouper.params" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">params</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">with_norm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.contrib.optim.grouper.ParamGrouper.params" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="lumo.contrib.optim.grouper.walk_module">
-<span class="sig-prename descclassname"><span class="pre">lumo.contrib.optim.grouper.</span></span><span class="sig-name descname"><span class="pre">walk_module</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">module</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Module</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Module</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Module</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Parameter</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#lumo.contrib.optim.grouper.walk_module" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">lumo.contrib.optim.grouper.</span></span><span class="sig-name descname"><span class="pre">walk_module</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">module</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Module</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Module</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Module</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Parameter</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#lumo.contrib.optim.grouper.walk_module" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </section>
 <section id="module-lumo.contrib.optim.lars">
-<span id="lumo-contrib-optim-lars-module"></span><h2>lumo.contrib.optim.lars module<a class="headerlink" href="#module-lumo.contrib.optim.lars" title="Permalink to this heading"></a></h2>
+<span id="lumo-contrib-optim-lars-module"></span><h2>lumo.contrib.optim.lars module<a class="headerlink" href="#module-lumo.contrib.optim.lars" title="Permalink to this heading">¶</a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="lumo.contrib.optim.lars.LARS">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">lumo.contrib.optim.lars.</span></span><span class="sig-name descname"><span class="pre">LARS</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">params</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">len_reduced</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">momentum</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.9</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_nesterov</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weight_decay</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">classic_momentum</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eta</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.001</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.contrib.optim.lars.LARS" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">lumo.contrib.optim.lars.</span></span><span class="sig-name descname"><span class="pre">LARS</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">params</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">len_reduced</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">momentum</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.9</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_nesterov</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weight_decay</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">classic_momentum</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eta</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.001</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.contrib.optim.lars.LARS" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Optimizer</span></code></p>
 <p>Layer-wise adaptive rate scaling</p>
 <ul class="simple">
@@ -167,7 +168,7 @@ eta (float, optional): LARS coefficient (default: 0.001)
 <a class="reference external" href="https://arxiv.org/abs/1708.03888">https://arxiv.org/abs/1708.03888</a></p>
 <dl class="py method">
 <dt class="sig sig-object py" id="lumo.contrib.optim.lars.LARS.step">
-<span class="sig-name descname"><span class="pre">step</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">epoch</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">closure</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.contrib.optim.lars.LARS.step" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">step</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">epoch</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">closure</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.contrib.optim.lars.LARS.step" title="Permalink to this definition">¶</a></dt>
 <dd><p>Performs a single optimization step (parameter update).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -184,7 +185,7 @@ eta (float, optional): LARS coefficient (default: 0.001)
 
 </section>
 <section id="module-lumo.contrib.optim">
-<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-lumo.contrib.optim" title="Permalink to this heading"></a></h2>
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-lumo.contrib.optim" title="Permalink to this heading">¶</a></h2>
 </section>
 </section>
 
@@ -209,7 +210,25 @@ eta (float, optional): LARS coefficient (default: 0.001)
       </div>
     </section>
   </div>
-  <script>
+  <div>
+    <p>True Flag</p>
+    
+    
+    <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="Versions">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      <span class="fa fa-book"> Read the Docs</span>
+      v: 1.0.0
+      <span class="fa fa-caret-down"></span>
+    </span>
+        <div class="rst-other-versions">
+            <dl>
+                <dt>Versions</dt>
+            </dl>
+        </div>
+    </div>
+    
+
+</div><script>
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });

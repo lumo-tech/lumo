@@ -11,8 +11,6 @@
     <script src="_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script src="_static/jquery.js"></script>
-        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
         <script src="_static/doctools.js"></script>
         <script src="_static/sphinx_highlight.js"></script>
@@ -32,6 +30,9 @@
           <a href="index.html" class="icon icon-home">
             lumo
           </a>
+              <div class="version">
+                
+              </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
@@ -70,15 +71,15 @@
            <div itemprop="articleBody">
              
   <section id="lumo-decorators-package">
-<h1>lumo.decorators package<a class="headerlink" href="#lumo-decorators-package" title="Permalink to this heading"></a></h1>
+<h1>lumo.decorators package<a class="headerlink" href="#lumo-decorators-package" title="Permalink to this heading">¶</a></h1>
 <section id="submodules">
-<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this heading"></a></h2>
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this heading">¶</a></h2>
 </section>
 <section id="module-lumo.decorators.clsmethod">
-<span id="lumo-decorators-clsmethod-module"></span><h2>lumo.decorators.clsmethod module<a class="headerlink" href="#module-lumo.decorators.clsmethod" title="Permalink to this heading"></a></h2>
+<span id="lumo-decorators-clsmethod-module"></span><h2>lumo.decorators.clsmethod module<a class="headerlink" href="#module-lumo.decorators.clsmethod" title="Permalink to this heading">¶</a></h2>
 <dl class="py function">
 <dt class="sig sig-object py" id="lumo.decorators.clsmethod.clswrap">
-<span class="sig-prename descclassname"><span class="pre">lumo.decorators.clsmethod.</span></span><span class="sig-name descname"><span class="pre">clswrap</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">callable</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">T</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">T</span></span></span><a class="headerlink" href="#lumo.decorators.clsmethod.clswrap" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">lumo.decorators.clsmethod.</span></span><span class="sig-name descname"><span class="pre">clswrap</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">callable</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">T</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">T</span></span></span><a class="headerlink" href="#lumo.decorators.clsmethod.clswrap" title="Permalink to this definition">¶</a></dt>
 <dd><p>A decorator for creating a staticmethod with type hints.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -96,10 +97,10 @@ for the parameters and return type. The resulting staticmethod will also have th
 
 </section>
 <section id="module-lumo.decorators.debounce">
-<span id="lumo-decorators-debounce-module"></span><h2>lumo.decorators.debounce module<a class="headerlink" href="#module-lumo.decorators.debounce" title="Permalink to this heading"></a></h2>
+<span id="lumo-decorators-debounce-module"></span><h2>lumo.decorators.debounce module<a class="headerlink" href="#module-lumo.decorators.debounce" title="Permalink to this heading">¶</a></h2>
 <dl class="py function">
 <dt class="sig sig-object py" id="lumo.decorators.debounce.debounce">
-<span class="sig-prename descclassname"><span class="pre">lumo.decorators.debounce.</span></span><span class="sig-name descname"><span class="pre">debounce</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wait</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.decorators.debounce.debounce" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">lumo.decorators.debounce.</span></span><span class="sig-name descname"><span class="pre">debounce</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wait</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.decorators.debounce.debounce" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>wait</strong> (<em>float</em>) – seconds</p>
@@ -119,10 +120,10 @@ time.sleep(1)</p>
 
 </section>
 <section id="module-lumo.decorators.deprecated">
-<span id="lumo-decorators-deprecated-module"></span><h2>lumo.decorators.deprecated module<a class="headerlink" href="#module-lumo.decorators.deprecated" title="Permalink to this heading"></a></h2>
+<span id="lumo-decorators-deprecated-module"></span><h2>lumo.decorators.deprecated module<a class="headerlink" href="#module-lumo.decorators.deprecated" title="Permalink to this heading">¶</a></h2>
 <dl class="py exception">
 <dt class="sig sig-object py" id="lumo.decorators.deprecated.DeprecatedWarning">
-<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">lumo.decorators.deprecated.</span></span><span class="sig-name descname"><span class="pre">DeprecatedWarning</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">function</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">deprecated_in</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">removed_in</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">details</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.decorators.deprecated.DeprecatedWarning" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">lumo.decorators.deprecated.</span></span><span class="sig-name descname"><span class="pre">DeprecatedWarning</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">function</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">deprecated_in</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">removed_in</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">details</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.decorators.deprecated.DeprecatedWarning" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">DeprecationWarning</span></code></p>
 <p>A warning class for deprecated methods
 This is a specialization of the built-in :class:<code class="docutils literal notranslate"><span class="pre">DeprecationWarning</span></code>,
@@ -142,7 +143,7 @@ of the now deprecated code.</p>
 
 <dl class="py exception">
 <dt class="sig sig-object py" id="lumo.decorators.deprecated.UnsupportedWarning">
-<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">lumo.decorators.deprecated.</span></span><span class="sig-name descname"><span class="pre">UnsupportedWarning</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">function</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">deprecated_in</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">removed_in</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">details</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.decorators.deprecated.UnsupportedWarning" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">lumo.decorators.deprecated.</span></span><span class="sig-name descname"><span class="pre">UnsupportedWarning</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">function</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">deprecated_in</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">removed_in</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">details</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.decorators.deprecated.UnsupportedWarning" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#lumo.decorators.deprecated.DeprecatedWarning" title="lumo.decorators.deprecated.DeprecatedWarning"><code class="xref py py-class docutils literal notranslate"><span class="pre">DeprecatedWarning</span></code></a></p>
 <p>A warning class for methods to be removed
 This is a subclass of :class:<code class="docutils literal notranslate"><span class="pre">~deprecation.DeprecatedWarning</span></code> and is used
@@ -154,7 +155,7 @@ under test uses code that raises this warning.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="lumo.decorators.deprecated.deprecated">
-<span class="sig-prename descclassname"><span class="pre">lumo.decorators.deprecated.</span></span><span class="sig-name descname"><span class="pre">deprecated</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">deprecated_in</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">removed_in</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">details</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.decorators.deprecated.deprecated" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">lumo.decorators.deprecated.</span></span><span class="sig-name descname"><span class="pre">deprecated</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">deprecated_in</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">removed_in</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">details</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.decorators.deprecated.deprecated" title="Permalink to this definition">¶</a></dt>
 <dd><p>Decorate a function to signify its deprecation
 This function wraps a method that will soon be removed and does two things:
 * The docstring of the method will be modified to include a notice
@@ -196,7 +197,7 @@ method instead”. By default there are no details.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="lumo.decorators.deprecated.fail_if_not_removed">
-<span class="sig-prename descclassname"><span class="pre">lumo.decorators.deprecated.</span></span><span class="sig-name descname"><span class="pre">fail_if_not_removed</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">method</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.decorators.deprecated.fail_if_not_removed" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">lumo.decorators.deprecated.</span></span><span class="sig-name descname"><span class="pre">fail_if_not_removed</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">method</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.decorators.deprecated.fail_if_not_removed" title="Permalink to this definition">¶</a></dt>
 <dd><p>Decorate a test method to track removal of deprecated code
 This decorator catches :class:<code class="docutils literal notranslate"><span class="pre">~deprecation.UnsupportedWarning</span></code>
 warnings that occur during testing and causes unittests to fail,
@@ -208,7 +209,7 @@ is raised while running the test method.</p>
 
 <dl class="py data">
 <dt class="sig sig-object py" id="lumo.decorators.deprecated.message_location">
-<span class="sig-prename descclassname"><span class="pre">lumo.decorators.deprecated.</span></span><span class="sig-name descname"><span class="pre">message_location</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'bottom'</span></em><a class="headerlink" href="#lumo.decorators.deprecated.message_location" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">lumo.decorators.deprecated.</span></span><span class="sig-name descname"><span class="pre">message_location</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'bottom'</span></em><a class="headerlink" href="#lumo.decorators.deprecated.message_location" title="Permalink to this definition">¶</a></dt>
 <dd><p>Location where the details are added to a deprecated docstring</p>
 <p>When set to <code class="docutils literal notranslate"><span class="pre">&quot;bottom&quot;</span></code>, the details are appended to the end.
 When set to <code class="docutils literal notranslate"><span class="pre">&quot;top&quot;</span></code>, the details are inserted between the
@@ -217,10 +218,10 @@ summary line and docstring contents.</p>
 
 </section>
 <section id="module-lumo.decorators.lazy_required">
-<span id="lumo-decorators-lazy-required-module"></span><h2>lumo.decorators.lazy_required module<a class="headerlink" href="#module-lumo.decorators.lazy_required" title="Permalink to this heading"></a></h2>
+<span id="lumo-decorators-lazy-required-module"></span><h2>lumo.decorators.lazy_required module<a class="headerlink" href="#module-lumo.decorators.lazy_required" title="Permalink to this heading">¶</a></h2>
 <dl class="py function">
 <dt class="sig sig-object py" id="lumo.decorators.lazy_required.is_lib_available">
-<span class="sig-prename descclassname"><span class="pre">lumo.decorators.lazy_required.</span></span><span class="sig-name descname"><span class="pre">is_lib_available</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lib</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.decorators.lazy_required.is_lib_available" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">lumo.decorators.lazy_required.</span></span><span class="sig-name descname"><span class="pre">is_lib_available</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lib</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.decorators.lazy_required.is_lib_available" title="Permalink to this definition">¶</a></dt>
 <dd><p>Check if a library is available to be imported.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -237,22 +238,22 @@ summary line and docstring contents.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="lumo.decorators.lazy_required.lib_required">
-<span class="sig-prename descclassname"><span class="pre">lumo.decorators.lazy_required.</span></span><span class="sig-name descname"><span class="pre">lib_required</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lib_name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.decorators.lazy_required.lib_required" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">lumo.decorators.lazy_required.</span></span><span class="sig-name descname"><span class="pre">lib_required</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lib_name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.decorators.lazy_required.lib_required" title="Permalink to this definition">¶</a></dt>
 <dd><p>Wrap a function to raise an ImportError if a required library is not available.</p>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="lumo.decorators.lazy_required.torch_required">
-<span class="sig-prename descclassname"><span class="pre">lumo.decorators.lazy_required.</span></span><span class="sig-name descname"><span class="pre">torch_required</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.decorators.lazy_required.torch_required" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">lumo.decorators.lazy_required.</span></span><span class="sig-name descname"><span class="pre">torch_required</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.decorators.lazy_required.torch_required" title="Permalink to this definition">¶</a></dt>
 <dd><p>Wrap a function to raise an ImportError if PyTorch is not available.</p>
 </dd></dl>
 
 </section>
 <section id="module-lumo.decorators.process">
-<span id="lumo-decorators-process-module"></span><h2>lumo.decorators.process module<a class="headerlink" href="#module-lumo.decorators.process" title="Permalink to this heading"></a></h2>
+<span id="lumo-decorators-process-module"></span><h2>lumo.decorators.process module<a class="headerlink" href="#module-lumo.decorators.process" title="Permalink to this heading">¶</a></h2>
 <dl class="py function">
 <dt class="sig sig-object py" id="lumo.decorators.process.call_on_main_process_wrap">
-<span class="sig-prename descclassname"><span class="pre">lumo.decorators.process.</span></span><span class="sig-name descname"><span class="pre">call_on_main_process_wrap</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Callable</span></span></span><a class="headerlink" href="#lumo.decorators.process.call_on_main_process_wrap" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">lumo.decorators.process.</span></span><span class="sig-name descname"><span class="pre">call_on_main_process_wrap</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Callable</span></span></span><a class="headerlink" href="#lumo.decorators.process.call_on_main_process_wrap" title="Permalink to this definition">¶</a></dt>
 <dd><p>Wrap a function to only execute on the main process.</p>
 <p>If the current process is the main process, it calls the original func with the passed arguments and returns the result.
 If it is not the main process, it does nothing and returns None.</p>
@@ -271,10 +272,10 @@ If it is not the main process, it does nothing and returns None.</p>
 
 </section>
 <section id="module-lumo.decorators.regist">
-<span id="lumo-decorators-regist-module"></span><h2>lumo.decorators.regist module<a class="headerlink" href="#module-lumo.decorators.regist" title="Permalink to this heading"></a></h2>
+<span id="lumo-decorators-regist-module"></span><h2>lumo.decorators.regist module<a class="headerlink" href="#module-lumo.decorators.regist" title="Permalink to this heading">¶</a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="lumo.decorators.regist.Register">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">lumo.decorators.regist.</span></span><span class="sig-name descname"><span class="pre">Register</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.decorators.regist.Register" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">lumo.decorators.regist.</span></span><span class="sig-name descname"><span class="pre">Register</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.decorators.regist.Register" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>A class for registering functions.</p>
 <dl class="field-list simple">
@@ -284,13 +285,13 @@ If it is not the main process, it does nothing and returns None.</p>
 </dl>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="lumo.decorators.regist.Register.name">
-<span class="sig-name descname"><span class="pre">name</span></span><a class="headerlink" href="#lumo.decorators.regist.Register.name" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">name</span></span><a class="headerlink" href="#lumo.decorators.regist.Register.name" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <p>The name of the register.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="lumo.decorators.regist.Register.source">
-<span class="sig-name descname"><span class="pre">source</span></span><a class="headerlink" href="#lumo.decorators.regist.Register.source" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">source</span></span><a class="headerlink" href="#lumo.decorators.regist.Register.source" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <p>An ordered dictionary that holds the registered functions.</p>
@@ -320,13 +321,13 @@ If it is not the main process, it does nothing and returns None.</p>
 <p>A decorator function that adds a function to the register.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="lumo.decorators.regist.Register.regist">
-<span class="sig-name descname"><span class="pre">regist</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.decorators.regist.Register.regist" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">regist</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.decorators.regist.Register.regist" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <p>A method that returns a partial function of <strong>call</strong> with the register’s name.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="id0">
-<span class="sig-name descname"><span class="pre">regist</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="lumo.trainer.html#lumo.trainer.factory.OptimBuilder.None" title="lumo.trainer.factory.OptimBuilder.None"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#id0" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">regist</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="lumo.trainer.html#lumo.trainer.factory.OptimBuilder.None" title="lumo.trainer.factory.OptimBuilder.None"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#id0" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns a partial function of <strong>call</strong> with the register’s name.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -345,7 +346,7 @@ is optional, but if it is provided it should be a string.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="lumo.decorators.regist.regist_func_to">
-<span class="sig-prename descclassname"><span class="pre">lumo.decorators.regist.</span></span><span class="sig-name descname"><span class="pre">regist_func_to</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">val</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Callable</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Callable</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name_</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.decorators.regist.regist_func_to" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">lumo.decorators.regist.</span></span><span class="sig-name descname"><span class="pre">regist_func_to</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">val</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Callable</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Callable</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name_</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.decorators.regist.regist_func_to" title="Permalink to this definition">¶</a></dt>
 <dd><p>A decorator function that registers a function to a dictionary or list.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -371,7 +372,7 @@ provided it should be a string. The <code class="docutils literal notranslate"><
 
 </section>
 <section id="module-lumo.decorators">
-<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-lumo.decorators" title="Permalink to this heading"></a></h2>
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-lumo.decorators" title="Permalink to this heading">¶</a></h2>
 </section>
 </section>
 
@@ -396,7 +397,25 @@ provided it should be a string. The <code class="docutils literal notranslate"><
       </div>
     </section>
   </div>
-  <script>
+  <div>
+    <p>True Flag</p>
+    
+    
+    <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="Versions">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      <span class="fa fa-book"> Read the Docs</span>
+      v: 1.0.0
+      <span class="fa fa-caret-down"></span>
+    </span>
+        <div class="rst-other-versions">
+            <dl>
+                <dt>Versions</dt>
+            </dl>
+        </div>
+    </div>
+    
+
+</div><script>
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });

@@ -11,8 +11,6 @@
     <script src="_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script src="_static/jquery.js"></script>
-        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
         <script src="_static/doctools.js"></script>
         <script src="_static/sphinx_highlight.js"></script>
@@ -32,6 +30,9 @@
           <a href="index.html" class="icon icon-home">
             lumo
           </a>
+              <div class="version">
+                
+              </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
@@ -70,12 +71,12 @@
            <div itemprop="articleBody">
              
   <section id="lumo-cli-package">
-<h1>lumo.cli package<a class="headerlink" href="#lumo-cli-package" title="Permalink to this heading"></a></h1>
+<h1>lumo.cli package<a class="headerlink" href="#lumo-cli-package" title="Permalink to this heading">¶</a></h1>
 <section id="module-lumo.cli">
-<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-lumo.cli" title="Permalink to this heading"></a></h2>
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-lumo.cli" title="Permalink to this heading">¶</a></h2>
 <dl class="py function">
 <dt class="sig sig-object py" id="lumo.cli.board">
-<span class="sig-prename descclassname"><span class="pre">lumo.cli.</span></span><span class="sig-name descname"><span class="pre">board</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">port</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">11606</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">address</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">open</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.cli.board" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">lumo.cli.</span></span><span class="sig-name descname"><span class="pre">board</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">port</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">11606</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">address</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">open</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.cli.board" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>port</strong> – </p>
@@ -86,13 +87,13 @@
 
 <dl class="py function">
 <dt class="sig sig-object py" id="lumo.cli.main">
-<span class="sig-prename descclassname"><span class="pre">lumo.cli.</span></span><span class="sig-name descname"><span class="pre">main</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#lumo.cli.main" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">lumo.cli.</span></span><span class="sig-name descname"><span class="pre">main</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#lumo.cli.main" title="Permalink to this definition">¶</a></dt>
 <dd><p>the entry</p>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="lumo.cli.note">
-<span class="sig-prename descclassname"><span class="pre">lumo.cli.</span></span><span class="sig-name descname"><span class="pre">note</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">test_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">description</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.cli.note" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">lumo.cli.</span></span><span class="sig-name descname"><span class="pre">note</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">test_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">description</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.cli.note" title="Permalink to this definition">¶</a></dt>
 <dd><p>Add note to a test:
 lumo note &lt;test_name&gt; description ;</p>
 <dl class="field-list simple">
@@ -108,7 +109,7 @@ lumo note &lt;test_name&gt; description ;</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="lumo.cli.rerun">
-<span class="sig-prename descclassname"><span class="pre">lumo.cli.</span></span><span class="sig-name descname"><span class="pre">rerun</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">test_name</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwarg</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.cli.rerun" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">lumo.cli.</span></span><span class="sig-name descname"><span class="pre">rerun</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">test_name</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwarg</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.cli.rerun" title="Permalink to this definition">¶</a></dt>
 <dd><p>rerun a test
 lumo rerun &lt;test_name&gt;
 lumo rerun &lt;test_name&gt; –device=0</p>
@@ -144,7 +145,25 @@ lumo rerun &lt;test_name&gt; –device=0</p>
       </div>
     </section>
   </div>
-  <script>
+  <div>
+    <p>True Flag</p>
+    
+    
+    <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="Versions">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      <span class="fa fa-book"> Read the Docs</span>
+      v: 1.0.0
+      <span class="fa fa-caret-down"></span>
+    </span>
+        <div class="rst-other-versions">
+            <dl>
+                <dt>Versions</dt>
+            </dl>
+        </div>
+    </div>
+    
+
+</div><script>
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });

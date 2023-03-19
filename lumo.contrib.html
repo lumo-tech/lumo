@@ -11,8 +11,6 @@
     <script src="_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script src="_static/jquery.js"></script>
-        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
         <script src="_static/doctools.js"></script>
         <script src="_static/sphinx_highlight.js"></script>
@@ -32,6 +30,9 @@
           <a href="index.html" class="icon icon-home">
             lumo
           </a>
+              <div class="version">
+                
+              </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
@@ -70,9 +71,9 @@
            <div itemprop="articleBody">
              
   <section id="lumo-contrib-package">
-<h1>lumo.contrib package<a class="headerlink" href="#lumo-contrib-package" title="Permalink to this heading"></a></h1>
+<h1>lumo.contrib package<a class="headerlink" href="#lumo-contrib-package" title="Permalink to this heading">¶</a></h1>
 <section id="subpackages">
-<h2>Subpackages<a class="headerlink" href="#subpackages" title="Permalink to this heading"></a></h2>
+<h2>Subpackages<a class="headerlink" href="#subpackages" title="Permalink to this heading">¶</a></h2>
 <div class="toctree-wrapper compound">
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="lumo.contrib.board.html">lumo.contrib.board package</a><ul>
@@ -254,13 +255,13 @@
 </div>
 </section>
 <section id="submodules">
-<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this heading"></a></h2>
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this heading">¶</a></h2>
 </section>
 <section id="module-lumo.contrib.itertools">
-<span id="lumo-contrib-itertools-module"></span><h2>lumo.contrib.itertools module<a class="headerlink" href="#module-lumo.contrib.itertools" title="Permalink to this heading"></a></h2>
+<span id="lumo-contrib-itertools-module"></span><h2>lumo.contrib.itertools module<a class="headerlink" href="#module-lumo.contrib.itertools" title="Permalink to this heading">¶</a></h2>
 <dl class="py function">
 <dt class="sig sig-object py" id="lumo.contrib.itertools.accumulate_slice">
-<span class="sig-prename descclassname"><span class="pre">lumo.contrib.itertools.</span></span><span class="sig-name descname"><span class="pre">accumulate_slice</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">iterable</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.contrib.itertools.accumulate_slice" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">lumo.contrib.itertools.</span></span><span class="sig-name descname"><span class="pre">accumulate_slice</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">iterable</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.contrib.itertools.accumulate_slice" title="Permalink to this definition">¶</a></dt>
 <dd><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">sl</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">accumulate_slice</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">))):</span>
     <span class="nb">print</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">45</span><span class="p">)[</span><span class="n">sl</span><span class="p">]))</span>
 
@@ -286,12 +287,12 @@
 
 <dl class="py function">
 <dt class="sig sig-object py" id="lumo.contrib.itertools.chunk">
-<span class="sig-prename descclassname"><span class="pre">lumo.contrib.itertools.</span></span><span class="sig-name descname"><span class="pre">chunk</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">seq</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Sequence</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chunksize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pad_last</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pad_item</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.contrib.itertools.chunk" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">lumo.contrib.itertools.</span></span><span class="sig-name descname"><span class="pre">chunk</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">seq</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Sequence</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chunksize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pad_last</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pad_item</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.contrib.itertools.chunk" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="lumo.contrib.itertools.group_continuous">
-<span class="sig-prename descclassname"><span class="pre">lumo.contrib.itertools.</span></span><span class="sig-name descname"><span class="pre">group_continuous</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">iterable</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">key</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.contrib.itertools.group_continuous" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">lumo.contrib.itertools.</span></span><span class="sig-name descname"><span class="pre">group_continuous</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">iterable</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">key</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.contrib.itertools.group_continuous" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns grouped items constrained by continuous integer in the iterable object.</p>
 <blockquote>
 <div><p>list(group_continuous([[i] for i in [1,2,3,4,5,7,8,9,12,13]], key=lambda x:x[0]))
@@ -303,7 +304,7 @@
 
 <dl class="py function">
 <dt class="sig sig-object py" id="lumo.contrib.itertools.groupby">
-<span class="sig-prename descclassname"><span class="pre">lumo.contrib.itertools.</span></span><span class="sig-name descname"><span class="pre">groupby</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">iterable</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">key</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.contrib.itertools.groupby" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">lumo.contrib.itertools.</span></span><span class="sig-name descname"><span class="pre">groupby</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">iterable</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">key</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.contrib.itertools.groupby" title="Permalink to this definition">¶</a></dt>
 <dd><blockquote>
 <div><p>labels = [1,1,2,2,3,3,4,4]
 for cur,vals in list(groupby(labels)):
@@ -328,85 +329,85 @@ print(cur,vals)</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="lumo.contrib.itertools.lchain">
-<span class="sig-prename descclassname"><span class="pre">lumo.contrib.itertools.</span></span><span class="sig-name descname"><span class="pre">lchain</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">iterable</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.contrib.itertools.lchain" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">lumo.contrib.itertools.</span></span><span class="sig-name descname"><span class="pre">lchain</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">iterable</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.contrib.itertools.lchain" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="lumo.contrib.itertools.lfilter">
-<span class="sig-prename descclassname"><span class="pre">lumo.contrib.itertools.</span></span><span class="sig-name descname"><span class="pre">lfilter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">iterable</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.contrib.itertools.lfilter" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">lumo.contrib.itertools.</span></span><span class="sig-name descname"><span class="pre">lfilter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">iterable</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.contrib.itertools.lfilter" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="lumo.contrib.itertools.lmap">
-<span class="sig-prename descclassname"><span class="pre">lumo.contrib.itertools.</span></span><span class="sig-name descname"><span class="pre">lmap</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">iterable</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.contrib.itertools.lmap" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">lumo.contrib.itertools.</span></span><span class="sig-name descname"><span class="pre">lmap</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">iterable</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.contrib.itertools.lmap" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="lumo.contrib.itertools.poll">
-<span class="sig-prename descclassname"><span class="pre">lumo.contrib.itertools.</span></span><span class="sig-name descname"><span class="pre">poll</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">iterables</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.contrib.itertools.poll" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">lumo.contrib.itertools.</span></span><span class="sig-name descname"><span class="pre">poll</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">iterables</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.contrib.itertools.poll" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="lumo.contrib.itertools.safe_cycle">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">lumo.contrib.itertools.</span></span><span class="sig-name descname"><span class="pre">safe_cycle</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">iter_item</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.contrib.itertools.safe_cycle" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">lumo.contrib.itertools.</span></span><span class="sig-name descname"><span class="pre">safe_cycle</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">iter_item</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.contrib.itertools.safe_cycle" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="lumo.contrib.itertools.window">
-<span class="sig-prename descclassname"><span class="pre">lumo.contrib.itertools.</span></span><span class="sig-name descname"><span class="pre">window</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">seq</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Sized</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">strid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">drop_last</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.contrib.itertools.window" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">lumo.contrib.itertools.</span></span><span class="sig-name descname"><span class="pre">window</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">seq</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Sized</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">strid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">drop_last</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.contrib.itertools.window" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="lumo.contrib.itertools.window2">
-<span class="sig-prename descclassname"><span class="pre">lumo.contrib.itertools.</span></span><span class="sig-name descname"><span class="pre">window2</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">seq</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Iterable</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">strid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">drop_last</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.contrib.itertools.window2" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">lumo.contrib.itertools.</span></span><span class="sig-name descname"><span class="pre">window2</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">seq</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Iterable</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">strid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">drop_last</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.contrib.itertools.window2" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </section>
 <section id="module-lumo.contrib.path">
-<span id="lumo-contrib-path-module"></span><h2>lumo.contrib.path module<a class="headerlink" href="#module-lumo.contrib.path" title="Permalink to this heading"></a></h2>
+<span id="lumo-contrib-path-module"></span><h2>lumo.contrib.path module<a class="headerlink" href="#module-lumo.contrib.path" title="Permalink to this heading">¶</a></h2>
 <dl class="py function">
 <dt class="sig sig-object py" id="lumo.contrib.path.walk">
-<span class="sig-prename descclassname"><span class="pre">lumo.contrib.path.</span></span><span class="sig-name descname"><span class="pre">walk</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">top</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">depth</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">-1</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Iterable</span><span class="p"><span class="pre">[</span></span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#lumo.contrib.path.walk" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">lumo.contrib.path.</span></span><span class="sig-name descname"><span class="pre">walk</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">top</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">depth</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">-1</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Iterable</span><span class="p"><span class="pre">[</span></span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#lumo.contrib.path.walk" title="Permalink to this definition">¶</a></dt>
 <dd><p>same as os.path.walk but added depth argument</p>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="lumo.contrib.path.walk_file">
-<span class="sig-prename descclassname"><span class="pre">lumo.contrib.path.</span></span><span class="sig-name descname"><span class="pre">walk_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">root</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">suffix_lis</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">set</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.contrib.path.walk_file" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">lumo.contrib.path.</span></span><span class="sig-name descname"><span class="pre">walk_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">root</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">suffix_lis</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">set</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.contrib.path.walk_file" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </section>
 <section id="module-lumo.contrib.scan">
-<span id="lumo-contrib-scan-module"></span><h2>lumo.contrib.scan module<a class="headerlink" href="#module-lumo.contrib.scan" title="Permalink to this heading"></a></h2>
+<span id="lumo-contrib-scan-module"></span><h2>lumo.contrib.scan module<a class="headerlink" href="#module-lumo.contrib.scan" title="Permalink to this heading">¶</a></h2>
 <p>基线对比</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="lumo.contrib.scan.ScanBaseParams">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">lumo.contrib.scan.</span></span><span class="sig-name descname"><span class="pre">ScanBaseParams</span></span><a class="headerlink" href="#lumo.contrib.scan.ScanBaseParams" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">lumo.contrib.scan.</span></span><span class="sig-name descname"><span class="pre">ScanBaseParams</span></span><a class="headerlink" href="#lumo.contrib.scan.ScanBaseParams" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="lumo.core.html#lumo.core.params.Params" title="lumo.core.params.Params"><code class="xref py py-class docutils literal notranslate"><span class="pre">Params</span></code></a></p>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="lumo.contrib.scan.base_main">
-<span class="sig-prename descclassname"><span class="pre">lumo.contrib.scan.</span></span><span class="sig-name descname"><span class="pre">base_main</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pm</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#lumo.contrib.scan.ScanBaseParams" title="lumo.contrib.scan.ScanBaseParams"><span class="pre">ScanBaseParams</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">files</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dics</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.contrib.scan.base_main" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">lumo.contrib.scan.</span></span><span class="sig-name descname"><span class="pre">base_main</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pm</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#lumo.contrib.scan.ScanBaseParams" title="lumo.contrib.scan.ScanBaseParams"><span class="pre">ScanBaseParams</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">files</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dics</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.contrib.scan.base_main" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="lumo.contrib.scan.format_args">
-<span class="sig-prename descclassname"><span class="pre">lumo.contrib.scan.</span></span><span class="sig-name descname"><span class="pre">format_args</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.contrib.scan.format_args" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">lumo.contrib.scan.</span></span><span class="sig-name descname"><span class="pre">format_args</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.contrib.scan.format_args" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </section>
 <section id="module-lumo.contrib.tb">
-<span id="lumo-contrib-tb-module"></span><h2>lumo.contrib.tb module<a class="headerlink" href="#module-lumo.contrib.tb" title="Permalink to this heading"></a></h2>
+<span id="lumo-contrib-tb-module"></span><h2>lumo.contrib.tb module<a class="headerlink" href="#module-lumo.contrib.tb" title="Permalink to this heading">¶</a></h2>
 <dl class="py function">
 <dt class="sig sig-object py" id="lumo.contrib.tb.run_board">
-<span class="sig-prename descclassname"><span class="pre">lumo.contrib.tb.</span></span><span class="sig-name descname"><span class="pre">run_board</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">logdir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">host</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">port</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.contrib.tb.run_board" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">lumo.contrib.tb.</span></span><span class="sig-name descname"><span class="pre">run_board</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">logdir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">host</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">port</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.contrib.tb.run_board" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </section>
 <section id="module-lumo.contrib">
-<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-lumo.contrib" title="Permalink to this heading"></a></h2>
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-lumo.contrib" title="Permalink to this heading">¶</a></h2>
 <p>包含众多对 torch 官方提供的方法或类的扩充</p>
 </section>
 </section>
@@ -432,7 +433,25 @@ print(cur,vals)</p>
       </div>
     </section>
   </div>
-  <script>
+  <div>
+    <p>True Flag</p>
+    
+    
+    <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="Versions">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      <span class="fa fa-book"> Read the Docs</span>
+      v: 1.0.0
+      <span class="fa fa-caret-down"></span>
+    </span>
+        <div class="rst-other-versions">
+            <dl>
+                <dt>Versions</dt>
+            </dl>
+        </div>
+    </div>
+    
+
+</div><script>
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });

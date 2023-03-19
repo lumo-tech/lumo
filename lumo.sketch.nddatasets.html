@@ -11,8 +11,6 @@
     <script src="_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script src="_static/jquery.js"></script>
-        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
         <script src="_static/doctools.js"></script>
         <script src="_static/sphinx_highlight.js"></script>
@@ -32,6 +30,9 @@
           <a href="index.html" class="icon icon-home">
             lumo
           </a>
+              <div class="version">
+                
+              </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
@@ -70,87 +71,87 @@
            <div itemprop="articleBody">
              
   <section id="lumo-sketch-nddatasets-package">
-<h1>lumo.sketch.nddatasets package<a class="headerlink" href="#lumo-sketch-nddatasets-package" title="Permalink to this heading"></a></h1>
+<h1>lumo.sketch.nddatasets package<a class="headerlink" href="#lumo-sketch-nddatasets-package" title="Permalink to this heading">¶</a></h1>
 <section id="submodules">
-<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this heading"></a></h2>
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this heading">¶</a></h2>
 </section>
 <section id="module-lumo.sketch.nddatasets.ndtransforms">
-<span id="lumo-sketch-nddatasets-ndtransforms-module"></span><h2>lumo.sketch.nddatasets.ndtransforms module<a class="headerlink" href="#module-lumo.sketch.nddatasets.ndtransforms" title="Permalink to this heading"></a></h2>
+<span id="lumo-sketch-nddatasets-ndtransforms-module"></span><h2>lumo.sketch.nddatasets.ndtransforms module<a class="headerlink" href="#module-lumo.sketch.nddatasets.ndtransforms" title="Permalink to this heading">¶</a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="lumo.sketch.nddatasets.ndtransforms.Pad">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">lumo.sketch.nddatasets.ndtransforms.</span></span><span class="sig-name descname"><span class="pre">Pad</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pad</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fill</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.sketch.nddatasets.ndtransforms.Pad" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">lumo.sketch.nddatasets.ndtransforms.</span></span><span class="sig-name descname"><span class="pre">Pad</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pad</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fill</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.sketch.nddatasets.ndtransforms.Pad" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="lumo.sketch.nddatasets.ndtransforms.RandomCrop">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">lumo.sketch.nddatasets.ndtransforms.</span></span><span class="sig-name descname"><span class="pre">RandomCrop</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">size</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">padding</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fill</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.sketch.nddatasets.ndtransforms.RandomCrop" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">lumo.sketch.nddatasets.ndtransforms.</span></span><span class="sig-name descname"><span class="pre">RandomCrop</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">size</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">padding</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fill</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.sketch.nddatasets.ndtransforms.RandomCrop" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="lumo.sketch.nddatasets.ndtransforms.RandomHorizontalFlip">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">lumo.sketch.nddatasets.ndtransforms.</span></span><span class="sig-name descname"><span class="pre">RandomHorizontalFlip</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">p</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.5</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.sketch.nddatasets.ndtransforms.RandomHorizontalFlip" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">lumo.sketch.nddatasets.ndtransforms.</span></span><span class="sig-name descname"><span class="pre">RandomHorizontalFlip</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">p</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.5</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.sketch.nddatasets.ndtransforms.RandomHorizontalFlip" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Flip randomly the image.</p>
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="lumo.sketch.nddatasets.ndtransforms.RandomVerticalFlip">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">lumo.sketch.nddatasets.ndtransforms.</span></span><span class="sig-name descname"><span class="pre">RandomVerticalFlip</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">p</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.5</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.sketch.nddatasets.ndtransforms.RandomVerticalFlip" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">lumo.sketch.nddatasets.ndtransforms.</span></span><span class="sig-name descname"><span class="pre">RandomVerticalFlip</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">p</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.5</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.sketch.nddatasets.ndtransforms.RandomVerticalFlip" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="lumo.sketch.nddatasets.ndtransforms.ToCHW">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">lumo.sketch.nddatasets.ndtransforms.</span></span><span class="sig-name descname"><span class="pre">ToCHW</span></span><a class="headerlink" href="#lumo.sketch.nddatasets.ndtransforms.ToCHW" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">lumo.sketch.nddatasets.ndtransforms.</span></span><span class="sig-name descname"><span class="pre">ToCHW</span></span><a class="headerlink" href="#lumo.sketch.nddatasets.ndtransforms.ToCHW" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="lumo.sketch.nddatasets.ndtransforms.ToHWC">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">lumo.sketch.nddatasets.ndtransforms.</span></span><span class="sig-name descname"><span class="pre">ToHWC</span></span><a class="headerlink" href="#lumo.sketch.nddatasets.ndtransforms.ToHWC" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">lumo.sketch.nddatasets.ndtransforms.</span></span><span class="sig-name descname"><span class="pre">ToHWC</span></span><a class="headerlink" href="#lumo.sketch.nddatasets.ndtransforms.ToHWC" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="lumo.sketch.nddatasets.ndtransforms.ToNumpy">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">lumo.sketch.nddatasets.ndtransforms.</span></span><span class="sig-name descname"><span class="pre">ToNumpy</span></span><a class="headerlink" href="#lumo.sketch.nddatasets.ndtransforms.ToNumpy" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">lumo.sketch.nddatasets.ndtransforms.</span></span><span class="sig-name descname"><span class="pre">ToNumpy</span></span><a class="headerlink" href="#lumo.sketch.nddatasets.ndtransforms.ToNumpy" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="lumo.sketch.nddatasets.ndtransforms.ToTensor">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">lumo.sketch.nddatasets.ndtransforms.</span></span><span class="sig-name descname"><span class="pre">ToTensor</span></span><a class="headerlink" href="#lumo.sketch.nddatasets.ndtransforms.ToTensor" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">lumo.sketch.nddatasets.ndtransforms.</span></span><span class="sig-name descname"><span class="pre">ToTensor</span></span><a class="headerlink" href="#lumo.sketch.nddatasets.ndtransforms.ToTensor" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Transform the image to tensor.</p>
 </dd></dl>
 
 </section>
 <section id="module-lumo.sketch.nddatasets.pttransforms">
-<span id="lumo-sketch-nddatasets-pttransforms-module"></span><h2>lumo.sketch.nddatasets.pttransforms module<a class="headerlink" href="#module-lumo.sketch.nddatasets.pttransforms" title="Permalink to this heading"></a></h2>
+<span id="lumo-sketch-nddatasets-pttransforms-module"></span><h2>lumo.sketch.nddatasets.pttransforms module<a class="headerlink" href="#module-lumo.sketch.nddatasets.pttransforms" title="Permalink to this heading">¶</a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="lumo.sketch.nddatasets.pttransforms.Pad">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">lumo.sketch.nddatasets.pttransforms.</span></span><span class="sig-name descname"><span class="pre">Pad</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">padding</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fill</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.sketch.nddatasets.pttransforms.Pad" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">lumo.sketch.nddatasets.pttransforms.</span></span><span class="sig-name descname"><span class="pre">Pad</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">padding</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fill</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.sketch.nddatasets.pttransforms.Pad" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="lumo.sketch.nddatasets.pttransforms.RandomBatchCrop">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">lumo.sketch.nddatasets.pttransforms.</span></span><span class="sig-name descname"><span class="pre">RandomBatchCrop</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">size</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">padding</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fill</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">p</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.5</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.sketch.nddatasets.pttransforms.RandomBatchCrop" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">lumo.sketch.nddatasets.pttransforms.</span></span><span class="sig-name descname"><span class="pre">RandomBatchCrop</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">size</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">padding</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fill</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">p</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.5</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.sketch.nddatasets.pttransforms.RandomBatchCrop" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="lumo.sketch.nddatasets.pttransforms.RandomHorizontalFlip">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">lumo.sketch.nddatasets.pttransforms.</span></span><span class="sig-name descname"><span class="pre">RandomHorizontalFlip</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">p</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.5</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.sketch.nddatasets.pttransforms.RandomHorizontalFlip" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">lumo.sketch.nddatasets.pttransforms.</span></span><span class="sig-name descname"><span class="pre">RandomHorizontalFlip</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">p</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.5</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.sketch.nddatasets.pttransforms.RandomHorizontalFlip" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Flip randomly the image.</p>
 </dd></dl>
 
 </section>
 <section id="module-lumo.sketch.nddatasets">
-<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-lumo.sketch.nddatasets" title="Permalink to this heading"></a></h2>
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-lumo.sketch.nddatasets" title="Permalink to this heading">¶</a></h2>
 </section>
 </section>
 
@@ -175,7 +176,25 @@
       </div>
     </section>
   </div>
-  <script>
+  <div>
+    <p>True Flag</p>
+    
+    
+    <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="Versions">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      <span class="fa fa-book"> Read the Docs</span>
+      v: 1.0.0
+      <span class="fa fa-caret-down"></span>
+    </span>
+        <div class="rst-other-versions">
+            <dl>
+                <dt>Versions</dt>
+            </dl>
+        </div>
+    </div>
+    
+
+</div><script>
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });

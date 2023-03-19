@@ -11,8 +11,6 @@
     <script src="_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script src="_static/jquery.js"></script>
-        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
         <script src="_static/doctools.js"></script>
         <script src="_static/sphinx_highlight.js"></script>
@@ -32,6 +30,9 @@
           <a href="index.html" class="icon icon-home">
             lumo
           </a>
+              <div class="version">
+                
+              </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
@@ -70,33 +71,33 @@
            <div itemprop="articleBody">
              
   <section id="lumo-contrib-string-package">
-<h1>lumo.contrib.string package<a class="headerlink" href="#lumo-contrib-string-package" title="Permalink to this heading"></a></h1>
+<h1>lumo.contrib.string package<a class="headerlink" href="#lumo-contrib-string-package" title="Permalink to this heading">¶</a></h1>
 <section id="submodules">
-<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this heading"></a></h2>
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this heading">¶</a></h2>
 </section>
 <section id="module-lumo.contrib.string.lcs">
-<span id="lumo-contrib-string-lcs-module"></span><h2>lumo.contrib.string.lcs module<a class="headerlink" href="#module-lumo.contrib.string.lcs" title="Permalink to this heading"></a></h2>
+<span id="lumo-contrib-string-lcs-module"></span><h2>lumo.contrib.string.lcs module<a class="headerlink" href="#module-lumo.contrib.string.lcs" title="Permalink to this heading">¶</a></h2>
 <p>Longest common subsequence
 edited from <a class="reference external" href="http://wordaligned.org/articles/longest-common-subsequence">http://wordaligned.org/articles/longest-common-subsequence</a></p>
 <dl class="py class">
 <dt class="sig sig-object py" id="lumo.contrib.string.lcs.Chunk">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">lumo.contrib.string.lcs.</span></span><span class="sig-name descname"><span class="pre">Chunk</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">w</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">size</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.contrib.string.lcs.Chunk" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">lumo.contrib.string.lcs.</span></span><span class="sig-name descname"><span class="pre">Chunk</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">w</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">size</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.contrib.string.lcs.Chunk" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="lumo.contrib.string.lcs.Chunk.a">
-<span class="sig-name descname"><span class="pre">a</span></span><a class="headerlink" href="#lumo.contrib.string.lcs.Chunk.a" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">a</span></span><a class="headerlink" href="#lumo.contrib.string.lcs.Chunk.a" title="Permalink to this definition">¶</a></dt>
 <dd><p>Alias for field number 1</p>
 </dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="lumo.contrib.string.lcs.Chunk.size">
-<span class="sig-name descname"><span class="pre">size</span></span><a class="headerlink" href="#lumo.contrib.string.lcs.Chunk.size" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">size</span></span><a class="headerlink" href="#lumo.contrib.string.lcs.Chunk.size" title="Permalink to this definition">¶</a></dt>
 <dd><p>Alias for field number 2</p>
 </dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="lumo.contrib.string.lcs.Chunk.w">
-<span class="sig-name descname"><span class="pre">w</span></span><a class="headerlink" href="#lumo.contrib.string.lcs.Chunk.w" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">w</span></span><a class="headerlink" href="#lumo.contrib.string.lcs.Chunk.w" title="Permalink to this definition">¶</a></dt>
 <dd><p>Alias for field number 0</p>
 </dd></dl>
 
@@ -104,7 +105,7 @@ edited from <a class="reference external" href="http://wordaligned.org/articles/
 
 <dl class="py class">
 <dt class="sig sig-object py" id="lumo.contrib.string.lcs.LCS">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">lumo.contrib.string.lcs.</span></span><span class="sig-name descname"><span class="pre">LCS</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xstr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ystr</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.contrib.string.lcs.LCS" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">lumo.contrib.string.lcs.</span></span><span class="sig-name descname"><span class="pre">LCS</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xstr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ystr</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.contrib.string.lcs.LCS" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>A diiflib.SequenceMatch like class.</p>
 <p class="rubric">Examples</p>
@@ -115,53 +116,53 @@ for m in l.get_matching_blocks():
 print(m, a[m.a:m.a + m.size], b[m.b:m.b + m.size])</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="lumo.contrib.string.lcs.LCS.get_matching_blocks">
-<span class="sig-name descname"><span class="pre">get_matching_blocks</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#lumo.contrib.string.lcs.LCS.get_matching_blocks" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">get_matching_blocks</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#lumo.contrib.string.lcs.LCS.get_matching_blocks" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return list of triples describing matching subsequences.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="lumo.contrib.string.lcs.LCS.get_matching_chunks">
-<span class="sig-name descname"><span class="pre">get_matching_chunks</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#lumo.contrib.string.lcs.LCS.get_matching_chunks" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">get_matching_chunks</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#lumo.contrib.string.lcs.LCS.get_matching_chunks" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return list of triples describing matching subsequences.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="lumo.contrib.string.lcs.LCS.lcs">
-<span class="sig-name descname"><span class="pre">lcs</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#lumo.contrib.string.lcs.LCS.lcs" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">lcs</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#lumo.contrib.string.lcs.LCS.lcs" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="lumo.contrib.string.lcs.LCS.lcs2">
-<span class="sig-name descname"><span class="pre">lcs2</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#lumo.contrib.string.lcs.LCS.lcs2" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">lcs2</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#lumo.contrib.string.lcs.LCS.lcs2" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="lumo.contrib.string.lcs.lcs">
-<span class="sig-prename descclassname"><span class="pre">lumo.contrib.string.lcs.</span></span><span class="sig-name descname"><span class="pre">lcs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ys</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.contrib.string.lcs.lcs" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">lumo.contrib.string.lcs.</span></span><span class="sig-name descname"><span class="pre">lcs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ys</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.contrib.string.lcs.lcs" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return longest common subsequence list.</p>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="lumo.contrib.string.lcs.lcs2">
-<span class="sig-prename descclassname"><span class="pre">lumo.contrib.string.lcs.</span></span><span class="sig-name descname"><span class="pre">lcs2</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ys</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ii</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kk</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.contrib.string.lcs.lcs2" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">lumo.contrib.string.lcs.</span></span><span class="sig-name descname"><span class="pre">lcs2</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ys</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ii</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kk</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.contrib.string.lcs.lcs2" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return longest common subsequence list with each character’s index.</p>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="lumo.contrib.string.lcs.lcs3">
-<span class="sig-prename descclassname"><span class="pre">lumo.contrib.string.lcs.</span></span><span class="sig-name descname"><span class="pre">lcs3</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">text2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ii</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kk</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.contrib.string.lcs.lcs3" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">lumo.contrib.string.lcs.</span></span><span class="sig-name descname"><span class="pre">lcs3</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">text2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ii</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kk</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.contrib.string.lcs.lcs3" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="lumo.contrib.string.lcs.lcs_lens">
-<span class="sig-prename descclassname"><span class="pre">lumo.contrib.string.lcs.</span></span><span class="sig-name descname"><span class="pre">lcs_lens</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ys</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.contrib.string.lcs.lcs_lens" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">lumo.contrib.string.lcs.</span></span><span class="sig-name descname"><span class="pre">lcs_lens</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ys</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.contrib.string.lcs.lcs_lens" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </section>
 <section id="module-lumo.contrib.string">
-<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-lumo.contrib.string" title="Permalink to this heading"></a></h2>
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-lumo.contrib.string" title="Permalink to this heading">¶</a></h2>
 </section>
 </section>
 
@@ -186,7 +187,25 @@ print(m, a[m.a:m.a + m.size], b[m.b:m.b + m.size])</p>
       </div>
     </section>
   </div>
-  <script>
+  <div>
+    <p>True Flag</p>
+    
+    
+    <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="Versions">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      <span class="fa fa-book"> Read the Docs</span>
+      v: 1.0.0
+      <span class="fa fa-caret-down"></span>
+    </span>
+        <div class="rst-other-versions">
+            <dl>
+                <dt>Versions</dt>
+            </dl>
+        </div>
+    </div>
+    
+
+</div><script>
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });

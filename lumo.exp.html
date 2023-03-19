@@ -11,8 +11,6 @@
     <script src="_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script src="_static/jquery.js"></script>
-        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
         <script src="_static/doctools.js"></script>
         <script src="_static/sphinx_highlight.js"></script>
@@ -32,6 +30,9 @@
           <a href="index.html" class="icon icon-home">
             lumo
           </a>
+              <div class="version">
+                
+              </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
@@ -70,58 +71,58 @@
            <div itemprop="articleBody">
              
   <section id="lumo-exp-package">
-<h1>lumo.exp package<a class="headerlink" href="#lumo-exp-package" title="Permalink to this heading"></a></h1>
+<h1>lumo.exp package<a class="headerlink" href="#lumo-exp-package" title="Permalink to this heading">¶</a></h1>
 <section id="submodules">
-<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this heading"></a></h2>
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this heading">¶</a></h2>
 </section>
 <section id="module-lumo.exp.agent">
-<span id="lumo-exp-agent-module"></span><h2>lumo.exp.agent module<a class="headerlink" href="#module-lumo.exp.agent" title="Permalink to this heading"></a></h2>
+<span id="lumo-exp-agent-module"></span><h2>lumo.exp.agent module<a class="headerlink" href="#module-lumo.exp.agent" title="Permalink to this heading">¶</a></h2>
 <p>heartbeat mechanism</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="lumo.exp.agent.wait_pid_stop">
-<span class="sig-prename descclassname"><span class="pre">lumo.exp.agent.</span></span><span class="sig-name descname"><span class="pre">wait_pid_stop</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">info_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.exp.agent.wait_pid_stop" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">lumo.exp.agent.</span></span><span class="sig-name descname"><span class="pre">wait_pid_stop</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">info_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.exp.agent.wait_pid_stop" title="Permalink to this definition">¶</a></dt>
 <dd><p>wait test</p>
 </dd></dl>
 
 </section>
 <section id="module-lumo.exp.backup">
-<span id="lumo-exp-backup-module"></span><h2>lumo.exp.backup module<a class="headerlink" href="#module-lumo.exp.backup" title="Permalink to this heading"></a></h2>
+<span id="lumo-exp-backup-module"></span><h2>lumo.exp.backup module<a class="headerlink" href="#module-lumo.exp.backup" title="Permalink to this heading">¶</a></h2>
 <dl class="py function">
 <dt class="sig sig-object py" id="lumo.exp.backup.backup_github_issue">
-<span class="sig-prename descclassname"><span class="pre">lumo.exp.backup.</span></span><span class="sig-name descname"><span class="pre">backup_github_issue</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">exp</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#lumo.exp.experiment.Experiment" title="lumo.exp.experiment.Experiment"><span class="pre">Experiment</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">repo</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">access_token</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">labels</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="lumo.trainer.html#lumo.trainer.factory.OptimBuilder.None" title="lumo.trainer.factory.OptimBuilder.None"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">update</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.exp.backup.backup_github_issue" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">lumo.exp.backup.</span></span><span class="sig-name descname"><span class="pre">backup_github_issue</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">exp</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#lumo.exp.experiment.Experiment" title="lumo.exp.experiment.Experiment"><span class="pre">Experiment</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">repo</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">access_token</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">labels</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="lumo.trainer.html#lumo.trainer.factory.OptimBuilder.None" title="lumo.trainer.factory.OptimBuilder.None"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">update</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.exp.backup.backup_github_issue" title="Permalink to this definition">¶</a></dt>
 <dd><p>backup ipath content and bpath content(optional) to github</p>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="lumo.exp.backup.backup_local">
-<span class="sig-prename descclassname"><span class="pre">lumo.exp.backup.</span></span><span class="sig-name descname"><span class="pre">backup_local</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">exp</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#lumo.exp.experiment.Experiment" title="lumo.exp.experiment.Experiment"><span class="pre">Experiment</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.exp.backup.backup_local" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">lumo.exp.backup.</span></span><span class="sig-name descname"><span class="pre">backup_local</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">exp</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#lumo.exp.experiment.Experiment" title="lumo.exp.experiment.Experiment"><span class="pre">Experiment</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.exp.backup.backup_local" title="Permalink to this definition">¶</a></dt>
 <dd><p>backup in local dist</p>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="lumo.exp.backup.backup_ssh">
-<span class="sig-prename descclassname"><span class="pre">lumo.exp.backup.</span></span><span class="sig-name descname"><span class="pre">backup_ssh</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">exp</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#lumo.exp.experiment.Experiment" title="lumo.exp.experiment.Experiment"><span class="pre">Experiment</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">host</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">username</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">root</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">size_limit</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.exp.backup.backup_ssh" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">lumo.exp.backup.</span></span><span class="sig-name descname"><span class="pre">backup_ssh</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">exp</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#lumo.exp.experiment.Experiment" title="lumo.exp.experiment.Experiment"><span class="pre">Experiment</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">host</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">username</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">root</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">size_limit</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.exp.backup.backup_ssh" title="Permalink to this definition">¶</a></dt>
 <dd><p>compress backup zip files to target server with replacement</p>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="lumo.exp.backup.make_summary">
-<span class="sig-prename descclassname"><span class="pre">lumo.exp.backup.</span></span><span class="sig-name descname"><span class="pre">make_summary</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">exp</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#lumo.exp.experiment.Experiment" title="lumo.exp.experiment.Experiment"><span class="pre">Experiment</span></a></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.exp.backup.make_summary" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">lumo.exp.backup.</span></span><span class="sig-name descname"><span class="pre">make_summary</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">exp</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#lumo.exp.experiment.Experiment" title="lumo.exp.experiment.Experiment"><span class="pre">Experiment</span></a></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.exp.backup.make_summary" title="Permalink to this definition">¶</a></dt>
 <dd><p>make a summary of experiment, can be used for backup or write report.</p>
 </dd></dl>
 
 </section>
 <section id="module-lumo.exp.base">
-<span id="lumo-exp-base-module"></span><h2>lumo.exp.base module<a class="headerlink" href="#module-lumo.exp.base" title="Permalink to this heading"></a></h2>
+<span id="lumo-exp-base-module"></span><h2>lumo.exp.base module<a class="headerlink" href="#module-lumo.exp.base" title="Permalink to this heading">¶</a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="lumo.exp.base.BaseExpHook">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">lumo.exp.base.</span></span><span class="sig-name descname"><span class="pre">BaseExpHook</span></span><a class="headerlink" href="#lumo.exp.base.BaseExpHook" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">lumo.exp.base.</span></span><span class="sig-name descname"><span class="pre">BaseExpHook</span></span><a class="headerlink" href="#lumo.exp.base.BaseExpHook" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>A base class of hook for experiments that can be registered with an experiment.</p>
 <p>Please Use Exphook in exp.exphook for better typehint.</p>
 <dl class="py property">
 <dt class="sig sig-object py" id="lumo.exp.base.BaseExpHook.config_name">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">config_name</span></span><a class="headerlink" href="#lumo.exp.base.BaseExpHook.config_name" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">config_name</span></span><a class="headerlink" href="#lumo.exp.base.BaseExpHook.config_name" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the configuration name for the hook.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -132,7 +133,7 @@
 
 <dl class="py property">
 <dt class="sig sig-object py" id="lumo.exp.base.BaseExpHook.config_string">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">config_string</span></span><a class="headerlink" href="#lumo.exp.base.BaseExpHook.config_string" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">config_string</span></span><a class="headerlink" href="#lumo.exp.base.BaseExpHook.config_string" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the configuration string for the hook.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -143,17 +144,17 @@
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="lumo.exp.base.BaseExpHook.configs">
-<span class="sig-name descname"><span class="pre">configs</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{}</span></em><a class="headerlink" href="#lumo.exp.base.BaseExpHook.configs" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">configs</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{}</span></em><a class="headerlink" href="#lumo.exp.base.BaseExpHook.configs" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="lumo.exp.base.BaseExpHook.name">
-<span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#lumo.exp.base.BaseExpHook.name" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#lumo.exp.base.BaseExpHook.name" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="lumo.exp.base.BaseExpHook.on_end">
-<span class="sig-name descname"><span class="pre">on_end</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">exp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end_code</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.exp.base.BaseExpHook.on_end" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">on_end</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">exp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end_code</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.exp.base.BaseExpHook.on_end" title="Permalink to this definition">¶</a></dt>
 <dd><p>Execute when the experiment ends.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -171,7 +172,7 @@
 
 <dl class="py method">
 <dt class="sig sig-object py" id="lumo.exp.base.BaseExpHook.on_newpath">
-<span class="sig-name descname"><span class="pre">on_newpath</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">exp</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.exp.base.BaseExpHook.on_newpath" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">on_newpath</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">exp</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.exp.base.BaseExpHook.on_newpath" title="Permalink to this definition">¶</a></dt>
 <dd><p>Execute when the experiment creates a new path.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -188,7 +189,7 @@
 
 <dl class="py method">
 <dt class="sig sig-object py" id="lumo.exp.base.BaseExpHook.on_progress">
-<span class="sig-name descname"><span class="pre">on_progress</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">exp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.exp.base.BaseExpHook.on_progress" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">on_progress</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">exp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.exp.base.BaseExpHook.on_progress" title="Permalink to this definition">¶</a></dt>
 <dd><p>Execute when the experiment makes progress.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -206,7 +207,7 @@
 
 <dl class="py method">
 <dt class="sig sig-object py" id="lumo.exp.base.BaseExpHook.on_start">
-<span class="sig-name descname"><span class="pre">on_start</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">exp</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.exp.base.BaseExpHook.on_start" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">on_start</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">exp</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.exp.base.BaseExpHook.on_start" title="Permalink to this definition">¶</a></dt>
 <dd><p>Execute when the experiment starts.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -223,7 +224,7 @@
 
 <dl class="py method">
 <dt class="sig sig-object py" id="lumo.exp.base.BaseExpHook.regist">
-<span class="sig-name descname"><span class="pre">regist</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">exp</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.exp.base.BaseExpHook.regist" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">regist</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">exp</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.exp.base.BaseExpHook.regist" title="Permalink to this definition">¶</a></dt>
 <dd><p>Register the hook with an experiment.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -236,7 +237,7 @@
 
 </section>
 <section id="module-lumo.exp.experiment">
-<span id="lumo-exp-experiment-module"></span><h2>lumo.exp.experiment module<a class="headerlink" href="#module-lumo.exp.experiment" title="Permalink to this heading"></a></h2>
+<span id="lumo-exp-experiment-module"></span><h2>lumo.exp.experiment module<a class="headerlink" href="#module-lumo.exp.experiment" title="Permalink to this heading">¶</a></h2>
 <p>Experiment 负责的内容</p>
 <ul class="simple">
 <li><p>管理路径 PathHelper</p></li>
@@ -245,7 +246,7 @@
 </ul>
 <dl class="py class">
 <dt class="sig sig-object py" id="lumo.exp.experiment.Experiment">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">lumo.exp.experiment.</span></span><span class="sig-name descname"><span class="pre">Experiment</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">exp_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="lumo.trainer.html#lumo.trainer.factory.OptimBuilder.None" title="lumo.trainer.factory.OptimBuilder.None"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">test_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">paths</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">info_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.exp.experiment.Experiment" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">lumo.exp.experiment.</span></span><span class="sig-name descname"><span class="pre">Experiment</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">exp_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="lumo.trainer.html#lumo.trainer.factory.OptimBuilder.None" title="lumo.trainer.factory.OptimBuilder.None"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">test_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">paths</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">info_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.exp.experiment.Experiment" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Represents an experiment and manages its directory structure. An experiment consists of multiple tests, each of which
 has its own directory to store information related to that test.</p>
@@ -302,17 +303,17 @@ lock.json
 - {pid2} -&gt; test_root</p>
 <dl class="py property">
 <dt class="sig sig-object py" id="lumo.exp.experiment.Experiment.Class">
-<em class="property"><span class="pre">class</span><span class="w"> </span><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Class</span></span><a class="headerlink" href="#lumo.exp.experiment.Experiment.Class" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Class</span></span><a class="headerlink" href="#lumo.exp.experiment.Experiment.Class" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="lumo.exp.experiment.Experiment.ENV_TEST_NAME_KEY">
-<span class="sig-name descname"><span class="pre">ENV_TEST_NAME_KEY</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'LUMO_EXP_TEST_NAME'</span></em><a class="headerlink" href="#lumo.exp.experiment.Experiment.ENV_TEST_NAME_KEY" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">ENV_TEST_NAME_KEY</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'LUMO_EXP_TEST_NAME'</span></em><a class="headerlink" href="#lumo.exp.experiment.Experiment.ENV_TEST_NAME_KEY" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="lumo.exp.experiment.Experiment.add_exit_hook">
-<span class="sig-name descname"><span class="pre">add_exit_hook</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.exp.experiment.Experiment.add_exit_hook" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">add_exit_hook</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.exp.experiment.Experiment.add_exit_hook" title="Permalink to this definition">¶</a></dt>
 <dd><p>Registers a function to be called when the program exits.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -323,46 +324,46 @@ lock.json
 
 <dl class="py method">
 <dt class="sig sig-object py" id="lumo.exp.experiment.Experiment.backup">
-<span class="sig-name descname"><span class="pre">backup</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">backend</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'github'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.exp.experiment.Experiment.backup" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">backup</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">backend</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'github'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.exp.experiment.Experiment.backup" title="Permalink to this definition">¶</a></dt>
 <dd><p>Backup this experiment into the given target, currently only support GitHub, you can implement your own way
 by the provided information of Experiment.</p>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="lumo.exp.experiment.Experiment.blob_dir">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">blob_dir</span></span><a class="headerlink" href="#lumo.exp.experiment.Experiment.blob_dir" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">blob_dir</span></span><a class="headerlink" href="#lumo.exp.experiment.Experiment.blob_dir" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="lumo.exp.experiment.Experiment.blob_root">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">blob_root</span></span><a class="headerlink" href="#lumo.exp.experiment.Experiment.blob_root" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">blob_root</span></span><a class="headerlink" href="#lumo.exp.experiment.Experiment.blob_root" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="lumo.exp.experiment.Experiment.cache">
-<span class="sig-name descname"><span class="pre">cache</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#lumo.exp.experiment.Experiment.cache" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">cache</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#lumo.exp.experiment.Experiment.cache" title="Permalink to this definition">¶</a></dt>
 <dd><p>Cache information of current test.</p>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="lumo.exp.experiment.Experiment.cache_dir">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">cache_dir</span></span><a class="headerlink" href="#lumo.exp.experiment.Experiment.cache_dir" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">cache_dir</span></span><a class="headerlink" href="#lumo.exp.experiment.Experiment.cache_dir" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="lumo.exp.experiment.Experiment.cache_root">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">cache_root</span></span><a class="headerlink" href="#lumo.exp.experiment.Experiment.cache_root" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">cache_root</span></span><a class="headerlink" href="#lumo.exp.experiment.Experiment.cache_root" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="lumo.exp.experiment.Experiment.dict">
-<span class="sig-name descname"><span class="pre">dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#lumo.exp.experiment.Experiment.dict" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#lumo.exp.experiment.Experiment.dict" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get full information of current test, including dynamic status.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="lumo.exp.experiment.Experiment.dump_info">
-<span class="sig-name descname"><span class="pre">dump_info</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">info</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">append</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.exp.experiment.Experiment.dump_info" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">dump_info</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">info</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">append</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.exp.experiment.Experiment.dump_info" title="Permalink to this definition">¶</a></dt>
 <dd><p>Saves information about the experiment to a file.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -377,19 +378,19 @@ by the provided information of Experiment.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="lumo.exp.experiment.Experiment.dump_metric">
-<span class="sig-name descname"><span class="pre">dump_metric</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cmp</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flush</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.exp.experiment.Experiment.dump_metric" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">dump_metric</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cmp</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flush</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.exp.experiment.Experiment.dump_metric" title="Permalink to this definition">¶</a></dt>
 <dd><p>See Metric for details.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="lumo.exp.experiment.Experiment.dump_metrics">
-<span class="sig-name descname"><span class="pre">dump_metrics</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dic</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cmp</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.exp.experiment.Experiment.dump_metrics" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">dump_metrics</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dic</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cmp</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.exp.experiment.Experiment.dump_metrics" title="Permalink to this definition">¶</a></dt>
 <dd><p>See Metric for details.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="lumo.exp.experiment.Experiment.dump_note">
-<span class="sig-name descname"><span class="pre">dump_note</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">note</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.exp.experiment.Experiment.dump_note" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">dump_note</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">note</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.exp.experiment.Experiment.dump_note" title="Permalink to this definition">¶</a></dt>
 <dd><p>Dumps the contents of the note to the note file.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -403,7 +404,7 @@ by the provided information of Experiment.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="lumo.exp.experiment.Experiment.dump_progress">
-<span class="sig-name descname"><span class="pre">dump_progress</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ratio</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">update_from</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.exp.experiment.Experiment.dump_progress" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">dump_progress</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ratio</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">update_from</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.exp.experiment.Experiment.dump_progress" title="Permalink to this definition">¶</a></dt>
 <dd><p>Saves progress information about the experiment.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -417,7 +418,7 @@ by the provided information of Experiment.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="lumo.exp.experiment.Experiment.dump_string">
-<span class="sig-name descname"><span class="pre">dump_string</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">info</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">append</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.exp.experiment.Experiment.dump_string" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">dump_string</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">info</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">append</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.exp.experiment.Experiment.dump_string" title="Permalink to this definition">¶</a></dt>
 <dd><p>Saves a string to a file.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -431,7 +432,7 @@ by the provided information of Experiment.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="lumo.exp.experiment.Experiment.dump_tags">
-<span class="sig-name descname"><span class="pre">dump_tags</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">tags</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.exp.experiment.Experiment.dump_tags" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">dump_tags</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">tags</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.exp.experiment.Experiment.dump_tags" title="Permalink to this definition">¶</a></dt>
 <dd><p>Dumps the experiment’s tags to the info file.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -446,7 +447,7 @@ by the provided information of Experiment.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="lumo.exp.experiment.Experiment.end">
-<span class="sig-name descname"><span class="pre">end</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">end_code</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">extra</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.exp.experiment.Experiment.end" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">end</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">end_code</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">extra</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.exp.experiment.Experiment.end" title="Permalink to this definition">¶</a></dt>
 <dd><p>Ends the experiment.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -463,7 +464,7 @@ by the provided information of Experiment.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="lumo.exp.experiment.Experiment.exec_argv">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">exec_argv</span></span><a class="headerlink" href="#lumo.exp.experiment.Experiment.exec_argv" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">exec_argv</span></span><a class="headerlink" href="#lumo.exp.experiment.Experiment.exec_argv" title="Permalink to this definition">¶</a></dt>
 <dd><p>Gets the arguments used to execute the script associated with the experiment.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -477,12 +478,12 @@ by the provided information of Experiment.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="lumo.exp.experiment.Experiment.exp_dir">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">exp_dir</span></span><a class="headerlink" href="#lumo.exp.experiment.Experiment.exp_dir" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">exp_dir</span></span><a class="headerlink" href="#lumo.exp.experiment.Experiment.exp_dir" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="lumo.exp.experiment.Experiment.exp_name">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">exp_name</span></span><a class="headerlink" href="#lumo.exp.experiment.Experiment.exp_name" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">exp_name</span></span><a class="headerlink" href="#lumo.exp.experiment.Experiment.exp_name" title="Permalink to this definition">¶</a></dt>
 <dd><p>Gets the name of the experiment.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
@@ -493,7 +494,7 @@ by the provided information of Experiment.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="lumo.exp.experiment.Experiment.from_cache">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_cache</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dic</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.exp.experiment.Experiment.from_cache" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_cache</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dic</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.exp.experiment.Experiment.from_cache" title="Permalink to this definition">¶</a></dt>
 <dd><p>Creates an Experiment object from a cached dictionary.</p>
 <p>The cached dictionary should have the same format as the one returned by the Experiment.to_cache() method.</p>
 <dl class="field-list simple">
@@ -511,7 +512,7 @@ by the provided information of Experiment.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="lumo.exp.experiment.Experiment.from_disk">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_disk</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">info_dir</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.exp.experiment.Experiment.from_disk" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_disk</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">info_dir</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.exp.experiment.Experiment.from_disk" title="Permalink to this definition">¶</a></dt>
 <dd><p>Creates an Experiment object from a test root directory on disk.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -531,7 +532,7 @@ by the provided information of Experiment.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="lumo.exp.experiment.Experiment.get_prop">
-<span class="sig-name descname"><span class="pre">get_prop</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.exp.experiment.Experiment.get_prop" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">get_prop</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.exp.experiment.Experiment.get_prop" title="Permalink to this definition">¶</a></dt>
 <dd><p>Gets the value of a property of the experiment.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -551,7 +552,7 @@ by the provided information of Experiment.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="lumo.exp.experiment.Experiment.has_prop">
-<span class="sig-name descname"><span class="pre">has_prop</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.exp.experiment.Experiment.has_prop" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">has_prop</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.exp.experiment.Experiment.has_prop" title="Permalink to this definition">¶</a></dt>
 <dd><p>Determines whether the experiment has a certain property.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -568,28 +569,28 @@ by the provided information of Experiment.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="lumo.exp.experiment.Experiment.heartbeat_fn">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">heartbeat_fn</span></span><a class="headerlink" href="#lumo.exp.experiment.Experiment.heartbeat_fn" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">heartbeat_fn</span></span><a class="headerlink" href="#lumo.exp.experiment.Experiment.heartbeat_fn" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="lumo.exp.experiment.Experiment.info_dir">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">info_dir</span></span><a class="headerlink" href="#lumo.exp.experiment.Experiment.info_dir" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">info_dir</span></span><a class="headerlink" href="#lumo.exp.experiment.Experiment.info_dir" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="lumo.exp.experiment.Experiment.info_root">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">info_root</span></span><a class="headerlink" href="#lumo.exp.experiment.Experiment.info_root" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">info_root</span></span><a class="headerlink" href="#lumo.exp.experiment.Experiment.info_root" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="lumo.exp.experiment.Experiment.initial">
-<span class="sig-name descname"><span class="pre">initial</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#lumo.exp.experiment.Experiment.initial" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">initial</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#lumo.exp.experiment.Experiment.initial" title="Permalink to this definition">¶</a></dt>
 <dd><p>Initializes the experiment by setting up progress, information, and PID tracking.</p>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="lumo.exp.experiment.Experiment.is_alive">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">is_alive</span></span><a class="headerlink" href="#lumo.exp.experiment.Experiment.is_alive" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">is_alive</span></span><a class="headerlink" href="#lumo.exp.experiment.Experiment.is_alive" title="Permalink to this definition">¶</a></dt>
 <dd><p>Determines whether the process associated with the experiment is still running.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -603,7 +604,7 @@ by the provided information of Experiment.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="lumo.exp.experiment.Experiment.load_info">
-<span class="sig-name descname"><span class="pre">load_info</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.exp.experiment.Experiment.load_info" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">load_info</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.exp.experiment.Experiment.load_info" title="Permalink to this definition">¶</a></dt>
 <dd><p>Loads information about the experiment from a file.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -620,7 +621,7 @@ by the provided information of Experiment.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="lumo.exp.experiment.Experiment.load_note">
-<span class="sig-name descname"><span class="pre">load_note</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#lumo.exp.experiment.Experiment.load_note" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">load_note</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#lumo.exp.experiment.Experiment.load_note" title="Permalink to this definition">¶</a></dt>
 <dd><p>Loads the contents of the note file, if it exists.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -631,7 +632,7 @@ by the provided information of Experiment.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="lumo.exp.experiment.Experiment.load_string">
-<span class="sig-name descname"><span class="pre">load_string</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.exp.experiment.Experiment.load_string" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">load_string</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.exp.experiment.Experiment.load_string" title="Permalink to this definition">¶</a></dt>
 <dd><p>Loads a string from a file.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -648,7 +649,7 @@ by the provided information of Experiment.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="lumo.exp.experiment.Experiment.metric">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">metric</span></span><a class="headerlink" href="#lumo.exp.experiment.Experiment.metric" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">metric</span></span><a class="headerlink" href="#lumo.exp.experiment.Experiment.metric" title="Permalink to this definition">¶</a></dt>
 <dd><p>Gets a dictionary containing all metrics of the experiment.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -662,7 +663,7 @@ by the provided information of Experiment.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="lumo.exp.experiment.Experiment.mk_bpath">
-<span class="sig-name descname"><span class="pre">mk_bpath</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">is_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#lumo.exp.experiment.Experiment.mk_bpath" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">mk_bpath</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">is_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#lumo.exp.experiment.Experiment.mk_bpath" title="Permalink to this definition">¶</a></dt>
 <dd><p>Creates a directory path within the experiment’s blob directory.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -683,7 +684,7 @@ by the provided information of Experiment.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="lumo.exp.experiment.Experiment.mk_cpath">
-<span class="sig-name descname"><span class="pre">mk_cpath</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">is_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#lumo.exp.experiment.Experiment.mk_cpath" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">mk_cpath</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">is_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#lumo.exp.experiment.Experiment.mk_cpath" title="Permalink to this definition">¶</a></dt>
 <dd><p>Creates a directory path within the experiment’s cache directory.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -704,7 +705,7 @@ by the provided information of Experiment.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="lumo.exp.experiment.Experiment.mk_ipath">
-<span class="sig-name descname"><span class="pre">mk_ipath</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">is_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#lumo.exp.experiment.Experiment.mk_ipath" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">mk_ipath</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">is_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#lumo.exp.experiment.Experiment.mk_ipath" title="Permalink to this definition">¶</a></dt>
 <dd><p>Creates a directory path within the experiment’s info directory.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -725,7 +726,7 @@ by the provided information of Experiment.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="lumo.exp.experiment.Experiment.mk_rpath">
-<span class="sig-name descname"><span class="pre">mk_rpath</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">is_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#lumo.exp.experiment.Experiment.mk_rpath" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">mk_rpath</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">is_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#lumo.exp.experiment.Experiment.mk_rpath" title="Permalink to this definition">¶</a></dt>
 <dd><p>Creates a directory path within the user’s home directory.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -746,7 +747,7 @@ by the provided information of Experiment.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="lumo.exp.experiment.Experiment.paths">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">paths</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">dict</span></em><a class="headerlink" href="#lumo.exp.experiment.Experiment.paths" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">paths</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">dict</span></em><a class="headerlink" href="#lumo.exp.experiment.Experiment.paths" title="Permalink to this definition">¶</a></dt>
 <dd><p>Gets a dictionary containing the paths to various directories associated with the experiment.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -760,12 +761,12 @@ by the provided information of Experiment.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="lumo.exp.experiment.Experiment.pid_fn">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">pid_fn</span></span><a class="headerlink" href="#lumo.exp.experiment.Experiment.pid_fn" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">pid_fn</span></span><a class="headerlink" href="#lumo.exp.experiment.Experiment.pid_fn" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="lumo.exp.experiment.Experiment.project_name">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">project_name</span></span><a class="headerlink" href="#lumo.exp.experiment.Experiment.project_name" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">project_name</span></span><a class="headerlink" href="#lumo.exp.experiment.Experiment.project_name" title="Permalink to this definition">¶</a></dt>
 <dd><p>Gets the name of the project associated with the experiment.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -779,7 +780,7 @@ by the provided information of Experiment.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="lumo.exp.experiment.Experiment.project_root">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">project_root</span></span><a class="headerlink" href="#lumo.exp.experiment.Experiment.project_root" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">project_root</span></span><a class="headerlink" href="#lumo.exp.experiment.Experiment.project_root" title="Permalink to this definition">¶</a></dt>
 <dd><p>Gets the path to the root directory of the project associated with the experiment.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -793,7 +794,7 @@ by the provided information of Experiment.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="lumo.exp.experiment.Experiment.properties">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">properties</span></span><a class="headerlink" href="#lumo.exp.experiment.Experiment.properties" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">properties</span></span><a class="headerlink" href="#lumo.exp.experiment.Experiment.properties" title="Permalink to this definition">¶</a></dt>
 <dd><p>Gets a dictionary containing all properties of the experiment.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -807,7 +808,7 @@ by the provided information of Experiment.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="lumo.exp.experiment.Experiment.repo_name">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">repo_name</span></span><a class="headerlink" href="#lumo.exp.experiment.Experiment.repo_name" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">repo_name</span></span><a class="headerlink" href="#lumo.exp.experiment.Experiment.repo_name" title="Permalink to this definition">¶</a></dt>
 <dd><p>Gets the name of the repository associated with the experiment.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -821,13 +822,13 @@ by the provided information of Experiment.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="lumo.exp.experiment.Experiment.rerun">
-<span class="sig-name descname"><span class="pre">rerun</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">arg_list</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.exp.experiment.Experiment.rerun" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">rerun</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">arg_list</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.exp.experiment.Experiment.rerun" title="Permalink to this definition">¶</a></dt>
 <dd><p>rerun this test in another</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="lumo.exp.experiment.Experiment.set_hook">
-<span class="sig-name descname"><span class="pre">set_hook</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hook</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#lumo.exp.base.BaseExpHook" title="lumo.exp.base.BaseExpHook"><span class="pre">BaseExpHook</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.exp.experiment.Experiment.set_hook" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">set_hook</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hook</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#lumo.exp.base.BaseExpHook" title="lumo.exp.base.BaseExpHook"><span class="pre">BaseExpHook</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.exp.experiment.Experiment.set_hook" title="Permalink to this definition">¶</a></dt>
 <dd><p>Registers a hook to be executed during the experiment.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -838,7 +839,7 @@ by the provided information of Experiment.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="lumo.exp.experiment.Experiment.set_prop">
-<span class="sig-name descname"><span class="pre">set_prop</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.exp.experiment.Experiment.set_prop" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">set_prop</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.exp.experiment.Experiment.set_prop" title="Permalink to this definition">¶</a></dt>
 <dd><p>Sets a property of the experiment.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -852,13 +853,13 @@ by the provided information of Experiment.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="lumo.exp.experiment.Experiment.start">
-<span class="sig-name descname"><span class="pre">start</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#lumo.exp.experiment.Experiment.start" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">start</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#lumo.exp.experiment.Experiment.start" title="Permalink to this definition">¶</a></dt>
 <dd><p>Starts the experiment.</p>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="lumo.exp.experiment.Experiment.test_name">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">test_name</span></span><a class="headerlink" href="#lumo.exp.experiment.Experiment.test_name" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">test_name</span></span><a class="headerlink" href="#lumo.exp.experiment.Experiment.test_name" title="Permalink to this definition">¶</a></dt>
 <dd><p>Gets the name of the current test being run.</p>
 <p>If the test name is not set, generates a new unique name and sets it.</p>
 <dl class="field-list simple">
@@ -870,7 +871,7 @@ by the provided information of Experiment.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="lumo.exp.experiment.Experiment.test_name_with_dist">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">test_name_with_dist</span></span><a class="headerlink" href="#lumo.exp.experiment.Experiment.test_name_with_dist" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">test_name_with_dist</span></span><a class="headerlink" href="#lumo.exp.experiment.Experiment.test_name_with_dist" title="Permalink to this definition">¶</a></dt>
 <dd><p>Gets the name of the current test with the local rank number
 appended to it if running in distributed mode.</p>
 <p>Create different test_name for each process in multiprocess training.
@@ -885,7 +886,7 @@ in subprocess,  “{test_name}.{local_rank()}”</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="lumo.exp.experiment.Experiment.trigger">
-<span class="sig-name descname"><span class="pre">trigger</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#lumo.exp.experiment.Experiment.trigger" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">trigger</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#lumo.exp.experiment.Experiment.trigger" title="Permalink to this definition">¶</a></dt>
 <dd><p>trigger the disk change</p>
 </dd></dl>
 
@@ -893,7 +894,7 @@ in subprocess,  “{test_name}.{local_rank()}”</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="lumo.exp.experiment.SimpleExperiment">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">lumo.exp.experiment.</span></span><span class="sig-name descname"><span class="pre">SimpleExperiment</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">exp_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="lumo.trainer.html#lumo.trainer.factory.OptimBuilder.None" title="lumo.trainer.factory.OptimBuilder.None"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">test_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">paths</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">info_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.exp.experiment.SimpleExperiment" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">lumo.exp.experiment.</span></span><span class="sig-name descname"><span class="pre">SimpleExperiment</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">exp_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="lumo.trainer.html#lumo.trainer.factory.OptimBuilder.None" title="lumo.trainer.factory.OptimBuilder.None"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">test_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">paths</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">info_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.exp.experiment.SimpleExperiment" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#lumo.exp.experiment.Experiment" title="lumo.exp.experiment.Experiment"><code class="xref py py-class docutils literal notranslate"><span class="pre">Experiment</span></code></a></p>
 <p>A simple to use experiment subclass that extends the base <code class="docutils literal notranslate"><span class="pre">Experiment</span></code> class and sets up some useful hooks to
 execute before and after the experiment.</p>
@@ -901,15 +902,15 @@ execute before and after the experiment.</p>
 
 </section>
 <section id="module-lumo.exp.exphook">
-<span id="lumo-exp-exphook-module"></span><h2>lumo.exp.exphook module<a class="headerlink" href="#module-lumo.exp.exphook" title="Permalink to this heading"></a></h2>
+<span id="lumo-exp-exphook-module"></span><h2>lumo.exp.exphook module<a class="headerlink" href="#module-lumo.exp.exphook" title="Permalink to this heading">¶</a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="lumo.exp.exphook.Diary">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">lumo.exp.exphook.</span></span><span class="sig-name descname"><span class="pre">Diary</span></span><a class="headerlink" href="#lumo.exp.exphook.Diary" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">lumo.exp.exphook.</span></span><span class="sig-name descname"><span class="pre">Diary</span></span><a class="headerlink" href="#lumo.exp.exphook.Diary" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#lumo.exp.exphook.ExpHook" title="lumo.exp.exphook.ExpHook"><code class="xref py py-class docutils literal notranslate"><span class="pre">ExpHook</span></code></a></p>
 <p>A hook for logging experiment information to a diary file.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="lumo.exp.exphook.Diary.on_start">
-<span class="sig-name descname"><span class="pre">on_start</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">exp</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#lumo.exp.experiment.Experiment" title="lumo.exp.experiment.Experiment"><span class="pre">Experiment</span></a></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.exp.exphook.Diary.on_start" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">on_start</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">exp</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#lumo.exp.experiment.Experiment" title="lumo.exp.experiment.Experiment"><span class="pre">Experiment</span></a></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.exp.exphook.Diary.on_start" title="Permalink to this definition">¶</a></dt>
 <dd><p>Execute when the experiment starts.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -928,12 +929,12 @@ execute before and after the experiment.</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="lumo.exp.exphook.ExpHook">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">lumo.exp.exphook.</span></span><span class="sig-name descname"><span class="pre">ExpHook</span></span><a class="headerlink" href="#lumo.exp.exphook.ExpHook" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">lumo.exp.exphook.</span></span><span class="sig-name descname"><span class="pre">ExpHook</span></span><a class="headerlink" href="#lumo.exp.exphook.ExpHook" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#lumo.exp.base.BaseExpHook" title="lumo.exp.base.BaseExpHook"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseExpHook</span></code></a></p>
 <p>A base class of hook for experiments that can be registered with an experiment.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="lumo.exp.exphook.ExpHook.on_end">
-<span class="sig-name descname"><span class="pre">on_end</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">exp</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#lumo.exp.experiment.Experiment" title="lumo.exp.experiment.Experiment"><span class="pre">Experiment</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">end_code</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.exp.exphook.ExpHook.on_end" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">on_end</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">exp</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#lumo.exp.experiment.Experiment" title="lumo.exp.experiment.Experiment"><span class="pre">Experiment</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">end_code</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.exp.exphook.ExpHook.on_end" title="Permalink to this definition">¶</a></dt>
 <dd><p>Execute when the experiment ends.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -951,7 +952,7 @@ execute before and after the experiment.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="lumo.exp.exphook.ExpHook.on_newpath">
-<span class="sig-name descname"><span class="pre">on_newpath</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">exp</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#lumo.exp.experiment.Experiment" title="lumo.exp.experiment.Experiment"><span class="pre">Experiment</span></a></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.exp.exphook.ExpHook.on_newpath" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">on_newpath</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">exp</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#lumo.exp.experiment.Experiment" title="lumo.exp.experiment.Experiment"><span class="pre">Experiment</span></a></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.exp.exphook.ExpHook.on_newpath" title="Permalink to this definition">¶</a></dt>
 <dd><p>Execute when the experiment creates a new path.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -968,7 +969,7 @@ execute before and after the experiment.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="lumo.exp.exphook.ExpHook.on_progress">
-<span class="sig-name descname"><span class="pre">on_progress</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">exp</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#lumo.exp.experiment.Experiment" title="lumo.exp.experiment.Experiment"><span class="pre">Experiment</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">step</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.exp.exphook.ExpHook.on_progress" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">on_progress</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">exp</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#lumo.exp.experiment.Experiment" title="lumo.exp.experiment.Experiment"><span class="pre">Experiment</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">step</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.exp.exphook.ExpHook.on_progress" title="Permalink to this definition">¶</a></dt>
 <dd><p>Execute when the experiment makes progress.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -986,7 +987,7 @@ execute before and after the experiment.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="lumo.exp.exphook.ExpHook.on_start">
-<span class="sig-name descname"><span class="pre">on_start</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">exp</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#lumo.exp.experiment.Experiment" title="lumo.exp.experiment.Experiment"><span class="pre">Experiment</span></a></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.exp.exphook.ExpHook.on_start" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">on_start</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">exp</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#lumo.exp.experiment.Experiment" title="lumo.exp.experiment.Experiment"><span class="pre">Experiment</span></a></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.exp.exphook.ExpHook.on_start" title="Permalink to this definition">¶</a></dt>
 <dd><p>Execute when the experiment starts.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -1003,7 +1004,7 @@ execute before and after the experiment.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="lumo.exp.exphook.ExpHook.regist">
-<span class="sig-name descname"><span class="pre">regist</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">exp</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#lumo.exp.experiment.Experiment" title="lumo.exp.experiment.Experiment"><span class="pre">Experiment</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.exp.exphook.ExpHook.regist" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">regist</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">exp</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#lumo.exp.experiment.Experiment" title="lumo.exp.experiment.Experiment"><span class="pre">Experiment</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.exp.exphook.ExpHook.regist" title="Permalink to this definition">¶</a></dt>
 <dd><p>Register the hook with an experiment.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -1016,13 +1017,13 @@ execute before and after the experiment.</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="lumo.exp.exphook.FinalReport">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">lumo.exp.exphook.</span></span><span class="sig-name descname"><span class="pre">FinalReport</span></span><a class="headerlink" href="#lumo.exp.exphook.FinalReport" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">lumo.exp.exphook.</span></span><span class="sig-name descname"><span class="pre">FinalReport</span></span><a class="headerlink" href="#lumo.exp.exphook.FinalReport" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#lumo.exp.exphook.ExpHook" title="lumo.exp.exphook.ExpHook"><code class="xref py py-class docutils literal notranslate"><span class="pre">ExpHook</span></code></a></p>
 <p>A class for generating a final report for an experiment.</p>
 <p>Prints the experiment’s properties, tags, paths, and execute command.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="lumo.exp.exphook.FinalReport.on_end">
-<span class="sig-name descname"><span class="pre">on_end</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">exp</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#lumo.exp.experiment.Experiment" title="lumo.exp.experiment.Experiment"><span class="pre">Experiment</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">end_code</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.exp.exphook.FinalReport.on_end" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">on_end</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">exp</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#lumo.exp.experiment.Experiment" title="lumo.exp.experiment.Experiment"><span class="pre">Experiment</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">end_code</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.exp.exphook.FinalReport.on_end" title="Permalink to this definition">¶</a></dt>
 <dd><p>Execute when the experiment ends.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -1042,11 +1043,11 @@ execute before and after the experiment.</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="lumo.exp.exphook.GitCommit">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">lumo.exp.exphook.</span></span><span class="sig-name descname"><span class="pre">GitCommit</span></span><a class="headerlink" href="#lumo.exp.exphook.GitCommit" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">lumo.exp.exphook.</span></span><span class="sig-name descname"><span class="pre">GitCommit</span></span><a class="headerlink" href="#lumo.exp.exphook.GitCommit" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#lumo.exp.exphook.ExpHook" title="lumo.exp.exphook.ExpHook"><code class="xref py py-class docutils literal notranslate"><span class="pre">ExpHook</span></code></a></p>
 <dl class="py method">
 <dt class="sig sig-object py" id="lumo.exp.exphook.GitCommit.on_start">
-<span class="sig-name descname"><span class="pre">on_start</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">exp</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#lumo.exp.experiment.Experiment" title="lumo.exp.experiment.Experiment"><span class="pre">Experiment</span></a></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.exp.exphook.GitCommit.on_start" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">on_start</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">exp</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#lumo.exp.experiment.Experiment" title="lumo.exp.experiment.Experiment"><span class="pre">Experiment</span></a></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.exp.exphook.GitCommit.on_start" title="Permalink to this definition">¶</a></dt>
 <dd><p>Execute when the experiment starts.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -1065,19 +1066,19 @@ execute before and after the experiment.</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="lumo.exp.exphook.LastCmd">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">lumo.exp.exphook.</span></span><span class="sig-name descname"><span class="pre">LastCmd</span></span><a class="headerlink" href="#lumo.exp.exphook.LastCmd" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">lumo.exp.exphook.</span></span><span class="sig-name descname"><span class="pre">LastCmd</span></span><a class="headerlink" href="#lumo.exp.exphook.LastCmd" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#lumo.exp.exphook.ExpHook" title="lumo.exp.exphook.ExpHook"><code class="xref py py-class docutils literal notranslate"><span class="pre">ExpHook</span></code></a></p>
 <p>A hook to save the last command executed in an experiment.</p>
 <p>This hook saves the last command executed in an experiment to a shell script file in a specified directory. The saved
 file can be used to re-run the experiment with the same command.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="lumo.exp.exphook.LastCmd.configs">
-<span class="sig-name descname"><span class="pre">configs</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'HOOK_LASTCMD_DIR':</span> <span class="pre">'/home/runner/work/lumo/lumo'}</span></em><a class="headerlink" href="#lumo.exp.exphook.LastCmd.configs" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">configs</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'HOOK_LASTCMD_DIR':</span> <span class="pre">'/home/runner/work/lumo/lumo'}</span></em><a class="headerlink" href="#lumo.exp.exphook.LastCmd.configs" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="lumo.exp.exphook.LastCmd.on_start">
-<span class="sig-name descname"><span class="pre">on_start</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">exp</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#lumo.exp.experiment.Experiment" title="lumo.exp.experiment.Experiment"><span class="pre">Experiment</span></a></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.exp.exphook.LastCmd.on_start" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">on_start</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">exp</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#lumo.exp.experiment.Experiment" title="lumo.exp.experiment.Experiment"><span class="pre">Experiment</span></a></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.exp.exphook.LastCmd.on_start" title="Permalink to this definition">¶</a></dt>
 <dd><p>Execute when the experiment starts.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -1096,13 +1097,13 @@ file can be used to re-run the experiment with the same command.</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="lumo.exp.exphook.LockFile">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">lumo.exp.exphook.</span></span><span class="sig-name descname"><span class="pre">LockFile</span></span><a class="headerlink" href="#lumo.exp.exphook.LockFile" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">lumo.exp.exphook.</span></span><span class="sig-name descname"><span class="pre">LockFile</span></span><a class="headerlink" href="#lumo.exp.exphook.LockFile" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#lumo.exp.exphook.ExpHook" title="lumo.exp.exphook.ExpHook"><code class="xref py py-class docutils literal notranslate"><span class="pre">ExpHook</span></code></a></p>
 <p>A class for locking dependencies for an experiment.
 Locks the specified dependencies for the experiment and saves them to a file.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="lumo.exp.exphook.LockFile.on_start">
-<span class="sig-name descname"><span class="pre">on_start</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">exp</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#lumo.exp.experiment.Experiment" title="lumo.exp.experiment.Experiment"><span class="pre">Experiment</span></a></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.exp.exphook.LockFile.on_start" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">on_start</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">exp</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#lumo.exp.experiment.Experiment" title="lumo.exp.experiment.Experiment"><span class="pre">Experiment</span></a></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.exp.exphook.LockFile.on_start" title="Permalink to this definition">¶</a></dt>
 <dd><p>Execute when the experiment starts.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -1121,17 +1122,17 @@ Locks the specified dependencies for the experiment and saves them to a file.</p
 
 <dl class="py class">
 <dt class="sig sig-object py" id="lumo.exp.exphook.RecordAbort">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">lumo.exp.exphook.</span></span><span class="sig-name descname"><span class="pre">RecordAbort</span></span><a class="headerlink" href="#lumo.exp.exphook.RecordAbort" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">lumo.exp.exphook.</span></span><span class="sig-name descname"><span class="pre">RecordAbort</span></span><a class="headerlink" href="#lumo.exp.exphook.RecordAbort" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#lumo.exp.exphook.ExpHook" title="lumo.exp.exphook.ExpHook"><code class="xref py py-class docutils literal notranslate"><span class="pre">ExpHook</span></code></a></p>
 <p>A hook to record and handle experiment aborts.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="lumo.exp.exphook.RecordAbort.exc_end">
-<span class="sig-name descname"><span class="pre">exc_end</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">exc_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exc_val</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exc_tb</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.exp.exphook.RecordAbort.exc_end" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">exc_end</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">exc_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exc_val</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exc_tb</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.exp.exphook.RecordAbort.exc_end" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="lumo.exp.exphook.RecordAbort.regist">
-<span class="sig-name descname"><span class="pre">regist</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">exp</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#lumo.exp.experiment.Experiment" title="lumo.exp.experiment.Experiment"><span class="pre">Experiment</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.exp.exphook.RecordAbort.regist" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">regist</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">exp</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#lumo.exp.experiment.Experiment" title="lumo.exp.experiment.Experiment"><span class="pre">Experiment</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.exp.exphook.RecordAbort.regist" title="Permalink to this definition">¶</a></dt>
 <dd><p>Register the hook with an experiment.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -1144,7 +1145,7 @@ Locks the specified dependencies for the experiment and saves them to a file.</p
 
 </section>
 <section id="module-lumo.exp.finder">
-<span id="lumo-exp-finder-module"></span><h2>lumo.exp.finder module<a class="headerlink" href="#module-lumo.exp.finder" title="Permalink to this heading"></a></h2>
+<span id="lumo-exp-finder-module"></span><h2>lumo.exp.finder module<a class="headerlink" href="#module-lumo.exp.finder" title="Permalink to this heading">¶</a></h2>
 <p>list -&gt;
 experiment
 test
@@ -1153,7 +1154,7 @@ test_name
 test_root</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="lumo.exp.finder.find_path_from_test_name">
-<span class="sig-prename descclassname"><span class="pre">lumo.exp.finder.</span></span><span class="sig-name descname"><span class="pre">find_path_from_test_name</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">test_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#lumo.exp.finder.find_path_from_test_name" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">lumo.exp.finder.</span></span><span class="sig-name descname"><span class="pre">find_path_from_test_name</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">test_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#lumo.exp.finder.find_path_from_test_name" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the path of the specified test name.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -1167,7 +1168,7 @@ test_root</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="lumo.exp.finder.format_experiment">
-<span class="sig-prename descclassname"><span class="pre">lumo.exp.finder.</span></span><span class="sig-name descname"><span class="pre">format_experiment</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">exp</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#lumo.exp.experiment.Experiment" title="lumo.exp.experiment.Experiment"><span class="pre">Experiment</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#lumo.exp.finder.format_experiment" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">lumo.exp.finder.</span></span><span class="sig-name descname"><span class="pre">format_experiment</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">exp</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#lumo.exp.experiment.Experiment" title="lumo.exp.experiment.Experiment"><span class="pre">Experiment</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#lumo.exp.finder.format_experiment" title="Permalink to this definition">¶</a></dt>
 <dd><p>Formats the Experiment object into a dictionary.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -1181,7 +1182,7 @@ test_root</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="lumo.exp.finder.list_all">
-<span class="sig-prename descclassname"><span class="pre">lumo.exp.finder.</span></span><span class="sig-name descname"><span class="pre">list_all</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">exp_root</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#lumo.exp.experiment.Experiment" title="lumo.exp.experiment.Experiment"><span class="pre">Experiment</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#lumo.exp.finder.list_all" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">lumo.exp.finder.</span></span><span class="sig-name descname"><span class="pre">list_all</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">exp_root</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#lumo.exp.experiment.Experiment" title="lumo.exp.experiment.Experiment"><span class="pre">Experiment</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#lumo.exp.finder.list_all" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns a dictionary of all experiments under exp_root directory.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -1195,7 +1196,7 @@ test_root</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="lumo.exp.finder.list_all_metrics">
-<span class="sig-prename descclassname"><span class="pre">lumo.exp.finder.</span></span><span class="sig-name descname"><span class="pre">list_all_metrics</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">metric_root</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#lumo.exp.finder.list_all_metrics" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">lumo.exp.finder.</span></span><span class="sig-name descname"><span class="pre">list_all_metrics</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">metric_root</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#lumo.exp.finder.list_all_metrics" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns a dictionary of all metrics found under metric_root directory.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -1209,7 +1210,7 @@ test_root</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="lumo.exp.finder.list_experiment_paths">
-<span class="sig-prename descclassname"><span class="pre">lumo.exp.finder.</span></span><span class="sig-name descname"><span class="pre">list_experiment_paths</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">exp_root</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#lumo.exp.finder.list_experiment_paths" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">lumo.exp.finder.</span></span><span class="sig-name descname"><span class="pre">list_experiment_paths</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">exp_root</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#lumo.exp.finder.list_experiment_paths" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns a list of experiment paths under exp_root directory.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -1223,7 +1224,7 @@ test_root</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="lumo.exp.finder.list_test_names_from_experiment">
-<span class="sig-prename descclassname"><span class="pre">lumo.exp.finder.</span></span><span class="sig-name descname"><span class="pre">list_test_names_from_experiment</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">experiment_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#lumo.exp.finder.list_test_names_from_experiment" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">lumo.exp.finder.</span></span><span class="sig-name descname"><span class="pre">list_test_names_from_experiment</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">experiment_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#lumo.exp.finder.list_test_names_from_experiment" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns a list of test names found in the specified experiment directory.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -1237,7 +1238,7 @@ test_root</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="lumo.exp.finder.retrieval_experiment">
-<span class="sig-prename descclassname"><span class="pre">lumo.exp.finder.</span></span><span class="sig-name descname"><span class="pre">retrieval_experiment</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">test_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">test_root</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="lumo.trainer.html#lumo.trainer.factory.OptimBuilder.None" title="lumo.trainer.factory.OptimBuilder.None"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#lumo.exp.experiment.Experiment" title="lumo.exp.experiment.Experiment"><span class="pre">Experiment</span></a></span></span><a class="headerlink" href="#lumo.exp.finder.retrieval_experiment" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">lumo.exp.finder.</span></span><span class="sig-name descname"><span class="pre">retrieval_experiment</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">test_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">test_root</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="lumo.trainer.html#lumo.trainer.factory.OptimBuilder.None" title="lumo.trainer.factory.OptimBuilder.None"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#lumo.exp.experiment.Experiment" title="lumo.exp.experiment.Experiment"><span class="pre">Experiment</span></a></span></span><a class="headerlink" href="#lumo.exp.finder.retrieval_experiment" title="Permalink to this definition">¶</a></dt>
 <dd><p>Loads an Experiment object from disk for the given test name or test root.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -1261,7 +1262,7 @@ the retrieval_test_root function. Defaults to None.
 
 <dl class="py function">
 <dt class="sig sig-object py" id="lumo.exp.finder.retrieval_test_root">
-<span class="sig-prename descclassname"><span class="pre">lumo.exp.finder.</span></span><span class="sig-name descname"><span class="pre">retrieval_test_root</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">test_flag</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#lumo.exp.finder.retrieval_test_root" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">lumo.exp.finder.</span></span><span class="sig-name descname"><span class="pre">retrieval_test_root</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">test_flag</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#lumo.exp.finder.retrieval_test_root" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the test root directory for the specified test name or test root.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -1278,7 +1279,7 @@ the retrieval_test_root function. Defaults to None.
 
 <dl class="py function">
 <dt class="sig sig-object py" id="lumo.exp.finder.retrieval_tests_from_experiment">
-<span class="sig-prename descclassname"><span class="pre">lumo.exp.finder.</span></span><span class="sig-name descname"><span class="pre">retrieval_tests_from_experiment</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">exp_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#lumo.exp.experiment.Experiment" title="lumo.exp.experiment.Experiment"><span class="pre">Experiment</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#lumo.exp.finder.retrieval_tests_from_experiment" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">lumo.exp.finder.</span></span><span class="sig-name descname"><span class="pre">retrieval_tests_from_experiment</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">exp_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#lumo.exp.experiment.Experiment" title="lumo.exp.experiment.Experiment"><span class="pre">Experiment</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#lumo.exp.finder.retrieval_tests_from_experiment" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns a list of Experiment objects found in the specified experiment directory.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -1292,7 +1293,7 @@ the retrieval_test_root function. Defaults to None.
 
 <dl class="py function">
 <dt class="sig sig-object py" id="lumo.exp.finder.summary_experiment">
-<span class="sig-prename descclassname"><span class="pre">lumo.exp.finder.</span></span><span class="sig-name descname"><span class="pre">summary_experiment</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">test_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="lumo.trainer.html#lumo.trainer.factory.OptimBuilder.None" title="lumo.trainer.factory.OptimBuilder.None"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">test_root</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="lumo.trainer.html#lumo.trainer.factory.OptimBuilder.None" title="lumo.trainer.factory.OptimBuilder.None"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.exp.finder.summary_experiment" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">lumo.exp.finder.</span></span><span class="sig-name descname"><span class="pre">summary_experiment</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">test_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="lumo.trainer.html#lumo.trainer.factory.OptimBuilder.None" title="lumo.trainer.factory.OptimBuilder.None"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">test_root</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="lumo.trainer.html#lumo.trainer.factory.OptimBuilder.None" title="lumo.trainer.factory.OptimBuilder.None"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.exp.finder.summary_experiment" title="Permalink to this definition">¶</a></dt>
 <dd><p>Prints a summary of the experiment specified by test_name or test_root.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -1306,18 +1307,18 @@ the retrieval_test_root function. Defaults to None.
 
 </section>
 <section id="lumo-exp-lazy-panel-module">
-<h2>lumo.exp.lazy_panel module<a class="headerlink" href="#lumo-exp-lazy-panel-module" title="Permalink to this heading"></a></h2>
+<h2>lumo.exp.lazy_panel module<a class="headerlink" href="#lumo-exp-lazy-panel-module" title="Permalink to this heading">¶</a></h2>
 </section>
 <section id="module-lumo.exp.metric">
-<span id="lumo-exp-metric-module"></span><h2>lumo.exp.metric module<a class="headerlink" href="#module-lumo.exp.metric" title="Permalink to this heading"></a></h2>
+<span id="lumo-exp-metric-module"></span><h2>lumo.exp.metric module<a class="headerlink" href="#module-lumo.exp.metric" title="Permalink to this heading">¶</a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="lumo.exp.metric.Metric">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">lumo.exp.metric.</span></span><span class="sig-name descname"><span class="pre">Metric</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">metric_fn</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">persistent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.exp.metric.Metric" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">lumo.exp.metric.</span></span><span class="sig-name descname"><span class="pre">Metric</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">metric_fn</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">persistent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.exp.metric.Metric" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>A class that handles metric values and saving/loading them to/from disk.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="lumo.exp.metric.Metric.fn">
-<span class="sig-name descname"><span class="pre">fn</span></span><a class="headerlink" href="#lumo.exp.metric.Metric.fn" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">fn</span></span><a class="headerlink" href="#lumo.exp.metric.Metric.fn" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <p>The file path of the metric file.</p>
@@ -1328,7 +1329,7 @@ the retrieval_test_root function. Defaults to None.
 </dl>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="lumo.exp.metric.Metric._metric">
-<span class="sig-name descname"><span class="pre">_metric</span></span><a class="headerlink" href="#lumo.exp.metric.Metric._metric" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">_metric</span></span><a class="headerlink" href="#lumo.exp.metric.Metric._metric" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <p>A dictionary containing the metric values.</p>
@@ -1339,7 +1340,7 @@ the retrieval_test_root function. Defaults to None.
 </dl>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="lumo.exp.metric.Metric.persistent">
-<span class="sig-name descname"><span class="pre">persistent</span></span><a class="headerlink" href="#lumo.exp.metric.Metric.persistent" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">persistent</span></span><a class="headerlink" href="#lumo.exp.metric.Metric.persistent" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <p>A boolean value indicating whether to save the metric values to disk.</p>
@@ -1350,12 +1351,12 @@ the retrieval_test_root function. Defaults to None.
 </dl>
 <dl class="py property">
 <dt class="sig sig-object py" id="lumo.exp.metric.Metric.current">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">current</span></span><a class="headerlink" href="#lumo.exp.metric.Metric.current" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">current</span></span><a class="headerlink" href="#lumo.exp.metric.Metric.current" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="lumo.exp.metric.Metric.dump_metric">
-<span class="sig-name descname"><span class="pre">dump_metric</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cmp</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flush</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.exp.metric.Metric.dump_metric" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">dump_metric</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cmp</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flush</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.exp.metric.Metric.dump_metric" title="Permalink to this definition">¶</a></dt>
 <dd><p>Updates the metric value for a given key.</p>
 <p>If the metric value for the given key is not set or the new value is better than the
 existing value based on the comparison type specified by cmp, the metric value is updated
@@ -1388,7 +1389,7 @@ with the new value. The function returns the updated value.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="lumo.exp.metric.Metric.dump_metrics">
-<span class="sig-name descname"><span class="pre">dump_metrics</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dic</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cmp</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.exp.metric.Metric.dump_metrics" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">dump_metrics</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dic</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cmp</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.exp.metric.Metric.dump_metrics" title="Permalink to this definition">¶</a></dt>
 <dd><p>Updates multiple metric values with a dictionary.</p>
 <p>The function calls dump_metric for each key-value pair in the input dictionary and returns
 a dictionary containing the updated metric values.</p>
@@ -1410,13 +1411,13 @@ a dictionary containing the updated metric values.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="lumo.exp.metric.Metric.flush">
-<span class="sig-name descname"><span class="pre">flush</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#lumo.exp.metric.Metric.flush" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">flush</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#lumo.exp.metric.Metric.flush" title="Permalink to this definition">¶</a></dt>
 <dd><p>Writes the metric values to a file.</p>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="lumo.exp.metric.Metric.value">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">value</span></span><a class="headerlink" href="#lumo.exp.metric.Metric.value" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">value</span></span><a class="headerlink" href="#lumo.exp.metric.Metric.value" title="Permalink to this definition">¶</a></dt>
 <dd><p>A property that returns the metric values.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -1432,10 +1433,10 @@ a dictionary containing the updated metric values.</p>
 
 </section>
 <section id="module-lumo.exp.watch">
-<span id="lumo-exp-watch-module"></span><h2>lumo.exp.watch module<a class="headerlink" href="#module-lumo.exp.watch" title="Permalink to this heading"></a></h2>
+<span id="lumo-exp-watch-module"></span><h2>lumo.exp.watch module<a class="headerlink" href="#module-lumo.exp.watch" title="Permalink to this heading">¶</a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="lumo.exp.watch.Condition">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">lumo.exp.watch.</span></span><span class="sig-name descname"><span class="pre">Condition</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="lumo.trainer.html#lumo.trainer.factory.OptimBuilder.None" title="lumo.trainer.factory.OptimBuilder.None"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">op</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.exp.watch.Condition" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">lumo.exp.watch.</span></span><span class="sig-name descname"><span class="pre">Condition</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="lumo.trainer.html#lumo.trainer.factory.OptimBuilder.None" title="lumo.trainer.factory.OptimBuilder.None"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">op</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.exp.watch.Condition" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Represents a condition to filter data based on a certain criteria.</p>
 <p>row filter:</p>
@@ -1480,19 +1481,19 @@ a dictionary containing the updated metric values.</p>
 </div>
 <dl class="py method">
 <dt class="sig sig-object py" id="lumo.exp.watch.Condition.apply">
-<span class="sig-name descname"><span class="pre">apply</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.exp.watch.Condition.apply" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">apply</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.exp.watch.Condition.apply" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns a new DataFrame with only the rows that meet the condition.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="lumo.exp.watch.Condition.capply">
-<span class="sig-name descname"><span class="pre">capply</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.exp.watch.Condition.capply" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">capply</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.exp.watch.Condition.capply" title="Permalink to this definition">¶</a></dt>
 <dd><p>apply operations in column axis</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="lumo.exp.watch.Condition.in_">
-<span class="sig-name descname"><span class="pre">in_</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lis</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.exp.watch.Condition.in_" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">in_</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lis</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.exp.watch.Condition.in_" title="Permalink to this definition">¶</a></dt>
 <dd><p>Sets the condition to evaluate if the value is in a given list.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -1506,7 +1507,7 @@ a dictionary containing the updated metric values.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="lumo.exp.watch.Condition.mask">
-<span class="sig-name descname"><span class="pre">mask</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.exp.watch.Condition.mask" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">mask</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.exp.watch.Condition.mask" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns a boolean mask of the given DataFrame based on the condition.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -1520,7 +1521,7 @@ a dictionary containing the updated metric values.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="lumo.exp.watch.Condition.not_in_">
-<span class="sig-name descname"><span class="pre">not_in_</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lis</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.exp.watch.Condition.not_in_" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">not_in_</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lis</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.exp.watch.Condition.not_in_" title="Permalink to this definition">¶</a></dt>
 <dd><p>Sets the condition to evaluate if the value is not in a given list.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -1534,7 +1535,7 @@ a dictionary containing the updated metric values.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="lumo.exp.watch.Condition.pipe">
-<span class="sig-name descname"><span class="pre">pipe</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">conditions</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#lumo.exp.watch.Condition" title="lumo.exp.watch.Condition"><span class="pre">Condition</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.exp.watch.Condition.pipe" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">pipe</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">conditions</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#lumo.exp.watch.Condition" title="lumo.exp.watch.Condition"><span class="pre">Condition</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.exp.watch.Condition.pipe" title="Permalink to this definition">¶</a></dt>
 <dd><p>Applies a list of conditions to a DataFrame using the pipe method.</p>
 </dd></dl>
 
@@ -1542,12 +1543,12 @@ a dictionary containing the updated metric values.</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="lumo.exp.watch.Watcher">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">lumo.exp.watch.</span></span><span class="sig-name descname"><span class="pre">Watcher</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">exp_root</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hb_root</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pid_root</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">db_root</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.exp.watch.Watcher" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">lumo.exp.watch.</span></span><span class="sig-name descname"><span class="pre">Watcher</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">exp_root</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hb_root</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pid_root</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">db_root</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.exp.watch.Watcher" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>A class for listing and watching experiments with time order and caching test information in ‘metrics/.sqlite’.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="lumo.exp.watch.Watcher.exp_root">
-<span class="sig-name descname"><span class="pre">exp_root</span></span><a class="headerlink" href="#lumo.exp.watch.Watcher.exp_root" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">exp_root</span></span><a class="headerlink" href="#lumo.exp.watch.Watcher.exp_root" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <p>The root directory to search for experiments.</p>
@@ -1558,7 +1559,7 @@ a dictionary containing the updated metric values.</p>
 </dl>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="lumo.exp.watch.Watcher.hb_root">
-<span class="sig-name descname"><span class="pre">hb_root</span></span><a class="headerlink" href="#lumo.exp.watch.Watcher.hb_root" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">hb_root</span></span><a class="headerlink" href="#lumo.exp.watch.Watcher.hb_root" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <p>The root directory to search for heartbeat files.</p>
@@ -1569,7 +1570,7 @@ a dictionary containing the updated metric values.</p>
 </dl>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="lumo.exp.watch.Watcher.pid_root">
-<span class="sig-name descname"><span class="pre">pid_root</span></span><a class="headerlink" href="#lumo.exp.watch.Watcher.pid_root" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">pid_root</span></span><a class="headerlink" href="#lumo.exp.watch.Watcher.pid_root" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <p>The root directory to search for PID files.</p>
@@ -1580,7 +1581,7 @@ a dictionary containing the updated metric values.</p>
 </dl>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="lumo.exp.watch.Watcher.db_root">
-<span class="sig-name descname"><span class="pre">db_root</span></span><a class="headerlink" href="#lumo.exp.watch.Watcher.db_root" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">db_root</span></span><a class="headerlink" href="#lumo.exp.watch.Watcher.db_root" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <p>The root directory to store the experiment databases.</p>
@@ -1591,13 +1592,13 @@ a dictionary containing the updated metric values.</p>
 </dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="lumo.exp.watch.Watcher.fullupdate">
-<span class="sig-name descname"><span class="pre">fullupdate</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#lumo.exp.watch.Watcher.fullupdate" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">fullupdate</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#lumo.exp.watch.Watcher.fullupdate" title="Permalink to this definition">¶</a></dt>
 <dd><p>re-update all experiment from original experiment directories</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="lumo.exp.watch.Watcher.load">
-<span class="sig-name descname"><span class="pre">load</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">with_pandas</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.exp.watch.Watcher.load" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">load</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">with_pandas</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.exp.watch.Watcher.load" title="Permalink to this definition">¶</a></dt>
 <dd><p>Loads the experiment information from heartbeat files and the experiment databases.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -1617,13 +1618,13 @@ experiment information.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="lumo.exp.watch.Watcher.panel">
-<span class="sig-name descname"><span class="pre">panel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.exp.watch.Watcher.panel" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">panel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.exp.watch.Watcher.panel" title="Permalink to this definition">¶</a></dt>
 <dd><p>create a dashboard powered by Panel, need to install panel library first.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="lumo.exp.watch.Watcher.progress">
-<span class="sig-name descname"><span class="pre">progress</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">with_pandas</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.exp.watch.Watcher.progress" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">progress</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">with_pandas</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.exp.watch.Watcher.progress" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns a DataFrame of alive experiments.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -1634,19 +1635,19 @@ experiment information.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="lumo.exp.watch.Watcher.retrieve">
-<span class="sig-name descname"><span class="pre">retrieve</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">test_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#lumo.exp.experiment.Experiment" title="lumo.exp.experiment.Experiment"><span class="pre">Experiment</span></a></span></span><a class="headerlink" href="#lumo.exp.watch.Watcher.retrieve" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">retrieve</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">test_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#lumo.exp.experiment.Experiment" title="lumo.exp.experiment.Experiment"><span class="pre">Experiment</span></a></span></span><a class="headerlink" href="#lumo.exp.watch.Watcher.retrieve" title="Permalink to this definition">¶</a></dt>
 <dd><p>retrieve the Experiment of given test name</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="lumo.exp.watch.Watcher.server">
-<span class="sig-name descname"><span class="pre">server</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#lumo.exp.watch.Watcher.server" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">server</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#lumo.exp.watch.Watcher.server" title="Permalink to this definition">¶</a></dt>
 <dd><p>simple server which make you note your experiments</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="lumo.exp.watch.Watcher.update">
-<span class="sig-name descname"><span class="pre">update</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#lumo.exp.watch.Watcher.update" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">update</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#lumo.exp.watch.Watcher.update" title="Permalink to this definition">¶</a></dt>
 <dd><p>Diff &amp; Update</p>
 </dd></dl>
 
@@ -1654,18 +1655,18 @@ experiment information.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="lumo.exp.watch.eq">
-<span class="sig-prename descclassname"><span class="pre">lumo.exp.watch.</span></span><span class="sig-name descname"><span class="pre">eq</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ser</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.exp.watch.eq" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">lumo.exp.watch.</span></span><span class="sig-name descname"><span class="pre">eq</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ser</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.exp.watch.eq" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="lumo.exp.watch.in_">
-<span class="sig-prename descclassname"><span class="pre">lumo.exp.watch.</span></span><span class="sig-name descname"><span class="pre">in_</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ser</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.exp.watch.in_" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">lumo.exp.watch.</span></span><span class="sig-name descname"><span class="pre">in_</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ser</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.exp.watch.in_" title="Permalink to this definition">¶</a></dt>
 <dd><p>pandas operation</p>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="lumo.exp.watch.is_test_name">
-<span class="sig-prename descclassname"><span class="pre">lumo.exp.watch.</span></span><span class="sig-name descname"><span class="pre">is_test_name</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">test_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#lumo.exp.watch.is_test_name" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">lumo.exp.watch.</span></span><span class="sig-name descname"><span class="pre">is_test_name</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">test_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#lumo.exp.watch.is_test_name" title="Permalink to this definition">¶</a></dt>
 <dd><p>Determines if the specified string is a valid test name.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -1679,7 +1680,7 @@ experiment information.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="lumo.exp.watch.is_test_root">
-<span class="sig-prename descclassname"><span class="pre">lumo.exp.watch.</span></span><span class="sig-name descname"><span class="pre">is_test_root</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#lumo.exp.watch.is_test_root" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">lumo.exp.watch.</span></span><span class="sig-name descname"><span class="pre">is_test_root</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#lumo.exp.watch.is_test_root" title="Permalink to this definition">¶</a></dt>
 <dd><p>Determines if the specified path is a valid test root.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -1693,18 +1694,18 @@ experiment information.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="lumo.exp.watch.ne">
-<span class="sig-prename descclassname"><span class="pre">lumo.exp.watch.</span></span><span class="sig-name descname"><span class="pre">ne</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ser</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.exp.watch.ne" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">lumo.exp.watch.</span></span><span class="sig-name descname"><span class="pre">ne</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ser</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.exp.watch.ne" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="lumo.exp.watch.not_in_">
-<span class="sig-prename descclassname"><span class="pre">lumo.exp.watch.</span></span><span class="sig-name descname"><span class="pre">not_in_</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ser</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.exp.watch.not_in_" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">lumo.exp.watch.</span></span><span class="sig-name descname"><span class="pre">not_in_</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ser</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.exp.watch.not_in_" title="Permalink to this definition">¶</a></dt>
 <dd><p>pandas operation</p>
 </dd></dl>
 
 </section>
 <section id="module-lumo.exp">
-<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-lumo.exp" title="Permalink to this heading"></a></h2>
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-lumo.exp" title="Permalink to this heading">¶</a></h2>
 </section>
 </section>
 
@@ -1729,7 +1730,25 @@ experiment information.</p>
       </div>
     </section>
   </div>
-  <script>
+  <div>
+    <p>True Flag</p>
+    
+    
+    <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="Versions">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      <span class="fa fa-book"> Read the Docs</span>
+      v: 1.0.0
+      <span class="fa fa-caret-down"></span>
+    </span>
+        <div class="rst-other-versions">
+            <dl>
+                <dt>Versions</dt>
+            </dl>
+        </div>
+    </div>
+    
+
+</div><script>
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
