@@ -5,24 +5,13 @@ contain the root `toctree` directive.
 
 Welcome to lumo's documentation!
 ================================
-.. include:: ../../README.md
-   :parser: myst_parser.sphinx_
-
-.. include:: ../README.md
-   :parser: myst_parser.sphinx_
-
-.. include:: README.md
-   :parser: myst_parser.sphinx_
-
 
 .. toctree::
    :maxdepth: 2
    :caption: Contents
 
-.. toctree::
-   :caption: Tutorial
-   :glob:
-   tutorial/*
+    ../tutorial/getting_start.md
+
 
 Indices and tables
 ==================
