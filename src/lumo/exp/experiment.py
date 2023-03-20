@@ -914,7 +914,7 @@ class Experiment:
         """
         from .backup import backup_regist
         if backend == 'github':
-            kwargs.setdefault('access_token', glob['github_access_token'])
+            kwargs.setdefault('access_token', glob.get('github_access_token'))
 
         return backup_regist[backend](exp=self, **kwargs)
 
