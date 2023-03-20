@@ -845,7 +845,10 @@ class Experiment:
         paths = dic.pop('paths', {})
         _ = dic.pop('metrics')
         self = cls(exp_name=dic['exp_name'], test_name=dic['test_name'], paths=paths)
+        if os.path.exists(self.heartbeat_fn):
+            return cls.from_disk(self.info_dir)
         self._prop.update(dic)
+
         return self
 
     @classmethod
