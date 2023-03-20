@@ -184,23 +184,26 @@ class memory(object):
     A graceful memory allocator that optimizes GPU memory allocation by incrementally increasing the memory
     footprint to minimize fragmentation.
 
+    ```python
+    import lumo
+    with lumo.memory(5000):
+        y = x * 2
+
+    @lumo.memory(1024)
+    def doubler(x):
+        ...
+
+    lumo.memory(10000).start()
+    ...
+    ```
+
     Args:
         memory (int): Memory size to be allocated in MB.
         device (str or int, optional): Device to allocate memory on. Defaults to the current CUDA device.
         hold (bool, optional): Whether to hold the memory after allocation. Defaults to False.
         invade (bool, optional): Whether to use aggressive memory allocation. Defaults to False.
 
-    Examples:
-        >>> import lumo
-        >>> with lumo.memory(5000):
-        ...     y = x * 2
 
-        >>> @lumo.memory(1024)
-        ... def doubler(x):
-        ...     ...
-
-        >>> lumo.memory(10000).start()
-        ... # do something
 
     References:
         To get GPU memory usage, we use nvidia-smi. Refer to this link for details:

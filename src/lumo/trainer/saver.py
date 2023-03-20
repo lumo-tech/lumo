@@ -27,14 +27,16 @@ class state_dict_tuple:
         IndexError: If the index is not 0 or 1.
 
     Examples:
-        # Create an instance of state_dict_tuple with state_dict and meta_info
-        >>> sd = state_dict_tuple({'a': 1, 'b': 2}, 'meta')
+    ```python
+    # Create an instance of state_dict_tuple with state_dict and meta_info
+    >>> sd = state_dict_tuple({'a': 1, 'b': 2}, 'meta')
 
-        # Access the state_dict and meta_info using the [] operator
-        >>> sd[0]
-        {'a': 1, 'b': 2}
-        >>> sd[1]
-        'meta'
+    # Access the state_dict and meta_info using the [] operator
+    >>> sd[0]
+    {'a': 1, 'b': 2}
+    >>> sd[1]
+    'meta'
+    ```
     """
 
     def __init__(self, state_dict=None, meta_info=None):
@@ -75,8 +77,7 @@ class Saver:
     """
     Write state_dict into test dirs, record save log into <repo working dir>/.lumo/save.<exp_name>.log
 
-    format:
-        <test_name> -> <fn>
+    format: <test_name> -> <fn>
 
     Raises:
         When save/load operations happend, you may meet Out Of Space, FileNotExist, or other problems,

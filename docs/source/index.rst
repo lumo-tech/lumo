@@ -8,9 +8,14 @@ Welcome to lumo's documentation!
 
 .. toctree::
    :maxdepth: 2
-   :caption: Contents
+   :caption: Tutorial
+   :glob:
 
-    ../tutorial/getting_start.md
+   tutorial/*
+
+.. toctree::
+   :maxdepth: 2
+   :caption: Development
 
 
 Indices and tables

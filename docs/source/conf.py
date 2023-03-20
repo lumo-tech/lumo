@@ -31,7 +31,9 @@ release = extract_version()
 import os
 import sys
 
-sys.path.insert(0, os.path.abspath('../../src/'))
+sys.path.insert(0, Path(__file__).parent.parent.joinpath('src').as_posix())
+
+# sys.path.insert(0, os.path.abspath('../../src/'))
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
@@ -130,7 +132,7 @@ html_static_path = ['_static']
 #     '.md': 'markdown',
 # }
 #
-commonmark_suffixes = ['.rst']
+# commonmark_suffixes = ['.rst']
 
 source_parsers = {
     '.md': CommonMarkParser,

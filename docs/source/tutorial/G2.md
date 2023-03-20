@@ -1,5 +1,0 @@
-# Getting Start
-
-这是测试
-
-Here is a Test for English.
