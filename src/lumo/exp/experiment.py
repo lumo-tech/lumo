@@ -831,13 +831,15 @@ class Experiment:
     @classmethod
     def from_cache(cls, dic: dict):
         """
-        Creates an Experiment object from a cached dictionary.
+        Create an Experiment object from cached Experiment data.
 
-        The cached dictionary should have the same format as the one returned by the Experiment.to_cache() method.
+        If the disk has been modified (as detected by `~Experiment.heartbeat_fn`),
+        reload the Experiment from disk. Otherwise, create a new Experiment
+        object with the cached data.
 
         Args:
-            cls: the Experiment class.
-            dic: a dictionary with the cached Experiment data.
+            cls: The Experiment class.
+            dic: A dictionary containing cached Experiment data.
 
         Returns:
             An Experiment object.
