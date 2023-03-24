@@ -190,7 +190,7 @@ class Experiment:
         Returns:
             str: A string representation of the Experiment object.
         """
-        return f'{self.__class__.__name__}(info_dir="{self.info_dir})"'
+        return f'{self.__class__.__name__}(info_dir="{self.info_dir}")'
 
     def __str__(self):
         """
@@ -709,7 +709,7 @@ class Experiment:
         # self.properties['']
         new_test_name = self._create_test_name(self.exp_dir)
         new_exp = Experiment(self.exp_name, test_name=new_test_name)
-        self.dump_info('deprecated', {'rerun_at': {new_exp.test_name: True}}, append=True)
+        self.dump_info('rerun', {'rerun_at': {new_exp.test_name: True}}, append=True)
         old_rerun_info = self.properties.get('rerun', {})
         count = 1
         if isinstance(old_rerun_info, dict):
