@@ -25,6 +25,7 @@ and focuses on enhancing the experience of deep learning practitioners.
     - **Distributed Training:** Also supports multiple training acceleration frameworks, unified abstraction, and easy
       switching at any time.
 - More utilities...
+- **Type Hint:** Support as much as possible for modern IDE's auto-completion.
 
 ![lumo-framework](./images/lumo-intro.png)
 
