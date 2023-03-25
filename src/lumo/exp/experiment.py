@@ -871,7 +871,8 @@ class Experiment:
         if not is_test_root(info_dir):
             raise ValueError(f'{info_dir} is not a valid test_root')
         info_dir = os.path.abspath(info_dir)
-        exp_dir = os.path.dirname(info_dir)
+        exp_name = io.load_json(os.path.join(info_dir, 'info', 'exp_name.json'))
+        test_name = io.load_json(os.path.join(info_dir, 'info', 'test_name.json'))
 
         paths_fn = os.path.join(info_dir, 'info', f'paths.json')
         if os.path.exists(paths_fn):
@@ -882,7 +883,7 @@ class Experiment:
         else:
             paths = {}
 
-        self = cls(os.path.basename(exp_dir), test_name=os.path.basename(info_dir), paths=paths)
+        self = cls(exp_name, test_name=test_name, paths=paths)
 
         # load prop
         for f in os.listdir(self.mk_ipath('info', is_dir=True)):
@@ -922,6 +923,17 @@ class Experiment:
             kwargs.setdefault('access_token', glob.get('github_access_token'))
 
         return backup_regist[backend](exp=self, **kwargs)
+
+    def archive(self):
+        pass
+        # exp = Experiment('GitArchive')
+        # fn = exp.mk_bpath(f'{commit.hexsha[:8]}.tar')
+        #
+        # exp.dump_info('git_archive', {'file': fn,
+        #                               'test_name': exp.test_name,
+        #                               'commit_hex': commit.hexsha[:8]})
+        # exp.dump_string('archive_fn', fn)
+        # archived_fn = exp.load_string('archive_fn')
 
 
 class SimpleExperiment(Experiment):
