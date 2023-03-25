@@ -180,7 +180,7 @@ def summary_experiment(test_name: str = None, test_root: str = None):
     print('Tags:')
     indent_print(pformat(exp.tags))
     print('Use paths:')
-    indent_print(pformat(exp.paths))
+    indent_print(pformat(exp.roots))
     print('Execute:')
     indent_print(' '.join(exp.exec_argv))
     print('-----------------------------------')
@@ -199,7 +199,7 @@ def format_experiment(exp: Experiment) -> Dict[str, Any]:
     return {
         'Properties': exp.properties,
         'tags': exp.tags,
-        'paths': exp.paths,
+        'paths': exp.roots,
         'exec_argv': exp.exec_argv,
     }
 
