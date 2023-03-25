@@ -44,6 +44,9 @@ Tensor metrics:
 {properties}
 </code>
 </details>
+
+
+> Powered by [lumo](https://github.com/pytorch-lumo/lumo)
 """
 
 
