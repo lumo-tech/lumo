@@ -66,9 +66,9 @@ Here are two classic scenarios:
 
 ## :small_orange_diamond: Embedding into Existing Projects
 
-For existing projects, you can quickly embed Lumo by following these steps:
+For existing projects, you can quickly embed `lumo` by following these steps:
 
-- Import Lumo and initialize Logger and Experiment:
+- Import `lumo` and initialize Logger and Experiment:
 
 ```python
 import random
@@ -118,8 +118,8 @@ exp.end()
 
 ## :small_orange_diamond: Building from Scratch
 
-If you want to start a new deep learning experiment from scratch, you can use Lumo to accelerate your code development.
-Below are examples of Lumo training at different scales:
+If you want to start a new deep learning experiment from scratch, you can use `lumo` to accelerate your code development.
+Below are examples of `lumo` training at different scales:
 
 one-fine training:
 

@@ -7,15 +7,21 @@ Welcome to lumo's documentation!
 ================================
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
    :caption: Tutorial
-   :glob:
 
-   tutorial/*
+   tutorial/reproducibility.md
+   tutorial/configuration.md
+   tutorial/dataset_builder.md
+   
+
+
 
 .. toctree::
    :maxdepth: 2
    :caption: Development
+
+
 
 
 Indices and tables
