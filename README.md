@@ -39,6 +39,7 @@ and focuses on enhancing the experience of deep learning practitioners.
     - :small_orange_diamond: [re-run](#small_orange_diamond-re-run)
     - :small_orange_diamond: [backup](#small_orange_diamond-backup)
 - :scroll: [License](#scroll-license)
+- [Full Document](https://pytorch-lumo.github.io/lumo/)
 
 # :cloud: Installation
 
@@ -118,7 +119,8 @@ exp.end()
 
 ## :small_orange_diamond: Building from Scratch
 
-If you want to start a new deep learning experiment from scratch, you can use `lumo` to accelerate your code development.
+If you want to start a new deep learning experiment from scratch, you can use `lumo` to accelerate your code
+development.
 Below are examples of `lumo` training at different scales:
 
 one-fine training:
