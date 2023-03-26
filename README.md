@@ -25,6 +25,7 @@ and focuses on enhancing the experience of deep learning practitioners.
     - **Distributed Training:** Also supports multiple training acceleration frameworks, unified abstraction, and easy
       switching at any time.
 - More utilities...
+- **Type Hint:** Support as much as possible for modern IDE's auto-completion.
 
 ![lumo-framework](./images/lumo-intro.png)
 
@@ -38,6 +39,7 @@ and focuses on enhancing the experience of deep learning practitioners.
     - :small_orange_diamond: [re-run](#small_orange_diamond-re-run)
     - :small_orange_diamond: [backup](#small_orange_diamond-backup)
 - :scroll: [License](#scroll-license)
+- [Full Document](https://pytorch-lumo.github.io/lumo/)
 
 # :cloud: Installation
 
@@ -65,9 +67,9 @@ Here are two classic scenarios:
 
 ## :small_orange_diamond: Embedding into Existing Projects
 
-For existing projects, you can quickly embed Lumo by following these steps:
+For existing projects, you can quickly embed `lumo` by following these steps:
 
-- Import Lumo and initialize Logger and Experiment:
+- Import `lumo` and initialize Logger and Experiment:
 
 ```python
 import random
@@ -117,8 +119,9 @@ exp.end()
 
 ## :small_orange_diamond: Building from Scratch
 
-If you want to start a new deep learning experiment from scratch, you can use Lumo to accelerate your code development.
-Below are examples of Lumo training at different scales:
+If you want to start a new deep learning experiment from scratch, you can use `lumo` to accelerate your code
+development.
+Below are examples of `lumo` training at different scales:
 
 one-fine training:
 

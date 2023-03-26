@@ -1,8 +1,11 @@
-from .experiment import Experiment
 import os
-from pprint import pformat
-from lumo.utils.fmt import strftime
 import re
+import warnings
+from pprint import pformat
+from pathlib import Path
+from lumo.utils.fmt import strftime
+from .experiment import Experiment
+from lumo.utils.compress import compress_dpath
 
 issue_title = """Test {test_name}"""
 
@@ -44,6 +47,9 @@ Tensor metrics:
 {properties}
 </code>
 </details>
+
+
+> Powered by [lumo](https://github.com/pytorch-lumo/lumo)
 """
 
 
@@ -150,38 +156,29 @@ def backup_github_issue(exp: Experiment, repo: str, access_token: str,
 
     return issue
 
-    # There is no way to upload files by GitHub Api
-    # filter backuped file sizes
-    # files = []
-    # for root, dirs, fs in os.walk(exp.mk_ipath()):
-    #     for f in fs:
-    #         absf = os.path.join(root, f)
-    #         file_size = os.path.getsize(absf) / (1024 * 1024)  # Mb
-    #         if file_size > size_limit:
-    #             continue
-    #         files.append(absf)
-    #
-    # for root, dirs, fs in os.walk(exp.mk_bpath()):
-    #     for f in fs:
-    #         absf = os.path.join(root, f)
-    #         file_size = os.path.getsize(absf) / (1024 * 1024)  # Mb
-    #         if file_size > size_limit:
-    #             continue
-    #         files.append(absf)
-
-    # repo.create_git_blob()
-    # {files}
-    # issue.create_comment()
-
 
 def backup_ssh(exp: Experiment, host, username, root, size_limit):
     """compress backup zip files to target server with replacement"""
     pass
 
 
-def backup_local(exp: Experiment, target: str):
+def backup_local(exp: Experiment, target_dir: str, with_code=False, with_blob=False, with_cache=False):
     """backup in local dist"""
-    pass
+    dpath = {'info': exp.info_dir}
+    if with_blob:
+        dpath['blob'] = exp.blob_dir
+    if with_cache:
+        dpath['cache'] = exp.cache_dir
+    if with_code:
+        res = exp.archive()
+        if res is None:
+            warnings.warn(f'git commit is not recorded in {exp}.')
+
+    names, paths = zip(*list(dpath.items()))
+
+    target_fn = os.path.join(target_dir, f'{exp.test_name}.tar')
+
+    return compress_dpath(paths, names, target_fn, root_name=exp.test_name)
 
 
 backup_regist = {

@@ -496,8 +496,11 @@ def is_test_root(path: str) -> bool:
     Returns:
         True if the path is a valid test root, False otherwise.
     """
-    test_name = os.path.basename(path.rstrip('/'))
-    return is_test_name(test_name)
+    if os.path.exists(os.path.join(path, 'info', 'test_name.json')):
+        return True
+
+    # test_name = os.path.basename(path.rstrip('/'))
+    # return is_test_name(test_name)
 
 
 def is_test_name(test_name: str) -> bool:

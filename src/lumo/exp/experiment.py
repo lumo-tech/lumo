@@ -23,6 +23,7 @@ from lumo.utils.subprocess import run_command
 from .base import BaseExpHook
 from ..proc.pid import pid_hash, runtime_pid_obj
 from .metric import Metric
+from lumo.utils import repository as git_repo
 
 
 class Experiment:
@@ -92,7 +93,7 @@ class Experiment:
 
     ENV_TEST_NAME_KEY = 'LUMO_EXP_TEST_NAME'
 
-    def __init__(self, exp_name: str = None, test_name=None, paths=None, info_dir=None):
+    def __init__(self, exp_name: str = None, test_name=None, roots=None, info_dir=None, blob_dir=None, cache_dir=None):
         """
         Initializes a new instance of the Experiment class.
 
@@ -103,7 +104,7 @@ class Experiment:
         Raises:
             ValueError: If the experiment name is not a legal filename.
         """
-        if info_dir is not None:
+        if exp_name is None and info_dir is not None and os.path.exists(info_dir):
             exp = self.__class__.from_disk(info_dir=info_dir)
             self._prop = exp._prop
             self._hooks = exp._hooks
@@ -117,14 +118,20 @@ class Experiment:
             if test_name is None:
                 test_name = os.environ.get(Experiment.ENV_TEST_NAME_KEY, None)
             self._prop['test_name'] = test_name
-            if paths is None:
-                paths = {}
-            self._prop['paths'] = paths
+            if roots is None:
+                roots = {}
+            self._prop['paths'] = roots
             self._prop['note'] = ''
 
             self._hooks = {}
             self._metric = None
 
+        if info_dir is not None:
+            self._prop['info_dir'] = info_dir
+        if blob_dir is not None:
+            self._prop['blob_dir'] = blob_dir
+        if cache_dir is not None:
+            self._prop['cache_dir'] = cache_dir
         # wrap
         self.dump_string = self._trigger_change(self.dump_string)
         self.dump_note = self._trigger_change(self.dump_note)
@@ -190,7 +197,7 @@ class Experiment:
         Returns:
             str: A string representation of the Experiment object.
         """
-        return f'{self.__class__.__name__}(info_dir="{self.info_dir})"'
+        return f'{self.__class__.__name__}(info_dir="{self.info_dir}")'
 
     def __str__(self):
         """
@@ -330,7 +337,7 @@ class Experiment:
         return self._metric
 
     @property
-    def paths(self) -> dict:
+    def roots(self) -> dict:
         """
         Gets a dictionary containing the paths to various directories associated with the experiment.
 
@@ -583,15 +590,15 @@ class Experiment:
 
     @property
     def info_root(self):
-        return self.paths['info_root']
+        return self.roots['info_root']
 
     @property
     def cache_root(self):
-        return self.paths['cache_root']
+        return self.roots['cache_root']
 
     @property
     def blob_root(self):
-        return self.paths['blob_root']
+        return self.roots['blob_root']
 
     @property
     def pid_fn(self):
@@ -613,20 +620,26 @@ class Experiment:
 
     @property
     def info_dir(self):
-        d = os.path.join(self.info_root, self.exp_name, self.test_name)
-        os.makedirs(d, exist_ok=True)
+        d = self.properties.get('info_dir')
+        if d is None:
+            d = os.path.join(self.info_root, self.exp_name, self.test_name)
+            os.makedirs(d, exist_ok=True)
         return d
 
     @property
     def cache_dir(self):
-        d = os.path.join(self.cache_root, self.exp_name, self.test_name)
-        os.makedirs(d, exist_ok=True)
+        d = self.properties.get('cache_dir')
+        if d is None:
+            d = os.path.join(self.cache_root, self.exp_name, self.test_name)
+            os.makedirs(d, exist_ok=True)
         return d
 
     @property
     def blob_dir(self):
-        d = os.path.join(self.blob_root, self.exp_name, self.test_name)
-        os.makedirs(d, exist_ok=True)
+        d = self.properties.get('blob_dir')
+        if d is None:
+            d = os.path.join(self.blob_root, self.exp_name, self.test_name)
+            os.makedirs(d, exist_ok=True)
         return d
 
     def _mk_path(self, *path: str, is_dir: bool) -> str:
@@ -709,7 +722,7 @@ class Experiment:
         # self.properties['']
         new_test_name = self._create_test_name(self.exp_dir)
         new_exp = Experiment(self.exp_name, test_name=new_test_name)
-        self.dump_info('deprecated', {'rerun_at': {new_exp.test_name: True}}, append=True)
+        self.dump_info('rerun', {'rerun_at': {new_exp.test_name: True}}, append=True)
         old_rerun_info = self.properties.get('rerun', {})
         count = 1
         if isinstance(old_rerun_info, dict):
@@ -729,7 +742,7 @@ class Experiment:
         """
         self.dump_info('exp_name', self.exp_name)
         self.dump_info('test_name', self.test_name)
-        self.dump_info('paths', self.paths)
+        self.dump_info('roots', self.roots)
 
         self.dump_info('execute', {
             'repo': self.project_root,
@@ -831,25 +844,30 @@ class Experiment:
     @classmethod
     def from_cache(cls, dic: dict):
         """
-        Creates an Experiment object from a cached dictionary.
+        Create an Experiment object from cached Experiment data.
 
-        The cached dictionary should have the same format as the one returned by the Experiment.to_cache() method.
+        If the disk has been modified (as detected by `~Experiment.heartbeat_fn`),
+        reload the Experiment from disk. Otherwise, create a new Experiment
+        object with the cached data.
 
         Args:
-            cls: the Experiment class.
-            dic: a dictionary with the cached Experiment data.
+            cls: The Experiment class.
+            dic: A dictionary containing cached Experiment data.
 
         Returns:
             An Experiment object.
         """
         paths = dic.pop('paths', {})
         _ = dic.pop('metrics')
-        self = cls(exp_name=dic['exp_name'], test_name=dic['test_name'], paths=paths)
+        self = cls(exp_name=dic['exp_name'], test_name=dic['test_name'], roots=paths)
+        if os.path.exists(self.heartbeat_fn):
+            return cls.from_disk(self.info_dir)
         self._prop.update(dic)
+
         return self
 
     @classmethod
-    def from_disk(cls, info_dir):
+    def from_disk(cls, info_dir, blob_dir=None, cache_dir=None):
         """
         Creates an Experiment object from a test root directory on disk.
 
@@ -866,7 +884,8 @@ class Experiment:
         if not is_test_root(info_dir):
             raise ValueError(f'{info_dir} is not a valid test_root')
         info_dir = os.path.abspath(info_dir)
-        exp_dir = os.path.dirname(info_dir)
+        exp_name = io.load_json(os.path.join(info_dir, 'info', 'exp_name.json'))
+        test_name = io.load_json(os.path.join(info_dir, 'info', 'test_name.json'))
 
         paths_fn = os.path.join(info_dir, 'info', f'paths.json')
         if os.path.exists(paths_fn):
@@ -877,7 +896,9 @@ class Experiment:
         else:
             paths = {}
 
-        self = cls(os.path.basename(exp_dir), test_name=os.path.basename(info_dir), paths=paths)
+        # given exp_name will stop __init__ load information by .from_disk()
+        self = cls(exp_name, test_name=test_name, roots=paths,
+                   info_dir=info_dir, blob_dir=blob_dir, cache_dir=cache_dir)
 
         # load prop
         for f in os.listdir(self.mk_ipath('info', is_dir=True)):
@@ -907,16 +928,34 @@ class Experiment:
             'metrics': self.metric.value,
         }
 
+    @overload
+    def backup(self, backend: str = 'local',
+               target_dir: str = None, with_code=False, with_blob=False, with_cache=False):
+        ...
+
+    @overload
+    def backup(self, backend: str = 'github', access_token: str = None,
+               labels: list = None, update: bool = True,
+               **kwargs):
+        ...
+
     def backup(self, backend: str = 'github', **kwargs):
         """
         Backup this experiment into the given target, currently only support GitHub, you can implement your own way
         by the provided information of Experiment.
         """
         from .backup import backup_regist
-        if backend == 'github':
-            kwargs.setdefault('access_token', glob['github_access_token'])
-
         return backup_regist[backend](exp=self, **kwargs)
+
+    def archive(self, target_dir=None):
+        if 'git' not in self.properties:
+            return None
+
+        if target_dir is None:
+            target_dir = self.blob_dir
+
+        repo = git_repo.load_repo(self.project_root)
+        return git_repo.git_archive(target_dir, repo, self.properties['git']['commit'])
 
 
 class SimpleExperiment(Experiment):
@@ -925,8 +964,8 @@ class SimpleExperiment(Experiment):
     execute before and after the experiment.
     """
 
-    def __init__(self, exp_name: str = None, test_name=None, paths=None, info_dir=None):
-        super().__init__(exp_name, test_name, paths, info_dir)
+    def __init__(self, exp_name: str = None, test_name=None, roots=None, info_dir=None):
+        super().__init__(exp_name, test_name, roots, info_dir)
         from . import exphook
         self.set_hook(exphook.LastCmd())
         self.set_hook(exphook.LockFile())

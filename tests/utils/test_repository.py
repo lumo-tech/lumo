@@ -1,10 +1,11 @@
-import tempfile
 import os
+import random
+import tempfile
+
 import git
 
 from lumo.proc.config import debug_mode
 from lumo.utils import repository
-import random
 
 
 def write(fn):
@@ -62,8 +63,7 @@ def test_git():
 
     import tarfile
 
-    exp = repository.git_archive(repo, b_hash)
-    archived_fn = exp.load_string('archive_fn')
+    archived_fn = repository.git_archive(tempfile.mkdtemp(), repo, b_hash)
     file = tarfile.open(archived_fn, mode='r')
     assert file.extractfile('a.txt').read().decode() == b_str
     assert file.extractfile('init.txt').read().decode() == f_str

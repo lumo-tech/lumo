@@ -76,12 +76,29 @@ def test_json():
 def test_yaml():
     res = get_res()
     fn = tempfile.mktemp('.yaml')
+    res.yaml = 3
     res.a = 3
     res.to_yaml(fn)
     res.from_args([f'--config={fn}', '--a=2'])
     assert res.a == 2
     res.from_args([f'--config={fn}'])
-    assert res.a == 3
+    assert res.yaml == 3
+
+
+def test_multiple_config():
+    json_fn = tempfile.mktemp(".json")
+    with open(json_fn, 'w') as w:
+        json.dump({'json': {'a': 2}}, w)
+
+    yaml_pm = BaseParams()
+    yaml_fn = tempfile.mktemp('.yaml')
+    yaml_pm.yaml = 3
+    yaml_pm.to_yaml(yaml_fn)
+
+    res = MyParams()
+    res.from_args([f'--config={json_fn},{yaml_fn}'])
+    assert res.yaml == 3
+    assert res.json["a"] == 2
 
 
 def test_copy():

@@ -1,7 +1,7 @@
 """
 
 """
-__version__ = "1.0.0"
+__version__ = "1.1.0"
 
 from .core import Params, ParamsType, MetricType, Meter, Record, TrainStage, BaseParams
 from .proc import glob

@@ -8,7 +8,7 @@ from typing import Any, List, NewType, MutableMapping
 
 import fire
 from joblib import hash
-from omegaconf import DictConfig, OmegaConf, DictKeyType
+from omegaconf import DictConfig, OmegaConf, DictKeyType, ListConfig
 from omegaconf._utils import _ensure_container
 
 # from .attr import safe_update_dict, set_item_iterative
@@ -393,11 +393,19 @@ class BaseParams(DictConfig):
             config = kwargs.get('config')
             if config is None:
                 config = kwargs.get('c')
-            if config is not None and isinstance(config, str) and os.path.exists(config):
-                if config.endswith('yaml') or config.endswith('yml'):
-                    self.from_yaml(config)
-                elif config.endswith('json'):
-                    self.from_json(config)
+
+            if config is not None:
+                if isinstance(config, str):
+                    config = config.split(',')
+                if isinstance(config, (list, ListConfig)):
+                    for config_fn in config:
+                        print('get', config_fn, 'done')
+                        if not (isinstance(config_fn, str) and os.path.exists(config_fn)):
+                            continue
+                        if config_fn.endswith('yaml') or config_fn.endswith('yml'):
+                            self.from_yaml(config_fn)
+                        elif config_fn.endswith('json'):
+                            self.from_json(config_fn)
 
             dic = BaseParams()
             for k, v in kwargs.items():

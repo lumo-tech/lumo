@@ -56,10 +56,24 @@ def board(port=11606, address=None, open=True):
     print(f"Starting server on port {port}")
 
 
+def backup_local(test_name, target_dir, with_blob=False, with_cache=False):
+    from lumo.exp.watch import Watcher
+    from lumo import Experiment
+    w = Watcher()
+    exp = w.retrieve(test_name)
+    if exp is None:
+        print(f'{test_name} not found')
+        exit(1)
+    else:
+        print(exp.backup('local', target_dir=target_dir, with_blob=with_blob, with_cache=with_cache))
+
+
 def main():
     """the entry"""
     fire.Fire({
         'rerun': rerun,
         'note': note,
         'board': board,
+        'backup_local': backup_local,
     })
+    exit(0)

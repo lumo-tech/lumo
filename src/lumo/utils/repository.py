@@ -185,14 +185,13 @@ def git_commit(repo=None, key=None, branch_name=None, info: str = None, filter_f
     return commit_
 
 
-def git_archive(repo=None, commit_hex=None, commit: Commit = None):
+def git_archive(target_path, repo=None, commit_hex=None, commit: Commit = None):
     """
     git archive -o <filename> <commit-hash>
 
     Returns:
         An Experiment represents this archive operation
     """
-    from lumo.exp import Experiment
     if repo is None:
         repo = load_repo()
 
@@ -201,18 +200,14 @@ def git_archive(repo=None, commit_hex=None, commit: Commit = None):
 
     old_path = os.getcwd()
     os.chdir(commit.tree.abspath)
-    exp = Experiment('GitArchive')
-    fn = exp.mk_bpath(f'{commit.hexsha[:8]}.tar')
 
-    exp.dump_info('git_archive', {'file': fn,
-                                  'test_name': exp.test_name,
-                                  'commit_hex': commit.hexsha[:8]})
-    exp.dump_string('archive_fn', fn)
+    fn = os.path.join(target_path, f'{commit.hexsha[:8]}.tar')
+
     with open(fn, 'wb') as w:
         repo.archive(w, commit.hexsha)
 
     os.chdir(old_path)
-    return exp
+    return fn
 
 
 def git_checkout(repo=None, commit_hex=None, commit: Commit = None):

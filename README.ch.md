@@ -17,6 +17,7 @@
     - 数据: 数据集构建流程抽象、组合多个 DataLoader、...
     - 分布式训练：同样支持多种训练加速框架，统一抽象，方便随时切换
 - 更多工具类...
+- 尽可能多的支持现代 IDE 的自动补全
 
 ![lumo-framework](./images/lumo-intro.png)
 
@@ -33,6 +34,7 @@
 - [More](#more)
 - :pencil: [Acknowledge](#pencil-acknowledge)
 - :scroll: [License](#scroll-license)
+- [完整文档](https://pytorch-lumo.github.io/lumo/)
 
 # :cloud: 安装
 
