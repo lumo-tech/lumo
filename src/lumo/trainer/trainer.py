@@ -91,14 +91,14 @@ class Trainer(_BaseTrainer):
 
         device = params.get('device', None) if not self.is_dist else None
 
-        if isinstance(accelerator, str):
+        if isinstance(accelerator, str) or accelerator is None:
             accelerator = glob.get('accelerator', 'accelerator')
             accelerate = get_accelerator(accelerator)
         elif isinstance(accelerator, Accelerator):
             accelerate = accelerator
         else:
             raise NotImplementedError()
-        
+
         self.accelerate = accelerate
         self.accelerate.set_device(torch.device(device))
 
