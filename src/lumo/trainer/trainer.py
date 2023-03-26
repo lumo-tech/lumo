@@ -20,6 +20,7 @@ from lumo.proc import glob
 from lumo.utils import safe_io as IO
 from lumo.trainer.rnd import RndManager
 from lumo.utils.logger import Logger
+from .backend.base import Accelerator
 from .base import _BaseTrainer
 from .components import TrainerExperiment, TrainerParams
 from .saver import Saver
@@ -89,12 +90,16 @@ class Trainer(_BaseTrainer):
         self.train_toggle = False
 
         device = params.get('device', None) if not self.is_dist else None
-        # self.accelerate = Accelerator(kwargs_handlers=[
-        #     DistributedDataParallelKwargs(find_unused_parameters=params.get('find_unused_parameters', False))
-        # ])
-        accelerator = glob.get('accelerator', 'accelerator')
-        self.accelerate = get_accelerator(accelerator)
 
+        if isinstance(accelerator, str):
+            accelerator = glob.get('accelerator', 'accelerator')
+            accelerate = get_accelerator(accelerator)
+        elif isinstance(accelerator, Accelerator):
+            accelerate = accelerator
+        else:
+            raise NotImplementedError()
+        
+        self.accelerate = accelerate
         self.accelerate.set_device(torch.device(device))
 
         if dist.is_main():
