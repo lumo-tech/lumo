@@ -107,7 +107,7 @@ html_theme = "custom_rtd_theme"
 # html_theme = "sphinx_rtd_theme"
 # html_theme = "alabaster"
 html_theme_options = {
-    # 'github_url': 'https://github.com/pytorch-lumo/lumo',
+    # 'github_url': 'https://github.com/lumo-tech/lumo',
     # 'analytics_id': 'G-XXXXXXXXXX',  #  Provided by Google in your dashboard
     # 'analytics_anonymize_ip': False,
     # 'logo_only': False,

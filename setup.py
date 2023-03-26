@@ -14,7 +14,7 @@ if __name__ == '__main__':
         version=extract_version(),
         description='library to manage your pytorch experiments.',
         long_description_content_type='text/markdown',
-        url='https://github.com/pytorch-lumo/lumo',
+        url='https://github.com/lumo-tech/lumo',
         author='sailist',
         author_email='sailist@outlook.com',
         license_files=('LICENSE',),

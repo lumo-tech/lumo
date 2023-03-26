@@ -108,12 +108,12 @@ exp2.properties['rerun']
 ```python
 from lumo import glob
 glob['github_access_token'] = '...' # or store in .lumorc.json
-exp.backup('github',repo='pytorch-lumo/lumo')
+exp.backup('github',repo='lumo-tech/lumo')
 ```
 
 ```python
 from lumo import glob
-exp.backup('github',repo='pytorch-lumo/lumo', access_token='...')
+exp.backup('github',repo='lumo-tech/lumo', access_token='...')
 ```
 
 ### 本地/远程备份

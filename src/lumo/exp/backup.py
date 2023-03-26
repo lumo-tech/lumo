@@ -49,7 +49,7 @@ Tensor metrics:
 </details>
 
 
-> Powered by [lumo](https://github.com/pytorch-lumo/lumo)
+> Powered by [lumo](https://github.com/lumo-tech/lumo)
 """
 
 
