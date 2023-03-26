@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Experiment management &mdash; lumo 1.1.0 documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/sphinx_highlight.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Runtime Configuration and Params" href="configuration.html" />
+    <link rel="prev" title="Welcome to lumo’s documentation!" href="../index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            lumo
+          </a>
+              <div class="version">
+                
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Tutorial</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Experiment management</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#path-management">Path Management</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#version-control">Version Control</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#information-recording">Information Recording</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="#retrieve-experiment">Retrieve Experiment</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#visual-panel">Visual Panel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#repetitive-experiment">Repetitive Experiment</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="configuration.html">Runtime Configuration and Params</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dataset_builder.html">Build your Dataset Easily</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">lumo</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Experiment management</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/tutorial/reproducibility.md.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="experiment-management">
+<h1>Experiment management<a class="headerlink" href="#experiment-management" title="Permalink to this heading">¶</a></h1>
+<p>In <code class="docutils literal notranslate"><span class="pre">lumo</span></code>, the<code class="docutils literal notranslate"><span class="pre">Experiment</span></code>class provides sufficient guarantees to ensure experiment reproducibility. Specifically,<code class="docutils literal notranslate"><span class="pre">Experiment</span></code>guarantees reproducibility from four perspectives: path management, version control, parameter recording, and backup. It also simplifies the operation threshold through visual panels, command-line interfaces, and other methods.</p>
+<section id="path-management">
+<h2>Path Management<a class="headerlink" href="#path-management" title="Permalink to this heading">¶</a></h2>
+<p>To ensure that paths are not duplicated,<code class="docutils literal notranslate"><span class="pre">Experiment</span></code>assigns a unique experiment ID (<code class="docutils literal notranslate"><span class="pre">test_name</span></code>) to each experiment run. At the same time,<code class="docutils literal notranslate"><span class="pre">Experiment</span></code>provides three different types of data storage paths for storing information (info_dir), binary files (blob_dir), and temporary files (cache_dir), with the following path relationships:</p>
+<div class="highlight-markdown notranslate"><div class="highlight"><pre><span></span><span class="k">-</span><span class="w"> </span>&lt;cache_root&gt;
+<span class="w">    </span><span class="k">-</span><span class="w"> </span>&lt;exp_name&gt;
+<span class="w">        </span><span class="k">-</span><span class="w"> </span>&lt;cache_dir&gt;
+
+<span class="k">-</span><span class="w"> </span>&lt;info_root&gt;
+<span class="w">    </span><span class="k">-</span><span class="w"> </span>&lt;exp_name&gt;
+<span class="w">        </span><span class="k">-</span><span class="w"> </span>&lt;info_dir&gt;
+
+<span class="k">-</span><span class="w"> </span>&lt;blob_root&gt;
+<span class="w">    </span><span class="k">-</span><span class="w"> </span>&lt;exp_name&gt;
+<span class="w">        </span><span class="k">-</span><span class="w"> </span>&lt;blob_dir&gt;
+</pre></div>
+</div>
+</section>
+<section id="version-control">
+<h2>Version Control<a class="headerlink" href="#version-control" title="Permalink to this heading">¶</a></h2>
+<p>The lifecycle of<code class="docutils literal notranslate"><span class="pre">Experiment</span></code>includes start/progress/end, and a series of<code class="docutils literal notranslate"><span class="pre">ExpHook</span></code>classes are set up to perform partial operations at each lifecycle stage. Among them,<code class="docutils literal notranslate"><span class="pre">~lumo.exp.exphook.GitCommit</span></code>is responsible for git commit, which checks for file changes at<code class="docutils literal notranslate"><span class="pre">on_start</span></code>and submits a snapshot of the current file to the<code class="docutils literal notranslate"><span class="pre">lumo_experiments</span></code>branch if changes exist. The commit information corresponding to the current code is recorded in the<code class="docutils literal notranslate"><span class="pre">info_dir</span></code>of the<code class="docutils literal notranslate"><span class="pre">Experiment</span></code>instance and can be viewed through<code class="docutils literal notranslate"><span class="pre">exp.properties['git']</span></code>.</p>
+</section>
+<section id="information-recording">
+<h2>Information Recording<a class="headerlink" href="#information-recording" title="Permalink to this heading">¶</a></h2>
+<p>Information recording includes startup parameters such as hyperparameters and program execution parameters, runtime and post-run parameters such as Metric, execution time, and other metadata. All information mentioned except for hyperparameters is automatically recorded by<code class="docutils literal notranslate"><span class="pre">Experiment</span></code>at<code class="docutils literal notranslate"><span class="pre">.start()</span></code>. The hyperparameters of the experiment can be recorded by<code class="docutils literal notranslate"><span class="pre">exp.dump_info('params',</span> <span class="pre">params_dict)</span></code>.</p>
+<blockquote>
+<div><p>When using<code class="docutils literal notranslate"><span class="pre">lumo.Trainer</span></code>for training, hyperparameters used are automatically recorded in the<code class="docutils literal notranslate"><span class="pre">params</span></code>key.</p>
+</div></blockquote>
+<p>For Metric, the<code class="docutils literal notranslate"><span class="pre">Experiment</span></code>instance can be recorded using<code class="docutils literal notranslate"><span class="pre">.dump_metric</span></code>and<code class="docutils literal notranslate"><span class="pre">.dump_metrics()</span></code>, for example:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">max_acc</span> <span class="o">=</span> <span class="n">exp</span><span class="o">.</span><span class="n">dump_metric</span><span class="p">(</span><span class="s2">&quot;acc&quot;</span><span class="p">,</span><span class="n">acc</span><span class="p">,</span> <span class="s2">&quot;cls_acc&quot;</span><span class="p">,</span> <span class="n">cls_acc</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Here shows an example in <code class="docutils literal notranslate"><span class="pre">exp.properties</span></code></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="s1">&#39;agent&#39;</span><span class="p">:</span> <span class="n">nan</span><span class="p">,</span>
+ <span class="s1">&#39;backup&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;23-03-17-161847&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;backend&#39;</span><span class="p">:</span> <span class="s1">&#39;github&#39;</span><span class="p">,</span>
+                                <span class="s1">&#39;number&#39;</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span>
+                                <span class="s1">&#39;repo&#39;</span><span class="p">:</span> <span class="s1">&#39;pytorch-lumo/image-classification&#39;</span><span class="p">}},</span>
+ <span class="s1">&#39;deprecated&#39;</span><span class="p">:</span> <span class="n">nan</span><span class="p">,</span>
+ <span class="s1">&#39;exception&#39;</span><span class="p">:</span> <span class="n">nan</span><span class="p">,</span>
+ <span class="s1">&#39;execute&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;cwd&#39;</span><span class="p">:</span> <span class="s1">&#39;~/python/image-classification-private&#39;</span><span class="p">,</span>
+             <span class="s1">&#39;exec_argv&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;train_ssl.py&#39;</span><span class="p">,</span>
+                           <span class="s1">&#39;train_ssl.py&#39;</span><span class="p">,</span>
+                           <span class="s1">&#39;--module=simclr&#39;</span><span class="p">,</span>
+                           <span class="s1">&#39;--device=2&#39;</span><span class="p">,</span>
+                           <span class="s1">&#39;--config=config/ssl/simclr/cifar100.yaml&#39;</span><span class="p">,</span>
+                           <span class="s1">&#39;--model=wrn282&#39;</span><span class="p">,</span>
+                           <span class="s1">&#39;--scan=ssl-2023.02.28&#39;</span><span class="p">],</span>
+             <span class="s1">&#39;exec_bin&#39;</span><span class="p">:</span> <span class="s1">&#39;~/miniconda3/bin/python3&#39;</span><span class="p">,</span>
+             <span class="s1">&#39;exec_file&#39;</span><span class="p">:</span> <span class="s1">&#39;train_ssl.py&#39;</span><span class="p">,</span>
+             <span class="s1">&#39;repo&#39;</span><span class="p">:</span> <span class="s1">&#39;~/python/image-classification-private&#39;</span><span class="p">},</span>
+ <span class="s1">&#39;exp_name&#39;</span><span class="p">:</span> <span class="s1">&#39;simclr.simclrexp&#39;</span><span class="p">,</span>
+ <span class="s1">&#39;git&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;commit&#39;</span><span class="p">:</span> <span class="s1">&#39;294ccdac&#39;</span><span class="p">,</span>
+         <span class="s1">&#39;dep_hash&#39;</span><span class="p">:</span> <span class="s1">&#39;404fc6044b2119d56a5e8b92ac02fc1c&#39;</span><span class="p">,</span>
+         <span class="s1">&#39;repo&#39;</span><span class="p">:</span> <span class="s1">&#39;~/python/image-classification-private&#39;</span><span class="p">},</span>
+ <span class="s1">&#39;hooks&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;Diary&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;loaded&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span> <span class="s1">&#39;msg&#39;</span><span class="p">:</span> <span class="s1">&#39;&#39;</span><span class="p">},</span>
+           <span class="s1">&#39;FinalReport&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;loaded&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span> <span class="s1">&#39;msg&#39;</span><span class="p">:</span> <span class="s1">&#39;&#39;</span><span class="p">},</span>
+           <span class="s1">&#39;GitCommit&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;loaded&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span> <span class="s1">&#39;msg&#39;</span><span class="p">:</span> <span class="s1">&#39;&#39;</span><span class="p">},</span>
+           <span class="s1">&#39;LastCmd&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;loaded&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span> <span class="s1">&#39;msg&#39;</span><span class="p">:</span> <span class="s1">&#39;&#39;</span><span class="p">},</span>
+           <span class="s1">&#39;LockFile&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;loaded&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span> <span class="s1">&#39;msg&#39;</span><span class="p">:</span> <span class="s1">&#39;&#39;</span><span class="p">},</span>
+           <span class="s1">&#39;RecordAbort&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;loaded&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span> <span class="s1">&#39;msg&#39;</span><span class="p">:</span> <span class="s1">&#39;&#39;</span><span class="p">}},</span>
+ <span class="s1">&#39;lock&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;accelerate&#39;</span><span class="p">:</span> <span class="s1">&#39;0.16.0&#39;</span><span class="p">,</span>
+          <span class="s1">&#39;decorator&#39;</span><span class="p">:</span> <span class="s1">&#39;5.1.1&#39;</span><span class="p">,</span>
+          <span class="s1">&#39;fire&#39;</span><span class="p">:</span> <span class="s1">&#39;0.5.0&#39;</span><span class="p">,</span>
+          <span class="s1">&#39;hydra&#39;</span><span class="p">:</span> <span class="s1">&#39;1.3.1&#39;</span><span class="p">,</span>
+          <span class="s1">&#39;joblib&#39;</span><span class="p">:</span> <span class="s1">&#39;1.2.0&#39;</span><span class="p">,</span>
+          <span class="s1">&#39;lumo&#39;</span><span class="p">:</span> <span class="s1">&#39;0.15.0&#39;</span><span class="p">,</span>
+          <span class="s1">&#39;numpy&#39;</span><span class="p">:</span> <span class="s1">&#39;1.24.2&#39;</span><span class="p">,</span>
+          <span class="s1">&#39;omegaconf&#39;</span><span class="p">:</span> <span class="s1">&#39;2.3.0&#39;</span><span class="p">,</span>
+          <span class="s1">&#39;psutil&#39;</span><span class="p">:</span> <span class="s1">&#39;5.9.4&#39;</span><span class="p">,</span>
+          <span class="s1">&#39;torch&#39;</span><span class="p">:</span> <span class="s1">&#39;1.8.1+cu101&#39;</span><span class="p">,</span>
+          <span class="s1">&#39;torch.version.cuda&#39;</span><span class="p">:</span> <span class="s1">&#39;10.1&#39;</span><span class="p">},</span>
+ <span class="s1">&#39;note&#39;</span><span class="p">:</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+ <span class="s1">&#39;params&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;apply_mixco&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+            <span class="s1">&#39;apply_unmix&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+            <span class="s1">&#39;config&#39;</span><span class="p">:</span> <span class="s1">&#39;config/ssl/simclr/cifar100.yaml&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;dataset&#39;</span><span class="p">:</span> <span class="s1">&#39;cifar100&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;detach_cls&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+            <span class="s1">&#39;device&#39;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+            <span class="s1">&#39;ema&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+            <span class="s1">&#39;ema_alpha&#39;</span><span class="p">:</span> <span class="mf">0.99</span><span class="p">,</span>
+            <span class="s1">&#39;epoch&#39;</span><span class="p">:</span> <span class="mi">1000</span><span class="p">,</span>
+            <span class="s1">&#39;eval&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;batch_size&#39;</span><span class="p">:</span> <span class="mi">512</span><span class="p">,</span>
+                     <span class="s1">&#39;num_workers&#39;</span><span class="p">:</span> <span class="mi">8</span><span class="p">,</span>
+                     <span class="s1">&#39;pin_memory&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+                     <span class="s1">&#39;shuffle&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">},</span>
+            <span class="s1">&#39;feature_dim&#39;</span><span class="p">:</span> <span class="mi">128</span><span class="p">,</span>
+            <span class="s1">&#39;hidden_feature_size&#39;</span><span class="p">:</span> <span class="mi">128</span><span class="p">,</span>
+            <span class="s1">&#39;knn&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+            <span class="s1">&#39;knn_k&#39;</span><span class="p">:</span> <span class="mi">200</span><span class="p">,</span>
+            <span class="s1">&#39;knn_t&#39;</span><span class="p">:</span> <span class="mf">0.1</span><span class="p">,</span>
+            <span class="s1">&#39;linear_eval&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+            <span class="s1">&#39;lr_decay_end&#39;</span><span class="p">:</span> <span class="mf">0.0005</span><span class="p">,</span>
+            <span class="s1">&#39;method&#39;</span><span class="p">:</span> <span class="s1">&#39;simclr&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;model&#39;</span><span class="p">:</span> <span class="s1">&#39;wrn282&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;module&#39;</span><span class="p">:</span> <span class="s1">&#39;simclr&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;more_sample&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+            <span class="s1">&#39;n_classes&#39;</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span>
+            <span class="s1">&#39;optim&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;lr&#39;</span><span class="p">:</span> <span class="mf">0.06</span><span class="p">,</span>
+                      <span class="s1">&#39;momentum&#39;</span><span class="p">:</span> <span class="mf">0.9</span><span class="p">,</span>
+                      <span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;SGD&#39;</span><span class="p">,</span>
+                      <span class="s1">&#39;weight_decay&#39;</span><span class="p">:</span> <span class="mf">0.0005</span><span class="p">},</span>
+            <span class="s1">&#39;pretrain_path&#39;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="s1">&#39;scan&#39;</span><span class="p">:</span> <span class="s1">&#39;ssl-2023.02.28&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;seed&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="s1">&#39;semi_eval&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+            <span class="s1">&#39;stl10_unlabeled&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+            <span class="s1">&#39;temperature&#39;</span><span class="p">:</span> <span class="mf">0.1</span><span class="p">,</span>
+            <span class="s1">&#39;test&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;batch_size&#39;</span><span class="p">:</span> <span class="mi">512</span><span class="p">,</span>
+                     <span class="s1">&#39;num_workers&#39;</span><span class="p">:</span> <span class="mi">8</span><span class="p">,</span>
+                     <span class="s1">&#39;pin_memory&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+                     <span class="s1">&#39;shuffle&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">},</span>
+            <span class="s1">&#39;train&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;batch_size&#39;</span><span class="p">:</span> <span class="mi">512</span><span class="p">,</span>
+                      <span class="s1">&#39;num_workers&#39;</span><span class="p">:</span> <span class="mi">8</span><span class="p">,</span>
+                      <span class="s1">&#39;pin_memory&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+                      <span class="s1">&#39;shuffle&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">},</span>
+            <span class="s1">&#39;train_ending&#39;</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span>
+            <span class="s1">&#39;train_linear&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+            <span class="s1">&#39;train_strategy&#39;</span><span class="p">:</span> <span class="s1">&#39;ending&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;warmup_epochs&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+            <span class="s1">&#39;warmup_from&#39;</span><span class="p">:</span> <span class="mf">0.01</span><span class="p">,</span>
+            <span class="s1">&#39;with_bn&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">},</span>
+ <span class="s1">&#39;pinfo&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;hash&#39;</span><span class="p">:</span> <span class="s1">&#39;62ee6de98b381872e200e82901ad51f7&#39;</span><span class="p">,</span>
+           <span class="s1">&#39;obj&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;argv&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;~/miniconda3/bin/python3&#39;</span><span class="p">,</span>
+                            <span class="s1">&#39;train_ssl.py&#39;</span><span class="p">,</span>
+                            <span class="s1">&#39;train_ssl.py&#39;</span><span class="p">,</span>
+                            <span class="s1">&#39;--module=simclr&#39;</span><span class="p">,</span>
+                            <span class="s1">&#39;--device=2&#39;</span><span class="p">,</span>
+                            <span class="s1">&#39;--config=config/ssl/simclr/cifar100.yaml&#39;</span><span class="p">,</span>
+                            <span class="s1">&#39;--model=wrn282&#39;</span><span class="p">,</span>
+                            <span class="s1">&#39;--scan=ssl-2023.02.28&#39;</span><span class="p">],</span>
+                   <span class="s1">&#39;pid&#39;</span><span class="p">:</span> <span class="mi">27687</span><span class="p">,</span>
+                   <span class="s1">&#39;pname&#39;</span><span class="p">:</span> <span class="s1">&#39;python3&#39;</span><span class="p">,</span>
+                   <span class="s1">&#39;pstart&#39;</span><span class="p">:</span> <span class="mf">1678763482.5</span><span class="p">},</span>
+           <span class="s1">&#39;pid&#39;</span><span class="p">:</span> <span class="mi">27687</span><span class="p">},</span>
+ <span class="s1">&#39;progress&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;finished&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+              <span class="s1">&#39;last_edit_time&#39;</span><span class="p">:</span> <span class="s1">&#39;23-03-14-212932&#39;</span><span class="p">,</span>
+              <span class="s1">&#39;ratio&#39;</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">,</span>
+              <span class="s1">&#39;start&#39;</span><span class="p">:</span> <span class="s1">&#39;23-03-14-111124&#39;</span><span class="p">,</span>
+              <span class="s1">&#39;update_from&#39;</span><span class="p">:</span> <span class="kc">None</span><span class="p">},</span>
+ <span class="s1">&#39;rerun&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;from&#39;</span><span class="p">:</span> <span class="s1">&#39;230313.015.99t&#39;</span><span class="p">,</span> <span class="s1">&#39;repeat&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">},</span>
+ <span class="s1">&#39;test_name&#39;</span><span class="p">:</span> <span class="s1">&#39;230314.000.a3t&#39;</span><span class="p">,</span>
+ <span class="o">...</span>
+ <span class="p">}</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="retrieve-experiment">
+<h1>Retrieve Experiment<a class="headerlink" href="#retrieve-experiment" title="Permalink to this heading">¶</a></h1>
+<p><code class="docutils literal notranslate"><span class="pre">Watch</span></code>consolidates information for all experiments, allowing users to search for a specific experiment.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">lumo</span> <span class="kn">import</span> <span class="n">Watcher</span><span class="p">,</span> <span class="n">Experiment</span>
+
+<span class="n">w</span> <span class="o">=</span> <span class="n">Watcher</span><span class="p">()</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">w</span><span class="o">.</span><span class="n">load</span><span class="p">()</span> <span class="c1"># all experiments</span>
+
+<span class="n">exp</span> <span class="o">=</span> <span class="n">Experiment</span><span class="o">.</span><span class="n">from_cache</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">to_dict</span><span class="p">())</span>
+</pre></div>
+</div>
+<p>For a known experiment with<code class="docutils literal notranslate"><span class="pre">test_name</span></code>, the<code class="docutils literal notranslate"><span class="pre">Experiment</span></code>instance can be directly retrieved using the<code class="docutils literal notranslate"><span class="pre">retrieve</span></code>method:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">w</span><span class="o">.</span><span class="n">retrieve</span><span class="p">(</span><span class="s1">&#39;230306.012.d5t&#39;</span><span class="p">)</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">Experiment</span><span class="p">(</span><span class="n">info_dir</span><span class="o">=</span><span class="s2">&quot;.../.lumo/experiments/moco.mocoexp/230306.012.d5t&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<section id="visual-panel">
+<h2>Visual Panel<a class="headerlink" href="#visual-panel" title="Permalink to this heading">¶</a></h2>
+<p>A fixed-style panel can never satisfy everyone’s needs. Therefore, <code class="docutils literal notranslate"><span class="pre">lumo</span></code> provides dynamic panels based on pandas and panel, with all styles except for a few fixed parts added by the user:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">lumo</span> <span class="kn">import</span> <span class="n">Watcher</span>
+<span class="n">w</span> <span class="o">=</span> <span class="n">Watcher</span><span class="p">()</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">w</span><span class="o">.</span><span class="n">load</span><span class="p">()</span>
+
+<span class="o">...</span> <span class="nb">filter</span> <span class="n">operations</span> <span class="o">...</span>
+
+<span class="n">new_df</span> <span class="o">=</span> <span class="o">...</span>
+
+<span class="n">w</span><span class="o">.</span><span class="n">panel</span><span class="p">(</span><span class="n">new_df</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><img alt="" src="../_images/2023-03-24-15-57-11.png" /></p>
+</section>
+<section id="repetitive-experiment">
+<h2>Repetitive Experiment<a class="headerlink" href="#repetitive-experiment" title="Permalink to this heading">¶</a></h2>
+<p>Repetitive experiments mainly occur in two scenarios:</p>
+<ul class="simple">
+<li><p>To verify the stability of the results, rerun the experiment with other random seeds and the same parameters.</p></li>
+<li><p>In the middle of the experiment, due to memory, disk space, or other reasons, the experiment failed and needs to be rerun with similar parameters.</p></li>
+</ul>
+<p>Especially when scanning parameters, if only</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../index.html" class="btn btn-neutral float-left" title="Welcome to lumo’s documentation!" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="configuration.html" class="btn btn-neutral float-right" title="Runtime Configuration and Params" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, sailist.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <div>
+    <p>True Flag</p>
+    
+    
+    <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="Versions">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      <span class="fa fa-book"> Read the Docs</span>
+      v: 
+      <span class="fa fa-caret-down"></span>
+    </span>
+        <div class="rst-other-versions">
+            <dl>
+                <dt>Versions</dt>
+            </dl>
+        </div>
+    </div>
+    
+
+</div><script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

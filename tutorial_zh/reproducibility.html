@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Reproducibility &mdash; lumo 1.1.0 documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/sphinx_highlight.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            lumo
+          </a>
+              <div class="version">
+                
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Tutorial</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial/reproducibility.html">Experiment management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial/reproducibility.html#retrieve-experiment">Retrieve Experiment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial/configuration.html">Runtime Configuration and Params</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial/dataset_builder.html">Build your Dataset Easily</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">lumo</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Reproducibility</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/tutorial_zh/reproducibility.md.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="reproducibility">
+<h1>Reproducibility<a class="headerlink" href="#reproducibility" title="Permalink to this heading">¶</a></h1>
+<p>在 lumo 中，<code class="docutils literal notranslate"><span class="pre">Experiment</span></code> 为保证实验可复现提供了足够的保障。具体的，Experiment 从路径管理、版本控制、参数记录、备份四个角度来保证。并通过可视化面板、命令行接口等简化了操作门槛。</p>
+<section id="id1">
+<h2>路径管理<a class="headerlink" href="#id1" title="Permalink to this heading">¶</a></h2>
+<p>为了保证路径不重复，<code class="docutils literal notranslate"><span class="pre">Experiment</span></code> 会为每次实验运行分配一个唯一实验 ID (<code class="docutils literal notranslate"><span class="pre">test_name</span></code>)。同时，<code class="docutils literal notranslate"><span class="pre">Experiment</span></code> 提供三种不同类型的数据存储路径，分别用于存储信息（info_dir）、二进制文件(blob_dir)、临时文件(cache_dir)，三者的路径关系如下：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">-</span> <span class="o">&lt;</span><span class="n">cache_root</span><span class="o">&gt;</span>
+    <span class="o">-</span> <span class="o">&lt;</span><span class="n">exp_name</span><span class="o">&gt;</span>
+        <span class="o">-</span> <span class="o">&lt;</span><span class="n">cache_dir</span><span class="o">&gt;</span>
+
+<span class="o">-</span> <span class="o">&lt;</span><span class="n">info_root</span><span class="o">&gt;</span>
+    <span class="o">-</span> <span class="o">&lt;</span><span class="n">exp_name</span><span class="o">&gt;</span>
+        <span class="o">-</span> <span class="o">&lt;</span><span class="n">info_dir</span><span class="o">&gt;</span>
+
+<span class="o">-</span> <span class="o">&lt;</span><span class="n">blob_root</span><span class="o">&gt;</span>
+    <span class="o">-</span> <span class="o">&lt;</span><span class="n">exp_name</span><span class="o">&gt;</span>
+        <span class="o">-</span> <span class="o">&lt;</span><span class="n">blob_dir</span><span class="o">&gt;</span>
+
+</pre></div>
+</div>
+</section>
+<section id="id2">
+<h2>版本控制<a class="headerlink" href="#id2" title="Permalink to this heading">¶</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">Experiment</span></code> 的生命周期包括 start/progress/end，在每个生命周期，都设置了一系列 <code class="docutils literal notranslate"><span class="pre">ExpHook</span></code> 类来执行部分操作。其中，负责 git 提交的是 <code class="docutils literal notranslate"><span class="pre">~lumo.exp.exphook.GitCommit</span></code>，会在 <code class="docutils literal notranslate"><span class="pre">on_start</span></code> 时检查文件的更改，如果存在，则向 <code class="docutils literal notranslate"><span class="pre">lumo_experiments</span></code> 分支提交一份当前的文件快照。当前代码所对应的 commit 等信息会全部记录到该 <code class="docutils literal notranslate"><span class="pre">Experiment</span></code> 实例的 <code class="docutils literal notranslate"><span class="pre">info_dir</span></code> 中。可以通过 <code class="docutils literal notranslate"><span class="pre">exp.properties['git']</span></code> 查看。</p>
+</section>
+<section id="id3">
+<h2>参数记录<a class="headerlink" href="#id3" title="Permalink to this heading">¶</a></h2>
+<p>参数记录包括超参数、程序执行参数等启动时参数，Metric 等运行时和运行后参数以及执行时间等元信息。除了超参数外，所提到的全部信息都会通过 <code class="docutils literal notranslate"><span class="pre">Experiment</span></code> 在 <code class="docutils literal notranslate"><span class="pre">.start()</span></code> 时自动记录。而实验的超参数，则可以通过<code class="docutils literal notranslate"><span class="pre">exp.dump_info('params',params_dict)</span></code> 自行记录。</p>
+<blockquote>
+<div><p>使用 lumo.Trainer 训练时，使用到的超参数会自动记录到 <code class="docutils literal notranslate"><span class="pre">params</span></code> key 中。</p>
+</div></blockquote>
+<p>对于 Metric，<code class="docutils literal notranslate"><span class="pre">Experiment</span></code> 实例可以通过 <code class="docutils literal notranslate"><span class="pre">.dump_metric</span></code> 和 <code class="docutils literal notranslate"><span class="pre">.dump_metrics()</span></code> 进行记录，如：</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">max_acc</span> <span class="o">=</span> <span class="n">exp</span><span class="o">.</span><span class="n">dump_metric</span><span class="p">(</span><span class="s2">&quot;acc&quot;</span><span class="p">,</span><span class="n">acc</span><span class="p">,</span> <span class="s2">&quot;cls_acc&quot;</span><span class="p">,</span> <span class="n">cls_acc</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="retrieve">
+<h1>Retrieve<a class="headerlink" href="#retrieve" title="Permalink to this heading">¶</a></h1>
+<p><code class="docutils literal notranslate"><span class="pre">Watch</span></code> 会将所有实验的信息进行整合，从而允许用户全盘检索某次实验。</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">lumo</span> <span class="kn">import</span> <span class="n">Watcher</span><span class="p">,</span> <span class="n">Experiment</span>
+
+<span class="n">w</span> <span class="o">=</span> <span class="n">Watcher</span><span class="p">()</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">w</span><span class="o">.</span><span class="n">load</span><span class="p">()</span> <span class="c1"># all experiments</span>
+
+<span class="n">exp</span> <span class="o">=</span> <span class="n">Experiment</span><span class="o">.</span><span class="n">from_cache</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">to_dict</span><span class="p">())</span>
+</pre></div>
+</div>
+<p>对某个已知 <code class="docutils literal notranslate"><span class="pre">test_name</span></code> 的实验，可以通过 <code class="docutils literal notranslate"><span class="pre">retrieve</span></code> 方法直接获取 <code class="docutils literal notranslate"><span class="pre">Experiment</span></code> 实例：</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">w</span><span class="o">.</span><span class="n">retrieve</span><span class="p">(</span><span class="s1">&#39;230306.012.d5t&#39;</span><span class="p">)</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">Experiment</span><span class="p">(</span><span class="n">info_dir</span><span class="o">=</span><span class="s2">&quot;.../.lumo/experiments/moco.mocoexp/230306.012.d5t&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<section id="id4">
+<h2>可视化面板<a class="headerlink" href="#id4" title="Permalink to this heading">¶</a></h2>
+<p>一个固定样式的面板永远不能满足所有人的需要，所以，lumo 基于 pandas 和 panel 提供了动态面板，除了固定的几个部分外，其余所有样式均由使用者自行添加：</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">lumo</span> <span class="kn">import</span> <span class="n">Watcher</span>
+<span class="n">w</span> <span class="o">=</span> <span class="n">Watcher</span><span class="p">()</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">w</span><span class="o">.</span><span class="n">load</span><span class="p">()</span>
+
+<span class="o">...</span> <span class="nb">filter</span> <span class="n">operations</span> <span class="o">...</span>
+
+<span class="n">new_df</span> <span class="o">=</span> <span class="o">...</span>
+
+<span class="n">w</span><span class="o">.</span><span class="n">panel</span><span class="p">(</span><span class="n">new_df</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><img alt="" src="../_images/2023-03-24-15-57-111.png" /></p>
+</section>
+<section id="id5">
+<h2>重复实验<a class="headerlink" href="#id5" title="Permalink to this heading">¶</a></h2>
+<p>重复实验主要存在于两个场景：</p>
+<ul class="simple">
+<li><p>为了验证结果稳定性而使用其他随机种子重新以相同参数运行实验</p></li>
+<li><p>在实验中途因为显存、内存等原因实验出错需要以类似参数运行实验</p></li>
+</ul>
+<p>尤其是在扫参时，如果仅有一两个实验出现了问题，直接基于日志观察，很难快速的知道失败的实验的运行参数。lumo 提供了 <code class="docutils literal notranslate"><span class="pre">rerun</span></code> 这一命令行参数，对于通过可视化面板或其他方式得到的失败的实验 ID (test_name)，可以直接通过如下的命令重跑，并重新指定参数：</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>lumo<span class="w"> </span>rerun<span class="w"> </span><span class="m">230315</span>.017.bbt<span class="w"> </span>--device<span class="o">=</span><span class="m">0</span>
+lumo<span class="w"> </span>rerun<span class="w"> </span><span class="m">230315</span>.012.29t<span class="w"> </span>--seed<span class="o">=</span><span class="m">1</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">rerun</span></code>除了保证运行参数完全可控，还会在原实验和新实验之间建立一个双向链接，用于提示实验的重复次数等，可以分别在原实验和新实验的 <code class="docutils literal notranslate"><span class="pre">rerun</span></code> 参数中观察到：</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">exp</span><span class="o">.</span><span class="n">properties</span><span class="p">[</span><span class="s1">&#39;rerun&#39;</span><span class="p">]</span>
+<span class="o">&gt;&gt;&gt;</span>  <span class="p">{</span><span class="s1">&#39;from&#39;</span><span class="p">:</span> <span class="s1">&#39;230310.002.f5t&#39;</span><span class="p">,</span> <span class="s1">&#39;repeat&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">}</span>
+
+<span class="n">exp2</span><span class="o">.</span><span class="n">properties</span><span class="p">[</span><span class="s1">&#39;rerun&#39;</span><span class="p">]</span>
+<span class="o">&gt;&gt;&gt;</span>  <span class="p">{</span><span class="s1">&#39;rerun_at&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;230311.004.87t&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">}}</span>
+</pre></div>
+</div>
+</section>
+<section id="id6">
+<h2>备份<a class="headerlink" href="#id6" title="Permalink to this heading">¶</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">Experiment</span></code> 额外提供了备份方法，可以向不同的途径记录实验。</p>
+<section id="github">
+<h3>GitHub<a class="headerlink" href="#github" title="Permalink to this heading">¶</a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">lumo</span> <span class="kn">import</span> <span class="n">glob</span>
+<span class="n">glob</span><span class="p">[</span><span class="s1">&#39;github_access_token&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;...&#39;</span> <span class="c1"># or store in .lumorc.json</span>
+<span class="n">exp</span><span class="o">.</span><span class="n">backup</span><span class="p">(</span><span class="s1">&#39;github&#39;</span><span class="p">,</span><span class="n">repo</span><span class="o">=</span><span class="s1">&#39;pytorch-lumo/lumo&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">lumo</span> <span class="kn">import</span> <span class="n">glob</span>
+<span class="n">exp</span><span class="o">.</span><span class="n">backup</span><span class="p">(</span><span class="s1">&#39;github&#39;</span><span class="p">,</span><span class="n">repo</span><span class="o">=</span><span class="s1">&#39;pytorch-lumo/lumo&#39;</span><span class="p">,</span> <span class="n">access_token</span><span class="o">=</span><span class="s1">&#39;...&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="id7">
+<h3>本地/远程备份<a class="headerlink" href="#id7" title="Permalink to this heading">¶</a></h3>
+<ul class="simple">
+<li><p>[ ] TODO</p></li>
+</ul>
+</section>
+<section id="id8">
+<h3>代码快照<a class="headerlink" href="#id8" title="Permalink to this heading">¶</a></h3>
+<ul class="simple">
+<li><p>[ ] TODO</p></li>
+</ul>
+</section>
+</section>
+</section>
+<section id="id9">
+<h1>其他<a class="headerlink" href="#id9" title="Permalink to this heading">¶</a></h1>
+<section id="id10">
+<h2>生命周期<a class="headerlink" href="#id10" title="Permalink to this heading">¶</a></h2>
+<p>所有经过 <code class="docutils literal notranslate"><span class="pre">Experiment</span></code> 对实验信息的改动都会自动触发一次变更记录，会在 <code class="docutils literal notranslate"><span class="pre">exp.heartbeat_fn</span></code> 位置创建一个文件。该文件会被 Watcher 在 <code class="docutils literal notranslate"><span class="pre">.load()</span></code> 的时候检测到，并增量更新该实验的内容。<code class="docutils literal notranslate"><span class="pre">Experiment</span></code> 实例在创建时，如果是通过 <code class="docutils literal notranslate"><span class="pre">.from_cache()</span></code> 创建的，也会检测该文件是否存在，如果存在，则从原目录中重新加载，而忽略 cache 的内容。</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">-</span> <span class="n">progress</span>
+    <span class="o">-</span> <span class="o">&lt;</span><span class="n">exp_name</span><span class="o">&gt;</span>
+        <span class="o">-</span> <span class="p">{</span><span class="n">test</span><span class="o">-</span><span class="mi">1</span><span class="p">}</span><span class="o">.</span><span class="n">heartbeat</span>
+        <span class="o">-</span> <span class="p">{</span><span class="n">test</span><span class="o">-</span><span class="mi">1</span><span class="p">}</span><span class="o">.</span><span class="n">pid</span>
+</pre></div>
+</div>
+</section>
+<section id="exphook">
+<h2>ExpHook<a class="headerlink" href="#exphook" title="Permalink to this heading">¶</a></h2>
+<p>目前支持的 ExpHook 有：</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">~lumo.exp.exphook.LastCmd</span></code> : 在项目根目录（或运行目录）记录运行命令的 history。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">~lumo.exp.exphook.RecordAbort</span></code> : 在项目抛出异常时在 <code class="docutils literal notranslate"><span class="pre">exp.properties[&quot;exception&quot;]</span></code> 记录异常内容。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">~lumo.exp.exphook.GitCommit</span></code> : 在每次实验开始时保存实验快照，并记录 commit 信息到 <code class="docutils literal notranslate"><span class="pre">exp.properties['git']</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">~lumo.exp.exphook.LockFile</span></code> : 在每次实验开始时保存相关库的版本信息，记录到 <code class="docutils literal notranslate"><span class="pre">exp.properties['lock']</span></code></p></li>
+</ul>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, sailist.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <div>
+    <p>True Flag</p>
+    
+    
+    <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="Versions">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      <span class="fa fa-book"> Read the Docs</span>
+      v: 
+      <span class="fa fa-caret-down"></span>
+    </span>
+        <div class="rst-other-versions">
+            <dl>
+                <dt>Versions</dt>
+            </dl>
+        </div>
+    </div>
+    
+
+</div><script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

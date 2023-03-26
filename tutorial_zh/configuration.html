@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Configuration &mdash; lumo 1.1.0 documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/sphinx_highlight.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            lumo
+          </a>
+              <div class="version">
+                
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Tutorial</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial/reproducibility.html">Experiment management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial/reproducibility.html#retrieve-experiment">Retrieve Experiment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial/configuration.html">Runtime Configuration and Params</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial/dataset_builder.html">Build your Dataset Easily</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">lumo</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Configuration</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/tutorial_zh/configuration.md.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="configuration">
+<h1>Configuration<a class="headerlink" href="#configuration" title="Permalink to this heading">¶</a></h1>
+<p>lumo 提供了多级作用域的配置，这包括：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">~/.</span><span class="n">lumorc</span><span class="o">.</span><span class="n">json</span> <span class="o">-&gt;</span> <span class="n">user</span><span class="o">-</span><span class="n">level</span>
+<span class="o">&lt;</span><span class="n">repo</span><span class="o">&gt;/.</span><span class="n">lumorc</span><span class="o">.</span><span class="n">json</span> <span class="o">-&gt;</span> <span class="n">repo</span><span class="o">-</span><span class="n">level</span><span class="p">,</span> <span class="n">private</span>
+<span class="o">&lt;</span><span class="n">repo</span><span class="o">&gt;/.</span><span class="n">lumorc</span><span class="o">.</span><span class="n">public</span><span class="o">.</span><span class="n">json</span> <span class="o">-&gt;</span> <span class="n">repo</span><span class="o">-</span><span class="n">level</span><span class="p">,</span> <span class="n">public</span>
+</pre></div>
+</div>
+<p>所有的配置会在运行时加载到 <code class="docutils literal notranslate"><span class="pre">lumo.glob</span></code> 中，用以全局设置：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">lumo</span> <span class="kn">import</span> <span class="n">glob</span>
+
+<span class="n">glob</span><span class="p">[</span><span class="s1">&#39;xxx&#39;</span><span class="p">]</span>
+</pre></div>
+</div>
+<section id="id1">
+<h2>配置和超参数的区别<a class="headerlink" href="#id1" title="Permalink to this heading">¶</a></h2>
+<p>在 lumo 中，配置大多用于和实验完全无关，但跟电脑环境和 lumo 行为有关的内容，如数据集的存放路径、GitHub 的 access token 等。 <code class="docutils literal notranslate"><span class="pre">lumo</span></code> 中所有支持的可选行为都可以通过更改 glob 的配置进行控制，以下是目前支持变更的配置项：</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>配置项</p></th>
+<th class="head"><p>描述</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>github_access_token</p></td>
+<td><p>代替 exp.backup() 方法的 access_token 参数。</p></td>
+</tr>
+<tr class="row-odd"><td><p>exp_root</p></td>
+<td><p>一些初始路径之一。</p></td>
+</tr>
+<tr class="row-even"><td><p>db_root</p></td>
+<td><p>一些初始路径之一。</p></td>
+</tr>
+<tr class="row-odd"><td><p>progress_root</p></td>
+<td><p>一些初始路径之一。</p></td>
+</tr>
+<tr class="row-even"><td><p>metric_root</p></td>
+<td><p>一些初始路径之一。</p></td>
+</tr>
+<tr class="row-odd"><td><p>cache_dir</p></td>
+<td><p>一些初始路径之一。</p></td>
+</tr>
+<tr class="row-even"><td><p>blob_root</p></td>
+<td><p>一些初始路径之一。</p></td>
+</tr>
+<tr class="row-odd"><td><p>timezone</p></td>
+<td><p>决定 lumo 使用的时区，默认为 ‘Asia/Shanghai’。</p></td>
+</tr>
+<tr class="row-even"><td><p>TRAINER_LOGGER_STDIO</p></td>
+<td><p>控制 Logger 是否向标准输出流输出内容。</p></td>
+</tr>
+<tr class="row-odd"><td><p>dev_branch</p></td>
+<td><p>版本控制时代码快照的保存分支，默认为 ‘lumo_experiments’。</p></td>
+</tr>
+<tr class="row-even"><td><p>HOOK_LOCKFILE</p></td>
+<td><p>控制加载 LockFile ExpHook 的行为。</p></td>
+</tr>
+<tr class="row-odd"><td><p>HOOK_RECORDABORT</p></td>
+<td><p>控制加载 RecordAbort ExpHook 的行为。</p></td>
+</tr>
+<tr class="row-even"><td><p>HOOK_GITCOMMIT</p></td>
+<td><p>控制加载 GitCommit ExpHook 的行为。</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, sailist.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <div>
+    <p>True Flag</p>
+    
+    
+    <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="Versions">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      <span class="fa fa-book"> Read the Docs</span>
+      v: 
+      <span class="fa fa-caret-down"></span>
+    </span>
+        <div class="rst-other-versions">
+            <dl>
+                <dt>Versions</dt>
+            </dl>
+        </div>
+    </div>
+    
+
+</div><script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Build your Dataset Easily &mdash; lumo 1.1.0 documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/sphinx_highlight.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="prev" title="Runtime Configuration and Params" href="configuration.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            lumo
+          </a>
+              <div class="version">
+                
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Tutorial</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="reproducibility.html">Experiment management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="reproducibility.html#retrieve-experiment">Retrieve Experiment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="configuration.html">Runtime Configuration and Params</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Build your Dataset Easily</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">lumo</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Build your Dataset Easily</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/tutorial/dataset_builder.md.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="build-your-dataset-easily">
+<h1>Build your Dataset Easily<a class="headerlink" href="#build-your-dataset-easily" title="Permalink to this heading">¶</a></h1>
+<p>lumo has designed<code class="docutils literal notranslate"><span class="pre">~lumo.DatasetBuilder</span></code>to provide a unified interface for constructing datasets. This can greatly reduce repetitive dataset design in most cases.</p>
+<p>Taking the CIFAR10 dataset as an example, if the dataset requires images to be output with two augmentations, either the Dataset class needs to be modified or the transform function needs to be rewritten:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">MyCIFAR</span><span class="p">(</span><span class="n">CIFAR10</span><span class="p">):</span>
+    <span class="o">...</span>
+
+    <span class="k">def</span> <span class="nf">__getitem</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">index</span><span class="p">):</span>
+        <span class="n">sample</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">index</span><span class="p">]</span>
+        <span class="n">label</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">target</span><span class="p">[</span><span class="n">index</span><span class="p">]</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">transform1</span><span class="p">(</span><span class="n">sample</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">transform2</span><span class="p">(</span><span class="n">sample</span><span class="p">),</span> <span class="n">label</span>
+
+
+<span class="c1"># or</span>
+
+<span class="k">def</span> <span class="nf">two_transform</span><span class="p">(</span><span class="n">sample</span><span class="p">):</span>
+    <span class="o">...</span>
+    <span class="k">return</span> <span class="n">transform1</span><span class="p">(</span><span class="n">sample</span><span class="p">),</span> <span class="n">transform2</span><span class="p">(</span><span class="n">sample</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>When facing such changes in multiple datasets, this rewriting method can be time-consuming. Especially when the output format is not yet certain and may be subject to frequent changes.</p>
+<p>To solve this, lumo provides a universal and streaming solution through<code class="docutils literal notranslate"><span class="pre">DatasetBuilder</span></code>. You only need to prepare the raw data in the standard format and the standard one-to-one augmentation functions:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="o">...</span>
+
+<span class="n">source</span> <span class="o">=</span> <span class="n">CIFAR10</span><span class="p">()</span>
+<span class="n">transform1</span> <span class="o">=</span> <span class="o">...</span>
+<span class="n">transform2</span> <span class="o">=</span> <span class="o">...</span>
+</pre></div>
+</div>
+<p>Then, any output format can be defined through<code class="docutils literal notranslate"><span class="pre">DatasetBuilder</span></code>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">lumo</span> <span class="kn">import</span> <span class="n">DatasetBuilder</span>
+
+<span class="n">ds</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="n">DatasetBuilder</span><span class="p">()</span>
+        <span class="c1"># Define input stream</span>
+        <span class="o">.</span><span class="n">add_input</span><span class="p">(</span><span class="s1">&#39;xs&#39;</span><span class="p">,</span> <span class="n">source</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+        <span class="o">.</span><span class="n">add_input</span><span class="p">(</span><span class="s1">&#39;ys&#39;</span><span class="p">,</span> <span class="n">source</span><span class="o">.</span><span class="n">targets</span><span class="p">)</span>
+        <span class="c1"># Define output stream</span>
+        <span class="o">.</span><span class="n">add_output</span><span class="p">(</span><span class="s1">&#39;xs&#39;</span><span class="p">,</span><span class="s1">&#39;xs1&#39;</span><span class="p">,</span><span class="n">transform1</span><span class="p">)</span>
+        <span class="o">.</span><span class="n">add_output</span><span class="p">(</span><span class="s1">&#39;xs&#39;</span><span class="p">,</span><span class="s1">&#39;xs2&#39;</span><span class="p">,</span><span class="n">transform2</span><span class="p">)</span>
+        <span class="o">.</span><span class="n">add_output</span><span class="p">(</span><span class="s1">&#39;ys&#39;</span><span class="p">,</span><span class="s1">&#39;ys&#39;</span><span class="p">)</span>
+<span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">ds</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="p">{</span><span class="s1">&#39;xs1&#39;</span><span class="p">:</span> <span class="o">...</span><span class="p">,</span> <span class="s1">&#39;xs2&#39;</span><span class="p">:</span> <span class="o">...</span><span class="p">,</span> <span class="s2">&quot;ys&quot;</span><span class="p">:</span> <span class="o">...</span><span class="p">}</span>
+</pre></div>
+</div>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="configuration.html" class="btn btn-neutral float-left" title="Runtime Configuration and Params" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, sailist.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <div>
+    <p>True Flag</p>
+    
+    
+    <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="Versions">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      <span class="fa fa-book"> Read the Docs</span>
+      v: 
+      <span class="fa fa-caret-down"></span>
+    </span>
+        <div class="rst-other-versions">
+            <dl>
+                <dt>Versions</dt>
+            </dl>
+        </div>
+    </div>
+    
+
+</div><script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

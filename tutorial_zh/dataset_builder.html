@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DatasetBuilder &mdash; lumo 1.1.0 documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/sphinx_highlight.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            lumo
+          </a>
+              <div class="version">
+                
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Tutorial</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial/reproducibility.html">Experiment management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial/reproducibility.html#retrieve-experiment">Retrieve Experiment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial/configuration.html">Runtime Configuration and Params</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial/dataset_builder.html">Build your Dataset Easily</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">lumo</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">DatasetBuilder</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/tutorial_zh/dataset_builder.md.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="datasetbuilder">
+<h1>DatasetBuilder<a class="headerlink" href="#datasetbuilder" title="Permalink to this heading">¶</a></h1>
+<p>lumo 设计了 <code class="docutils literal notranslate"><span class="pre">~lumo.DatasetBuilder</span></code> 用于提供一个统一的构建数据集的接口。可以在大多数情况下，减少重复的数据集形态设计。</p>
+<p>以 CIFAR10 数据集为例，如果需要数据集的图片输出两次增广，那么要么要更改 Dataset 类，要么重写 transform 函数：</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">MyCIFAR</span><span class="p">(</span><span class="n">CIFAR10</span><span class="p">):</span>
+    <span class="o">...</span>
+
+    <span class="k">def</span> <span class="nf">__getitem</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">index</span><span class="p">):</span>
+        <span class="n">sample</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">index</span><span class="p">]</span>
+        <span class="n">label</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">target</span><span class="p">[</span><span class="n">index</span><span class="p">]</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">transform1</span><span class="p">(</span><span class="n">sample</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">transform2</span><span class="p">(</span><span class="n">sample</span><span class="p">),</span> <span class="n">label</span>
+
+
+<span class="c1"># or</span>
+
+<span class="k">def</span> <span class="nf">two_transform</span><span class="p">(</span><span class="n">sample</span><span class="p">):</span>
+    <span class="o">...</span>
+    <span class="k">return</span> <span class="n">transform1</span><span class="p">(</span><span class="n">sample</span><span class="p">),</span> <span class="n">transform2</span><span class="p">(</span><span class="n">sample</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>在多个数据集都面临这种更改时候，这种重写的方式会消耗较多的精力。尤其是在输出形式还不确定，可能面临频繁更改的时候。</p>
+<p>对此，lumo 通过 <code class="docutils literal notranslate"><span class="pre">DatasetBuilder</span></code> 提供了一个通用的流式的解决方案，你只需要按标准形式准备好原始数据，和标准的 one-to-one 的增广函数：</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="o">...</span>
+
+<span class="n">source</span> <span class="o">=</span> <span class="n">CIFAR10</span><span class="p">()</span>
+<span class="n">transform1</span> <span class="o">=</span> <span class="o">...</span>
+<span class="n">transform2</span> <span class="o">=</span> <span class="o">...</span>
+</pre></div>
+</div>
+<p>随后，任意的输出形式均可以通过 <code class="docutils literal notranslate"><span class="pre">DatasetBuilder</span></code> 来定义</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">lumo</span> <span class="kn">import</span> <span class="n">DatasetBuilder</span>
+
+<span class="n">ds</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="n">DatasetBuilder</span><span class="p">()</span>
+        <span class="c1"># 定义输入流</span>
+        <span class="o">.</span><span class="n">add_input</span><span class="p">(</span><span class="s1">&#39;xs&#39;</span><span class="p">,</span> <span class="n">source</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+        <span class="o">.</span><span class="n">add_input</span><span class="p">(</span><span class="s1">&#39;ys&#39;</span><span class="p">,</span> <span class="n">source</span><span class="o">.</span><span class="n">targets</span><span class="p">)</span>
+        <span class="c1"># 定义输出流</span>
+        <span class="o">.</span><span class="n">add_output</span><span class="p">(</span><span class="s1">&#39;xs&#39;</span><span class="p">,</span><span class="s1">&#39;xs1&#39;</span><span class="p">,</span><span class="n">transform1</span><span class="p">)</span> 
+        <span class="o">.</span><span class="n">add_output</span><span class="p">(</span><span class="s1">&#39;xs&#39;</span><span class="p">,</span><span class="s1">&#39;xs2&#39;</span><span class="p">,</span><span class="n">transform2</span><span class="p">)</span>
+        <span class="o">.</span><span class="n">add_output</span><span class="p">(</span><span class="s1">&#39;ys&#39;</span><span class="p">,</span><span class="s1">&#39;ys&#39;</span><span class="p">)</span>
+<span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">ds</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="p">{</span><span class="s1">&#39;xs1&#39;</span><span class="p">:</span> <span class="o">...</span><span class="p">,</span> <span class="s1">&#39;xs2&#39;</span><span class="p">:</span> <span class="o">...</span><span class="p">,</span> <span class="s2">&quot;ys&quot;</span><span class="p">:</span> <span class="o">...</span><span class="p">}</span>
+</pre></div>
+</div>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, sailist.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <div>
+    <p>True Flag</p>
+    
+    
+    <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="Versions">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      <span class="fa fa-book"> Read the Docs</span>
+      v: 
+      <span class="fa fa-caret-down"></span>
+    </span>
+        <div class="rst-other-versions">
+            <dl>
+                <dt>Versions</dt>
+            </dl>
+        </div>
+    </div>
+    
+
+</div><script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Runtime Configuration and Params &mdash; lumo 1.1.0 documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/sphinx_highlight.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Build your Dataset Easily" href="dataset_builder.html" />
+    <link rel="prev" title="Experiment management" href="reproducibility.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            lumo
+          </a>
+              <div class="version">
+                
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Tutorial</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="reproducibility.html">Experiment management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="reproducibility.html#retrieve-experiment">Retrieve Experiment</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Runtime Configuration and Params</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#params">Params</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#configuration">Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#difference-between-configuration-and-hyperparameters">Difference between Configuration and Hyperparameters</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="dataset_builder.html">Build your Dataset Easily</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">lumo</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Runtime Configuration and Params</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/tutorial/configuration.md.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="runtime-configuration-and-params">
+<h1>Runtime Configuration and Params<a class="headerlink" href="#runtime-configuration-and-params" title="Permalink to this heading">¶</a></h1>
+<section id="params">
+<h2>Params<a class="headerlink" href="#params" title="Permalink to this heading">¶</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">~lumo.Params</span></code>is used to specify the configuration required for the current experiment. In addition to defining parameters that support autocompletion, it also supports command-line parameters, inheritance, and reading from multiple configuration files.</p>
+<p>The simplest usage is as follows:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">lumo</span> <span class="kn">import</span> <span class="n">Params</span>
+
+<span class="n">params</span> <span class="o">=</span> <span class="n">Params</span><span class="p">()</span>
+<span class="n">params</span><span class="o">.</span><span class="n">lr</span> <span class="o">=</span> <span class="mf">1e-3</span>
+<span class="n">params</span><span class="o">.</span><span class="n">dataset</span> <span class="o">=</span> <span class="s1">&#39;cifar10&#39;</span>
+<span class="n">params</span><span class="o">.</span><span class="n">from_args</span><span class="p">()</span> <span class="c1"># python main.py --dataset=cifar100</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">params</span><span class="o">.</span><span class="n">dataset</span><span class="p">)</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="s2">&quot;cifar100&quot;</span>
+</pre></div>
+</div>
+<p>Limit the value of parameters:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">params</span><span class="o">.</span><span class="n">dataset</span> <span class="o">=</span> <span class="n">params</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="s1">&#39;cifar10&#39;</span><span class="p">,</span> <span class="s1">&#39;cifar100&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">params</span><span class="o">.</span><span class="n">dataset</span><span class="p">)</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="s2">&quot;cifar10&quot;</span> <span class="c1"># by default is the first value</span>
+
+<span class="n">params</span><span class="o">.</span><span class="n">dataset</span> <span class="o">=</span> <span class="s2">&quot;imagenet&quot;</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="k">raise</span> <span class="n">BoundCheckError</span><span class="p">:</span> <span class="n">value</span> <span class="n">of</span> <span class="n">param</span> <span class="s1">&#39;dataset&#39;</span> <span class="n">should</span> <span class="ow">in</span> <span class="n">values</span> <span class="p">(</span><span class="s1">&#39;cifar10&#39;</span><span class="p">,</span>
+<span class="s1">&#39;cifar100&#39;</span><span class="p">),</span> <span class="n">but</span> <span class="n">got</span> <span class="n">imagenet</span>
+</pre></div>
+</div>
+<p>Read from other locations:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">params</span><span class="o">.</span><span class="n">from_json</span><span class="p">(</span><span class="s2">&quot;*.json&quot;</span><span class="p">)</span>
+<span class="n">params</span><span class="o">.</span><span class="n">from_yaml</span><span class="p">(</span><span class="s2">&quot;*.yaml&quot;</span><span class="p">)</span>
+<span class="n">params</span><span class="o">.</span><span class="n">from_yaml</span><span class="p">(</span><span class="s2">&quot;*.yml&quot;</span><span class="p">)</span>
+<span class="n">params</span><span class="o">.</span><span class="n">from_dict</span><span class="p">({})</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">params.config</span></code>or<code class="docutils literal notranslate"><span class="pre">params.c</span></code>is a built-in reserved parameter. When the values of these two variables are strings and the path judgment is a yaml or json file or file list, the configuration is read from the corresponding position:</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span># cfg.json
+{
+    &quot;dataset&quot;: &quot;cifar100&quot;
+}
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">params</span><span class="o">.</span><span class="n">from_args</span><span class="p">([</span><span class="s1">&#39;--c&#39;</span><span class="p">,</span><span class="s1">&#39;cfg.json&#39;</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">params</span><span class="o">.</span><span class="n">dataset</span><span class="p">)</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="s2">&quot;cifar100&quot;</span>
+</pre></div>
+</div>
+</section>
+<section id="configuration">
+<h2>Configuration<a class="headerlink" href="#configuration" title="Permalink to this heading">¶</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">lumo</span></code> provides a multi-level configuration system, including three file locations:</p>
+<div class="highlight-arduino notranslate"><div class="highlight"><pre><span></span><span class="o">~/</span><span class="p">.</span><span class="n">lumorc</span><span class="p">.</span><span class="n">json</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">user</span><span class="o">-</span><span class="n">level</span>
+<span class="o">&lt;</span><span class="n">repo</span><span class="o">&gt;/</span><span class="p">.</span><span class="n">lumorc</span><span class="p">.</span><span class="n">json</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">repo</span><span class="o">-</span><span class="n">level</span><span class="p">,</span><span class="w"> </span><span class="kr">private</span>
+<span class="o">&lt;</span><span class="n">repo</span><span class="o">&gt;/</span><span class="p">.</span><span class="n">lumorc</span><span class="p">.</span><span class="kr">public</span><span class="p">.</span><span class="n">json</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">repo</span><span class="o">-</span><span class="n">level</span><span class="p">,</span><span class="w"> </span><span class="kr">public</span>
+</pre></div>
+</div>
+<p>All configurations are loaded into<code class="docutils literal notranslate"><span class="pre">lumo.glob</span></code>at runtime for global settings:</p>
+<div class="highlight-css notranslate"><div class="highlight"><pre><span></span><span class="nt">from</span><span class="w"> </span><span class="nt">lumo</span><span class="w"> </span><span class="nt">import</span><span class="w"> </span><span class="nt">glob</span>
+
+<span class="nt">glob</span><span class="o">[</span><span class="s1">&#39;xxx&#39;</span><span class="o">]</span>
+</pre></div>
+</div>
+</section>
+<section id="difference-between-configuration-and-hyperparameters">
+<h2>Difference between Configuration and Hyperparameters<a class="headerlink" href="#difference-between-configuration-and-hyperparameters" title="Permalink to this heading">¶</a></h2>
+<p>In <code class="docutils literal notranslate"><span class="pre">lumo</span></code>, configurations are mostly used for non-experiment-related content that is related to the computer environment and <code class="docutils literal notranslate"><span class="pre">lumo</span></code> behavior, such as the location of the dataset, GitHub access tokens, etc. All supported optional behaviors in<code class="docutils literal notranslate"><span class="pre">lumo</span></code>can be controlled by modifying the configuration in<code class="docutils literal notranslate"><span class="pre">glob</span></code>. The following are the currently supported configurable items:</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Configuration</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>github_access_token</p></td>
+<td><p>Replaces the access_token parameter of the exp.backup() method.</p></td>
+</tr>
+<tr class="row-odd"><td><p>exp_root</p></td>
+<td><p>One of several initial paths.</p></td>
+</tr>
+<tr class="row-even"><td><p>db_root</p></td>
+<td><p>One of several initial paths.</p></td>
+</tr>
+<tr class="row-odd"><td><p>progress_root</p></td>
+<td><p>One of several initial paths.</p></td>
+</tr>
+<tr class="row-even"><td><p>metric_root</p></td>
+<td><p>One of several initial paths.</p></td>
+</tr>
+<tr class="row-odd"><td><p>cache_dir</p></td>
+<td><p>One of several initial paths.</p></td>
+</tr>
+<tr class="row-even"><td><p>blob_root</p></td>
+<td><p>One of several initial paths.</p></td>
+</tr>
+<tr class="row-odd"><td><p>timezone</p></td>
+<td><p>Determines the timezone used by lumo. Default is ‘Asia/Shanghai’.</p></td>
+</tr>
+<tr class="row-even"><td><p>TRAINER_LOGGER_STDIO</p></td>
+<td><p>Controls whether the Logger outputs to the standard output stream.</p></td>
+</tr>
+<tr class="row-odd"><td><p>dev_branch</p></td>
+<td><p>The branch used for saving code snapshots during version control. Default is ‘lumo_experiments’.</p></td>
+</tr>
+<tr class="row-even"><td><p>HOOK_LOCKFILE</p></td>
+<td><p>Behavior control for loading LockFile ExpHook.</p></td>
+</tr>
+<tr class="row-odd"><td><p>HOOK_RECORDABORT</p></td>
+<td><p>Behavior control for loading RecordAbort ExpHook.</p></td>
+</tr>
+<tr class="row-even"><td><p>HOOK_GITCOMMIT</p></td>
+<td><p>Behavior control for loading GitCommit ExpHook.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="reproducibility.html" class="btn btn-neutral float-left" title="Experiment management" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="dataset_builder.html" class="btn btn-neutral float-right" title="Build your Dataset Easily" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, sailist.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <div>
+    <p>True Flag</p>
+    
+    
+    <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="Versions">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      <span class="fa fa-book"> Read the Docs</span>
+      v: 
+      <span class="fa fa-caret-down"></span>
+    </span>
+        <div class="rst-other-versions">
+            <dl>
+                <dt>Versions</dt>
+            </dl>
+        </div>
+    </div>
+    
+
+</div><script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

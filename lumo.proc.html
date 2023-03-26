@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>lumo.proc package &mdash; lumo 1.0.0 documentation</title>
+  <title>lumo.proc package &mdash; lumo 1.1.0 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -41,9 +41,12 @@
   </form>
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <p class="caption" role="heading"><span class="caption-text">Contents</span></p>
+              <p class="caption" role="heading"><span class="caption-text">Tutorial</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="tutorial/getting_start.html">Getting Start</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial/reproducibility.html">Experiment management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial/reproducibility.html#retrieve-experiment">Retrieve Experiment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial/configuration.html">Runtime Configuration and Params</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial/dataset_builder.html">Build your Dataset Easily</a></li>
 </ul>
 
         </div>
@@ -75,359 +78,32 @@
 <section id="submodules">
 <h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this heading">¶</a></h2>
 </section>
-<section id="module-lumo.proc.config">
-<span id="lumo-proc-config-module"></span><h2>lumo.proc.config module<a class="headerlink" href="#module-lumo.proc.config" title="Permalink to this heading">¶</a></h2>
-<dl class="py function">
-<dt class="sig sig-object py" id="lumo.proc.config.debug_mode">
-<span class="sig-prename descclassname"><span class="pre">lumo.proc.config.</span></span><span class="sig-name descname"><span class="pre">debug_mode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">base_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">disable_git</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.proc.config.debug_mode" title="Permalink to this definition">¶</a></dt>
-<dd><p>Sets up global variables for debugging mode.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>base_dir</strong> (<em>str</em><em>, </em><em>optional</em>) – The directory to create temporary directories in. Defaults to None.</p></li>
-<li><p><strong>disable_git</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether to disable git hooks. Defaults to True.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>None</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="lumo.proc.config.global_config_path">
-<span class="sig-prename descclassname"><span class="pre">lumo.proc.config.</span></span><span class="sig-name descname"><span class="pre">global_config_path</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#lumo.proc.config.global_config_path" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the path to the global configuration file.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>The path to the global configuration file.</p>
-</dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>str</p>
-</dd>
-</dl>
-<p class="rubric">Notes</p>
-<p>The relative path of global config path should never change (~/.lumorc.json)</p>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="lumo.proc.config.local_config_path">
-<span class="sig-prename descclassname"><span class="pre">lumo.proc.config.</span></span><span class="sig-name descname"><span class="pre">local_config_path</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#lumo.proc.config.local_config_path" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the path to the local configuration file.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>The path to the local configuration file, if found. Otherwise, None.</p>
-</dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>str</p>
-</dd>
-</dl>
-</dd></dl>
-
+<section id="lumo-proc-config-module">
+<h2>lumo.proc.config module<a class="headerlink" href="#lumo-proc-config-module" title="Permalink to this heading">¶</a></h2>
 </section>
-<section id="module-lumo.proc.date">
-<span id="lumo-proc-date-module"></span><h2>lumo.proc.date module<a class="headerlink" href="#module-lumo.proc.date" title="Permalink to this heading">¶</a></h2>
-<p>Methods about file/date/format.</p>
-<dl class="py function">
-<dt class="sig sig-object py" id="lumo.proc.date.date_from_str">
-<span class="sig-prename descclassname"><span class="pre">lumo.proc.date.</span></span><span class="sig-name descname"><span class="pre">date_from_str</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fmt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'%y-%m-%d-%H%M%S'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">datetime</span></span></span><a class="headerlink" href="#lumo.proc.date.date_from_str" title="Permalink to this definition">¶</a></dt>
-<dd><p>convert from date formatted string to datetime object</p>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="lumo.proc.date.file_atime2date">
-<span class="sig-prename descclassname"><span class="pre">lumo.proc.date.</span></span><span class="sig-name descname"><span class="pre">file_atime2date</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fmt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'%y%m%d-%H%M%S'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#lumo.proc.date.file_atime2date" title="Permalink to this definition">¶</a></dt>
-<dd><p>get atime of a file and convert in from timestamp to formatted string
-atime : time of last access</p>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="lumo.proc.date.file_ctime2date">
-<span class="sig-prename descclassname"><span class="pre">lumo.proc.date.</span></span><span class="sig-name descname"><span class="pre">file_ctime2date</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fmt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'%y%m%d-%H%M%S'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#lumo.proc.date.file_ctime2date" title="Permalink to this definition">¶</a></dt>
-<dd><p>get ctime of a file and convert in from timestamp to formatted string
-ctime : time of last status change</p>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="lumo.proc.date.file_mtime2date">
-<span class="sig-prename descclassname"><span class="pre">lumo.proc.date.</span></span><span class="sig-name descname"><span class="pre">file_mtime2date</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fmt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'%y%m%d-%H%M%S'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#lumo.proc.date.file_mtime2date" title="Permalink to this definition">¶</a></dt>
-<dd><p>get mtime of a file and convert in from timestamp to formatted string
-mtime : time of last modification (write)</p>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="lumo.proc.date.timehash">
-<span class="sig-prename descclassname"><span class="pre">lumo.proc.date.</span></span><span class="sig-name descname"><span class="pre">timehash</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#lumo.proc.date.timehash" title="Permalink to this definition">¶</a></dt>
-<dd><p>return a hash string based on current time, accurate to nanoseconds.</p>
-</dd></dl>
-
+<section id="lumo-proc-date-module">
+<h2>lumo.proc.date module<a class="headerlink" href="#lumo-proc-date-module" title="Permalink to this heading">¶</a></h2>
 </section>
-<section id="module-lumo.proc.dependency">
-<span id="lumo-proc-dependency-module"></span><h2>lumo.proc.dependency module<a class="headerlink" href="#module-lumo.proc.dependency" title="Permalink to this heading">¶</a></h2>
-<dl class="py function">
-<dt class="sig sig-object py" id="lumo.proc.dependency.get_lock">
-<span class="sig-prename descclassname"><span class="pre">lumo.proc.dependency.</span></span><span class="sig-name descname"><span class="pre">get_lock</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">others</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.proc.dependency.get_lock" title="Permalink to this definition">¶</a></dt>
-<dd><p>Used to record the specific version of the run-time dependencies to ensure reproducibility.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>*others</strong> – <p>other library to be recorded.</p>
-</p>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>A dict instance with each library as the key and its version as the value.</p>
-</dd>
-</dl>
-</dd></dl>
-
+<section id="lumo-proc-dependency-module">
+<h2>lumo.proc.dependency module<a class="headerlink" href="#lumo-proc-dependency-module" title="Permalink to this heading">¶</a></h2>
 </section>
-<section id="module-lumo.proc.dist">
-<span id="lumo-proc-dist-module"></span><h2>lumo.proc.dist module<a class="headerlink" href="#module-lumo.proc.dist" title="Permalink to this heading">¶</a></h2>
-<dl class="py function">
-<dt class="sig sig-object py" id="lumo.proc.dist.is_dist">
-<span class="sig-prename descclassname"><span class="pre">lumo.proc.dist.</span></span><span class="sig-name descname"><span class="pre">is_dist</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#lumo.proc.dist.is_dist" title="Permalink to this definition">¶</a></dt>
-<dd><p>Whether the experiment is running in a distributed manner.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>True if it is a distributed program.</p>
-</dd>
-</dl>
-<p>False for not.</p>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="lumo.proc.dist.is_main">
-<span class="sig-prename descclassname"><span class="pre">lumo.proc.dist.</span></span><span class="sig-name descname"><span class="pre">is_main</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#lumo.proc.dist.is_main" title="Permalink to this definition">¶</a></dt>
-<dd><p>Whether the experiment is the main process.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p></p>
-</dd>
-</dl>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">-</span> <span class="n">Current</span> <span class="n">process</span> <span class="ow">is</span> <span class="n">running</span> <span class="ow">in</span> <span class="n">distributed</span> <span class="n">manner</span> <span class="ow">and</span> <span class="n">local_rank</span><span class="p">()</span><span class="o">==</span><span class="mi">0</span><span class="p">,</span> <span class="ow">or</span>
-<span class="o">-</span> <span class="ow">not</span> <span class="n">a</span> <span class="n">distributed</span> <span class="n">process</span><span class="o">.</span>
-
-<span class="kc">False</span> <span class="k">for</span> <span class="n">others</span><span class="o">.</span>
-</pre></div>
-</div>
-<dl class="field-list simple">
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>True if</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="lumo.proc.dist.local_rank">
-<span class="sig-prename descclassname"><span class="pre">lumo.proc.dist.</span></span><span class="sig-name descname"><span class="pre">local_rank</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">group</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.proc.dist.local_rank" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the rank of the current process in the provided <code class="docutils literal notranslate"><span class="pre">group</span></code> or the
-default group if none was provided.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>group</strong> (<em>ProcessGroup</em><em>, </em><em>optional</em>) – See <code class="docutils literal notranslate"><span class="pre">torch.distributed.get_rank()</span></code> for details.</p>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>The rank of the process group</p>
-</dd>
-</dl>
-<p>-1, if not part of the group</p>
-<div class="admonition seealso">
-<p class="admonition-title">See also</p>
-<p><code class="docutils literal notranslate"><span class="pre">torch.distributed.get_rank()</span></code></p>
-</div>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="lumo.proc.dist.world_size">
-<span class="sig-prename descclassname"><span class="pre">lumo.proc.dist.</span></span><span class="sig-name descname"><span class="pre">world_size</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">group</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.proc.dist.world_size" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the number of processes in the current process group</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>group</strong> (<em>ProcessGroup</em><em>, </em><em>optional</em>) – See <code class="docutils literal notranslate"><span class="pre">torch.distributed.get_world_size()</span></code> for details.</p>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>The world size of the process group</p>
-</dd>
-</dl>
-<p>-1, if not part of the group</p>
-<div class="admonition seealso">
-<p class="admonition-title">See also</p>
-<p><code class="docutils literal notranslate"><span class="pre">torch.distributed.get_rank()</span></code></p>
-</div>
-</dd></dl>
-
+<section id="lumo-proc-dist-module">
+<h2>lumo.proc.dist module<a class="headerlink" href="#lumo-proc-dist-module" title="Permalink to this heading">¶</a></h2>
 </section>
-<section id="module-lumo.proc.network">
-<span id="lumo-proc-network-module"></span><h2>lumo.proc.network module<a class="headerlink" href="#module-lumo.proc.network" title="Permalink to this heading">¶</a></h2>
-<dl class="py function">
-<dt class="sig sig-object py" id="lumo.proc.network.find_free_network_port">
-<span class="sig-prename descclassname"><span class="pre">lumo.proc.network.</span></span><span class="sig-name descname"><span class="pre">find_free_network_port</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="headerlink" href="#lumo.proc.network.find_free_network_port" title="Permalink to this definition">¶</a></dt>
-<dd><p>Finds a free port on localhost. It is useful in single-node training
-when we don’t want to connect to a real master node but have to set the <code class="docutils literal notranslate"><span class="pre">MASTER_PORT</span></code> environment variable.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>an available local port</p>
-</dd>
-</dl>
-</dd></dl>
-
+<section id="lumo-proc-network-module">
+<h2>lumo.proc.network module<a class="headerlink" href="#lumo-proc-network-module" title="Permalink to this heading">¶</a></h2>
 </section>
-<section id="module-lumo.proc.path">
-<span id="lumo-proc-path-module"></span><h2>lumo.proc.path module<a class="headerlink" href="#module-lumo.proc.path" title="Permalink to this heading">¶</a></h2>
-<dl class="py function">
-<dt class="sig sig-object py" id="lumo.proc.path.blobroot">
-<span class="sig-prename descclassname"><span class="pre">lumo.proc.path.</span></span><span class="sig-name descname"><span class="pre">blobroot</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#lumo.proc.path.blobroot" title="Permalink to this definition">¶</a></dt>
-<dd><p>Experiment root to store big files, default is <code class="docutils literal notranslate"><span class="pre">~/.lumo/blob</span></code></p>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="lumo.proc.path.cache_dir">
-<span class="sig-prename descclassname"><span class="pre">lumo.proc.path.</span></span><span class="sig-name descname"><span class="pre">cache_dir</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#lumo.proc.path.cache_dir" title="Permalink to this definition">¶</a></dt>
-<dd><p>Directory to store cache files, like datasets. Can be shared for everyone.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>An available path, default value is ~/.cache/.lumo,</p>
-</dd>
-</dl>
-<p>if the path cannot be used due to permission denied,
-<code class="docutils literal notranslate"><span class="pre">~/.lumo/cache</span></code> will be returned</p>
-<p>Notes:</p>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="lumo.proc.path.dbroot">
-<span class="sig-prename descclassname"><span class="pre">lumo.proc.path.</span></span><span class="sig-name descname"><span class="pre">dbroot</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#lumo.proc.path.dbroot" title="Permalink to this definition">¶</a></dt>
-<dd><p>Root path to store experiment information. Default is <code class="docutils literal notranslate"><span class="pre">~/.lumo/database</span></code></p>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="lumo.proc.path.exproot">
-<span class="sig-prename descclassname"><span class="pre">lumo.proc.path.</span></span><span class="sig-name descname"><span class="pre">exproot</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#lumo.proc.path.exproot" title="Permalink to this definition">¶</a></dt>
-<dd><p>Experiment root to store multiple experiments, default is <code class="docutils literal notranslate"><span class="pre">~/.lumo/experiments</span></code></p>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="lumo.proc.path.home">
-<span class="sig-prename descclassname"><span class="pre">lumo.proc.path.</span></span><span class="sig-name descname"><span class="pre">home</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#lumo.proc.path.home" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the home directory of the current user.</p>
-<p>This function returns the home directory of the current user, which is
-different from the home directory of the library. If you need to access
-the library home directory, use <code class="docutils literal notranslate"><span class="pre">libhome()</span></code> instead.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>The home directory of the current user.</p>
-</dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>str</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="lumo.proc.path.libhome">
-<span class="sig-prename descclassname"><span class="pre">lumo.proc.path.</span></span><span class="sig-name descname"><span class="pre">libhome</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#lumo.proc.path.libhome" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the library home directory.</p>
-<p>This function returns the library home directory, which is used to store
-configuration files. By default, the library home directory is <code class="docutils literal notranslate"><span class="pre">~/.lumo</span></code>.
-If a custom home directory is set in the <code class="docutils literal notranslate"><span class="pre">home</span></code> global variable, that
-directory will be returned instead.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>The library home directory.</p>
-</dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>str</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="lumo.proc.path.local_dir">
-<span class="sig-prename descclassname"><span class="pre">lumo.proc.path.</span></span><span class="sig-name descname"><span class="pre">local_dir</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#lumo.proc.path.local_dir" title="Permalink to this definition">¶</a></dt>
-<dd><p>Project root, default is the parent directory of .git.
-If this program is not a git project, the parent directory of the executed file will be returned.</p>
-<p>Returns:</p>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="lumo.proc.path.metricroot">
-<span class="sig-prename descclassname"><span class="pre">lumo.proc.path.</span></span><span class="sig-name descname"><span class="pre">metricroot</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#lumo.proc.path.metricroot" title="Permalink to this definition">¶</a></dt>
-<dd><p>Only used for storing table_row instance.</p>
-<div class="admonition seealso">
-<p class="admonition-title">See also</p>
-<p><code class="docutils literal notranslate"><span class="pre">~lumo.core.disk.TableRow</span></code></p>
-</div>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="lumo.proc.path.progressroot">
-<span class="sig-prename descclassname"><span class="pre">lumo.proc.path.</span></span><span class="sig-name descname"><span class="pre">progressroot</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#lumo.proc.path.progressroot" title="Permalink to this definition">¶</a></dt>
-<dd><p>Experiment root to store multiple experiments, default is <code class="docutils literal notranslate"><span class="pre">~/.lumo/experiments</span></code></p>
-</dd></dl>
-
+<section id="lumo-proc-path-module">
+<h2>lumo.proc.path module<a class="headerlink" href="#lumo-proc-path-module" title="Permalink to this heading">¶</a></h2>
 </section>
-<section id="module-lumo.proc.pid">
-<span id="lumo-proc-pid-module"></span><h2>lumo.proc.pid module<a class="headerlink" href="#module-lumo.proc.pid" title="Permalink to this heading">¶</a></h2>
-<p>Returns information about the specified process or the current process, and computes its hash value.</p>
-<dl class="py function">
-<dt class="sig sig-object py" id="lumo.proc.pid.pid_hash">
-<span class="sig-prename descclassname"><span class="pre">lumo.proc.pid.</span></span><span class="sig-name descname"><span class="pre">pid_hash</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pid_obj</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.proc.pid.pid_hash" title="Permalink to this definition">¶</a></dt>
-<dd><p>Computes the hash of a process object.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>pid_obj</strong> (<em>dict</em><em>, </em><em>optional</em>) – A dictionary containing information about a process. If None, uses the information about the current process. Defaults to None.</p>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>The hash of the process object.</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>str</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="lumo.proc.pid.runtime_pid_obj">
-<span class="sig-prename descclassname"><span class="pre">lumo.proc.pid.</span></span><span class="sig-name descname"><span class="pre">runtime_pid_obj</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pid</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.proc.pid.runtime_pid_obj" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns a dictionary containing information about a process identified by the given PID.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>pid</strong> (<em>int</em><em>, </em><em>optional</em>) – The PID of the process to get information about. If None, uses the PID of the current process. Defaults to None.</p>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p></p>
-</dd>
-</dl>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">A</span> <span class="n">dictionary</span> <span class="n">containing</span> <span class="n">the</span> <span class="n">following</span> <span class="n">keys</span><span class="p">:</span>
-    <span class="o">-</span> <span class="n">pid</span> <span class="p">(</span><span class="nb">int</span><span class="p">):</span> <span class="n">The</span> <span class="n">process</span> <span class="n">ID</span><span class="o">.</span>
-    <span class="o">-</span> <span class="n">pname</span> <span class="p">(</span><span class="nb">str</span><span class="p">):</span> <span class="n">The</span> <span class="n">name</span> <span class="n">of</span> <span class="n">the</span> <span class="n">process</span><span class="o">.</span>
-    <span class="o">-</span> <span class="n">pstart</span> <span class="p">(</span><span class="nb">float</span><span class="p">):</span> <span class="n">The</span> <span class="n">process</span> <span class="n">creation</span> <span class="n">time</span><span class="p">,</span> <span class="ow">in</span> <span class="n">seconds</span> <span class="n">since</span> <span class="n">the</span> <span class="n">epoch</span><span class="o">.</span>
-    <span class="o">-</span> <span class="n">argv</span> <span class="p">(</span><span class="nb">list</span><span class="p">):</span> <span class="n">A</span> <span class="nb">list</span> <span class="n">of</span> <span class="n">command</span><span class="o">-</span><span class="n">line</span> <span class="n">arguments</span> <span class="n">passed</span> <span class="n">to</span> <span class="n">the</span> <span class="n">process</span><span class="o">.</span>
-</pre></div>
-</div>
-<dl class="field-list simple">
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>dict</p>
-</dd>
-</dl>
-</dd></dl>
-
+<section id="lumo-proc-pid-module">
+<h2>lumo.proc.pid module<a class="headerlink" href="#lumo-proc-pid-module" title="Permalink to this heading">¶</a></h2>
 </section>
-<section id="module-lumo.proc.tz">
-<span id="lumo-proc-tz-module"></span><h2>lumo.proc.tz module<a class="headerlink" href="#module-lumo.proc.tz" title="Permalink to this heading">¶</a></h2>
-<dl class="py function">
-<dt class="sig sig-object py" id="lumo.proc.tz.timezone">
-<span class="sig-prename descclassname"><span class="pre">lumo.proc.tz.</span></span><span class="sig-name descname"><span class="pre">timezone</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#lumo.proc.tz.timezone" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get the timezone from the global configuration, or default to ‘Asia/Shanghai’.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>The timezone.</p>
-</dd>
-</dl>
-</dd></dl>
-
+<section id="lumo-proc-tz-module">
+<h2>lumo.proc.tz module<a class="headerlink" href="#lumo-proc-tz-module" title="Permalink to this heading">¶</a></h2>
 </section>
-<section id="module-lumo.proc">
-<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-lumo.proc" title="Permalink to this heading">¶</a></h2>
+<section id="module-contents">
+<h2>Module contents<a class="headerlink" href="#module-contents" title="Permalink to this heading">¶</a></h2>
 </section>
 </section>
 
@@ -459,7 +135,7 @@ If this program is not a git project, the parent directory of the executed file 
     <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="Versions">
     <span class="rst-current-version" data-toggle="rst-current-version">
       <span class="fa fa-book"> Read the Docs</span>
-      v: 1.0.0
+      v: 
       <span class="fa fa-caret-down"></span>
     </span>
         <div class="rst-other-versions">

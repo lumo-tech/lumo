@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>lumo.cli package &mdash; lumo 1.0.0 documentation</title>
+  <title>lumo.cli package &mdash; lumo 1.1.0 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -41,9 +41,12 @@
   </form>
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <p class="caption" role="heading"><span class="caption-text">Contents</span></p>
+              <p class="caption" role="heading"><span class="caption-text">Tutorial</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="tutorial/getting_start.html">Getting Start</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial/reproducibility.html">Experiment management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial/reproducibility.html#retrieve-experiment">Retrieve Experiment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial/configuration.html">Runtime Configuration and Params</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial/dataset_builder.html">Build your Dataset Easily</a></li>
 </ul>
 
         </div>
@@ -72,55 +75,8 @@
              
   <section id="lumo-cli-package">
 <h1>lumo.cli package<a class="headerlink" href="#lumo-cli-package" title="Permalink to this heading">¶</a></h1>
-<section id="module-lumo.cli">
-<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-lumo.cli" title="Permalink to this heading">¶</a></h2>
-<dl class="py function">
-<dt class="sig sig-object py" id="lumo.cli.board">
-<span class="sig-prename descclassname"><span class="pre">lumo.cli.</span></span><span class="sig-name descname"><span class="pre">board</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">port</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">11606</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">address</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">open</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.cli.board" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>port</strong> – </p>
-</dd>
-</dl>
-<p>Returns:</p>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="lumo.cli.main">
-<span class="sig-prename descclassname"><span class="pre">lumo.cli.</span></span><span class="sig-name descname"><span class="pre">main</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#lumo.cli.main" title="Permalink to this definition">¶</a></dt>
-<dd><p>the entry</p>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="lumo.cli.note">
-<span class="sig-prename descclassname"><span class="pre">lumo.cli.</span></span><span class="sig-name descname"><span class="pre">note</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">test_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">description</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.cli.note" title="Permalink to this definition">¶</a></dt>
-<dd><p>Add note to a test:
-lumo note &lt;test_name&gt; description ;</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>test_name</strong> – </p></li>
-<li><p><strong>description</strong> – </p></li>
-</ul>
-</dd>
-</dl>
-<p>Returns:</p>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="lumo.cli.rerun">
-<span class="sig-prename descclassname"><span class="pre">lumo.cli.</span></span><span class="sig-name descname"><span class="pre">rerun</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">test_name</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwarg</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.cli.rerun" title="Permalink to this definition">¶</a></dt>
-<dd><p>rerun a test
-lumo rerun &lt;test_name&gt;
-lumo rerun &lt;test_name&gt; –device=0</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>test_name</strong> – </p>
-</dd>
-</dl>
-<p>Returns:</p>
-</dd></dl>
-
+<section id="module-contents">
+<h2>Module contents<a class="headerlink" href="#module-contents" title="Permalink to this heading">¶</a></h2>
 </section>
 </section>
 
@@ -152,7 +108,7 @@ lumo rerun &lt;test_name&gt; –device=0</p>
     <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="Versions">
     <span class="rst-current-version" data-toggle="rst-current-version">
       <span class="fa fa-book"> Read the Docs</span>
-      v: 1.0.0
+      v: 
       <span class="fa fa-caret-down"></span>
     </span>
         <div class="rst-other-versions">

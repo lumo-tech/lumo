@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>lumo.contrib.data.augments package &mdash; lumo 1.0.0 documentation</title>
+  <title>lumo.contrib.data.augments package &mdash; lumo 1.1.0 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -41,9 +41,12 @@
   </form>
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <p class="caption" role="heading"><span class="caption-text">Contents</span></p>
+              <p class="caption" role="heading"><span class="caption-text">Tutorial</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="tutorial/getting_start.html">Getting Start</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial/reproducibility.html">Experiment management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial/reproducibility.html#retrieve-experiment">Retrieve Experiment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial/configuration.html">Runtime Configuration and Params</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial/dataset_builder.html">Build your Dataset Easily</a></li>
 </ul>
 
         </div>
@@ -75,45 +78,14 @@
 <section id="submodules">
 <h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this heading">¶</a></h2>
 </section>
-<section id="module-lumo.contrib.data.augments.mix">
-<span id="lumo-contrib-data-augments-mix-module"></span><h2>lumo.contrib.data.augments.mix module<a class="headerlink" href="#module-lumo.contrib.data.augments.mix" title="Permalink to this heading">¶</a></h2>
-<dl class="py function">
-<dt class="sig sig-object py" id="lumo.contrib.data.augments.mix.beta">
-<span class="sig-prename descclassname"><span class="pre">lumo.contrib.data.augments.mix.</span></span><span class="sig-name descname"><span class="pre">beta</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">alpha</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2.0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.contrib.data.augments.mix.beta" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return lambda
-:param alpha:</p>
-<p>Returns:</p>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="lumo.contrib.data.augments.mix.mixup">
-<span class="sig-prename descclassname"><span class="pre">lumo.contrib.data.augments.mix.</span></span><span class="sig-name descname"><span class="pre">mixup</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">major</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">minor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lam</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.contrib.data.augments.mix.mixup" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="lumo.contrib.data.augments.mix.permutation">
-<span class="sig-prename descclassname"><span class="pre">lumo.contrib.data.augments.mix.</span></span><span class="sig-name descname"><span class="pre">permutation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">size</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nonoverlap</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.contrib.data.augments.mix.permutation" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
+<section id="lumo-contrib-data-augments-mix-module">
+<h2>lumo.contrib.data.augments.mix module<a class="headerlink" href="#lumo-contrib-data-augments-mix-module" title="Permalink to this heading">¶</a></h2>
 </section>
-<section id="module-lumo.contrib.data.augments.transforms">
-<span id="lumo-contrib-data-augments-transforms-module"></span><h2>lumo.contrib.data.augments.transforms module<a class="headerlink" href="#module-lumo.contrib.data.augments.transforms" title="Permalink to this heading">¶</a></h2>
-<dl class="py class">
-<dt class="sig sig-object py" id="lumo.contrib.data.augments.transforms.Compose">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">lumo.contrib.data.augments.transforms.</span></span><span class="sig-name descname"><span class="pre">Compose</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">transforms</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#lumo.contrib.data.augments.transforms.Compose" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>Composes several transforms together. This transform does not support torchscript.
-Please, see the note below.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>transforms</strong> (list of <code class="docutils literal notranslate"><span class="pre">Transform</span></code> objects) – list of transforms to compose.</p>
-</dd>
-</dl>
-</dd></dl>
-
+<section id="lumo-contrib-data-augments-transforms-module">
+<h2>lumo.contrib.data.augments.transforms module<a class="headerlink" href="#lumo-contrib-data-augments-transforms-module" title="Permalink to this heading">¶</a></h2>
 </section>
-<section id="module-lumo.contrib.data.augments">
-<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-lumo.contrib.data.augments" title="Permalink to this heading">¶</a></h2>
+<section id="module-contents">
+<h2>Module contents<a class="headerlink" href="#module-contents" title="Permalink to this heading">¶</a></h2>
 </section>
 </section>
 
@@ -145,7 +117,7 @@ Please, see the note below.</p>
     <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="Versions">
     <span class="rst-current-version" data-toggle="rst-current-version">
       <span class="fa fa-book"> Read the Docs</span>
-      v: 1.0.0
+      v: 
       <span class="fa fa-caret-down"></span>
     </span>
         <div class="rst-other-versions">
