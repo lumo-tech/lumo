@@ -44,7 +44,7 @@ Here shows an example in `exp.properties`
 {'agent': nan,
  'backup': {'23-03-17-161847': {'backend': 'github',
                                 'number': 4,
-                                'repo': 'pytorch-lumo/image-classification'}},
+                                'repo': 'sailist/image-classification'}},
  'deprecated': nan,
  'exception': nan,
  'execute': {'cwd': '~/python/image-classification-private',
