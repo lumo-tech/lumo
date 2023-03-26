@@ -44,8 +44,8 @@ class Trainer(_BaseTrainer):
         for allocating dynamic(different) storage path and version control in each program.
 
     At present, I have explored best practices based on lumo in two fields, this includs:
-     - https://github.com/pytorch-lumo/image-classification
-     - https://github.com/pytorch-lumo/MMERC
+     - https://github.com/sailist/image-classification
+     - https://github.com/lumo-tech/MMERC
 
     Both two reposiroties are github templates and you can use them to create you new (private) repository.
     """

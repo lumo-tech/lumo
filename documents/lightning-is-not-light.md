@@ -1,3 +1,10 @@
+#
+
+- fairseq: 内置了训练各种 NLP 任务的完整流程，只需要定义模型
+- pytorch-lightning:
+- deepspeed: 主要提供对分布式训练的加速方法
+- transformers: 提供了对 Transformer 的支持
+
 # 完美主义者的深度学习代码结构最佳实践
 
 # 太长不看简略版
@@ -45,7 +52,6 @@
 ## 乱用动态特性
 
 ![](images/2022-08-12-11-10-51.png)
-
 
 # 竞品分析
 

@@ -1,7 +1,7 @@
 # lumo
 
 [![PyPI version](https://badge.fury.io/py/lumo.svg)](https://badge.fury.io/py/lumo)
-![Python-Test](https://github.com/pytorch-lumo/lumo/actions/workflows/python-test.yml/badge.svg)
+![Python-Test](https://github.com/lumo-tech/lumo/actions/workflows/python-test.yml/badge.svg)
 [![license](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://github.com/Lightning-AI/lightning/blob/master/LICENSE)
 ![Python-doc](./images/docstr_coverage_badge.svg)
 
@@ -34,7 +34,7 @@
 - [More](#more)
 - :pencil: [Acknowledge](#pencil-acknowledge)
 - :scroll: [License](#scroll-license)
-- [完整文档](https://pytorch-lumo.github.io/lumo/)
+- [完整文档](https://lumo-tech.github.io/lumo/)
 
 # :cloud: 安装
 
@@ -47,7 +47,7 @@ pip install -U lumo
 或从 dev1 分支安装最新版本：
 
 ```bash
-pip install git+https://github.com/pytorch-lumo/lumo
+pip install git+https://github.com/lumo-tech/lumo
 ```
 
 实验面板依赖于 panel，需要额外安装：
@@ -140,8 +140,8 @@ exp.end()
 
 | 项目                                                                                                        | 说明                            |
 |-----------------------------------------------------------------------------------------------------------|-------------------------------|
-| [image-classification](https://github.com/pytorch-lumo/image-classification)                              | 集成了全监督、半监督、自监督的多个论文的复现代码      |
-| [emotion-recognition-in-coversation](https://github.com/pytorch-lumo/emotion-recognition-in-conversation) | 集成了对话情感分类、多模态对话情感分类的多个论文的复现代码 |
+| [image-classification](https://github.com/sailist/image-classification)                              | 集成了全监督、半监督、自监督的多个论文的复现代码      |
+| [emotion-recognition-in-coversation](https://github.com/lumo-tech/emotion-recognition-in-conversation) | 集成了对话情感分类、多模态对话情感分类的多个论文的复现代码 |
 
 ## :small_orange_diamond: 可视化界面
 
@@ -190,7 +190,7 @@ df = w.load()
 
 # 选择单个实验备份
 exp = Experiment.from_cache(df.iloc[0].to_dict())
-issue = exp.backup('github', repo='pytorch-lumo/image-classification-private',
+issue = exp.backup('github', repo='sailist/image-classification-private',
                    access_token='ghp_*',
                    update=True,  # 如果已备份，则覆盖更新之前的 issue
                    labels=None,  # 可选标签

@@ -3,7 +3,7 @@
 # lumo
 
 [![PyPI version](https://badge.fury.io/py/lumo.svg)](https://badge.fury.io/py/lumo)
-![Python-Test](https://github.com/pytorch-lumo/lumo/actions/workflows/python-test.yml/badge.svg)
+![Python-Test](https://github.com/lumo-tech/lumo/actions/workflows/python-test.yml/badge.svg)
 [![license](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://github.com/Lightning-AI/lightning/blob/master/LICENSE)
 ![Python-doc](./images/docstr_coverage_badge.svg)
 
@@ -39,7 +39,7 @@ and focuses on enhancing the experience of deep learning practitioners.
     - :small_orange_diamond: [re-run](#small_orange_diamond-re-run)
     - :small_orange_diamond: [backup](#small_orange_diamond-backup)
 - :scroll: [License](#scroll-license)
-- [Full Document](https://pytorch-lumo.github.io/lumo/)
+- [Full Document](https://lumo-tech.github.io/lumo/)
 
 # :cloud: Installation
 
@@ -52,7 +52,7 @@ pip install -U lumo
 Or install the latest version from the dev1 branch:
 
 ```bash
-pip install git+https://github.com/pytorch-lumo/lumo@dev1
+pip install git+https://github.com/lumo-tech/lumo@dev1
 ```
 
 The experiment panel depends on Panel, which needs to be installed separately:
@@ -135,8 +135,8 @@ Experimental project:
 
 | Project                                                                                                       | Description                            |
 |-----------------------------------------------------------------------------------------------------------|-------------------------------|
-| [image-classification](https://github.com/pytorch-lumo/image-classification)                              | Reproducible code for multiple papers with full supervision, semi-supervision, and self-supervision      |
-| [emotion-recognition-in-coversation](https://github.com/pytorch-lumo/emotion-recognition-in-conversation) | Reproducible code for multiple papers on dialogue emotion classification and multimodal dialogue emotion classification |
+| [image-classification](https://github.com/sailist/image-classification)                              | Reproducible code for multiple papers with full supervision, semi-supervision, and self-supervision      |
+| [emotion-recognition-in-coversation](https://github.com/lumo-tech/emotion-recognition-in-conversation) | Reproducible code for multiple papers on dialogue emotion classification and multimodal dialogue emotion classification |
 
 ## :small_orange_diamond: Visual Interface
 
@@ -187,7 +187,7 @@ df = w.load()
 
 # Selecting a single experiment for backup
 exp = Experiment.from_cache(df.iloc[0].to_dict())
-issue = exp.backup('github', repo='pytorch-lumo/image-classification-private',
+issue = exp.backup('github', repo='sailist/image-classification-private',
                    access_token='ghp_*',
                    update=True,  # If already backed up, overwrite the previous issue
                    labels=None,  # Optional labels
