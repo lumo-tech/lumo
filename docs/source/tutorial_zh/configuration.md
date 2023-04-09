@@ -1,5 +1,3 @@
-
-
 # Configuration
 
 lumo 提供了多级作用域的配置，这包括：
